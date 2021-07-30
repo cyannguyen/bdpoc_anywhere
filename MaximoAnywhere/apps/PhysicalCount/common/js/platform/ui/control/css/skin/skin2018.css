@@ -1,0 +1,1502 @@
+/* font files */
+@font-face{
+  font-family: "IBM Plex Sans Bold";
+  src: url('IBMPlexSans-Bold.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Bold Italic";
+  src: url('IBMPlexSans-BoldItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Extra Light";
+  src: url('IBMPlexSans-ExtraLight.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Extra LightI";
+  src: url('IBMPlexSans-ExtraLightItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Italic";
+  src: url('IBMPlexSans-Italic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Light";
+  src: url('IBMPlexSans-Light.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Light Italic";
+  src: url('IBMPlexSans-LightItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Medium";
+  src: url('IBMPlexSans-Medium.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Medium Italic";
+  src: url('IBMPlexSans-MediumItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans";
+  src: url('IBMPlexSans-Regular.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans SemiBold";
+  src: url('IBMPlexSans-SemiBold.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans SemiBold Italic";
+  src: url('IBMPlexSans-SemiBoldItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Text";
+  src: url('IBMPlexSans-Text.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Text Italic";
+  src: url('IBMPlexSans-TextItalic.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Thin";
+  src: url('IBMPlexSans-Thin.woff') format('woff');
+}
+@font-face{
+  font-family: "IBM Plex Sans Thin Italic";
+  src: url('IBMPlexSans-ThinItalic.woff') format('woff');
+}
+
+
+/* login View */
+
+.mainLogin > .mblScrollableViewContainer {
+	transform: unset !important;
+}
+
+
+.productName {
+	font-family: "IBM Plex Sans";
+	font-size: 1.5rem !important;
+}
+.productLogo {
+	width: 100px;
+}
+.IBMLogo {
+	width: 75px;
+}
+.loginCopyright {
+    text-align: right;
+    font-size: 0.875rem !important;
+    color: black !important;
+    position: absolute;
+    left: 30%;
+    width: 40% !important;
+    border-top: 0.5px solid #979797;
+    padding-top: 10px !important;
+}
+
+.loginForm .mblTextBox,
+.loginCopyright,
+.loginForm .loginBtn {
+	font-family: "IBM Plex Sans";
+	font-size: 0.875rem;
+	margin-top: 30px !important;
+}
+
+.loginForm {
+    margin: 40px 50px 20px 50px;
+    line-height: 28px;
+    padding	:23%;
+    text-align: center;
+}
+
+
+.loginForm .mblTextBox {
+	width:100% !important;
+	font-weight: lighter;
+    margin-right: 0;
+    margin-left: 0;
+    padding-left: 0;
+    padding-right: 0;
+    min-width:250px;
+    font-size: 1.125rem;
+}
+
+.loginForm .mblTextBox::-webkit-input-placeholder
+{
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.loginForm .mblTextBox:-ms-input-placeholder
+{
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.loginForm .mblTextBox:focus {
+    font-style: normal;
+}
+
+.loginForm .loginBtn {
+	font-weight:normal;
+    user-select: none;
+    border: none;
+    background-color: #4178be;
+    background-image: none;
+    color: white;
+    border-radius: 0;
+   	min-width: min-content;
+   	align-items: center;
+}
+
+.textlink {
+    font-weight: 100;
+    color: #464646;
+    border-radius: 0;
+    font-size: 0.875rem !important;
+    font-family: "IBM Plex Sans" !important;
+    padding-left: 4px;
+    padding-top: 4px;
+}
+
+.mobile body {
+    font-size: 0.875rem !important;
+    font-family: "IBM Plex Sans";
+    font-weight: 100;
+}
+
+   /* Dialog */
+
+.dialogLabel {
+	color:#000;
+	font-family: "IBM Plex Sans Light";
+	font-size: 1.125rem;
+	margin-bottom: 10px;
+}
+
+.mblSimpleDialog {
+    background-color: #ffffff;
+    border:5px solid #e0e0e0;
+    box-shadow: none;
+    padding: 5% !important;
+    color: #464646 !important;
+    text-shadow: none;
+    font-size: 0.875rem;
+}
+
+.mblSimpleDialog .list {
+	border-top: 0.5px solid #979797;
+}
+
+.mblSimpleDialogCover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: .12;
+}
+
+.mblSimpleDialog .nonEditableText {
+	font-family: "IBM Plex Sans Light" !important;
+	font-size: 0.875rem;
+}
+
+.mblSimpleDialogFooter {
+	border-top:0;
+}
+
+.mblSimpleDialog button {
+	border:1px solid #4178be;
+	border-radius: 0;
+	color: #4178be;
+	box-shadow:none;
+	text-shadow:none;
+	font-weight: normal;
+	background-image:none;
+	background-color:transparent;
+}
+
+.mblSimpleDialog .dialogButton:active {
+	background-color: rgba(0,0,0,0.05);
+	background-image: none !important;
+    box-shadow: none !important;
+}
+
+.mblSpecialButton, .mblPrimaryButton {
+	color: #ffffff !important;
+	background-color:#4178be !important;
+	border-color:#4178be !important; 
+}
+
+.mblSpecialButton:active, .mblPrimaryButton:active {
+	border: 0 !important;
+	background-image: none !important; 
+	background-color: #325c80 !important; 
+	box-shadow:none !important;
+}
+
+
+
+/* Date Picker Dialog */
+
+.mblValuePickerSlotButton {
+	border: 1px solid #777677;
+	background-color: none;
+	background-image: none !important;
+	border-radius:0;
+}
+
+.dialogDateTimeLookup div button {
+    width: 30% !important;
+}
+
+.mblValuePickerSlotInputArea {
+    border-right: 1px solid #777677;
+    border-left: 1px solid #777677;
+}
+
+.datePicker .mblValuePickerSlot {
+    width: 65px !important;
+}
+
+.dialogDateTimeLookup div {
+    color: #222222 !important;
+}
+
+.mblDomButtonGrayPlus {
+	background: url(skinIcons/plus.svg) !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px !important;
+    background-position: center !important;
+    height: 26px !important;
+}
+
+.mblDomButtonGrayMinus {
+	background: url(skinIcons/minus.svg) !important;
+	 background-repeat: no-repeat !important;
+    background-size: 13px !important;
+    background-position: center !important;
+    height: 26px !important;
+}
+
+.mblValuePickerSlotInputArea input {
+	font-family: "IBM Plex Sans Light";
+    font-size: 160%;
+    background-color:
+}
+.dialogDateTimeLookup .dialogLabel {
+	color:#000 !important; 
+} 
+.dialogDateTimeLookup .controlLabel {
+	color:464646 !important;
+}
+
+.dialogDateTimeLookup .mblToolBarButton{
+	background:transparent;
+	border-radius:0;
+	border: 1px solid #4178be;
+   	font-family: "IBM Plex Sans Light" !important;
+   	color: #4178be;
+
+}
+
+.timePicker .mblValuePickerSlot {
+	margin-left: 0 !important;
+	
+}
+
+/* MultiAsset */
+ 
+.MultiAssetListItem input {	
+	overflow: initial !important;
+	border:2px solid !important;
+	border-color:#464646 !important;
+	background-color:rgba(255,255,255,0.80) !important;
+}
+
+.MultiAssetListItem .mblCheckBox {
+	font-size:25px !important;	
+	border-width: 1px !important;
+}
+
+.MultiAssetListItem .checkbox {
+	padding: 0 !important;
+	display: block !important;
+}
+
+.MultiAssetListItem .leafControl {
+	margin:0 !important;
+}
+
+.MultiAssetListItem_item3_column {
+	font-size: 0.875rem !important;
+	color:#464646 !important;
+} 
+
+.MultiAssetListItem_item2_column {
+	font-size: 1.125rem !important;
+}
+
+/* Settings */
+/* Buttons inside settings following different and unexpected behavior*/
+
+/* Attachments View */
+
+
+.attachmentLabel{
+	font-family: "IBM Plex Sans Light" !important;
+	color:#000000 !important;
+	font-size: 1.125rem !important;
+}
+
+.attachmentInfo {
+	font-family: "IBM Plex Sans" !important;
+	font-size: 0.875rem !important;
+	color:#464646 !important;
+}
+
+.attachmentIcon {
+    height: 32px !important;
+}
+
+.AttachmentsListItem_item3_column > div ,
+.AttachmentsListItem_item4_column > div > div,
+.AttachmentsListItem_item6_column > div > div{
+	text-align:right;
+	margin-right: 20px;
+}
+
+
+/* Change Password */
+
+
+
+.mblTextBox::placeholder {
+	font-family:"IBM Plex Sans LightI";
+	font-size: 0.875rem
+}
+
+.mblTextBox:-ms-input-placeholder {
+	font-family:"IBM Plex Sans LightI";
+	font-size: 0.875rem
+}
+
+
+.changePasswordForm > div {
+	width:90%;
+	margin-left:0%;
+	
+}
+.changePasswordForm input {
+	width:96% !important;
+	margin-left:5%;
+	margin-top:7%;
+	height: 30px !important;
+	line-height:28px !important;
+}
+
+.changePasswordForm input::-webkit-input-placeholder {
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.changePasswordForm input:-ms-input-placeholder {
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.changePasswordForm .mblButton {
+    border: 1px solid #4178be;
+    border-radius: 0;
+    color: #4178be;
+    box-shadow: none;
+    text-shadow: none;
+    font-weight: normal;
+    background-image: none;
+    background-color: transparent;
+    margin-left:5% !important;
+    margin-top:10% !important;
+    font-size: 0.875rem;
+    width:40%;
+}
+
+/* Logging Data */
+
+.mblScrollableViewContainer {
+	width:100%;	
+}
+
+.loggerReport {
+	width:100%;
+}
+
+.loggerReport div {
+	width:100%;
+}
+
+.loggerReport table {
+	border: 0 solid;
+	border-top: 1px solid;
+	border-color:rgba(151,151,151,0.50);
+}
+
+.loggerReport table td, .loggerReport table th {
+	border: 0 solid;
+	border-bottom: 1px solid ;
+	border-right: 1px solid;
+	border-color: rgba(151,151,151,0.50);
+	height:50px;
+	text-align:left;
+	padding-left:20px;
+	font-size: 0.875rem;
+
+}
+
+
+
+/* Radio Buttons */
+
+.radioButtonPane div{
+	background-image:none;
+	background-color:transparent;
+	border: 0;
+}
+
+.radioButtonPane label{
+	background-image:none;
+	background-color:transparent;
+	border: 0;
+	border-color:#4178be;
+}
+
+.radioButtonPane span {
+	width:98% !important;
+}
+
+.radioButtonCtrl input + span {
+	width: 100%;
+	background-color: transparent;
+	background-image: none;
+	color: #4178be;
+	text-shadow: none;
+	box-shadow: none;
+	border: 1px solid #4178be;
+	font-family: "IBM Plex Sans";
+}
+
+.radioButtonCtrl input:checked + span {
+    background-color: #4178be;
+    background-image: none;
+    color: #4178be;
+    border: 1px solid #4178be;
+    color: #ffffff;
+}
+.mblCheckBox:disabled, .mblCheckBoxChecked:disabled, .mblCheckBox:checked:disabled {	
+	background-image:none !important;
+	background-color:#C0C0C0 !important;
+	border:none !important;
+}
+
+.mblCheckBox:checked::after {
+	border-color:#ffffff;
+	background-image:none;
+	background-color:transparent;
+
+}
+
+.mblCheckBox:disabled {
+	background-color: transparent;
+    border: 1px solid #777677;
+    background-image: none;
+    border-radius: 0;
+}
+
+.mblCheckBox:checked {
+	background-color:#4178be !important;
+	border:	1px solid #4178be !important;
+	background-image:none !important;
+}
+
+.mblCheckBox {
+	border:1px solid #777677;
+	background-color:transparent;
+	background-image:none;
+	border-radius:0;
+	margin-bottom: 20px;
+}
+
+/* Work Log Entry */
+
+.lastUpdateText {
+	color:#777677;
+	font-size: 0.875rem !important;
+}
+
+
+/* Failure Report */
+
+.textlink {
+	font-size: 1.125rem;
+	text-decoration: underline;
+	color: #4178BE;
+	font-family: "IBM Plex Sans Extra LightI";
+}
+
+/* About */
+
+.platformHelpAboutContainer div {
+	line-height: 1.5;
+	margin-top: 10px !important;
+
+}
+/* loading */
+#WLbusyOverlay {
+	background-color:rgba(0,0,0,0.12);
+}
+
+/* only makes sense on browser preview, which is not what end-users see
+#WLbusy {
+	border: none;
+	border-radius: 0;
+	background-repeat:no-repeat;
+	background-image: url(skinIcons/spinner.svg);
+	background-position: 25% 50%;
+	padding: 5%;
+
+}*/
+
+
+.mblHeading {
+	font-family: "IBM Plex Sans";
+    font-weight: 100;
+    background-image: none;
+    border-bottom: none;
+    height: 49px;
+    padding-left: 6px;
+    padding-right: 6px;
+    background-color: #1D3649;
+    padding-bottom:0;
+}
+
+.mblFooting {
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.mblFooting button {
+	border-radius: 0;
+    border: 1px solid #ffffff;
+    background-color: transparent;
+    background: none;
+    color: #ffffff;
+    font-family: "IBm Plex Sans";
+    font-size: 0.875rem;
+    text-shadow: none;
+    width: 36% !important;
+}
+
+.mblFixedSplitter .mblHeading {
+  	color: white;
+    background-color: #325c80;
+    border-bottom: 1px solid #325c80;
+    height: 48px;
+}
+
+.overflowMenu.sub {
+    background: #325c80 !important;
+    border: 0;
+}
+
+.mblHeadingSpanTitle {
+	cursor: pointer;
+    vertical-align: middle;
+    display: inline-block;
+    height: 50px;
+    margin-top: 0px;
+    font-weight: normal;
+}
+
+.assetNumDesc {
+	width: auto !important;
+}
+
+.WorkListItem_item3_column {
+	padding-top:6px !important;
+	padding-bottom:20px;
+}
+
+.WorkListItem_item2_column > div,
+.WorkListItem_item5_column > div  {
+	font-size: 0.875rem;
+	margin-left: 20px;
+}
+
+.WorkListItem_item5_column  {
+	vertical-align:bottom;
+}
+
+.mblHeading > .mblHeadingSpanTitle {
+    margin-left: -5px;
+}
+
+.mblIdxHeadingSpinner .mblHeadingSelectTitle {
+	margin-left: 0px;
+	margin-top: 0px;
+}
+
+.nonsortLabel {
+	text-transform: uppercase;
+}
+
+.nonSortLabel {
+	color: #444;
+}
+
+.dijitMenuItemIconCell,  .dijitMenuItemArrowCell {
+    display: none;
+}
+
+.dijitMenuItemLabel {
+	font-size: 1.125rem;
+}
+
+.dijitMenuItemLabel:before, .dijitMenuItemLabel:after {
+	content: '';
+	padding: 0px 5px;
+}
+
+.sortLabel {
+	color: #FFF;
+	margin-left:10px;
+	font-weight:normal;
+	font-size: 0.875rem !important;
+}
+
+.textappearance-medium .sortLabel {
+	font-size: .875rem;
+	background-color: white;
+}
+
+.sortMenu {
+	border: none;
+	background: #325C80 !important;
+	box-shadow:0 4px 10px 0 rgba(0,0,0,0.50);
+	font-size: 0.875rem;
+}
+
+.overflowMenu {
+	border: none;
+	background-color: #1D3649 !important;
+	box-shadow:0 4px 10px 0 rgba(0,0,0,0.50);
+}
+
+.sortMenu .dijitMenuItemLabel {
+  	color: #FFF;
+  	font-size: 0.875rem;
+}
+
+/* Work Order List */
+
+	/* defect 306482 -> by clicking create work order ( plus icon ), header buttons and elements go up and loose alignment */
+.mblHeading {
+	overflow: initial !important; 
+}
+
+.mblFixedHeaderBar > img {
+	margin-top:18px;
+	margin-left:16px;
+}
+
+/* Progress indicator  */
+
+.progressindicator {
+	background-color:transparent;
+	border:5px solid #c8f08f;
+	height:25px;
+	color:#000000;
+	padding:10px;
+}
+
+.progressindicator .nonEditableText {
+    font-size: 0.875rem !important;
+    color: #000000;
+    margin:0% !important;
+    box-shadow:none;
+    /* margin-top:2% !important; */
+    font-weight: bold;
+    text-shadow:none;
+}
+
+.progressindicator button {
+	font-family: "IBM Plex Sans";
+	font-size: 0.875rem;
+	background-color:transparent !important;
+	background-image:none !important;
+	border: 0 !important;
+	margin-right: 10px !important;
+	height: auto;
+	color:#4178be;
+	width: auto;
+	padding:0 !important;
+	box-shadow:none;
+    text-shadow:none;
+    line-height:initial !important;
+}
+
+/* Work List */
+
+.listHeader {
+    color: white;
+    text-shadow: none;
+    border-bottom: none;
+}
+
+.listHeader {
+    background: #325c80;
+    font-size: 0.875rem;
+}
+
+.listHeader .nonEditableText {
+	font-size: 0.875rem;
+}
+
+.listHeader tbody div  {
+	overflow:inherit;
+}
+
+.listHeader table.layout td .hideextra * {
+	overflow: inherit;
+}
+
+.listHeader button:first-child {
+	border-radius:0 !important;
+    /*border: 1px solid #ffffff;*/
+    background-color: transparent;
+    /*background: none;*/
+    color: #ffffff;
+    font-family: "IBM Plex Sans";
+    font-size: 0.875rem;
+    text-shadow: none;
+    width: 50% ;
+    margin: 0 !important;
+}
+
+.listHeader input {
+	border-radius:0;
+	text-shadow: none;
+	font-family: "IBM Plex Sans Light";
+}
+
+.errorCount {
+	margin-left:2px;
+}
+
+.mblListItem {
+	font-size: 1.125rem;
+	color: #222222;
+	font-family: "IBM Plex Sans Light";
+}
+
+.mblListItem .dijitContentPane {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.mblButtonText {
+	border: 1px solid #4178be;
+    border-radius: 0 !important;
+    color: #4178be;
+    box-shadow: none;
+    text-shadow: none;
+    font-weight: normal;
+    background-image: none;
+    background-color: transparent;
+    margin-left:0 !important;
+    margin-top:0% !important;
+    font-size: 0.875rem;
+    width:40%;
+    background-color:rgba(255,255,255,0.80);
+}
+
+.mblListItem .dijitContentPane:last-child {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.list .mblListItem.evenListItem {
+	background-color: #FFFFFF;
+	/* use the following to change every other list item to a gradient */
+    /* background-image: linear-gradient(to right, #D7E8F7 00%,#ffffff 100%); */
+}
+
+.list .mblListItem.oddListItem {
+	background-color: #ececec;
+}
+
+.list .mblListItem {
+    border: none;
+    background-color:none;
+    margin: 2px 2px;
+}
+
+.list .mblListItem.recordError {
+	border-right: 5px solid #d74108 !important;
+}
+
+.list .mblListItem .controlLabel {
+    color: #555;
+}
+
+.group .mblListItem {
+    margin: 2px;
+    border: 1px solid #CACACA;
+    border-top-color: #DCDCDC;
+}
+
+.mblTextBox {
+	-webkit-appearance: none;
+    display: inline-block;
+    padding: 3px 3px 0px 3px;
+    margin: 0px 3px 0px 2px;
+    border-width: 0px 1px 3px 1px;
+    border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAB3RJTUUH3wkDERwCJYQ88wAAAAlwSFlzAAAewgAAHsIBbtB1PgAAAARnQU1BAACxjwv8YQUAAAAMSURBVHjaY1i/fj0ABB4CDjFh0IEAAAAASUVORK5CYII=);
+    box-shadow: 0px 1px 0px 0px #afafaf;
+    -webkit-box-shadow: 0px 1px 0px 0px #afafaf;
+    border-color: transparent;
+}
+
+.mblTextBox:focus {
+    outline: 0;
+    border-width: 0px 1px 3px 1px;
+    border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAB3RJTUUH3wkDER0LRUO1FgAAAAlwSFlzAAAewgAAHsIBbtB1PgAAAARnQU1BAACxjwv8YQUAAAAMSURBVHjaY5h06CcABDcCTsF/1qwAAAAASUVORK5CYII=);
+    box-shadow: 0px 1px 0px 0px rgb(146, 194, 249);
+    -webkit-box-shadow: 0px 1px 0px 0px rgb(146, 194, 249);
+    text-shadow: 2px 2px 5px #F9FD72, -1px -1px 5px #F9FD72;
+    border-color: transparent;
+}
+
+/* Work Order Details */
+
+.errorIndicator {
+	background-color: transparent !important;
+    border: 5px solid #ffd4a0;
+    border-radius: 0;
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+    padding-left: 40px !important;
+    padding-top: 5px !important;
+    background-position-y: 10px !important;
+    background-position-x: 8px !important;
+}
+
+.errorIndicator div {
+	padding: 0 !important;
+	margin:0 !important;
+	display: inline
+}
+
+.errorIndicator button {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.errorIndicator div:first-of-type {
+	border: 0 !important;	
+}
+
+.errorIndicator .errorLinks{	
+	display:inline !important;
+	padding-top: 0 !important;
+}
+	
+.errorIndicator .errorLinks .textlink {
+    border: 1px solid;
+    border-color: #4178be;
+    border-radius: 0;
+    color: #4178be;
+    width: 40%;
+    display: inline-block !important;
+    text-align: center;
+    align-content: center;
+    /* margin-left: 4% !important; */
+    margin-right: 4% !important; 
+    margin-bottom: 5% !important;
+    padding: 2% !important;
+    /* min-width: 115px !important; */
+
+    font-size: 0.875rem;
+	text-decoration: none;
+	font-family: "IBM Plex Sans";
+}
+
+.errorIndicator .errorLinks div:fisrt-of-type {
+	border:none;
+}
+
+.errorIndicator > div {
+	padding-left:30px;
+}
+
+.nonEditableLabel {
+	font-size: 0.875rem;
+	color:#777677;
+}
+
+/* nonEditableLabels that have a parent element with "transitionTo" */
+.mblListItemRightIcon ~ div .nonEditableLabel {
+	color:#325c80;
+}
+
+.mblScrollableView .editableLabel,
+.mblScrollableView {
+	font-size: 0.875rem;
+	color:#325c80;
+}
+
+.nonEditableText {
+	font-family: "IBM Plex Sans Light" !important;
+	font-size: 1.125rem;
+}
+
+.mblListItem .mblTextArea {
+	font-size: 1.125rem !important;
+	font-weight: 300;
+	font-family: "IBM Plex Sans Light" !important;
+	border-radius:0;
+	border: 1px solid #777677;
+}
+
+.mblListItem .mblTextArea::placeholder {
+	text-decoration: none !important;
+	font-size: 1.125rem !important;
+	font-family: "IBM Plex Sans Extra LightI";
+}
+
+.mblListItem .mblTextArea:-ms-input-placeholder {
+	text-decoration: none !important;
+	font-size: 1.125rem !important;
+	font-family: "IBM Plex Sans Extra LightI";
+}
+
+.mblTextArea .longText {
+	padding-left:0;
+	border-radius:0;
+}
+
+.mblListItem .mblTextArea::-webkit-input-placeholder {
+	text-decoration: underline;
+	font-size: 1.125rem !important;
+	font-family: "IBM Plex Sans Extra LightI";
+}
+.mblListItem .mblTextArea:-ms-input-placeholder {
+	text-decoration: underline;
+	font-size: 1.125rem !important;
+	font-family: "IBM Plex Sans Extra LightI";
+}
+
+.mblListItem .mblTextBox {
+	font-weight:200 !important;
+}
+
+.mblListItem.mblVariableHeight {
+	border:none;
+}
+
+.lookupIcon,
+.codeScanIcon,
+.downTimeyIcon,
+.woHistoryIcon {
+	background-origin:content-box !important;
+}
+
+.lookupText {
+	margin-right:2%;
+	font-weight: normal;
+    font-size: 1.125rem;
+    font-family: "IBM Plex Sans Light";
+    text-decoration-color: #aaaa;
+    font-weight: lighter;
+}
+
+.editableText {
+	font-family: "IBM Plex Sans Light";
+	font-size: 1.125rem;
+}
+.editableText::placeholder {
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.editableText:-ms-input-placeholder {
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+}
+
+.mblImageIcon {
+    vertical-align: middle;
+}
+
+.mblEdgeToEdgeList.group {
+	border-bottom: solid 0.1px #e8e8e8;
+}
+
+/*  Specifications */
+.specLayoutLeft {
+	display: none;
+}
+
+
+
+.specLayoutRight {
+	float:none;
+	padding-bottom:none !important;
+	width: auto !important;
+    min-width: 0 !important;
+    display: inline;
+}
+
+.hiddenChevron:last-of-type  input{
+	padding-bottom:0 !important;	
+	margin-bottom:10px
+}
+
+.hiddenChevron div:nth-of-type(2) {
+	padding-bottom:0 !important;
+}
+
+.hiddenChevron div:last-of-type {
+    /*padding-bottom: 10px !important; 
+    10px padding-bottom is messing around with attachments view */
+}
+
+.hiddenChevron input {
+	padding-left:0 !important;
+}
+
+.mblEdgeToEdgeList .mblListItem:last-child {
+	margin-bottom:0px;
+}
+
+.mblListItem.mblVariableHeight {
+	margin-top:0px;
+}
+
+.placeholder {
+	font-family: "IBM Plex Sans Extra LightI";
+	font-size: 1.125rem;
+	color: #777677;
+	text-decoration: underline;
+}
+
+
+/* Related Records */
+
+.relatedRecords {
+	font-weight: normal;
+}
+
+.Item1Count1Button1, .Item1Count1Button2 { 
+	color:#325c80;
+}
+
+/* Windows Hack to fix the spacing */
+.Item1Count1Button1_count1_column > .hideextra > div, .Item1Count1Button2_count1_column > .hideextra > div { 
+	width: 100px;
+}
+/* Windows Hack to fix count alignment */
+.Item1Count1Button1_count1_column > .hideextra > div > div, .Item1Count1Button2_count1_column > .hideextra > div > div { 
+	display: inline-block;
+	vertical-align: bottom;
+	padding-bottom: 2px;
+}
+
+.Item1Count1Button1_item1_column .dijitContentPane,
+.Item1Count1Button2_item1_column .dijitContentPane {
+	padding-left: 0 !important;
+}
+
+/* Small Warning Icon   */
+
+.fieldMarkerWarning:before, .fieldMarkerError:before {
+	content:"";
+}
+
+.fieldMarkerWarning, .fieldMarkerError {
+    background-color: transparent;
+    border: 0;
+    background-position: left;
+    background-repeat: no-repeat;
+    height: 32px !important;
+    width: 32px !important;
+    box-shadow: none;
+    margin: 0 !important;
+}
+.fieldMarkerError {
+	background-image: url(skinIcons/warning-icon.svg) !important;
+}
+
+.fieldMarkerWarning {
+	background-image: url(skinIcons/warning-icon.svg) !important;
+}
+/*  lookups */
+
+.listEmpty {
+  font-family: "IBM Plex Sans Light";
+    font-style: italic;
+    font-size: 1.125rem;
+    background-image: url(skinIcons/bee-empty.svg);
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center bottom;
+    height: 120px;
+    color: #1d3649;
+    margin: 0;
+    width: 100%;
+    padding-top: 28%;
+    text-align: center;
+}
+
+.ListHeaderWithSearch_searchModifier_column {
+	width:20%;
+}
+
+.ListHeaderWithSearch_searchModifier_column button {
+	width:100% !important;
+}
+
+.ListHeaderWithSearch_searchField_column{
+    top: 10px;
+    width: 60%;
+}
+
+.ListHeaderWithSearch_searchField_column div{
+	margin-left: 2%;
+    width: 92%;
+    margin-right: 0;
+    text-align: left;
+}
+
+
+.ListHeaderWithSearch_searchField_column div div{
+    width: 98%;
+}
+
+.ListHeaderWithSearch_searchField_column input{
+	font-family : "IBM Plex Sans Light" ;
+	color: #ffffff;
+	background-color:transparent;
+	overflow:inherit;
+	width:100%;
+}
+
+.ListHeaderWithSearch_searchField_column input::placeholder{
+	font-family : "IBM Plex Sans LightI" ;
+	color: #ffffff;
+}
+
+.ListHeaderWithSearch_searchField_column input:-ms-input-placeholder{
+	font-family : "IBM Plex Sans LightI" ;
+	color: #ffffff;
+}
+
+.ListHeaderWithSearch_searchField_column input:focus{
+	font-family : "IBM Plex Sans Light" ;
+	color: #ffffff;
+	box-shadow:none;
+	font-style: normal;
+	text-shadow:none;
+}
+
+
+.ListHeaderWithSearch_searchButton_column {
+    vertical-align: middle;
+    text-align: left;
+    right: 25%;
+    top: -5px;
+    border: none;
+}
+
+.ListHeaderWithSearch_searchButton_column button {
+	height:40px !important;
+	border: 0 !important;
+    background: url(skinIcons/small-lookup.svg) !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+div[id$='Lookup'] .mblListItem table tbody tr:first-of-type div {
+    font-family: "IBM Plex Sans";
+}
+
+/* Map View */
+
+.MapDetail_previous_column, .MapDetail_marker_column, .MapDetail_next_column, .MapDetail_startstop_column {
+	vertical-align: top !important;
+	padding-top: 8% !important;
+}
+
+.MapDetail_marker_column {
+
+}
+
+.MapDetail_address_column {
+	padding-top:4% !important;
+	width:40% !important;
+	
+}
+.MapDetail_address_column .leafControl {
+	white-space: pre;
+}
+
+.MapDetail_address_column .leafControl button {
+	display:contents;
+}
+.textlinkForMap {
+	color:#325c80 !important;
+}
+
+.MapDetail_address_column div div:first-of-type div:nth-of-type(1) {
+	color:#000000;
+	margin-right:4px;
+	display:inline;
+}
+
+.MapDetail_address_column div div:first-of-type div:nth-of-type(2) {
+	white-space:nowrap;
+}
+
+.MapDetail_address_column div:first-of-type div:nth-of-type(3) {
+	color: #777677;
+	font-size:0.875rem;
+}
+
+.MapDetail_address_column div:first-of-type div:nth-of-type(4) {
+	color: #000000;
+	font-size: 0.875rem;
+}
+
+.MapDetail_address_column div:first-of-type div:nth-of-type(5) {
+	color: #000000;
+	font-size: 0.875rem;
+}
+
+.MapDetail_address_column div:first-of-type div:nth-of-type(6) {
+	color: #777677;
+	font-size:0.875rem;
+}
+
+table.MapView {
+	height: auto !important;
+}
+.mapDetailsNoMarkers {
+	color: #777677 !important;
+    font-family: "IBM Plex Sans Light";
+}
+
+.mapErrorNoMarkers {	
+	font-family: "IBM Plex Sans Light";
+    font-style: italic;
+    font-size: 1.125rem;
+    background-image: url(skinIcons/bee-empty.svg);
+    background-repeat: no-repeat;
+    background-color: white;
+    height: 220px;
+    background-position-y: 100px;
+    color: #1d3649;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    background-position-x: 45%;	
+}
+
+
+.mapdirections {
+	color:#4178be;
+}
+
+.mapdirections img {
+	margin:3px 3px;
+}
+
+/* Fonts */
+.listHeader .listCount {
+	color: #FFF;
+	font-size: 0.875rem;
+	font-weight: normal;
+}
+
+.listHeader .errorCount {
+	color: #FFF;
+	font-size: 0.875rem;
+}
+
+.listHeader .errorSeparator {
+	color: #FFF;
+	font-size: 0.875rem;
+}
+
+.textappearance-medium {
+	font-size: 1.125rem;
+}
+
+/* Weights */
+.bold {
+	font-weight: 400;
+}
+
+/* components */
+div.statusDesc {
+	width:200px;
+	border-radius: 8px;
+    padding: 3px 10px 0px 2px;
+    font-kerning: auto;
+    font-size: 0.875rem;
+    display: initial;
+    background-color:transparent;
+}
+img.statusDesc {
+	margin-top:4px;
+    padding: 0;
+    border-radius: 15%;
+    border: none;
+    background-color: transparent;
+    width: auto; */
+    margin:0;
+}
+img.statusDesc.COMP {
+	background-color:#777677 !important;
+}
+/* statuses */
+
+/* now color will be applied to svg icons instead:
+div.statusDesc.WAPPR, div.statusDesc.WSCH {
+	background-color: #FFBB00;
+}
+
+div.statusDesc.INPRG, div.statusDesc.APPR {
+	background-color: #8CD211;
+}
+
+div.statusDesc.COMP {
+	background-color: #AEAEAE;
+}
+
+*/
+
+/* listItem spacing */
+
+.WorkListItem > tbody > tr > td {
+	padding-bottom: 10px;
+}
+.WorkListItem > tbody > tr:last-child > td {
+	padding-bottom: 0px;
+}
+
+.mblListItem .mblButton {
+	margin-right: 0px;
+	min-width: min-content;
+}
+
+
+/* indicates when a list item was touched */
+
+.mblListItemSelected {
+	/*background-color: rgb(26, 150, 198) !important;*/
+	background-color: none !important;
+}
+
+
+
+/* toolbar */
+
+.mblHeading > span:first-of-type {
+	margin-left:0 !important;
+}
+
+.mblHeading > span:last-of-type > img {
+	margin-top:2px;
+    vertical-align: middle;
+}
+
+/* layout related styles */
+.colWidth {
+	width:40px;
+}
+
+/* SPECIFIC APPS */
+
+/* Issues and Returns */
+.copyPlanActual {
+	color: #000 !important;
+	font-size: 0.875rem !important;
+}
+
+
+/* Media Queries */
+
+@media screen and (max-width: 500px) {
+
+	.loginForm {
+		padding:5%;
+	}
+  	.loginForm .mblTextBox {
+  	  margin-left:0 ;
+  	  width:100% !important;
+  	  min-width:inherit;
+  	}
+
+  	.loginForm .loginBtn {
+  		margin-right:0;
+  	}
+ 	
+ 	.loginCopyright { 	
+	  	text-align: right;
+	    font-size: 0.875rem !important;
+	    color: black !important;
+	    position: absolute;
+	    bottom: -100px;
+	    left: 20%;
+	    width: 60% !important;
+	    border-top: 0.5px solid #979797;
+	    padding-top: 10px !important;
+	    margin-top: 50px !important;
+ 	}
+}
+
+@media screen and (min-width: 1000px) and (orientation:landscape) {
+
+	.loginForm {
+		padding:5%;		
+		width:40%;
+		margin-left:25%;
+	}
+	
+  	.loginForm .mblTextBox {
+  	  margin-left:0 ;
+  	  width:100% !important;
+  	  min-width:inherit;
+  	}
+
+  	.loginForm .loginBtn {
+  		margin-right:0;
+  		margin-bottom:200px !important;
+  	}
+  		
+}
+
+
+@media screen and (orientation:landscape) {
+
+	.loginForm {		
+		padding-top:0%;		
+	}
+	
+  	.loginForm .loginBtn {
+  	  margin-top:0 !important;
+  	}
+
+  	.loginForm .loginUsername {
+  		margin-top: 0 !important; 		
+  	}
+}

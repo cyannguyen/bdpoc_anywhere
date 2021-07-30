@@ -1,0 +1,86 @@
+{
+  "_from": "cordova-plugin-mfp-jsonstore",
+  "_id": "cordova-plugin-mfp-jsonstore@8.0.2019072908",
+  "_inBundle": false,
+  "_integrity": "sha512-4bhqzbsFARWeShXm/ZweyVgA19Y2RsRe4YPK2j0k3rBHPky7m1THjU0pmJlXnyqQ0/FJLjbydjlodF1quCvufg==",
+  "_location": "/cordova-plugin-mfp-jsonstore",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-mfp-jsonstore",
+    "name": "cordova-plugin-mfp-jsonstore",
+    "escapedName": "cordova-plugin-mfp-jsonstore",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-mfp-jsonstore/-/cordova-plugin-mfp-jsonstore-8.0.2019072908.tgz",
+  "_shasum": "eb99620ded3b37f4c1fd64818309f6085b106432",
+  "_spec": "cordova-plugin-mfp-jsonstore",
+  "_where": "/Users/amith/Development/Anywhere/764_CleanMximoAnywhere_2/MaximoAnywhereShell/MaximoAnywhere",
+  "author": {
+    "name": "IBM"
+  },
+  "bundleDependencies": [
+    "shelljs",
+    "npmlog",
+    "xcode"
+  ],
+  "cordova": {
+    "id": "cordova-plugin-mfp-jsonstore",
+    "platforms": [
+      "android",
+      "ios",
+      "windows"
+    ]
+  },
+  "dependencies": {
+    "npmlog": "0.0.6",
+    "shelljs": "0.3.0",
+    "xcode": "0.8.7"
+  },
+  "deprecated": false,
+  "description": "IBM MobileFirst Platform Foundation Cordova Plugin JSONStore",
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=6.1.2 <7"
+    },
+    {
+      "name": "cordova-ios",
+      "version": ">=4.1.1 <5"
+    },
+    {
+      "name": "cordova-windows",
+      "version": ">=4.3.2 <6"
+    },
+    {
+      "name": "cordova-plugman",
+      "version": ">=6.1.1 <7"
+    }
+  ],
+  "keywords": [
+    "cordova",
+    "ibm",
+    "worklight",
+    "mobilefirst",
+    "mfp",
+    "jsonstore",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-windows"
+  ],
+  "license": "SEE LICENSE IN LICENSE.TXT",
+  "name": "cordova-plugin-mfp-jsonstore",
+  "repository": {
+    "type": "git",
+    "url": "https://git.ng.bluemix.net/ibmmfpf/cordova-plugin-mfp-jsonstore/tree/master"
+  },
+  "version": "8.0.2019072908"
+}

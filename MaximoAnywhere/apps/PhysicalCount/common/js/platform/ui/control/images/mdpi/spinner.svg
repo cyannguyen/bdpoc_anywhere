@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="27px" viewBox="0 0 28 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>spinner</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-loading-/-text" transform="translate(-101.000000, -23.000000)" stroke="#4178BE" stroke-width="3">
+            <path d="M110.897016,25 C106.29012,26.6760703 103,31.093933 103,36.2802445 C103,42.9076615 108.372583,48.2802445 115,48.2802445 C121.627417,48.2802445 127,42.9076615 127,36.2802445 C127,32.2908173 125.053226,28.7560837 122.057847,26.5742137" id="spinner"></path>
+        </g>
+        <animateTransform attributeType="xml"
+		    attributeName="transform"
+		    type="rotate"
+            from="0 14 13.5"
+            to="360 14 13.5"
+		    dur=".8s"
+		    repeatCount="indefinite"/>
+    </g>
+</svg>

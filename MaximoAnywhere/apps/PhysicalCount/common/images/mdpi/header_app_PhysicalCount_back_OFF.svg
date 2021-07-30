@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="32px" viewBox="0 0 43 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_app_PhysicalCount_back_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="header_app_PhysicalCount_back_OFF" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M33.225646,14.0058414 L30.225646,15.5344177 L30.225646,25 L28.225646,25 L28.225646,16.5534686 L25.225646,18.082045 L25.225646,25 L23.225646,25 L23.225646,19.1010959 L20.225646,20.6296722 L20.225646,25 L18.225646,25 L18.225646,21.6487231 L14.907981,23.3391579 L14,21.5571448 L18.225646,19.4040706 L18.225646,7 L20.225646,7 L20.225646,18.3850197 L23.225646,16.8564434 L23.225646,7 L25.225646,7 L25.225646,15.8373925 L28.225646,14.3088161 L28.225646,7 L30.225646,7 L30.225646,13.2897652 L33.225646,11.7611889 L33.225646,7 L35.225646,7 L35.225646,10.742138 L38.6447843,9 L39.5527653,10.782013 L35.225646,12.9867905 L35.225646,25 L33.225646,25 L33.225646,14.0058414 Z" id="header_app_PhysicalCount_noBack" fill="#FFFFFF"></path>
+        <g id="nany-icon-/-back-arrow" fill="#FFFFFF">
+            <polygon id="header_back_OFF" points="4.09980033 16 7.53567422 22.5 4.18511389 22.5 1 16 4.64943967 9.5 8 9.5"></polygon>
+        </g>
+    </g>
+</svg>

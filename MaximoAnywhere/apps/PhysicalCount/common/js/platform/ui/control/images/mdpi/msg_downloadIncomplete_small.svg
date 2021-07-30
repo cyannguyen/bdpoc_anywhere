@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="19px" viewBox="0 0 20 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>msg_downloadIncomplete_small</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-download-/-incomplete" transform="translate(-6.000000, -7.000000)" fill="#5AAAFA">
+            <path d="M24.6666667,18 L26,18 L26,23.3333333 L26,26 L24.6666667,26 L7.33333333,26 L6,26 L6,23.3333333 L6,18 L7.33333333,18 L7.33333333,23.3333333 L24.6666667,23.3333333 L24.6666667,18 Z M15.0588296,7.03306223 L17.1253194,7.03342753 L17.1251367,16.2285216 L20.4756483,12.87801 L21.9368396,14.3392013 L16.0920745,20.1839664 L10.2473094,14.3392013 L11.7085007,12.87801 L15.0588296,16.2283389 L15.0588296,7.03306223 Z" id="msg_downloadIncomplete_small"></path>
+        </g>
+    </g>
+</svg>

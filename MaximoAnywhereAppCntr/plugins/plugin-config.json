@@ -1,0 +1,122 @@
+{
+  "cordova-plugin-buildinfo": {
+    "version": "2.0.3",
+    "name": "BuildInfo"
+  },
+  "cordova-plugin-camera": {
+    "version": "4.1.1-dev",
+    "name": "Camera"
+  },
+  "cordova-plugin-device": {
+    "version": "2.0.2",
+    "name": "Device"
+  },
+  "cordova-plugin-dialogs": {
+    "version": "2.0.2",
+    "name": "Notification"
+  },
+  "cordova-plugin-file": {
+    "version": "6.0.1",
+    "name": "File"
+  },
+  "cordova-plugin-file-opener2": {
+    "version": "2.2.1",
+    "name": "File Opener2"
+  },
+  "cordova-plugin-file-transfer": {
+    "version": "1.7.1",
+    "name": "File Transfer"
+  },
+  "cordova-plugin-geolocation": {
+    "version": "4.0.2",
+    "name": "Geolocation"
+  },
+  "cordova-plugin-globalization": {
+    "version": "1.11.0",
+    "name": "Globalization"
+  },
+  "cordova-plugin-inappbrowser": {
+    "version": "3.1.0",
+    "name": "InAppBrowser"
+  },
+  "cordova-plugin-iroot": {
+    "version": "0.8.1",
+    "name": "iRoot"
+  },
+  "cordova-plugin-maximo-pushnotification": {
+    "version": "1.0.0",
+    "name": "MaximoPushNotification"
+  },
+  "cordova-plugin-media-capture": {
+    "version": "3.0.2",
+    "name": "Capture"
+  },
+  "cordova-plugin-mfp": {
+    "version": "8.0.2019082207",
+    "name": "IBM MobileFirst Platform Foundation"
+  },
+  "cordova-plugin-mfp-jsonstore": {
+    "version": "8.0.2019072908",
+    "name": "IBM MobileFirst Platform Foundation JSONStore"
+  },
+  "cordova-plugin-native-spinner": {
+    "version": "1.1.3",
+    "name": "Native Spinner"
+  },
+  "cordova-plugin-network-information": {
+    "version": "2.0.1",
+    "name": "Network Information"
+  },
+  "cordova-plugin-okhttp": {
+    "version": "2.0.0",
+    "name": "OkHttp"
+  },
+  "cordova-spatialite-storage": {
+    "version": "1.2.0",
+    "name": "Cordova sqlite/spatialite storage plugin"
+  },
+  "ibm-accessibility-plugin": {
+    "version": "0.0.1",
+    "name": "AccessibilityPlugin"
+  },
+  "ibm-device-orientation-plugin": {
+    "version": "0.0.1",
+    "name": "DeviceOrientationPlugin"
+  },
+  "ibm-display-manager-plugin": {
+    "version": "0.0.1",
+    "name": "DisplayManagerPlugin"
+  },
+  "ibm-map-plugin": {
+    "version": "0.0.1",
+    "name": "MapPlugin"
+  },
+  "ibm-plugin-barcodescanner": {
+    "version": "0.1.0",
+    "name": "BarcodeScanner"
+  },
+  "ibm-plugin-cookiemanager": {
+    "version": "0.2.3",
+    "name": "CookieManager"
+  },
+  "ibm-plugin-devicekeyboard": {
+    "version": "0.1.0",
+    "name": "KeyboardPlugin"
+  },
+  "ibm-plugin-email": {
+    "version": "0.0.1",
+    "name": "EmailPlugin"
+  },
+  "ibm-plugin-filepath": {
+    "version": "0.1.0",
+    "name": "FilePath"
+  },
+  "ibm-plugin-permissions": {
+    "version": "0.1.0",
+    "name": "PermissionsPlugin"
+  },
+  "phonegap-plugin-contentsync": {
+    "version": "1.4.2",
+    "name": "content-sync"
+  }
+}

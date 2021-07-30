@@ -1,0 +1,15 @@
+
+init:
+     [echo] UpdateProps - init target with install and /private/var/avenuejsc/IBM/Anywhere/MaximoAnywhereAppCntr/Container.properties
+     [echo] unzip completed by: 06/22/2021 11:37:17 AM
+
+update_container_prop_if_install:
+     [echo] inside update_container_prop_if_install with im_action: install
+
+update_container_prop:
+     [echo] Anywhere.Application.BaseDirectory : /var/avenuejsc/IBM/Anywhere/MaximoAnywhere
+     [echo] JAVA_HOME                          : /Library/Java/JavaVirtualMachines/jdk1.8.0_291.jdk/Contents/Home
+     [echo] envsToDeploy                       : ${envsToDeploy}
+     [echo] appsToBuild                        : IssuesReturns
+[propertyfile] Updating property file: /private/var/avenuejsc/IBM/Anywhere/MaximoAnywhereAppCntr/Container.properties
+     [echo] update_container_prop complete

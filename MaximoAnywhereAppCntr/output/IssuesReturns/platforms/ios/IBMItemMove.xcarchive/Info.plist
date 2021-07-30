@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ApplicationProperties</key>
+	<dict>
+		<key>ApplicationPath</key>
+		<string>Applications/IBMItemMove.app</string>
+		<key>Architectures</key>
+		<array>
+			<string>armv7</string>
+			<string>arm64</string>
+		</array>
+		<key>CFBundleIdentifier</key>
+		<string>com.avenue.maximoanywhere.IssuesReturns</string>
+		<key>CFBundleShortVersionString</key>
+		<string>7.6.4</string>
+		<key>CFBundleVersion</key>
+		<string>7.6.4</string>
+		<key>SigningIdentity</key>
+		<string>iPhone Developer: Joey Hoang Bui (58SUP4JG3T)</string>
+		<key>Team</key>
+		<string>YB687AT2F3</string>
+	</dict>
+	<key>ArchiveVersion</key>
+	<integer>2</integer>
+	<key>CreationDate</key>
+	<date>2021-07-02T04:09:49Z</date>
+	<key>Name</key>
+	<string>IBMItemMove</string>
+	<key>SchemeName</key>
+	<string>IBMItemMove</string>
+</dict>
+</plist>

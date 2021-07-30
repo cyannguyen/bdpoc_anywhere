@@ -1,0 +1,4 @@
+
+copy_prov_prof:
+     [echo] Inside copy_prov_prof with src: /Users/avenuejsc/Downloads/MacOS to target: /private/var/avenuejsc/IBM/Anywhere/MaximoAnywhereAppCntr/signing 
+     [copy] Copying 3 files to /private/var/avenuejsc/IBM/Anywhere/MaximoAnywhereAppCntr/signing
