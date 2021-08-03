@@ -305,12 +305,17 @@ class InitApp {
         let targetImagePath = path.resolve(appPath, 'www/img/mx_icon.svg');
         let srcImagePath = path.resolve(baseAppPath, 'common/images/mdpi/app_icon_main.svg');
 
+        let targetBDPOCImagePath = path.resolve(appPath, 'www/img/BDPOCLogo.png');
+        let srcBDPOCImagePath = path.resolve(baseAppPath, 'common/images/mdpi/BDPOCLogo.png');
+
         let srcPathExsists = await fsc.exists(srcImagePath);
         //If custom apps do not have its own image, fallback to default image
         if(!srcPathExsists){
             srcImagePath = path.resolve(currDir, 'images/app/app_icon_main.svg');
         }
-        
+
+        fsc.copy(srcBDPOCImagePath, targetBDPOCImagePath);
+
         return fsc.copy(srcImagePath, targetImagePath);
     }
 
