@@ -52,15 +52,21 @@
 			    <requiredResource id="platform.LoginView_PlatformProgressResource" name="PlatformProgressResource"/>			    
 			    <requiredResource id="platform.LoginView_PlatformChangePasswordForm" name="PlatformChangePasswordForm"/>
 			</requiredResources>
-			<container cssClass="loginForm" id="platform.LoginView_container_0">
+		    <container id="platform.LoginView_container_customerLogo">
+		    	<image id="platform.LoginView_image_customerLogo" image="BDPOCLogo.png" cssClass="customProductLogo" />
+		    </container>
+		    <container cssClass="loginForm" id="platform.LoginView_container_0">
 				<image id="platform.LoginView_image_0" image="../../../../../../images/mdpi/app_icon_main.svg" cssClass="productLogo"/>
+				<!-- <image id="platform.LoginView_image_0" image="MyLogo.png" cssClass="customProductLogo"/> -->
  				<text cssClass="productName" editable="false" id="platform.LoginView_container_0_appName" resourceAttribute="appName"/>  
 				<text cssClass="errorMsg" editable="false" id="platform.LoginView_container_0_errorMsg" resourceAttribute="errorMsg"/>
 				 <!-- If you want device-side SSO comment out this view -->	
 				 <!-- Comment out the username and password to enable device-side SSO -->
 				 
 				<text border="true" cssClass="loginUsername" editable="true" id="platform.LoginView_container_0_username" placeHolder="Username" resourceAttribute="username"/>
+				<!-- <text border="true" cssClass="loginUsername" editable="true" id="platform.LoginView_container_0_username" placeHolder="Maximo UserId" resourceAttribute="username"/> -->
 				<text border="true" cssClass="loginPassword" editable="true" id="platform.LoginView_container_0_password" placeHolder="Password" resourceAttribute="password" type="password"/>
+				<!-- <text border="true" cssClass="loginPassword" editable="true" id="platform.LoginView_container_0_password" placeHolder="Maximo Password" resourceAttribute="password" type="password"/> -->
 				<button cssClass="loginBtn" id="platform.LoginView_LogIn_button" label="Sign In" primary="true">
 					<eventHandlers id="platform.LoginView_LogIn_button_eventHandlers">
 						<eventHandler class="platform.handlers.LoginHandler" event="click" id="platform.LoginView_LogIn_button_eventHandlers_click_loginClickHandler" method="loginClickHandler"/>
