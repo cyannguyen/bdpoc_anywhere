@@ -1,1 +1,0 @@
-var WL_CHECKSUM = {"checksum":0,"date":1625198936565,"machine":"avenuejscs-MacBook-Pro.local"}

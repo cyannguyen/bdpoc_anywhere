@@ -1,4 +1,0 @@
-CODE_SIGN_IDENTITY = iPhone Developer
-CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
-PROVISIONING_PROFILE = 2d160f8e-dbe8-4cf0-bd88-6baba72b1ec8
-DEVELOPMENT_TEAM = YB687AT2F3
