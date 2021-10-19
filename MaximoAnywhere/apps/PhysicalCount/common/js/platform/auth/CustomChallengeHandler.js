@@ -137,121 +137,125 @@ define("platform/auth/CustomChallengeHandler", [
 			var self = this;
 			var sysPropDeferred = SystemProperties.loadPlatformProperties();
 			var wlTimeoutAttempts = 0;
-			sysPropDeferred.always(function(){
-				self.getLoginOptions(user, pwd)
-				.then(lang.hitch(self, function(loginOptions) {
-					Logger.trace('CustomChallengeHandler login calling submitLoginForm');
-					var loginOptionsPwdHidden = lang.clone(loginOptions);
-					loginOptionsPwdHidden.parameters.password = '********';
-					Logger.traceJSON('[LOGIN] Sending login request with Login options: ', loginOptionsPwdHidden, clazzmethod);
-					var resubmit = true; 
-					var afterSubmit = function(response) {
-						Logger.trace('CustomChallengeHandler.afterSubmit');
-						if(response){
-							// Vyshantha - LA-Fix #RTC 346937 - Case TS002764297 : APAR IJ20068 : Begin
-							var responsePwdHidden = response;
-							if (responsePwdHidden != undefined) {
-								if (responsePwdHidden.request != null && responsePwdHidden.request != undefined) {
-									if(responsePwdHidden['request']['options'] != undefined) {
-										if (responsePwdHidden['request']['options']['parameters'] != undefined) {
-											responsePwdHidden['request']['options']['parameters']['password'] = "********";
+			if (user && pwd) {
+				sysPropDeferred.always(function(){
+					self.getLoginOptions(user, pwd)
+					.then(lang.hitch(self, function(loginOptions) {
+						Logger.trace('CustomChallengeHandler login calling submitLoginForm');
+						var loginOptionsPwdHidden = lang.clone(loginOptions);
+						loginOptionsPwdHidden.parameters.password = '********';
+						Logger.traceJSON('[LOGIN] Sending login request with Login options: ', loginOptionsPwdHidden, clazzmethod);
+						var resubmit = true; 
+						var afterSubmit = function(response) {
+							Logger.trace('CustomChallengeHandler.afterSubmit');
+							if(response){
+								// Vyshantha - LA-Fix #RTC 346937 - Case TS002764297 : APAR IJ20068 : Begin
+								var responsePwdHidden = response;
+								if (responsePwdHidden != undefined) {
+									if (responsePwdHidden.request != null && responsePwdHidden.request != undefined) {
+										if(responsePwdHidden['request']['options'] != undefined) {
+											if (responsePwdHidden['request']['options']['parameters'] != undefined) {
+												responsePwdHidden['request']['options']['parameters']['password'] = "********";
+											}
 										}
-									}
-									if (responsePwdHidden['request']['parameters'] != undefined)
-										responsePwdHidden['request']['parameters']['password'] = "********";
-									if (responsePwdHidden.request.body != null && responsePwdHidden.request.body != undefined) {
-										if (responsePwdHidden.request.body.indexOf('password=') !== -1) {
-											var bodyAttrWithPwd = responsePwdHidden['request']['body'];
-											responsePwdHidden['request']['body'] = bodyAttrWithPwd.split("&")[0] + "&password=********&" + bodyAttrWithPwd.split("&")[2] + "&" + bodyAttrWithPwd.split("&")[3];
+										if (responsePwdHidden['request']['parameters'] != undefined)
+											responsePwdHidden['request']['parameters']['password'] = "********";
+										if (responsePwdHidden.request.body != null && responsePwdHidden.request.body != undefined) {
+											if (responsePwdHidden.request.body.indexOf('password=') !== -1) {
+												var bodyAttrWithPwd = responsePwdHidden['request']['body'];
+												responsePwdHidden['request']['body'] = bodyAttrWithPwd.split("&")[0] + "&password=********&" + bodyAttrWithPwd.split("&")[2] + "&" + bodyAttrWithPwd.split("&")[3];
+											}
 										}
 									}
 								}
+								Logger.traceJSON("[CustomChallengeHandler] is CustomResponse INFXCCH101 client", responsePwdHidden);
+								// Vyshantha - End
 							}
-							Logger.traceJSON("[CustomChallengeHandler] is CustomResponse INFXCCH101 client", responsePwdHidden);
-							// Vyshantha - End
-						}
-						if(self._isAuthenticated(response)) {
-							Logger.trace("INFXCCH112")
-							Logger.trace('[LOGIN] User ' + user + ' successfully authentication against realm "' + self.REALM + '"', null, clazzmethod);								
-							self.isAuthenticating = false;
-							wlTimeoutAttempts = 0;
-							deferred.resolve(response);
-						}
-						else if (resubmit && (response['responseJSON'] && response['responseJSON']['challenges'] && response['responseJSON']['challenges']['wl_antiXSRFRealm']) || response.status == '500'){
-							//This is the XSRF error.  So call the client login to get the token needed to get past this
-							//The submit the login again
-							//WL.Client.login(CUSTOM_AUTH_REALM_NAME);
-							Logger.trace("INFXCCH113");
-							Logger.trace('[CustomChallengeHandler] XSRF chanllenge, re-connecting to MF Server...');
-							self.connectMFServer()
-                            .then(function() {
-                            	Logger.trace('[CustomChallengeHandler] XSRF chanllenge resolved, re-connected to MF Server!');
-                            	resubmit = false;
-                            	self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
-                            })
-                            .otherwise(function(error) {
-                            	Logger.trace('[CustomChallengeHandler] XSRF chanllenge not resolved, re-connected to MF Server failed!');
-                            	self.isAuthenticating = false;
-                            	deferred.reject(error);
-                            });						
-						}
-						else if (!self.isAuthenticating && resubmit && response['responseJSON'] && response['responseJSON']['oslcError'] && response['responseJSON']['oslcError'] == "401" && response.status == '200'){
-							//This is the a session timeout error.  So call the client login to get the token needed to get past this
-							//The submit the login again to avoid display the login view
-							Logger.trace("INFXCCH114");
-							Logger.trace("Clearing credentials");
-							self.setCredentials(null, null);
-                            Logger.trace('[CustomChallengeHandler] Returned a 401 oslcError');
-							var responseError = self._parseAuthenticationError(response);
-							self.isAuthenticating = false;
-                            deferred.reject(responseError);
-						}
-						else if (response['responseJSON'] && response['responseJSON']['errorCode'] == WL.ErrorCode.REQUEST_TIMEOUT) {
-							//We've reached the WL timeout (initOptions.js), commonly caused by some network latency
-							//Try to resend login request again
-							Logger.traceJSON('[CustomChallengeHandler] response.responseJSON.errorCode: ' + WL.ErrorCode.REQUEST_TIMEOUT, response);
-							if(wlTimeoutAttempts < WL_TIMEOUT_MAX_ATTEMPTS) {
-								wlTimeoutAttempts++;
-								Logger.trace('[CustomChallengeHandler] Timeout attempt #' + wlTimeoutAttempts);
-		                        Logger.trace('[CustomChallengeHandler] Trying to re-connect to MF Server...');
-		                        self.connectMFServer()
-	                            .then(function() {
-	                                Logger.trace('[CustomChallengeHandler] Re-connected to MF Server successfully! Submiting a new login request...');
-	                                resubmit = false;
-	                                Logger.trace("Setting the wlTImeout to max timeout attempts");
-	                                wlTimeoutAttempts = WL_TIMEOUT_MAX_ATTEMPTS; 
-	                                self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
-	                            })
-	                            .otherwise(function(error) {
-	                                Logger.traceJSON('[CustomChallengeHandler] Re-connecting to MF Server failed!');
-	                                self.isAuthenticating = false;
-	                                deferred.reject(error);
-	                            });
-							}
-							else {
-								Logger.trace('[CustomChallengeHandler] Exceeded max timeout attempts "' + wlTimeoutAttempts + '", WL_TIMEOUT_MAX_ATTEMPTS is ' + WL_TIMEOUT_MAX_ATTEMPTS);
+							if(self._isAuthenticated(response)) {
+								Logger.trace("INFXCCH112")
+								Logger.trace('[LOGIN] User ' + user + ' successfully authentication against realm "' + self.REALM + '"', null, clazzmethod);								
 								self.isAuthenticating = false;
-                                deferred.reject("lostconnection");
+								wlTimeoutAttempts = 0;
+								deferred.resolve(response);
 							}
-						}
-						else{
-							Logger.trace("INFXCCH115");
-                            Logger.traceJSON('[CustomChallengeHandler] Unknown authentication error: ', response);
-                            Logger.traceJSON('[CustomChallengeHandler] Unable to authenticate, unknown error:', response);
-                            var responseError = self._parseAuthenticationError(response);
-                            self.isAuthenticating = false;
-                            deferred.reject(responseError);
-						}
-					};
-					Logger.trace('[CustomChallengeHandler.login] CHALLENGE HANDLER submitLoginForm call: ' + (new Date()));
-					self.connectMFServer().then(function(){
-						self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
-					}).otherwise(function(error){
-						self.isAuthenticating = false;
-						deferred.reject(error);
-					});
-				}));
-			});
+							else if (resubmit && (response['responseJSON'] && response['responseJSON']['challenges'] && response['responseJSON']['challenges']['wl_antiXSRFRealm']) || response.status == '500'){
+								//This is the XSRF error.  So call the client login to get the token needed to get past this
+								//The submit the login again
+								//WL.Client.login(CUSTOM_AUTH_REALM_NAME);
+								Logger.trace("INFXCCH113");
+								Logger.trace('[CustomChallengeHandler] XSRF chanllenge, re-connecting to MF Server...');
+								self.connectMFServer()
+								.then(function() {
+									Logger.trace('[CustomChallengeHandler] XSRF chanllenge resolved, re-connected to MF Server!');
+									resubmit = false;
+									self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
+								})
+								.otherwise(function(error) {
+									Logger.trace('[CustomChallengeHandler] XSRF chanllenge not resolved, re-connected to MF Server failed!');
+									self.isAuthenticating = false;
+									deferred.reject(error);
+								});						
+							}
+							else if (!self.isAuthenticating && resubmit && response['responseJSON'] && response['responseJSON']['oslcError'] && response['responseJSON']['oslcError'] == "401" && response.status == '200'){
+								//This is the a session timeout error.  So call the client login to get the token needed to get past this
+								//The submit the login again to avoid display the login view
+								Logger.trace("INFXCCH114");
+								Logger.trace("Clearing credentials");
+								self.setCredentials(null, null);
+								Logger.trace('[CustomChallengeHandler] Returned a 401 oslcError');
+								var responseError = self._parseAuthenticationError(response);
+								self.isAuthenticating = false;
+								deferred.reject(responseError);
+							}
+							else if (response['responseJSON'] && response['responseJSON']['errorCode'] == WL.ErrorCode.REQUEST_TIMEOUT) {
+								//We've reached the WL timeout (initOptions.js), commonly caused by some network latency
+								//Try to resend login request again
+								Logger.traceJSON('[CustomChallengeHandler] response.responseJSON.errorCode: ' + WL.ErrorCode.REQUEST_TIMEOUT, response);
+								if(wlTimeoutAttempts < WL_TIMEOUT_MAX_ATTEMPTS) {
+									wlTimeoutAttempts++;
+									Logger.trace('[CustomChallengeHandler] Timeout attempt #' + wlTimeoutAttempts);
+									Logger.trace('[CustomChallengeHandler] Trying to re-connect to MF Server...');
+									self.connectMFServer()
+									.then(function() {
+										Logger.trace('[CustomChallengeHandler] Re-connected to MF Server successfully! Submiting a new login request...');
+										resubmit = false;
+										Logger.trace("Setting the wlTImeout to max timeout attempts");
+										wlTimeoutAttempts = WL_TIMEOUT_MAX_ATTEMPTS; 
+										self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
+									})
+									.otherwise(function(error) {
+										Logger.traceJSON('[CustomChallengeHandler] Re-connecting to MF Server failed!');
+										self.isAuthenticating = false;
+										deferred.reject(error);
+									});
+								}
+								else {
+									Logger.trace('[CustomChallengeHandler] Exceeded max timeout attempts "' + wlTimeoutAttempts + '", WL_TIMEOUT_MAX_ATTEMPTS is ' + WL_TIMEOUT_MAX_ATTEMPTS);
+									self.isAuthenticating = false;
+									deferred.reject("lostconnection");
+								}
+							}
+							else{
+								Logger.trace("INFXCCH115");
+								Logger.traceJSON('[CustomChallengeHandler] Unknown authentication error: ', response);
+								Logger.traceJSON('[CustomChallengeHandler] Unable to authenticate, unknown error:', response);
+								var responseError = self._parseAuthenticationError(response);
+								self.isAuthenticating = false;
+								deferred.reject(responseError);
+							}
+						};
+						Logger.trace('[CustomChallengeHandler.login] CHALLENGE HANDLER submitLoginForm call: ' + (new Date()));
+						self.connectMFServer().then(function(){
+							self.submitLoginForm(self.getAuthURL(), loginOptions, lang.hitch(self,afterSubmit));
+						}).otherwise(function(error){
+							self.isAuthenticating = false;
+							deferred.reject(error);
+						});
+					}));
+				});
+			} else {
+				Logger.trace('[CustomChallengeHandler.login] Either Username or Password or both are empty, please re-try with required credentials');
+			}
 		},
 		
 		/*

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<app id="configuration" version="202002190944" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
+<app id="configuration" version="201905031529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
     <ui id="ui">
         <actions id="actions">
     		<action id="ResetWorkList_action" label="Reset Work List" overflow="true">

@@ -119,8 +119,11 @@ function(declare, ApplicationHandlerBase, AdditionalDataManager, SystemDataManag
 			var loginForm = this.application.getResource(this.LOGIN_DATA).getCurrentRecord();
 			loginForm.set('errorMsg', '');
 			var reLogin = loginForm.get('relogin') == true;
+			//[Loc]: set to Test
 			var username = loginForm.get('username');
 			var password = loginForm.get('password');
+			/* var username = 'maxadmin';
+			var password = '123456'; */
 			if(!(username && password) || !username || !password){
 				loginForm.set('errorMsg', MessageService.createStaticMessage('Invalid user credentials.').getMessage());
 				return;
@@ -202,10 +205,7 @@ function(declare, ApplicationHandlerBase, AdditionalDataManager, SystemDataManag
 			SystemProperties.setProperty(PlatformConstants.REFRESH_DATA_ON_LOGIN_FLAG, false, true);
 			var requiredRole = this.application.getRequiredRoleOrNull();
 			var self = this;
-			
-			var push = new PushNotificationSelfRegistrationGenerated();
-			push.register();
-			
+		
 			if(!requiredRole || UserRolesManager.isCurrentUserInRole(requiredRole)){
 				var loginResource = this.application.getResource(this.LOGIN_DATA);
 				//Might not have username/password if we're doing single signon
@@ -224,6 +224,10 @@ function(declare, ApplicationHandlerBase, AdditionalDataManager, SystemDataManag
 				SystemDataManager._setSystemDataUIManager(sysUIManager);
 				return SystemDataManager.downloadSystemDataIfNeeded().
 				then(function(msg){
+					
+					var push = new PushNotificationSelfRegistrationGenerated();
+					push.register();
+					
 					var defaultView = self.ui._getPrimaryViewID();
 //					if (self.ui.getCurrentView().id == 'platform.LoginView'){
 //						defaultView = self.ui.getCurrentView().getNextSibling().id;

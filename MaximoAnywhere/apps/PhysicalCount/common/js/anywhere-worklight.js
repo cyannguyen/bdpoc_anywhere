@@ -912,105 +912,6 @@ var WLFoundation = (function () {
 	unwrapExports(Controllable_1);
 
 	/** MobX - (c) Michel Weststrate 2015 - 2020 - MIT Licensed */
-
-	/*! *****************************************************************************
-	Copyright (c) Microsoft Corporation. All rights reserved.
-	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-	this file except in compliance with the License. You may obtain a copy of the
-	License at http://www.apache.org/licenses/LICENSE-2.0
-
-	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-	MERCHANTABLITY OR NON-INFRINGEMENT.
-
-	See the Apache Version 2.0 License for specific language governing permissions
-	and limitations under the License.
-	***************************************************************************** */
-
-	/* global Reflect, Promise */
-	var extendStatics = function (d, b) {
-	  extendStatics = Object.setPrototypeOf || {
-	    __proto__: []
-	  } instanceof Array && function (d, b) {
-	    d.__proto__ = b;
-	  } || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	  };
-
-	  return extendStatics(d, b);
-	};
-
-	function __extends(d, b) {
-	  extendStatics(d, b);
-
-	  function __() {
-	    this.constructor = d;
-	  }
-
-	  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	}
-
-	var __assign = function () {
-	  __assign = Object.assign || function __assign(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	      s = arguments[i];
-
-	      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-	    }
-
-	    return t;
-	  };
-
-	  return __assign.apply(this, arguments);
-	};
-
-	function __values(o) {
-	  var m = typeof Symbol === "function" && o[Symbol.iterator],
-	      i = 0;
-	  if (m) return m.call(o);
-	  return {
-	    next: function () {
-	      if (o && i >= o.length) o = void 0;
-	      return {
-	        value: o && o[i++],
-	        done: !o
-	      };
-	    }
-	  };
-	}
-
-	function __read(o, n) {
-	  var m = typeof Symbol === "function" && o[Symbol.iterator];
-	  if (!m) return o;
-	  var i = m.call(o),
-	      r,
-	      ar = [],
-	      e;
-
-	  try {
-	    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-	  } catch (error) {
-	    e = {
-	      error: error
-	    };
-	  } finally {
-	    try {
-	      if (r && !r.done && (m = i["return"])) m.call(i);
-	    } finally {
-	      if (e) throw e.error;
-	    }
-	  }
-
-	  return ar;
-	}
-
-	function __spread() {
-	  for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-
-	  return ar;
-	}
-
 	var OBFUSCATED_ERROR = "An invariant failed, however the error is obfuscated because this is a production build.";
 	var EMPTY_ARRAY = [];
 	Object.freeze(EMPTY_ARRAY);
@@ -1081,6 +982,24 @@ var WLFoundation = (function () {
 	  if (value === null || typeof value !== "object") return false;
 	  var proto = Object.getPrototypeOf(value);
 	  return proto === Object.prototype || proto === null;
+	}
+
+	function convertToMap(dataStructure) {
+	  if (isES6Map(dataStructure) || isObservableMap(dataStructure)) {
+	    return dataStructure;
+	  } else if (Array.isArray(dataStructure)) {
+	    return new Map(dataStructure);
+	  } else if (isPlainObject(dataStructure)) {
+	    var map = new Map();
+
+	    for (var key in dataStructure) {
+	      map.set(key, dataStructure[key]);
+	    }
+
+	    return map;
+	  } else {
+	    return fail$1("Cannot convert to map from '" + dataStructure + "'");
+	  }
 	}
 
 	function addHiddenProp(object, propName, value) {
@@ -1157,22 +1076,15 @@ var WLFoundation = (function () {
 	  if (key && key.toString) return key.toString();else return new String(key).toString();
 	}
 
-	function getMapLikeKeys(map) {
-	  if (isPlainObject(map)) return Object.keys(map);
-	  if (Array.isArray(map)) return map.map(function (_a) {
-	    var _b = __read(_a, 1),
-	        key = _b[0];
-
-	    return key;
-	  });
-	  if (isES6Map(map) || isObservableMap(map)) return Array.from(map.keys());
-	  return fail$1("Cannot get keys from '" + map + "'");
-	}
-
 	function toPrimitive(value) {
 	  return value === null ? null : typeof value === "object" ? "" + value : value;
 	}
 
+	var ownKeys = typeof Reflect !== "undefined" && Reflect.ownKeys ? Reflect.ownKeys : Object.getOwnPropertySymbols ? function (obj) {
+	  return Object.getOwnPropertyNames(obj).concat(Object.getOwnPropertySymbols(obj));
+	} :
+	/* istanbul ignore next */
+	Object.getOwnPropertyNames;
 	var $mobx = Symbol("mobx administration");
 
 	var Atom =
@@ -1285,6 +1197,105 @@ var WLFoundation = (function () {
 	  default: defaultComparer,
 	  shallow: shallowComparer
 	};
+	/*! *****************************************************************************
+	Copyright (c) Microsoft Corporation. All rights reserved.
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+	this file except in compliance with the License. You may obtain a copy of the
+	License at http://www.apache.org/licenses/LICENSE-2.0
+
+	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+	MERCHANTABLITY OR NON-INFRINGEMENT.
+
+	See the Apache Version 2.0 License for specific language governing permissions
+	and limitations under the License.
+	***************************************************************************** */
+
+	/* global Reflect, Promise */
+
+	var extendStatics = function (d, b) {
+	  extendStatics = Object.setPrototypeOf || {
+	    __proto__: []
+	  } instanceof Array && function (d, b) {
+	    d.__proto__ = b;
+	  } || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	  };
+
+	  return extendStatics(d, b);
+	};
+
+	function __extends(d, b) {
+	  extendStatics(d, b);
+
+	  function __() {
+	    this.constructor = d;
+	  }
+
+	  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	}
+
+	var __assign = function () {
+	  __assign = Object.assign || function __assign(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	      s = arguments[i];
+
+	      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+	    }
+
+	    return t;
+	  };
+
+	  return __assign.apply(this, arguments);
+	};
+
+	function __values(o) {
+	  var m = typeof Symbol === "function" && o[Symbol.iterator],
+	      i = 0;
+	  if (m) return m.call(o);
+	  return {
+	    next: function () {
+	      if (o && i >= o.length) o = void 0;
+	      return {
+	        value: o && o[i++],
+	        done: !o
+	      };
+	    }
+	  };
+	}
+
+	function __read(o, n) {
+	  var m = typeof Symbol === "function" && o[Symbol.iterator];
+	  if (!m) return o;
+	  var i = m.call(o),
+	      r,
+	      ar = [],
+	      e;
+
+	  try {
+	    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+	  } catch (error) {
+	    e = {
+	      error: error
+	    };
+	  } finally {
+	    try {
+	      if (r && !r.done && (m = i["return"])) m.call(i);
+	    } finally {
+	      if (e) throw e.error;
+	    }
+	  }
+
+	  return ar;
+	}
+
+	function __spread() {
+	  for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+
+	  return ar;
+	}
+
 	var mobxDidRunLazyInitializersSymbol = Symbol("mobx did run lazy initializers");
 	var mobxPendingDecorators = Symbol("mobx pending decorators");
 	var enumerableDescriptorCache = {};
@@ -1567,6 +1578,10 @@ var WLFoundation = (function () {
 	}
 
 	var computedDecorator = createPropDecorator(false, function (instance, propertyName, descriptor, decoratorTarget, decoratorArgs) {
+	  if (process.env.NODE_ENV !== "production") {
+	    invariant(descriptor && descriptor.get, "Trying to declare a computed value for unspecified getter '" + stringifyKey(propertyName) + "'");
+	  }
+
 	  var get = descriptor.get,
 	      set = descriptor.set; // initialValue is the descriptor for get / set props
 	  // Optimization: faster on decorator target or instance? Assuming target
@@ -2732,7 +2747,7 @@ var WLFoundation = (function () {
 
 	        if (observable instanceof ComputedValue) {
 	          // computed values are automatically teared down when the last observer leaves
-	          // this process happens recursively, this computed might be the last observabe of another, etc..
+	          // this process happens recursively, this computed might be the last observable of another, etc..
 	          observable.suspend();
 	        }
 	      }
@@ -3580,7 +3595,7 @@ var WLFoundation = (function () {
 	  startBatch();
 
 	  try {
-	    var keys = getPlainObjectKeys(properties);
+	    var keys = ownKeys(properties);
 
 	    try {
 	      for (var keys_2 = __values(keys), keys_2_1 = keys_2.next(); !keys_2_1.done; keys_2_1 = keys_2.next()) {
@@ -3588,7 +3603,7 @@ var WLFoundation = (function () {
 	        var descriptor = Object.getOwnPropertyDescriptor(properties, key);
 
 	        if (process.env.NODE_ENV !== "production") {
-	          if (!isPlainObject(properties)) fail$1("'extendObservabe' only accepts plain objects as second argument");
+	          if (!isPlainObject(properties)) fail$1("'extendObservable' only accepts plain objects as second argument");
 	          if (isComputed(descriptor.value)) fail$1("Passing a 'computed' as initial property value is no longer supported by extendObservable. Use a getter or decorator instead");
 	        }
 
@@ -4711,12 +4726,51 @@ var WLFoundation = (function () {
 	    }
 	  }
 	};
-	["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf", "map", "reduce", "reduceRight", "slice", "some", "toString", "toLocaleString"].forEach(function (funcName) {
+	["concat", "flat", "includes", "indexOf", "join", "lastIndexOf", "slice", "toString", "toLocaleString"].forEach(function (funcName) {
+	  // Feature detection (eg flat may not be available)
+	  if (typeof Array.prototype[funcName] !== "function") {
+	    return;
+	  }
+
 	  arrayExtensions[funcName] = function () {
 	    var adm = this[$mobx];
 	    adm.atom.reportObserved();
-	    var res = adm.dehanceValues(adm.values);
-	    return res[funcName].apply(res, arguments);
+	    var dehancedValues = adm.dehanceValues(adm.values);
+	    return dehancedValues[funcName].apply(dehancedValues, arguments);
+	  };
+	});
+	["every", "filter", "find", "findIndex", "flatMap", "forEach", "map", "some"].forEach(function (funcName) {
+	  // Feature detection (eg flatMap may not be available)
+	  if (typeof Array.prototype[funcName] !== "function") {
+	    return;
+	  }
+
+	  arrayExtensions[funcName] = function (callback, thisArg) {
+	    var _this = this;
+
+	    var adm = this[$mobx];
+	    adm.atom.reportObserved();
+	    var dehancedValues = adm.dehanceValues(adm.values);
+	    return dehancedValues[funcName](function (element, index) {
+	      return callback.call(thisArg, element, index, _this);
+	    }, thisArg);
+	  };
+	});
+	["reduce", "reduceRight"].forEach(function (funcName) {
+	  arrayExtensions[funcName] = function () {
+	    var _this = this;
+
+	    var adm = this[$mobx];
+	    adm.atom.reportObserved(); // #2432 - reduce behavior depends on arguments.length
+
+	    var callback = arguments[0];
+
+	    arguments[0] = function (accumulator, currentValue, index) {
+	      currentValue = adm.dehanceValue(currentValue);
+	      return callback(accumulator, currentValue, index, _this);
+	    };
+
+	    return adm.values[funcName].apply(adm.values, arguments);
 	  };
 	});
 	var isObservableArrayAdministration = createInstanceofPredicate("ObservableArrayAdministration", ObservableArrayAdministration);
@@ -4807,6 +4861,8 @@ var WLFoundation = (function () {
 
 	  ObservableMap.prototype.delete = function (key) {
 	    var _this = this;
+
+	    checkIfStateModificationsAreAllowed(this._keysAtom);
 
 	    if (hasInterceptors(this)) {
 	      var change = interceptChange(this, {
@@ -4934,15 +4990,16 @@ var WLFoundation = (function () {
 
 	  ObservableMap.prototype.values = function () {
 	    var self = this;
-	    var nextIndex = 0;
-	    var keys = Array.from(this.keys());
+	    var keys = this.keys();
 	    return makeIterable({
 	      next: function () {
-	        return nextIndex < keys.length ? {
-	          value: self.get(keys[nextIndex++]),
-	          done: false
-	        } : {
-	          done: true
+	        var _b = keys.next(),
+	            done = _b.done,
+	            value = _b.value;
+
+	        return {
+	          done: done,
+	          value: done ? undefined : self.get(value)
 	        };
 	      }
 	    });
@@ -4950,20 +5007,16 @@ var WLFoundation = (function () {
 
 	  ObservableMap.prototype.entries = function () {
 	    var self = this;
-	    var nextIndex = 0;
-	    var keys = Array.from(this.keys());
+	    var keys = this.keys();
 	    return makeIterable({
 	      next: function () {
-	        if (nextIndex < keys.length) {
-	          var key = keys[nextIndex++];
-	          return {
-	            value: [key, self.get(key)],
-	            done: false
-	          };
-	        }
+	        var _b = keys.next(),
+	            done = _b.done,
+	            value = _b.value;
 
 	        return {
-	          done: true
+	          done: done,
+	          value: done ? undefined : [value, self.get(value)]
 	        };
 	      }
 	    });
@@ -5007,21 +5060,27 @@ var WLFoundation = (function () {
 	    }
 
 	    transaction(function () {
-	      if (isPlainObject(other)) getPlainObjectKeys(other).forEach(function (key) {
-	        return _this.set(key, other[key]);
-	      });else if (Array.isArray(other)) other.forEach(function (_b) {
-	        var _c = __read(_b, 2),
-	            key = _c[0],
-	            value = _c[1];
+	      var prev = allowStateChangesStart(true);
 
-	        return _this.set(key, value);
-	      });else if (isES6Map(other)) {
-	        if (other.constructor !== Map) fail$1("Cannot initialize from classes that inherit from Map: " + other.constructor.name); // prettier-ignore
+	      try {
+	        if (isPlainObject(other)) getPlainObjectKeys(other).forEach(function (key) {
+	          return _this.set(key, other[key]);
+	        });else if (Array.isArray(other)) other.forEach(function (_b) {
+	          var _c = __read(_b, 2),
+	              key = _c[0],
+	              value = _c[1];
 
-	        other.forEach(function (value, key) {
 	          return _this.set(key, value);
-	        });
-	      } else if (other !== null && other !== undefined) fail$1("Cannot initialize map from " + other);
+	        });else if (isES6Map(other)) {
+	          if (other.constructor !== Map) fail$1("Cannot initialize from classes that inherit from Map: " + other.constructor.name); // prettier-ignore
+
+	          other.forEach(function (value, key) {
+	            return _this.set(key, value);
+	          });
+	        } else if (other !== null && other !== undefined) fail$1("Cannot initialize map from " + other);
+	      } finally {
+	        allowStateChangesEnd(prev);
+	      }
 	    });
 	    return this;
 	  };
@@ -5055,22 +5114,125 @@ var WLFoundation = (function () {
 	  };
 
 	  ObservableMap.prototype.replace = function (values) {
-	    var _this = this;
+	    var _this = this; // Implementation requirements:
+	    // - respect ordering of replacement map
+	    // - allow interceptors to run and potentially prevent individual operations
+	    // - don't recreate observables that already exist in original map (so we don't destroy existing subscriptions)
+	    // - don't _keysAtom.reportChanged if the keys of resulting map are indentical (order matters!)
+	    // - note that result map may differ from replacement map due to the interceptors
+
 
 	    transaction(function () {
-	      // grab all the keys that are present in the new map but not present in the current map
-	      // and delete them from the map, then merge the new map
-	      // this will cause reactions only on changed values
-	      var newKeys = getMapLikeKeys(values);
-	      var oldKeys = Array.from(_this.keys());
-	      var missingKeys = oldKeys.filter(function (k) {
-	        return newKeys.indexOf(k) === -1;
-	      });
-	      missingKeys.forEach(function (k) {
-	        return _this.delete(k);
-	      });
+	      var e_3, _b, e_4, _c; // Convert to map so we can do quick key lookups
 
-	      _this.merge(values);
+
+	      var replacementMap = convertToMap(values);
+	      var orderedData = new Map(); // Used for optimization
+
+	      var keysReportChangedCalled = false;
+
+	      try {
+	        // Delete keys that don't exist in replacement map
+	        // if the key deletion is prevented by interceptor
+	        // add entry at the beginning of the result map
+	        for (var _d = __values(_this._data.keys()), _e = _d.next(); !_e.done; _e = _d.next()) {
+	          var key = _e.value; // Concurrently iterating/deleting keys
+	          // iterator should handle this correctly
+
+	          if (!replacementMap.has(key)) {
+	            var deleted = _this.delete(key); // Was the key removed?
+
+
+	            if (deleted) {
+	              // _keysAtom.reportChanged() was already called
+	              keysReportChangedCalled = true;
+	            } else {
+	              // Delete prevented by interceptor
+	              var value = _this._data.get(key);
+
+	              orderedData.set(key, value);
+	            }
+	          }
+	        }
+	      } catch (e_3_1) {
+	        e_3 = {
+	          error: e_3_1
+	        };
+	      } finally {
+	        try {
+	          if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+	        } finally {
+	          if (e_3) throw e_3.error;
+	        }
+	      }
+
+	      try {
+	        // Merge entries
+	        for (var _f = __values(replacementMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+	          var _h = __read(_g.value, 2),
+	              key = _h[0],
+	              value = _h[1]; // We will want to know whether a new key is added
+
+
+	          var keyExisted = _this._data.has(key); // Add or update value
+
+
+	          _this.set(key, value); // The addition could have been prevent by interceptor
+
+
+	          if (_this._data.has(key)) {
+	            // The update could have been prevented by interceptor
+	            // and also we want to preserve existing values
+	            // so use value from _data map (instead of replacement map)
+	            var value_1 = _this._data.get(key);
+
+	            orderedData.set(key, value_1); // Was a new key added?
+
+	            if (!keyExisted) {
+	              // _keysAtom.reportChanged() was already called
+	              keysReportChangedCalled = true;
+	            }
+	          }
+	        }
+	      } catch (e_4_1) {
+	        e_4 = {
+	          error: e_4_1
+	        };
+	      } finally {
+	        try {
+	          if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
+	        } finally {
+	          if (e_4) throw e_4.error;
+	        }
+	      } // Check for possible key order change
+
+
+	      if (!keysReportChangedCalled) {
+	        if (_this._data.size !== orderedData.size) {
+	          // If size differs, keys are definitely modified
+	          _this._keysAtom.reportChanged();
+	        } else {
+	          var iter1 = _this._data.keys();
+
+	          var iter2 = orderedData.keys();
+	          var next1 = iter1.next();
+	          var next2 = iter2.next();
+
+	          while (!next1.done) {
+	            if (next1.value !== next2.value) {
+	              _this._keysAtom.reportChanged();
+
+	              break;
+	            }
+
+	            next1 = iter1.next();
+	            next2 = iter2.next();
+	          }
+	        }
+	      } // Use correctly ordered map
+
+
+	      _this._data = orderedData;
 	    });
 	    return this;
 	  };
@@ -5091,7 +5253,7 @@ var WLFoundation = (function () {
 	   */
 
 	  ObservableMap.prototype.toPOJO = function () {
-	    var e_3, _b;
+	    var e_5, _b;
 
 	    var res = {};
 
@@ -5104,15 +5266,15 @@ var WLFoundation = (function () {
 
 	        res[typeof key === "symbol" ? key : stringifyKey(key)] = value;
 	      }
-	    } catch (e_3_1) {
-	      e_3 = {
-	        error: e_3_1
+	    } catch (e_5_1) {
+	      e_5 = {
+	        error: e_5_1
 	      };
 	    } finally {
 	      try {
 	        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
 	      } finally {
-	        if (e_3) throw e_3.error;
+	        if (e_5) throw e_5.error;
 	      }
 	    }
 
@@ -5391,20 +5553,26 @@ var WLFoundation = (function () {
 	    }
 
 	    transaction(function () {
-	      if (Array.isArray(other)) {
-	        _this.clear();
+	      var prev = allowStateChangesStart(true);
 
-	        other.forEach(function (value) {
-	          return _this.add(value);
-	        });
-	      } else if (isES6Set(other)) {
-	        _this.clear();
+	      try {
+	        if (Array.isArray(other)) {
+	          _this.clear();
 
-	        other.forEach(function (value) {
-	          return _this.add(value);
-	        });
-	      } else if (other !== null && other !== undefined) {
-	        fail$1("Cannot initialize set from " + other);
+	          other.forEach(function (value) {
+	            return _this.add(value);
+	          });
+	        } else if (isES6Set(other)) {
+	          _this.clear();
+
+	          other.forEach(function (value) {
+	            return _this.add(value);
+	          });
+	        } else if (other !== null && other !== undefined) {
+	          fail$1("Cannot initialize set from " + other);
+	        }
+	      } finally {
+	        allowStateChangesEnd(prev);
 	      }
 	    });
 	    return this;
@@ -5978,14 +6146,6 @@ var WLFoundation = (function () {
 	function getSelf() {
 	  return this;
 	}
-	/*
-	The only reason for this file to exist is pure horror:
-	Without it rollup can make the bundling fail at any point in time; when it rolls up the files in the wrong order
-	it will cause undefined errors (for example because super classes or local variables not being hoisted).
-	With this file that will still happen,
-	but at least in this file we can magically reorder the imports with trial and error until the build succeeds again.
-	*/
-
 	/**
 	 * (c) Michel Weststrate 2015 - 2018
 	 * MIT Licensed
@@ -6546,7 +6706,7 @@ var WLFoundation = (function () {
 
 	var uaParser = createCommonjsModule(function (module, exports) {
 	/*!
-	 * UAParser.js v0.7.21
+	 * UAParser.js v0.7.22
 	 * Lightweight JavaScript-based User-Agent string parser
 	 * https://github.com/faisalman/ua-parser-js
 	 *
@@ -6557,7 +6717,7 @@ var WLFoundation = (function () {
 	  // Constants
 	  /////////////
 
-	  var LIBVERSION = '0.7.21',
+	  var LIBVERSION = '0.7.22',
 	      EMPTY = '',
 	      UNKNOWN = '?',
 	      FUNC_TYPE = 'function',
@@ -6851,7 +7011,7 @@ var WLFoundation = (function () {
 	    /(zte)-(\w*)/i, // ZTE
 	    /(alcatel|geeksphone|nexian|panasonic|(?=;\s)sony)[_\s-]?([\w-]*)/i // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
 	    ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [/(nexus\s9)/i // HTC Nexus 9
-	    ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [/d\/huawei([\w\s-]+)[;\)]/i, /(nexus\s6p|vog-l29|ane-lx1|eml-l29)/i // Huawei
+	    ], [MODEL, [VENDOR, 'HTC'], [TYPE, TABLET]], [/d\/huawei([\w\s-]+)[;\)]/i, /(nexus\s6p|vog-l29|ane-lx1|eml-l29|ele-l29)/i // Huawei
 	    ], [MODEL, [VENDOR, 'Huawei'], [TYPE, MOBILE]], [/android.+(bah2?-a?[lw]\d{2})/i // Huawei MediaPad
 	    ], [MODEL, [VENDOR, 'Huawei'], [TYPE, TABLET]], [/(microsoft);\s(lumia[\s\w]+)/i // Microsoft Lumia
 	    ], [VENDOR, MODEL, [TYPE, MOBILE]], [/[\s\(;](xbox(?:\sone)?)[\s\);]/i // Microsoft Xbox
@@ -6879,8 +7039,8 @@ var WLFoundation = (function () {
 	    ], [MODEL, [VENDOR, 'Google'], [TYPE, MOBILE]], [/android.+;\s(\w+)\s+build\/hm\1/i, // Xiaomi Hongmi 'numeric' models
 	    /android.+(hm[\s\-_]*note?[\s_]*(?:\d\w)?)\s+build/i, // Xiaomi Hongmi
 	    /android.+(mi[\s\-_]*(?:a\d|one|one[\s_]plus|note lte)?[\s_]*(?:\d?\w?)[\s_]*(?:plus)?)\s+build/i, // Xiaomi Mi
-	    /android.+(redmi[\s\-_]*(?:note)?(?:[\s_]*[\w\s]+))\s+build/i // Redmi Phones
-	    ], [[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, MOBILE]], [/android.+(mi[\s\-_]*(?:pad)(?:[\s_]*[\w\s]+))\s+build/i // Mi Pad tablets
+	    /android.+(redmi[\s\-_]*(?:note)?(?:[\s_]?[\w\s]+))\s+build/i // Redmi Phones
+	    ], [[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, MOBILE]], [/android.+(mi[\s\-_]*(?:pad)(?:[\s_]?[\w\s]+))\s+build/i // Mi Pad tablets
 	    ], [[MODEL, /_/g, ' '], [VENDOR, 'Xiaomi'], [TYPE, TABLET]], [/android.+;\s(m[1-5]\snote)\sbuild/i // Meizu
 	    ], [MODEL, [VENDOR, 'Meizu'], [TYPE, MOBILE]], [/(mz)-([\w-]{2,})/i], [[VENDOR, 'Meizu'], MODEL, [TYPE, MOBILE]], [/android.+a000(1)\s+build/i, // OnePlus
 	    /android.+oneplus\s(a\d{4})[\s)]/i], [MODEL, [VENDOR, 'OnePlus'], [TYPE, MOBILE]], [/android.+[;\/]\s*(RCT[\d\w]+)\s+build/i // RCA Tablets
@@ -7790,7 +7950,7 @@ var WLFoundation = (function () {
 	     * @property {boolean} screen.isLandscape - Convenience method to access the screen orientation.
 	     */
 
-	    this.state = (0, mobx_module.observable)(_objectSpread({}, this.state, {
+	    this.state = (0, mobx_module.observable)(_objectSpread(_objectSpread({}, this.state), {}, {
 	      connected: false,
 	      authenticated: false,
 	      screen: {
@@ -7847,7 +8007,7 @@ var WLFoundation = (function () {
 	  updateScreenInfo() {
 	    (0, mobx_module.transaction)(() => {
 	      let isPortrait = this.device.screen.orientation === _Device.DeviceConstants.ORIENTATION_PORTRAIT;
-	      this.state.screen = _objectSpread({}, this.state.screen, {}, this.device.screen, {
+	      this.state.screen = _objectSpread(_objectSpread(_objectSpread({}, this.state.screen), this.device.screen), {}, {
 	        isPortrait: isPortrait,
 	        isLandscape: !isPortrait
 	      });
@@ -8146,7 +8306,7 @@ var WLFoundation = (function () {
 	      restclient.on('response', this._bindOnResponse);
 	    }
 
-	    let newOptions = _objectSpread({}, this.options, {}, options);
+	    let newOptions = _objectSpread(_objectSpread({}, this.options), options);
 
 	    _Log.default.t(TAG, 'Logging In', newOptions);
 
@@ -8479,11 +8639,11 @@ var WLFoundation = (function () {
 	        if (this.authType && this.authType.toUpperCase() === 'FORM') {
 	          options.post = true;
 	          options.query = {};
-	          options.postUrl = 'j_security_check'; // eslint-disable-next-line camelcase
-
-	          options.query.j_username = options.username; // eslint-disable-next-line camelcase
-
-	          options.query.j_password = options.password;
+	          options.postUrl = 'j_security_check';
+	          let params = new URLSearchParams();
+	          params.append('j_username', options.username);
+	          params.append('j_password', options.password);
+	          options.body = params;
 	          if (!options.headers) options.headers = {};
 	          options.headers["Content-type"] = 'application/x-www-form-urlencoded';
 	        }
@@ -8863,7 +9023,7 @@ var WLFoundation = (function () {
 	  }
 
 	  async _fetch(path, options) {
-	    let fetchOptions = _objectSpread({}, this.options, {}, options);
+	    let fetchOptions = _objectSpread(_objectSpread({}, this.options), options);
 
 	    if (this.listenerCount('request')) this.emit('request', path, fetchOptions);
 	    let requestOptions = {
@@ -8936,7 +9096,10 @@ var WLFoundation = (function () {
 
 	  async login() {
 	    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	    options.body = null;
+
+	    if (!(options.body instanceof URLSearchParams)) {
+	      options.body = null;
+	    }
 
 	    if (options.query) {
 	      options.query.csrf = '1';
@@ -9341,36 +9504,6 @@ var WLFoundation = (function () {
 	      return handlers.fulfilled ? handlers.fulfilled(this.value) : this.value;
 	  }
 	}
-
-	function createObservablePromise(origPromise, oldPromise) {
-	  invariant$1(arguments.length <= 2, "fromPromise expects up to two arguments");
-	  invariant$1(typeof origPromise === "function" || typeof origPromise === "object" && origPromise && typeof origPromise.then === "function", "Please pass a promise or function to fromPromise");
-	  if (origPromise.isPromiseBasedObservable === true) return origPromise;
-
-	  if (typeof origPromise === "function") {
-	    // If it is a (reject, resolve function, wrap it)
-	    origPromise = new Promise(origPromise);
-	  }
-
-	  var promise = origPromise;
-	  origPromise.then(action("observableFromPromise-resolve", function (value) {
-	    promise.value = value;
-	    promise.state = FULFILLED;
-	  }), action("observableFromPromise-reject", function (reason) {
-	    promise.value = reason;
-	    promise.state = REJECTED;
-	  }));
-	  promise.isPromiseBasedObservable = true;
-	  promise.case = caseImpl;
-	  var oldData = oldPromise && oldPromise.state === FULFILLED ? oldPromise.value : undefined;
-	  extendObservable(promise, {
-	    value: oldData,
-	    state: PENDING
-	  }, {}, {
-	    deep: false
-	  });
-	  return promise;
-	}
 	/**
 	 * `fromPromise` takes a Promise, extends it with 2 observable properties that track
 	 * the status of the promise and returns it. The returned object has the following observable properties:
@@ -9393,7 +9526,7 @@ var WLFoundation = (function () {
 	 * @example
 	 * \@observer
 	 * class SearchResults extends React.Component {
-	 *   \@observable searchResults
+	 *   \@observable.ref searchResults
 	 *
 	 *   componentDidUpdate(nextProps) {
 	 *     if (nextProps.query !== this.props.query)
@@ -9471,28 +9604,63 @@ var WLFoundation = (function () {
 	 */
 
 
-	var fromPromise = createObservablePromise;
-	fromPromise.reject = action("fromPromise.reject", function (reason) {
-	  var p = fromPromise(Promise.reject(reason));
-	  p.state = REJECTED;
-	  p.value = reason;
-	  return p;
-	});
-	fromPromise.resolve = action("fromPromise.resolve", function (value) {
-	  if (value === void 0) {
-	    value = undefined;
+	function fromPromise(origPromise, oldPromise) {
+	  invariant$1(arguments.length <= 2, "fromPromise expects up to two arguments");
+	  invariant$1(typeof origPromise === "function" || typeof origPromise === "object" && origPromise && typeof origPromise.then === "function", "Please pass a promise or function to fromPromise");
+	  if (origPromise.isPromiseBasedObservable === true) return origPromise;
+
+	  if (typeof origPromise === "function") {
+	    // If it is a (reject, resolve function, wrap it)
+	    origPromise = new Promise(origPromise);
 	  }
 
-	  var p = fromPromise(Promise.resolve(value));
-	  p.state = FULFILLED;
-	  p.value = value;
-	  return p;
-	});
+	  var promise = origPromise;
+	  origPromise.then(action("observableFromPromise-resolve", function (value) {
+	    promise.value = value;
+	    promise.state = FULFILLED;
+	  }), action("observableFromPromise-reject", function (reason) {
+	    promise.value = reason;
+	    promise.state = REJECTED;
+	  }));
+	  promise.isPromiseBasedObservable = true;
+	  promise.case = caseImpl;
+	  var oldData = oldPromise && oldPromise.state === FULFILLED ? oldPromise.value : undefined;
+	  extendObservable(promise, {
+	    value: oldData,
+	    state: PENDING
+	  }, {}, {
+	    deep: false
+	  });
+	  return promise;
+	}
+
+	(function (fromPromise) {
+	  fromPromise.reject = action("fromPromise.reject", function (reason) {
+	    var p = fromPromise(Promise.reject(reason));
+	    p.state = REJECTED;
+	    p.value = reason;
+	    return p;
+	  });
+
+	  function resolveBase(value) {
+	    if (value === void 0) {
+	      value = undefined;
+	    }
+
+	    var p = fromPromise(Promise.resolve(value));
+	    p.state = FULFILLED;
+	    p.value = value;
+	    return p;
+	  }
+
+	  fromPromise.resolve = action("fromPromise.resolve", resolveBase);
+	})(fromPromise || (fromPromise = {}));
 	/**
 	 * Returns true if the provided value is a promise-based observable.
 	 * @param value any
 	 * @returns {boolean}
 	 */
+
 
 	function isPromiseBasedObservable(value) {
 	  return value && value.isPromiseBasedObservable === true;
@@ -9593,7 +9761,7 @@ var WLFoundation = (function () {
 	 *     current(): T,
 	 *     refresh(): T,
 	 *     reset(): T
-	 *     pendind: boolean
+	 *     pending: boolean
 	 * }}
 	 */
 
@@ -9612,7 +9780,11 @@ var WLFoundation = (function () {
 	  var currentFnc = function () {
 	    if (!started) {
 	      started = true;
-	      pending.set(true);
+
+	      allowStateChanges(true, function () {
+	        pending.set(true);
+	      });
+
 	      fetch(function (newValue) {
 	        allowStateChanges(true, function () {
 	          value.set(newValue);
@@ -9773,10 +9945,6 @@ var WLFoundation = (function () {
 	function observableSymbol() {
 	  return typeof Symbol === "function" && Symbol.observable || "@@observable";
 	}
-
-	function self$1() {
-	  return this;
-	}
 	/**
 	 * Converts an expression to an observable stream (a.k.a. TC 39 Observable / RxJS observable).
 	 * The provided expression is tracked by mobx as long as there are subscribers, automatically
@@ -9812,29 +9980,42 @@ var WLFoundation = (function () {
 	  var computedValue = computed(expression);
 	  return _a = {
 	    subscribe: function (observer) {
+	      if ("function" === typeof observer) {
+	        return {
+	          unsubscribe: computedValue.observe(function (_a) {
+	            var newValue = _a.newValue;
+	            return observer(newValue);
+	          }, fireImmediately)
+	        };
+	      }
+
+	      if (observer && "object" === typeof observer && observer.next) {
+	        return {
+	          unsubscribe: computedValue.observe(function (_a) {
+	            var newValue = _a.newValue;
+	            return observer.next(newValue);
+	          }, fireImmediately)
+	        };
+	      }
+
 	      return {
-	        unsubscribe: computedValue.observe(typeof observer === "function" ? function (_a) {
-	          var newValue = _a.newValue;
-	          return observer(newValue);
-	        } : function (_a) {
-	          var newValue = _a.newValue;
-	          return observer.next(newValue);
-	        }, fireImmediately)
+	        unsubscribe: function () {}
 	      };
 	    }
-	  }, _a[observableSymbol()] = self$1, _a;
+	  }, _a[observableSymbol()] = function () {
+	    return this;
+	  }, _a;
 	}
 
 	var StreamListener =
 	/** @class */
 	function () {
-	  function StreamListener(observable$$1, initialValue) {
+	  function StreamListener(observable, initialValue) {
 	    var _this = this;
 
-	    this.current = undefined;
 	    runInAction(function () {
 	      _this.current = initialValue;
-	      _this.subscription = observable$$1.subscribe(_this);
+	      _this.subscription = observable.subscribe(_this);
 	    });
 	  }
 
@@ -9867,39 +10048,13 @@ var WLFoundation = (function () {
 
 	  return StreamListener;
 	}();
-	/**
-	 *
-	 * Converts a subscribable, observable stream (TC 39 observable / RxJS stream)
-	 * into an object which stores the current value (as `current`). The subscription can be cancelled through the `dispose` method.
-	 * Takes an initial value as second optional argument
-	 *
-	 * @example
-	 * const debouncedClickDelta = MobxUtils.fromStream(Rx.Observable.fromEvent(button, 'click')
-	 *     .throttleTime(1000)
-	 *     .map(event => event.clientX)
-	 *     .scan((count, clientX) => count + clientX, 0)
-	 * )
-	 *
-	 * autorun(() => {
-	 *     console.log("distance moved", debouncedClickDelta.current)
-	 * })
-	 *
-	 * @export
-	 * @template T
-	 * @param {IObservableStream<T>} observable
-	 * @returns {{
-	 *     current: T;
-	 *     dispose(): void;
-	 * }}
-	 */
 
-
-	function fromStream(observable$$1, initialValue) {
+	function fromStream(observable, initialValue) {
 	  if (initialValue === void 0) {
 	    initialValue = undefined;
 	  }
 
-	  return new StreamListener(observable$$1, initialValue);
+	  return new StreamListener(observable, initialValue);
 	}
 
 	var __assign$1 = function () {
@@ -9981,14 +10136,14 @@ var WLFoundation = (function () {
 	    get: function () {
 	      return this.localValues.size > 0;
 	    },
-	    enumerable: true,
+	    enumerable: false,
 	    configurable: true
 	  });
 	  Object.defineProperty(ViewModel.prototype, "changedValues", {
 	    get: function () {
 	      return this.localValues.toJS();
 	    },
-	    enumerable: true,
+	    enumerable: false,
 	    configurable: true
 	  });
 
@@ -10112,7 +10267,7 @@ var WLFoundation = (function () {
 	 */
 
 
-	function whenWithTimeout(expr, action$$1, timeout, onTimeout) {
+	function whenWithTimeout(expr, action, timeout, onTimeout) {
 	  if (timeout === void 0) {
 	    timeout = 10000;
 	  }
@@ -10122,7 +10277,7 @@ var WLFoundation = (function () {
 	  }
 
 	  deprecated$1("whenWithTimeout is deprecated, use mobx.when with timeout option instead");
-	  return when(expr, action$$1, {
+	  return when(expr, action, {
 	    timeout: timeout,
 	    onError: onTimeout
 	  });
@@ -10159,13 +10314,13 @@ var WLFoundation = (function () {
 
 
 	function keepAlive(_1, _2) {
-	  var computed$$1 = getAtom(_1, _2);
-	  if (!computed$$1) throw new Error("No computed provided, please provide an object created with `computed(() => expr)` or an object + property name");
-	  return computed$$1.observe(function () {});
+	  var computed = getAtom(_1, _2);
+	  if (!computed) throw new Error("No computed provided, please provide an object created with `computed(() => expr)` or an object + property name");
+	  return computed.observe(function () {});
 	}
 	/**
 	 * `queueProcessor` takes an observable array, observes it and calls `processor`
-	 * once for each item added to the observable array, optionally deboucing the action
+	 * once for each item added to the observable array, optionally debouncing the action
 	 *
 	 * @example
 	 * const pendingNotifications = observable([])
@@ -10446,6 +10601,7 @@ var WLFoundation = (function () {
 
 
 	  var generator = typeof arg1 === "string" ? arg2 : arg1;
+	  var name = typeof arg1 === "string" ? arg1 : generator.name || "<unnamed async action>";
 	  deprecated$1("asyncAction is deprecated. use mobx.flow instead");
 	  return flow(generator); // name get's dropped..
 	}
@@ -10601,6 +10757,7 @@ var WLFoundation = (function () {
 	}
 
 	function buildPath(entry) {
+	  if (!entry) return "ROOT";
 	  var res = [];
 
 	  while (entry.parent) {
@@ -10684,12 +10841,13 @@ var WLFoundation = (function () {
 
 	  function observeRecursively(thing, parent, path) {
 	    if (isRecursivelyObservable(thing)) {
-	      if (entrySet.has(thing)) {
-	        var entry = entrySet.get(thing);
+	      var entry = entrySet.get(thing);
+
+	      if (entry) {
 	        if (entry.parent !== parent || entry.path !== path) // MWE: this constraint is artificial, and this tool could be made to work with cycles,
 	          // but it increases administration complexity, has tricky edge cases and the meaning of 'path'
 	          // would become less clear. So doesn't seem to be needed for now
-	          throw new Error("The same observable object cannot appear twice in the same tree, trying to assign it to '" + buildPath(parent) + "/" + path + "', but it already exists at '" + buildPath(entry.parent) + "/" + entry.path + "'");
+	          throw new Error("The same observable object cannot appear twice in the same tree," + (" trying to assign it to '" + buildPath(parent) + "/" + path + "',") + (" but it already exists at '" + buildPath(entry.parent) + "/" + entry.path + "'"));
 	      } else {
 	        var entry_1 = {
 	          parent: parent,
@@ -10721,6 +10879,217 @@ var WLFoundation = (function () {
 	    unobserveRecursively(target);
 	  };
 	}
+
+	var __extends$1 = function () {
+	  var extendStatics = function (d, b) {
+	    extendStatics = Object.setPrototypeOf || {
+	      __proto__: []
+	    } instanceof Array && function (d, b) {
+	      d.__proto__ = b;
+	    } || function (d, b) {
+	      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    };
+
+	    return extendStatics(d, b);
+	  };
+
+	  return function (d, b) {
+	    extendStatics(d, b);
+
+	    function __() {
+	      this.constructor = d;
+	    }
+
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	  };
+	}();
+	/**
+	 * Reactively sorts a base observable array into multiple observable arrays based on the value of a
+	 * `groupBy: (item: T) => G` function.
+	 *
+	 * This observes the individual computed groupBy values and only updates the source and dest arrays
+	 * when there is an actual change, so this is far more efficient than, for example
+	 * `base.filter(i => groupBy(i) === 'we')`. Call #dispose() to stop tracking.
+	 *
+	 * No guarantees are made about the order of items in the grouped arrays.
+	 *
+	 * The resulting map of arrays is read-only. clear(), set(), delete() are not supported and
+	 * modifying the group arrays will lead to undefined behavior.
+	 *
+	 * @param {array} base The array to sort into groups.
+	 * @param {function} groupBy The function used for grouping.
+	 * @param options Object with properties:
+	 *  `name`: Debug name of this ObservableGroupMap.
+	 *  `keyToName`: Function to create the debug names of the observable group arrays.
+	 *
+	 * @example
+	 * const slices = observable([
+	 *     { day: "mo", hours: 12 },
+	 *     { day: "tu", hours: 2 },
+	 * ])
+	 * const slicesByDay = new ObservableGroupMap(slices, (slice) => slice.day)
+	 * autorun(() => console.log(
+	 *     slicesByDay.get("mo")?.length ?? 0,
+	 *     slicesByDay.get("we"))) // outputs 1, undefined
+	 * slices[0].day = "we" // outputs 0, [{ day: "we", hours: 12 }]
+	 */
+
+
+	var ObservableGroupMap =
+	/** @class */
+	function (_super) {
+	  __extends$1(ObservableGroupMap, _super);
+
+	  function ObservableGroupMap(base, groupBy, _a) {
+	    var _b = _a === void 0 ? {} : _a,
+	        _c = _b.name,
+	        name = _c === void 0 ? "ogm" + (Math.random() * 1000 | 0) : _c,
+	        _d = _b.keyToName,
+	        keyToName = _d === void 0 ? function (x) {
+	      return "" + x;
+	    } : _d;
+
+	    var _this = _super.call(this) || this;
+
+	    _this._keyToName = keyToName;
+	    _this._groupBy = groupBy;
+	    _this._ogmInfoKey = "function" == typeof Symbol ? Symbol("ogmInfo" + name) : "__ogmInfo" + name;
+	    _this._base = base;
+
+	    for (var i = 0; i < base.length; i++) {
+	      _this._addItem(base[i]);
+	    }
+
+	    _this._disposeBaseObserver = observe(_this._base, function (change) {
+	      if ("splice" === change.type) {
+	        transaction(function () {
+	          for (var _i = 0, _a = change.removed; _i < _a.length; _i++) {
+	            var removed = _a[_i];
+
+	            _this._removeItem(removed);
+	          }
+
+	          for (var _b = 0, _c = change.added; _b < _c.length; _b++) {
+	            var added = _c[_b];
+
+	            _this._addItem(added);
+	          }
+	        });
+	      } else if ("update" === change.type) {
+	        transaction(function () {
+	          _this._removeItem(change.oldValue);
+
+	          _this._addItem(change.newValue);
+	        });
+	      } else {
+	        throw new Error("illegal state");
+	      }
+	    });
+	    return _this;
+	  }
+
+	  ObservableGroupMap.prototype.clear = function () {
+	    throw new Error("not supported");
+	  };
+
+	  ObservableGroupMap.prototype.delete = function (_key) {
+	    throw new Error("not supported");
+	  };
+
+	  ObservableGroupMap.prototype.set = function (_key, _value) {
+	    throw new Error("not supported");
+	  };
+	  /**
+	   * Disposes all observers created during construction and removes state added to base array
+	   * items.
+	   */
+
+
+	  ObservableGroupMap.prototype.dispose = function () {
+	    this._disposeBaseObserver();
+
+	    for (var i = 0; i < this._base.length; i++) {
+	      var item = this._base[i];
+	      var grouperItemInfo = item[this._ogmInfoKey];
+	      grouperItemInfo.reaction();
+	      delete item[this._ogmInfoKey];
+	    }
+	  };
+
+	  ObservableGroupMap.prototype._getGroupArr = function (key) {
+	    var result = _super.prototype.get.call(this, key);
+
+	    if (undefined === result) {
+	      result = observable([], {
+	        name: "GroupArray[" + this._keyToName(key) + "]"
+	      });
+
+	      _super.prototype.set.call(this, key, result);
+	    }
+
+	    return result;
+	  };
+
+	  ObservableGroupMap.prototype._removeFromGroupArr = function (key, itemIndex) {
+	    var arr = _super.prototype.get.call(this, key);
+
+	    if (1 === arr.length) {
+	      _super.prototype.delete.call(this, key);
+	    } else if (itemIndex === arr.length - 1) {
+	      // last position in array
+	      arr.length--;
+	    } else {
+	      arr[itemIndex] = arr[arr.length - 1];
+	      arr[itemIndex][this._ogmInfoKey].groupArrIndex = itemIndex;
+	      arr.length--;
+	    }
+	  };
+
+	  ObservableGroupMap.prototype._addItem = function (item) {
+	    var _this = this;
+
+	    var groupByValue = this._groupBy(item);
+
+	    var groupArr = this._getGroupArr(groupByValue);
+
+	    var value = {
+	      groupByValue: groupByValue,
+	      groupArrIndex: groupArr.length,
+	      reaction: reaction(function () {
+	        return _this._groupBy(item);
+	      }, function (newGroupByValue, _r) {
+	        console.log("new group by value ", newGroupByValue);
+	        var grouperItemInfo = item[_this._ogmInfoKey];
+
+	        _this._removeFromGroupArr(grouperItemInfo.groupByValue, grouperItemInfo.groupArrIndex);
+
+	        var newGroupArr = _this._getGroupArr(newGroupByValue);
+
+	        var newGroupArrIndex = newGroupArr.length;
+	        newGroupArr.push(item);
+	        grouperItemInfo.groupByValue = newGroupByValue;
+	        grouperItemInfo.groupArrIndex = newGroupArrIndex;
+	      })
+	    };
+	    Object.defineProperty(item, this._ogmInfoKey, {
+	      configurable: true,
+	      enumerable: false,
+	      value: value
+	    });
+	    groupArr.push(item);
+	  };
+
+	  ObservableGroupMap.prototype._removeItem = function (item) {
+	    var grouperItemInfo = item[this._ogmInfoKey];
+
+	    this._removeFromGroupArr(grouperItemInfo.groupByValue, grouperItemInfo.groupArrIndex);
+
+	    grouperItemInfo.reaction();
+	    delete item[this._ogmInfoKey];
+	  };
+
+	  return ObservableGroupMap;
+	}(ObservableMap);
 	/**
 	 * @private
 	 */
@@ -10837,11 +11206,11 @@ var WLFoundation = (function () {
 	  return __assign$3.apply(this, arguments);
 	};
 	/**
-	 * computedFn takes a function with an arbitrarily amount of arguments,
-	 * and memoized the output of the function based on the arguments passed in.
+	 * computedFn takes a function with an arbitrary amount of arguments,
+	 * and memoizes the output of the function based on the arguments passed in.
 	 *
 	 * computedFn(fn) returns a function with the very same signature. There is no limit on the amount of arguments
-	 * that is accepted. However, the amount of arguments must be consistent and default arguments are not supported.
+	 * that is accepted. However, the amount of arguments must be constant and default arguments are not supported.
 	 *
 	 * By default the output of a function call will only be memoized as long as the
 	 * output is being observed.
@@ -10864,7 +11233,7 @@ var WLFoundation = (function () {
 
 	  const d = autorun(() => {
 	    // store.m(3) will be cached as long as this autorun is running
-	    console.log((store.m(3) * store.c))
+	    console.log(store.m(3) * store.c)
 	  })
 	 *
 	 * @param fn
@@ -10885,13 +11254,14 @@ var WLFoundation = (function () {
 	  } : keepAliveOrOptions;
 	  var d = new DeepMap();
 	  return function () {
+	    var _this = this;
+
 	    var args = [];
 
 	    for (var _i = 0; _i < arguments.length; _i++) {
 	      args[_i] = arguments[_i];
 	    }
 
-	    var self = this;
 	    var entry = d.entry(args); // cache hit, return
 
 	    if (entry.exists()) return entry.get().get(); // if function is invoked, and its a cache miss without reactive, there is no point in caching...
@@ -10902,12 +11272,12 @@ var WLFoundation = (function () {
 	        memoWarned = true;
 	      }
 
-	      return fn.apply(self, args);
+	      return fn.apply(this, args);
 	    } // create new entry
 
 
 	    var c = computed(function () {
-	      return fn.apply(self, args);
+	      return fn.apply(_this, args);
 	    }, __assign$3(__assign$3({}, opts), {
 	      name: "computedFn(" + fn.name + "#" + ++i + ")"
 	    }));
@@ -10942,8 +11312,7 @@ var WLFoundation = (function () {
 	      value: decorateFn(prop, descriptor.value),
 	      enumerable: false,
 	      configurable: true,
-	      writable: true // for typescript, this must be writable, otherwise it cannot inherit :/ (see inheritable actions test)
-
+	      writable: true
 	    };
 	  } // babel only: @action method = () => {}
 
@@ -11118,15 +11487,44 @@ var WLFoundation = (function () {
 	var runId = 0;
 	var unfinishedIds = new Set();
 	var currentlyActiveIds = new Set();
-	var taskOrderPromise = Promise.resolve();
+	var inOrderExecution;
+	{
+	  var taskOrderPromise_1 = Promise.resolve();
+	  var queueMicrotaskPolyfill_1;
 
-	var emptyFunction = function () {};
+	  if (typeof queueMicrotask !== "undefined") {
+	    // use real implementation if possible in modern browsers/node
+	    queueMicrotaskPolyfill_1 = queueMicrotask;
+	  } else if (typeof process !== "undefined" && process.nextTick) {
+	    // fallback to node's process.nextTick in node <= 10
+	    queueMicrotaskPolyfill_1 = function (cb) {
+	      process.nextTick(cb);
+	    };
+	  } else {
+	    // use setTimeout for old browsers
+	    queueMicrotaskPolyfill_1 = function (cb) {
+	      setTimeout(cb, 0);
+	    };
+	  }
 
+	  var idle_1 = function () {
+	    return new Promise(function (r) {
+	      queueMicrotaskPolyfill_1(r);
+	    });
+	  }; // we use this trick to force a proper order of execution
+	  // even for immediately resolved promises
+
+
+	  inOrderExecution = function () {
+	    taskOrderPromise_1 = taskOrderPromise_1.then(idle_1);
+	    return taskOrderPromise_1;
+	  };
+	}
 	var actionAsyncContextStack = [];
 
 	function task(value) {
 	  return __awaiter(this, void 0, void 0, function () {
-	    var ctx, runId, actionName, args, scope, actionRunInfo, step, nextStep, ret, actionRunInfo_1;
+	    var ctx, runId, actionName, args, scope, actionRunInfo, step, nextStep, ret, err_1, actionRunInfo_1;
 	    return __generator(this, function (_a) {
 	      switch (_a.label) {
 	        case 0:
@@ -11146,22 +11544,17 @@ var WLFoundation = (function () {
 	          _a.label = 1;
 
 	        case 1:
-	          _a.trys.push([1,, 4, 5]);
+	          _a.trys.push([1, 4, 6, 7]);
 
 	          return [4
 	          /*yield*/
-	          , value // we use this trick to force a proper order of execution
-	          // even for immediately resolved promises
-	          ];
+	          , value];
 
 	        case 2:
-	          ret = _a.sent(); // we use this trick to force a proper order of execution
-	          // even for immediately resolved promises
-
-	          taskOrderPromise = taskOrderPromise.then(emptyFunction);
+	          ret = _a.sent();
 	          return [4
 	          /*yield*/
-	          , taskOrderPromise];
+	          , inOrderExecution()];
 
 	        case 3:
 	          _a.sent();
@@ -11171,6 +11564,17 @@ var WLFoundation = (function () {
 	          , ret];
 
 	        case 4:
+	          err_1 = _a.sent();
+	          return [4
+	          /*yield*/
+	          , inOrderExecution()];
+
+	        case 5:
+	          _a.sent();
+
+	          throw err_1;
+
+	        case 6:
 	          // only restart if it not a dangling promise (the action is not yet finished)
 	          if (unfinishedIds.has(runId)) {
 	            actionRunInfo_1 = _startAction(getActionAsyncName(actionName, runId, nextStep), this, args);
@@ -11189,7 +11593,7 @@ var WLFoundation = (function () {
 	          /*endfinally*/
 	          ];
 
-	        case 5:
+	        case 7:
 	          return [2
 	          /*return*/
 	          ];
@@ -11288,7 +11692,7 @@ var WLFoundation = (function () {
 	    }
 
 	    return __awaiter(this, void 0, void 0, function () {
-	      var nextRunId, actionRunInfo, finish, promise, ret, err_1;
+	      var nextRunId, actionRunInfo, finish, promise, ret, err_2;
 	      return __generator(this, function (_a) {
 	        switch (_a.label) {
 	          case 0:
@@ -11368,8 +11772,8 @@ var WLFoundation = (function () {
 	            , 4];
 
 	          case 3:
-	            err_1 = _a.sent();
-	            finish(err_1);
+	            err_2 = _a.sent();
+	            finish(err_2);
 	            return [3
 	            /*break*/
 	            , 4];
@@ -11390,38 +11794,39 @@ var WLFoundation = (function () {
 	}
 
 	var mobxUtils_module = /*#__PURE__*/Object.freeze({
-		computedFn: computedFn,
-		actionAsync: actionAsync,
-		task: task,
-		PENDING: PENDING,
 		FULFILLED: FULFILLED,
-		REJECTED: REJECTED,
-		fromPromise: fromPromise,
-		isPromiseBasedObservable: isPromiseBasedObservable,
-		moveItem: moveItem,
-		lazyObservable: lazyObservable,
-		fromResource: fromResource,
-		toStream: toStream,
-		fromStream: fromStream,
-		ViewModel: ViewModel,
-		createViewModel: createViewModel,
-		whenWithTimeout: whenWithTimeout,
-		keepAlive: keepAlive,
-		queueProcessor: queueProcessor,
-		chunkProcessor: chunkProcessor,
-		now: now,
-		NOOP: NOOP,
 		IDENTITY: IDENTITY,
-		fail: fail$1$1,
-		invariant: invariant$1,
-		deprecated: deprecated$1,
+		NOOP: NOOP,
+		ObservableGroupMap: ObservableGroupMap,
+		PENDING: PENDING,
+		REJECTED: REJECTED,
+		ViewModel: ViewModel,
+		actionAsync: actionAsync,
 		addHiddenProp: addHiddenProp$1,
-		getAllMethodsAndProperties: getAllMethodsAndProperties,
 		asyncAction: asyncAction,
-		whenAsync: whenAsync,
-		expr: expr,
+		chunkProcessor: chunkProcessor,
+		computedFn: computedFn,
 		createTransformer: createTransformer,
-		deepObserve: deepObserve
+		createViewModel: createViewModel,
+		deepObserve: deepObserve,
+		deprecated: deprecated$1,
+		expr: expr,
+		fail: fail$1$1,
+		get fromPromise () { return fromPromise; },
+		fromResource: fromResource,
+		fromStream: fromStream,
+		getAllMethodsAndProperties: getAllMethodsAndProperties,
+		invariant: invariant$1,
+		isPromiseBasedObservable: isPromiseBasedObservable,
+		keepAlive: keepAlive,
+		lazyObservable: lazyObservable,
+		moveItem: moveItem,
+		now: now,
+		queueProcessor: queueProcessor,
+		task: task,
+		toStream: toStream,
+		whenAsync: whenAsync,
+		whenWithTimeout: whenWithTimeout
 	});
 
 	var DataWindowManager_1 = createCommonjsModule(function (module, exports) {
@@ -12203,7 +12608,7 @@ var WLFoundation = (function () {
 	  async search(text) {
 	    _Log.default.t(TAG, 'Searching for "%s"', text);
 
-	    let query = _objectSpread({}, this.lastQuery, {
+	    let query = _objectSpread(_objectSpread({}, this.lastQuery), {}, {
 	      searchText: text
 	    });
 
@@ -12224,7 +12629,7 @@ var WLFoundation = (function () {
 	  async searchQBE(qbe) {
 	    _Log.default.t(TAG, 'QBE Searching for', qbe);
 
-	    let query = _objectSpread({}, this.lastQuery, {
+	    let query = _objectSpread(_objectSpread({}, this.lastQuery), {}, {
 	      searchText: '',
 	      qbe: qbe
 	    });
@@ -12246,7 +12651,7 @@ var WLFoundation = (function () {
 	  async sort(sortOptions) {
 	    _Log.default.t(TAG, 'Sorting', sortOptions);
 
-	    let query = _objectSpread({}, this.lastQuery, {
+	    let query = _objectSpread(_objectSpread({}, this.lastQuery), {}, {
 	      start: 0,
 	      orderBy: [{
 	        field: sortOptions.attribute,
@@ -12595,7 +13000,7 @@ var WLFoundation = (function () {
 	    let size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.state.pageSize;
 	    let userQuery = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-	    let newQuery = _objectSpread({}, this.baseQuery, {}, this.lastQuery, {}, userQuery, {
+	    let newQuery = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, this.baseQuery), this.lastQuery), userQuery), {}, {
 	      start: start,
 	      pageSize: size
 	    });
@@ -12611,7 +13016,7 @@ var WLFoundation = (function () {
 	    this.lastQuery = newQuery;
 
 	    const loader = (qStart, qSize) => {
-	      let query = _objectSpread({}, newQuery, {
+	      let query = _objectSpread(_objectSpread({}, newQuery), {}, {
 	        start: qStart,
 	        pageSize: qSize
 	      });
@@ -13444,7 +13849,7 @@ var WLFoundation = (function () {
 
 
 	  async load(query) {
-	    let q = _objectSpread({}, this.options, {}, query);
+	    let q = _objectSpread(_objectSpread({}, this.options), query);
 
 	    this.lastQuery = q;
 
@@ -15761,6 +16166,25 @@ var WLFoundation = (function () {
 
 	    if (this.client.responseJSON) {
 	      response.responseJSON = this.client.responseJSON;
+	    } // bad credentials case:
+
+
+	    if (this.client.response.redirected && this.client.authenticator.authType && this.client.authenticator.authType.toUpperCase() == 'FORM' && this.client.response.headers.get('content-type') && this.client.response.headers.get('content-type').indexOf('text/html') != -1) {
+	      response.authenticated = false;
+	      response.errorCode = 'AUTHENTICATION REQUIRED';
+
+	      if (this.client.authenticator.authenticated) {
+	        this.client.authenticator.authenticated = false;
+	        this.client.authenticated = false;
+	      }
+
+	      result = false;
+	      response.status = '401';
+	      response.error = {
+	        status: '401'
+	      };
+	      response.error.statusText = this.client.response.statusText;
+	      return response;
 	    }
 
 	    response.authenticated = result === true;

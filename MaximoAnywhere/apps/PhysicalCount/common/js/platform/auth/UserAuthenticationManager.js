@@ -215,94 +215,98 @@ define("platform/auth/UserAuthenticationManager", [
 			this.reLoginError = null;			
 			var deferred = new Deferred();
 			var self = this;
-			currentUser = user;
-			password = pwd;
-			BusyIndicator.ignoreTimeout = true;
-			deferred.promise.then(function(){
-				Logger.timerEnd("UserAuthenticationManager - login");
-				BusyIndicator.ignoreTimeout = false;
-				reauthInProgress = false;
-			});
-			ConnectivityChecker.checkConnectivityAvailable(true).
-			then(lang.hitch(this, function(isConnectionAvailable) {
-				if(isConnectionAvailable){
-					self.authState.connected = true;
-					self._serverAuthentication(user, pwd, timeout).then(function(response){
-						//open/initialize the local store
-						console.log("Successfully logged in");
-						self.authState.server_auth = response;
-						self.authState.error = null;
-						password = pwd;
-						self._localAuthentication(user, pwd).then(function(result){
-							deferred.resolve(self.authState);
-						}).otherwise(function(error){
-							//Server passed and local failed? Is it a password change or a new user
-							if (error.error && error.error.recoverPassword){
-								self.authState.authenticated = false;
-								self.authState.error = error.error;
-								deferred.reject(self.authState);
-								return;
-							}
-							var response = {};
-							self._initializeLocalStorage(true).then(function(result){
-								response.response = result
-								response.authenticated = true;
-								self._cacheUserInfo(deferred);
-							}).otherwise(function(error){ //Something wrong with json store initializing new credentials
-								self.authState.error = error;
-								deferred.reject(self.authState);
-
-							})
-						})
-
-					}).otherwise(function(error){//server auth failed maybe due to timeout or change password or somethin else
-						self.authState.authenticated = false;
-						self.authState.server_auth = error;
-						self.authState.error = error;
-						
-						//Only if its a timeout error, do local authentication
-						if(error.error === 'REQUEST TIMEOUT'){
-							self.authState.connected = false;
+			if (user && pwd) {
+				currentUser = user;
+				password = pwd;
+				BusyIndicator.ignoreTimeout = true;
+				deferred.promise.then(function(){
+					Logger.timerEnd("UserAuthenticationManager - login");
+					BusyIndicator.ignoreTimeout = false;
+					reauthInProgress = false;
+				});
+				ConnectivityChecker.checkConnectivityAvailable(true).
+				then(lang.hitch(this, function(isConnectionAvailable) {
+					if(isConnectionAvailable){
+						self.authState.connected = true;
+						self._serverAuthentication(user, pwd, timeout).then(function(response){
+							//open/initialize the local store
+							console.log("Successfully logged in");
+							self.authState.server_auth = response;
+							self.authState.error = null;
+							password = pwd;
 							self._localAuthentication(user, pwd).then(function(result){
-								//Work Offline
 								deferred.resolve(self.authState);
-							}).otherwise(function(result){
-								//Show login page and login failure message
-								deferred.reject(self.authState);
-							});
-						}else{
-							//Check if password expired. Show change password screen
-							if(error.error && error.error.status && error.error.status  === 403){
-								var expiredPasswordInfo = {'loginFailed' : true};
-								if (error.responseJSON && error.responseJSON['oslc:Error']){
-									var oslcError = error.responseJSON['oslc:Error'];
-									expiredPasswordInfo.errorMsg = oslcError['oslc:message'];
-									expiredPasswordInfo.oslcMaxUserURL = oslcError['spi:user']['rdf:resource'];
+							}).otherwise(function(error){
+								//Server passed and local failed? Is it a password change or a new user
+								if (error.error && error.error.recoverPassword){
+									self.authState.authenticated = false;
+									self.authState.error = error.error;
+									deferred.reject(self.authState);
+									return;
 								}
-								self.authState.password_change = expiredPasswordInfo ;
-								deferred.reject(self.authState);
-							}
-							else{
-								deferred.reject(self.authState);
-							}							
-						}
+								var response = {};
+								self._initializeLocalStorage(true).then(function(result){
+									response.response = result
+									response.authenticated = true;
+									self._cacheUserInfo(deferred);
+								}).otherwise(function(error){ //Something wrong with json store initializing new credentials
+									self.authState.error = error;
+									deferred.reject(self.authState);
 
-					});
+								})
+							})
+
+						}).otherwise(function(error){//server auth failed maybe due to timeout or change password or somethin else
+							self.authState.authenticated = false;
+							self.authState.server_auth = error;
+							self.authState.error = error;
+							
+							//Only if its a timeout error, do local authentication
+							if(error.error === 'REQUEST TIMEOUT'){
+								self.authState.connected = false;
+								self._localAuthentication(user, pwd).then(function(result){
+									//Work Offline
+									deferred.resolve(self.authState);
+								}).otherwise(function(result){
+									//Show login page and login failure message
+									deferred.reject(self.authState);
+								});
+							}else{
+								//Check if password expired. Show change password screen
+								if(error.error && error.error.status && error.error.status  === 403){
+									var expiredPasswordInfo = {'loginFailed' : true};
+									if (error.responseJSON && error.responseJSON['oslc:Error']){
+										var oslcError = error.responseJSON['oslc:Error'];
+										expiredPasswordInfo.errorMsg = oslcError['oslc:message'];
+										expiredPasswordInfo.oslcMaxUserURL = oslcError['spi:user']['rdf:resource'];
+									}
+									self.authState.password_change = expiredPasswordInfo ;
+									deferred.reject(self.authState);
+								}
+								else{
+									deferred.reject(self.authState);
+								}							
+							}
+
+						});
+					
+					}else{
+						self.authState.connected = false;
+						self.authState.server_auth = {authenticated : false};
+						//No connection available. Try authenticating locally
+						self._localAuthentication(user, pwd).then(function(){
+							deferred.resolve(self.authState);
+							//Locall passed. Continue working offline.
+						}).otherwise(function(result){
+							deferred.reject(self.authState);
+							//Local failed. Show login page and login failure message
+						});
+					}
 				
-				}else{
-					self.authState.connected = false;
-					self.authState.server_auth = {authenticated : false};
-					//No connection available. Try authenticating locally
-					self._localAuthentication(user, pwd).then(function(){
-						deferred.resolve(self.authState);
-						//Locall passed. Continue working offline.
-					}).otherwise(function(result){
-						deferred.reject(self.authState);
-						//Local failed. Show login page and login failure message
-					});
-				}
-			
-			}));
+				}));
+			} else {
+				dfd.reject(invalidLoginMsg());
+			}
 
 			return deferred.promise;
 		},
@@ -347,27 +351,32 @@ define("platform/auth/UserAuthenticationManager", [
 			var self = this;
 			var dfd = new Deferred();
 			Logger.trace('[LOGIN] LOCAL AUTHENTICATION for user: ' + user, null, this.CLAZZ);
-			// collect the credentials to handle challenges
-			ServerAuthenticationProvider.setCredentials(user, pwd);
-			
-			var credentials = {username: user, password: pwd};
-			credentials.authenticated = (this.authState.server_auth && this.authState.server_auth.authenticated);
-			var response = {}
-			PersistenceManager.activateCollectionsOrFail(credentials).then(function(result){
-				self.authState.authenticatedLocally = true;
-				response.authenticated = true;
-				response.response = result;
-				self._cacheUserInfo(dfd);
-				//dfd.resolve(response);
+			if (user && pwd) {
+				// collect the credentials to handle challenges
+				ServerAuthenticationProvider.setCredentials(user, pwd);
 				
-			}).otherwise(function(result){
-				self.authState.authenticatedLocally = false;
-				response.authenticated = false;
-				response.error = result;
-				response.response = result;
-				dfd.reject(response);
-
-			})
+				var credentials = {username: user, password: pwd};
+				credentials.authenticated = (this.authState.server_auth && this.authState.server_auth.authenticated);
+				var response = {}
+				PersistenceManager.activateCollectionsOrFail(credentials).then(function(result){
+					self.authState.authenticatedLocally = true;
+					response.authenticated = true;
+					response.response = result;
+					self._cacheUserInfo(dfd);
+					//dfd.resolve(response);
+					
+				}).otherwise(function(result){
+					self.authState.authenticatedLocally = false;
+					response.authenticated = false;
+					response.error = result;
+					response.response = result;
+					dfd.reject(response);
+	
+				});
+			} else {
+				Logger.trace('[LOGIN] Either Username or Password or both are empty, please re-try with required credentials', null, clazzmethod);
+				dfd.reject(invalidLoginMsg());
+			}
 
 			return dfd.promise;
 			
@@ -642,7 +651,7 @@ define("platform/auth/UserAuthenticationManager", [
 				return true;
 			}
 			//If there's no invocationResult or responseJSON, a proxy server has stopped us before MobileFirst
-			if (!result.invocationResult && !result.responseJSON && result.status=="401") {
+			if (!result.invocationResult && !result.responseJSON && (result.status=="401" || result.status=="302" || result.status =="301")) {
 				Logger.trace("[LOGIN] UserAuthenticationManager: detected 401 perhaps your proxy token has expired, clearing session to force relogin", null, this.CLAZZ);
 				//Detected proxy response on expired token, need to force relogin
 				return true;
@@ -673,7 +682,7 @@ define("platform/auth/UserAuthenticationManager", [
 					 }
 				}
 			}
-			return (statusCode && (statusCode == '401' || statusCode == '403' )); //401: Invalid login; 403: password expired			
+			return (statusCode && (statusCode == '401' || statusCode == '403' || statusCode == '302' || statusCode == '301')); //401: Invalid login; 403: password expired; 302: found; 301: moved	
 		},
 		
 		_initializeLocalStorage: function(force){

@@ -37,8 +37,12 @@ define("application/handlers/InventoryHandler",
 	     "dojo/number",
 	     "platform/auth/AdminModeManager",
 	     "platform/store/SystemProperties"
-	     ],
-function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager, SynonymDomain, ModelService, MessageService, CommonHandler, FieldUtil, PlatformRuntimeException, PlatformRuntimeWarning, UserManager, PlatformConstants, AsyncAwareMixin, Logger, DateTimeUtil, CodeScannerHandlerExt, BluetoothScanner, focusUtil, Deferred, appConfig, numberUtil, AdminModeManager, SystemProperties) {	
+	     //[Loc]
+		 ,"platform/format/FormatterService",
+		 "dojo/date/stamp"
+		],
+function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager, SynonymDomain, ModelService, MessageService, CommonHandler, FieldUtil, PlatformRuntimeException, PlatformRuntimeWarning, UserManager, PlatformConstants, AsyncAwareMixin, Logger, DateTimeUtil, CodeScannerHandlerExt, BluetoothScanner, focusUtil, Deferred, appConfig, numberUtil, AdminModeManager, SystemProperties
+	,FormatterService, dateTimeISOFormatter) {	
 
 	var originatingQuerybase = null;
 	return declare( [ApplicationHandlerBase],  {
@@ -120,6 +124,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 						if(!dataSet.resourceID){
 		    				dataSet.resourceID = dataSet.name;
 		    			}
+						//Loc: filter by default storeroom
+						var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+						dataSet.filter('location == $1', currentStoreRoom.get('location'));
+
 		    			self.application.addResource(dataSet);
 	    			}
 	    			eventContext.ui.hideCurrentView();
@@ -209,7 +217,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				
 				blindCountResource.data = [];					
 			} else {
-                var appname = WL.Client.getAppProperty(WL.AppProperty.APP_DISPLAY_NAME).toUpperCase().replace(/\s+/g, '');
+                //var appname = WL.Client.getAppProperty(WL.AppProperty.APP_DISPLAY_NAME).toUpperCase().replace(/\s+/g, '');
+				var appname = "PHYSICALCOUNT"; //IBMCOUNT returns null or empty arrys in isBlindCOuntQuery
 				return AdminModeManager.isBlindCountQuery(querybase, appname, 'invbalance');
 			}	
 			
@@ -255,8 +264,43 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			if (search.lotnum){
 			    filter.lotnum = search.lotnum;
 			    filteredItems++;
-			}			
-	
+			}
+			
+			//In-Loc: bin range
+			if (search.description){
+				filter.description = search.description;
+				filteredItems++;
+			}
+
+			var isBinRangeCheck = false; 
+			if (search.binfrom && search.binto){
+				var binFrom = search.binfrom;
+				var binTo = search.binto;
+
+				var binFromChecked = this.checkBinRange(binFrom);
+				var binToChecked = this.checkBinRange(binTo);
+				if (binFromChecked.result && binToChecked.result){
+					if (binFromChecked.prefix == binToChecked.prefix){
+						if (binFrom < binTo){
+							isBinRangeCheck = true;
+
+							filteredItems++;
+						}
+					}
+				}
+
+			/* } else if ((search.binfrom && !search.binto) || (search.binto && !search.binfrom)){
+				isBinRangeCheck = false; */
+			} else if (!search.binfrom && !search.binto){
+				isBinRangeCheck = true;
+			}
+
+			if (!isBinRangeCheck){
+				eventContext.application.showMessage('BinRange is incorrect');
+				return;
+			}
+			//Out-Loc: bin range
+			
 			if(filteredItems == 0){
 				eventContext.ui.show('Inventory.RequiredSearchFieldMissing');
 				return;
@@ -264,8 +308,40 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 
 			self.populateSearch(eventContext);
 		},
-		
+
+		checkBinRange: function(value, prefix, suffix){
+			var obj = {};
+			if(typeof value != 'string'){
+				obj.result = false;
+				return obj;
+			}
+			var i = value.length;
+			var cursor = -1;
+			while(i--){
+				if (isNaN(value.charAt(i))){
+					cursor = i;
+					break;
+				}
+			}
+
+			if(cursor != -1){ 
+				cursor++;
+				prefix = value.substring(0, cursor);
+				suffix = value.substring(cursor);
+				
+				obj.result = true;
+				obj.prefix = prefix;
+				obj.suffix = suffix;
+
+				return obj;
+			}
+
+			obj.result = false;
+			return obj;
+		},
+
 		populateSearch: function(eventContext){
+			var self = this;
 			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
 			eventContext.application.ui.performSearch = true;
 			if(eventContext.application.ui.performSearch){
@@ -303,9 +379,21 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					filter.itemnum = search.itemnum;
 				    filteredItems++;
 				}
-				if (search.location){				
+
+				//In-Loc: set default storeroom
+				/* if (search.location){				
 				    filter.location = search.location;
 				    filteredItems++;
+				} */
+				var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+			    if (currentStoreRoom.get('location') != null){				
+				    filter.location = currentStoreRoom.get('location');
+				}
+				//Out-Loc: set default storeroom
+
+				if (search.description){
+					filter.description = search.description;
+					filteredItems++;
 				}
 				if (search.binnum){				
 				    filter.binnum = search.binnum;
@@ -318,6 +406,25 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				if (search.siteid){
 				    filter.siteid = search.siteid;
 				}
+
+				//In-Loc: bin range
+				if (search.binfrom && search.binto){
+					var binFrom = search.binfrom;
+					var binTo = search.binto;
+				
+					var binRangeFilter = {};
+					if (search.binfrom){
+						binRangeFilter.from = binFrom;
+					}
+					if (search.binto){
+						binRangeFilter.to = binTo;
+					}
+					if (search.binfrom && search.binto){
+						filter["binnum"] = binRangeFilter;
+						filteredItems++;
+					}
+				}
+				//Out-Loc: bin range
 				
 				if(filteredItems == 0){
 					eventContext.application.showMessage(MessageService.createStaticMessage('norecords').getMessage());
@@ -352,6 +459,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 										resultSet.setCurrentIndex(0);
 										 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 											 eventContext.ui.show('Inventory.ItemsView');
+											 self.reloadDefaultStoreRoom(eventContext);
 										 });
 									});
 								}
@@ -392,6 +500,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 													invbalanceSet.setCurrentIndex(0);
 													 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 														 eventContext.ui.show('Inventory.ItemsView');
+														 self.reloadDefaultStoreRoom(eventContext);
 													 });
 												});
 											}
@@ -446,6 +555,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 											invbalanceSet.setCurrentIndex(0);
 											 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 												 eventContext.ui.show('Inventory.ItemsView');
+												 self.reloadDefaultStoreRoom(eventContext);
 											 });
 										});
 									}
@@ -482,6 +592,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 		
 		populateItemDetail : function(eventContext) {
+			// [Loc]
+			this.loadDetailLabel(eventContext);
 			var invbalance = CommonHandler._getAdditionalResource(eventContext,"invbalance").getCurrentRecord();
 						
 			eventContext.getResource().getRecordAt(0).set("itemnum", invbalance.get('itemnum'));
@@ -491,7 +603,559 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			eventContext.getResource().getRecordAt(0).set("lot", invbalance.get('lotnum'));
 			eventContext.getResource().getRecordAt(0).set("unit", invbalance.get('issueunit'));
 			eventContext.getResource().getRecordAt(0).set("curbal", invbalance.get('curbal'));
+
+			// Exercise Unit 4
+			eventContext.getResource().getRecordAt(0).set("orgid", invbalance.get('orgid'));
+			eventContext.getResource().getRecordAt(0).set("count", invbalance.get('count'));
+
+			eventContext.getResource().getRecordAt(0).set("modelnum", invbalance.get('modelnum'));
+			eventContext.getResource().getRecordAt(0).set("lastcountdate", invbalance.get('lastcountdate'));
+			
+			// count++
+			/*var count = invbalance.get('count');
+			if (count == null || count === undefined){
+				count = 0;
+			}
+			count++;
+			//eventContext.getResource().getRecordAt(0).set("count", count);
+			invbalance.set("count", count);*/
 		},
+
+		// [Loc]
+		setStoreRoomTitle : function(eventContext, storeRoomTitle) {
+			var currentRecord = CommonHandler._getAdditionalResource(eventContext,"additionalstoreroom").getCurrentRecord();
+			var currentLocation = null;
+			var storeRoom = eventContext.application.getResource('storeRoomResource');
+			var localRecord = null;
+
+			currentLocation = currentRecord != null ? currentRecord.get("location") : "";
+			storeRoom = null;
+			localRecord = eventContext.application.getResource("storeRoomResource").createNewRecord();
+			//localRecord.set('location', currentLocation);
+			localRecord.set('location', storeRoomTitle);
+			/* if (storeRoom.count() > 0){
+				storeRoom.data[0].location = currentLocation;
+				//ModelService.save(storeRoom);
+			} else {
+				localRecord = storeRoom.createNewRecord();
+				localRecord.set('location', currentLocation);
+				//ModelService.save(storeRoom);
+			} */
+		},
+
+		reloadDefaultStoreRoom : function(eventContext){
+			var storeRoom = eventContext.application.getResource('storeRoomResource');
+			if (storeRoom.getCurrentRecord().get('location') == null){
+				var cuurentChooseStoreRoom = eventContext.application.getResource('chooseStoreRoomResource').getCurrentRecord();
+				var chooseStoreRoom = cuurentChooseStoreRoom.get("location");
+				var localRecord = storeRoom.createNewRecord();
+				localRecord.set('location', chooseStoreRoom);
+			}
+		},
+
+		/* loadInvbalanceList : function(eventContext){
+			//var deferred = new Deferred();
+			var currentRecord = CommonHandler._getAdditionalResource(eventContext,"invbalance").getCurrentRecord();
+			var physcntdate = currentRecord.get('physcntdate');
+			var physcntdateFormat = FormatterService.toDisplayableValue(dateTimeISOFormatter.fromISOString(physcntdate), "dateTime", this.userInterface.application.getUserLocale());
+			var row3 = "Unit: " + currentRecord.get('issueunit') + ", Last Count Date: " + physcntdateFormat;
+			invbalance.set('row3', row3);
+
+		}, */
+
+		loadInvbalanceList : function(eventContext){
+			//var deferred = new Deferred();
+			var currentRecord = CommonHandler._getAdditionalResource(eventContext,"invbalance").getCurrentRecord();
+			var physcntdate = currentRecord.get('physcntdate');
+			//var physcntdateFormat = FormatterService.toDisplayableValue(dateTimeISOFormatter.fromISOString(physcntdate), "dateTime", this.userInterface.application.getUserLocale());
+			var row3 = "Unit: " + currentRecord.get('issueunit') + ", Last Count Date: " + physcntdate; // physcntdateFormat;
+			currentRecord.set('row3', row3);
+
+			//invbalance.setValue('finishdate', row3);
+			
+		},
+
+		loadInvbalances: function(actualInvbalance, newStartDateString){
+			/* var physcntdate = actualInvbalance.getAsDateTimeOrNull('physcntdate');
+			physcntdate += "AAA";
+			actualInvbalance.set('row3', physcntdate);
+			newStartDateString = physcntdate;
+			return newStartDateString; */
+
+			actualInvbalance.set('binnum', "AAA");
+			actualInvbalance.set('row3', "AAA");
+			
+			/* if (newStartDate && enddate) {
+				var startdatetime = DateTimeUtil.fromDateAndTimeToDateTime(newStartDate, starttime);
+				var enddatetime = DateTimeUtil.fromDateAndTimeToDateTime(enddate, endtime);
+				this.checkDates(startdatetime, enddatetime);
+			}
+			
+			var hours = actualLabor.get('actuallaborhours');
+			if (newStartDate && starttime){
+				var startdatetime = DateTimeUtil.fromDateAndTimeToDateTime(newStartDate, starttime);
+				//TODO: fix enddatetime to handle timezone correctly
+				var enddatetime = new Date(startdatetime.getTime() + DateTimeUtil.fromHoursToMilliseconds(hours));
+				//Note: sometimes due to calculations, the time comes out just shy of the minute
+				enddatetime = DateTimeUtil.roundToNearestMinute(enddatetime);
+				actualLabor.setDateValue('finishdate', DateTimeUtil.fromDateTimeToDate(enddatetime));
+	            actualLabor.setTimestampValue('finishtime', DateTimeUtil.fromDateTimeToTime(enddatetime));				
+			} */
+				
+		},
+
+		loadDetailLabel : function(eventContext){
+			if(!eventContext){
+				return;
+			}
+			var resourceObject = CommonHandler._getAdditionalResource(eventContext,"invbalance");
+			//var resourceObject = eventContext.getResource();
+			if(!resourceObject){
+				return;
+			}
+			var currentIndex = resourceObject.getCurrentIndex();
+			var view = eventContext.ui.getViewFromId('Inventory.ItemDetailView');
+			var label = MessageService.createResolvedMessage("detailLabel", [currentIndex + 1, resourceObject.count()]);
+			view.label = label;
+			view.refresh();
+		},
+
+		loadDetailItem : function(eventContext){
+			var self = this;
+			self.populateItemDetail(eventContext);
+		},
+
+		previousRecord : function(eventContext){
+			if(!eventContext){
+				return;
+			}
+			var resourceObject = eventContext.getResource();
+			if(!resourceObject){
+				return;
+			}
+			
+			resourceObject.previous();
+			this.ui.getCurrentViewControl().refresh();
+		},
+
+		nextRecord : function(eventContext){
+			if(!eventContext){
+				return;
+			}
+			var resourceObject = eventContext.getResource();
+			if(!resourceObject){
+				return;
+			}
+
+			resourceObject.next();			
+			eventContext.ui.getCurrentViewControl().refresh();
+
+			// call ApplicationHandlerBase method
+			//this.nextRecord(eventContext);
+			
+			/* var i = 1;
+			var total = 20;
+			var view = eventContext.ui.getViewFromId('Inventory.ItemDetailView');
+			var label = MessageService.createResolvedMessage("detailLabel", [i, total]);
+			//var label = MessageService.createResolvedMessage("Detail {0}/{1}", [i, total]);
+			//var label = "Detail (" + i + "/" + total + ")";
+			//var label = "Detail (1/20)";
+			view.label = label;
+			view.refresh();
+			return; */
+		},
+
+		checkCanCount : function(eventContext){
+			var isCanCount = false;
+			var currentUserId = UserManager.getInfo('userid');
+			var additionaluserinfo = CommonHandler._getAdditionalResource(eventContext,"additionaluserinfo");
+			arrayUtil.forEach(additionaluserinfo.data, function(user){
+				var userid = user.get('userid');
+				if (userid == currentUserId){
+					if(user.get('cancount') == 1){
+						isCanCount = true;
+						return;
+					}
+				}
+			});
+
+			eventContext.setEnabled(isCanCount);
+		},
+
+		validateChooseStoreRoom : function(eventContext){
+			//eventContext.application.showMessage('AAA');
+			var res = false;
+			var arrayStoreRoom = CommonHandler._getAdditionalResource(eventContext,"additionalstoreroom");
+			var inputLocationResource = eventContext.getResource('chooseStoreRoomResource');
+			var inputCurrentLocation = inputLocationResource.getCurrentRecord();
+			//var inputLocationResource = CommonHandler._getAdditionalResource(eventContext,'storeRoomResource').getCurrentRecord();
+			var pendingLocation = inputCurrentLocation.getPendingOrOriginalValue('location');
+			if (pendingLocation !=""){
+
+				if (arrayStoreRoom.count() > 0){
+					var inputLocation = pendingLocation.toUpperCase();
+					arrayUtil.forEach(arrayStoreRoom.data, function(item){
+						var itemLocation = item.get('location');
+						if (itemLocation == inputLocation){
+							//inputCurrentLocation.set('location', itemLocation);
+							res = true;
+						}
+					});
+				} else {
+					
+				}
+
+				if (!res){
+					eventContext.ui.show('Inventory.NotExistStoreRoomWarning');
+					//window.UI.showToastMessage(" " + inputCurrentLocation.get('location'));
+				} else{
+					this.setStoreRoomTitle(eventContext, pendingLocation.toUpperCase());
+					this.filterAdditionalInvbalanceByStoreRoom(eventContext);	
+				}
+			}
+		},
+
+		clearChooseStoreRoom : function(eventContext){
+			var chooseStoreRoom = eventContext.application.getResource('chooseStoreRoomResource').getCurrentRecord();
+			chooseStoreRoom.setNullValue('location');
+			this.hideDialog(eventContext);
+		},
+
+		//Apply a filter on Invbalance List by storeRoom
+		filterAdditionalInvbalanceByStoreRoom : function(eventContext) {
+			//this.setStoreRoomTitle(eventContext);
+
+			//this.loadOnlineInvbalance(eventContext);
+			this.showFilteredList(eventContext);
+		},
+
+		loadLocalInvbalanceByStoreRoom : function(eventContext){
+			var invbalance = CommonHandler._getAdditionalResource(eventContext,'invbalance');
+			CommonHandler._clearFilterForResource(eventContext,invbalance);			
+			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+			invbalance.filter('location == $1', currentStoreRoom.get('location'));
+		},
+
+		checkLocalInvbalanceResource : function(eventContext){
+			var result = false;
+			var invbalance = CommonHandler._getAdditionalResource(eventContext,'invbalance');
+			if (invbalance.count() > 0){
+				result = true;
+			}
+			return result;
+		},
+
+		loadInvbalanceByQueryBase : function(eventContext){
+			//eventContext.application.showMessage('AAA');
+			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
+			//var queryBase = view.queries.children[eventContext.index].queryBase;
+			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+			if (currentStoreRoom.get('location') != null){
+                var self = this;
+				var promise = view.changeQueryBaseIndex(eventContext.index);
+				promise.then(function(){
+					self.showFilteredList(eventContext).then(function(result){
+						if (result){
+							view.lists[0].refresh();
+						}
+					});
+				});
+			} else {
+				var promise = view.changeQueryBase(eventContext.index);
+			}
+		},
+
+		showFilteredList : function(eventContext){
+			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
+			var querybase = view.queries.children[view.queryBaseIndex].queryBase;
+			var self = this;
+
+			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+
+			var deferred = new Deferred();
+
+			if (currentStoreRoom){
+                eventContext.application.showBusy();
+				var filter = {};
+				filter.location = currentStoreRoom.get('location');
+
+				ModelService.scan("invbalance", querybase, filter).then(function (dataSet) {
+					/* if (!eventContext.ui.combinedViews) {
+						eventContext.ui.show("Inventory.ItemsView");
+					} */
+					dataSet.resourceID = 'invbalance';
+					eventContext.application.addResource(dataSet);
+					if (dataSet.count() > 0){
+						ModelService.save(dataSet).then(function(){
+							dataSet.setCurrentIndex(0);
+						});
+					} else {
+						ModelService.clearSearchResult(dataSet);
+						//eventContext.application.showMessage(MessageService.createStaticMessage("norecords").getMessage());
+					}
+					deferred.resolve(true);
+					eventContext.application.hideBusy();
+				}).otherwise(function(error){
+					if(error && error.error){
+						switch (true) {				
+							case (error.error instanceof PlatformRuntimeException):										
+								self.showMessage(error.error.getMessage());
+							break;				
+						}
+					}
+					else {
+						self.showMessage('No valid error message was returned!');
+					}
+					deferred.resolve(false);
+					eventContext.application.hideBusy();
+				});						
+			}
+			return deferred.promise;
+		},
+
+		loadOnlineInvbalance : function(eventContext){
+			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
+			var querybase = view.queries.children[view.queryBaseIndex].queryBase;
+
+			//eventContext.application.showBusy();
+			var self = this;
+
+			var filter = {};
+			var oslcQueryParameters = {};
+			
+			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+			filter.location = currentStoreRoom.get('location');
+
+			/* ModelService.all('invbalance',querybase).then(function(searchResultSet){
+				ModelService.clearSearchResult(searchResultSet);			
+			}); */
+
+			if (currentStoreRoom && !this.isFiltered){
+
+			var deferred = new Deferred();
+
+			ModelService.fetchFromServer("invbalance",querybase).then (function(hasConnectivity){
+				eventContext.application.showBusy();
+				if(hasConnectivity){
+					/* var filter = {};
+					var oslcQueryParameters = {};
+					
+					var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+					filter.location = currentStoreRoom.get('location'); */
+
+					/* ModelService.all('invbalance',querybase).then(function(searchResultSet){
+						ModelService.clearSearchResult(searchResultSet);			
+					}); */
+
+					//network fetch
+					ModelService.filtered('invbalance', querybase, filter, null, true, false, oslcQueryParameters).then(function(dataSet){
+						dataSet.resourceID = 'invbalance';
+						eventContext.application.addResource(dataSet);
+						if (dataSet.count() > 0){
+							ModelService.save(dataSet).then(function(){
+								dataSet.setCurrentIndex(0);
+							});
+
+							eventContext.application.hideBusy();
+						} else {
+							//offline fetch
+
+							//removed attribute that was added by previous modelservice network call.
+							delete filter._querybases;
+
+							ModelService.filtered('invbalance', querybase, filter, null, false, false, oslcQueryParameters).then(function(invbalanceSet){
+								deferred.resolve(invbalanceSet);
+							});
+
+							var promise = deferred.promise;
+							
+							promise.then(function(invbalanceSet){
+								ModelService.clearSearchResult(invbalanceSet).then(function(){					
+																	
+									if (invbalanceSet.count()>0){
+										/* arrayUtil.forEach(invbalanceSet.data, function(data){
+											data.setQueryBase("__search_result__");									
+										}); */	
+					
+										invbalanceSet.resourceID = 'invbalance';
+										eventContext.application.addResource(invbalanceSet);
+										
+										ModelService.save(invbalanceSet).then(function(){
+											invbalanceSet.setCurrentIndex(0);
+										});
+										
+										eventContext.application.hideBusy();	
+									} else {
+										//ModelService.clearSearchResult(invbalanceSet);
+										self.loadLocalInvbalanceByStoreRoom(eventContext);
+										eventContext.application.hideBusy(); 
+									}						
+								});					
+							});						
+						}
+						
+					}).otherwise(function(error){
+						if(error && error.error){
+							switch (true) {				
+								case (error.error instanceof PlatformRuntimeException):										
+									self.showMessage(error.error.getMessage());
+								break;				
+							}
+						}
+						else {
+							self.showMessage('No valid error message was returned!');
+						}
+					});					
+				} else {
+					//offline fetch - filter
+					/* self.loadLocalInvbalanceByStoreRoom(eventContext);
+					eventContext.application.hideBusy(); */
+
+
+					//removed attribute that was added by previous modelservice network call.
+					delete filter._querybases;
+
+					ModelService.filtered('invbalance', querybase, filter, null, false, false, oslcQueryParameters).then(function(invbalanceSet){
+						deferred.resolve(invbalanceSet);
+					});
+
+					var promise = deferred.promise;
+					
+					promise.then(function(invbalanceSet){
+						ModelService.clearSearchResult(invbalanceSet).then(function(){							
+							if (invbalanceSet.count()>0){	
+			
+								invbalanceSet.resourceID = 'invbalance';
+								eventContext.application.addResource(invbalanceSet);
+								
+								ModelService.save(invbalanceSet).then(function(){
+									invbalanceSet.setCurrentIndex(0);
+								});
+								
+								eventContext.application.hideBusy();						
+									
+							} else {
+								self.loadLocalInvbalanceByStoreRoom(eventContext);
+								eventContext.application.hideBusy();						
+							}
+						});					
+					});
+				}
+			});
+		} 	
+		},
+
+		filterBinLookupTo : function(eventContext) {
+			
+			var invbalanceSet = CommonHandler._getAdditionalResource(eventContext,'invbalance');
+			
+			var binList = [];
+			var search = eventContext.application.getResource("searchItems").getCurrentRecord();
+			var binFrom = search.get('binfrom');
+			if (binFrom){
+				if (binFrom != null){
+					invbalanceSet.filter('binnum > $1', binFrom);
+
+					arrayUtil.forEach(invbalanceSet.data, function(invbalance){
+						var binnum = invbalance.get('binnum');
+						if (binnum){
+							if (binList.indexOf(binnum)<0){
+								binList.push(binnum);
+							} else {
+								invbalance.deleteLocal();
+							}
+						} else {
+							invbalance.deleteLocal();
+						}
+					});
+
+					return invbalanceSet;
+
+				}
+			} 
+			
+			invbalanceSet.filter('1 == 0');
+		
+			return invbalanceSet;
+		},
+
+		handleConditionBinnum: function (eventContext) {
+            var currentSearchItems = CommonHandler._getAdditionalResource(eventContext,"searchItems").getCurrentRecord();
+            var binFrom = currentSearchItems.get("binfrom");
+            var binTo = currentSearchItems.get("binto");
+            if (!eventContext.hasResourceWatch("binFromWatch")) {
+                eventContext.addResourceWatchHandle(
+                    currentSearchItems.watch(
+                        "binfrom",
+                        lang.hitch(this, function (attrName, oldValue, newValue) {
+                            if (newValue) {
+                                eventContext.children[0]._setReadOnly(true);
+                            } else {
+                                eventContext.children[0]._setReadOnly(false);
+                            }
+                        })
+                    ),
+                    "binFromWatch"
+                );
+            }
+            if (!eventContext.hasResourceWatch("binToWatch")) {
+                eventContext.addResourceWatchHandle(
+                    currentSearchItems.watch(
+                        "binto",
+                        lang.hitch(this, function (attrName, oldValue, newValue) {
+                            if (newValue) {
+                                eventContext.children[0]._setReadOnly(true);
+                            } else {
+                                eventContext.children[0]._setReadOnly(false);
+                            }
+                        })
+                    ),
+                    "binToWatch"
+                );
+            }
+        },
+
+        handleConditionBinRange: function (eventContext) {
+            var currentSearchItems = CommonHandler._getAdditionalResource(eventContext,"searchItems").getCurrentRecord();
+            var binNum = currentSearchItems.get("binnum");
+            if (!eventContext.hasResourceWatch("binNumWatch")) {
+                eventContext.addResourceWatchHandle(
+                    currentSearchItems.watch(
+                        "binnum",
+                        lang.hitch(this, function (attrName, oldValue, newValue) {
+                            if (newValue) {
+                                eventContext.children[0]._setReadOnly(true);
+                                eventContext.children[1]._setReadOnly(true);
+                            } else {
+                                eventContext.children[0]._setReadOnly(false);
+                                eventContext.children[1]._setReadOnly(false);
+                            }
+                        })
+                    ),
+                    "binNumWatch"
+                );
+            }
+        },
+
+		_addBackSlash: function (str) {
+            var result = "";
+            var chars = str.split("");
+            chars.forEach(function (oneChar) {
+                if (oneChar === '"') {
+                    oneChar = '\\"';
+                }
+                if (oneChar === "-") {
+                    oneChar = "\\-";
+                }
+                if (oneChar === ",") {
+                    oneChar = "\\,";
+                }
+                result += oneChar;
+            });
+            return result;
+        },
+
+		// [Loc]
 		
 		/*
 		 * Triggered functionality when back button is selected
@@ -538,15 +1202,51 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 		
 		discardSummaryView: function(eventContext){
-			
+			// Loc
 			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
+			var savedQueryIndex = eventContext.application.ui.savedQueryIndex;
+			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
+			if (currentStoreRoom.get('location') != null){
+                var self = this;
+				var promise = view.changeQueryBaseIndex(savedQueryIndex);
+				promise.then(function(){
+					self.showFilteredList(eventContext).then(function(result){
+						if (result){
+							view.lists[0].refresh();
+						}
+					});
+				});
+			} else {
+				CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
+					if (!hasConnectivity) {
+						var promise = view.changeQueryBase(savedQueryIndex);{}
+						promise.then(function(){
+							CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
+								if (!hasConnectivity) {
+									var invbalanceSet = CommonHandler._getAdditionalResource(eventContext,'invbalance');
+									CommonHandler._clearFilterForResource(eventContext,invbalanceSet);
+									view.lists[0].refresh();
+								}
+							});
+						});
+					} else{
+						var invbalanceSet = CommonHandler._getAdditionalResource(eventContext,'invbalance');
+						CommonHandler._clearFilterForResource(eventContext,invbalanceSet);
+						view.changeQueryBase(savedQueryIndex);
+						//view.lists[0].refresh();
+					}
+				});
+			}
+
+
+			/* var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
 			view.changeQueryBase(eventContext.application.ui.savedQueryIndex);
 		    var queryBase = view.queries.children[eventContext.application.ui.savedQueryIndex].queryBase;
 			ModelService.all('invbalance', queryBase).then(function(modelDataSet){
 				modelDataSet.resourceID = 'invbalance';
 				eventContext.application.addResource(modelDataSet);
 				eventContext.application.ui.getViewFromId('Inventory.ItemsView').lists[0].refresh();
-			});
+			}); */
 		},
 		
 		filterItemsForLookup : function(eventContext) {
@@ -647,8 +1347,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			additionalstoreroom.filter(args);					
 		},
 
+		filterStoreroomLookup: function(eventContext) {
+			var additionalstoreroom = CommonHandler._getAdditionalResource(eventContext,'additionalstoreroom');
+			CommonHandler._clearFilterForResource(eventContext,additionalstoreroom);
+			return additionalstoreroom;					
+		},
+
 		
 		filterBinLookup : function(eventContext) {
+			/* 
 			// set lookup filter on additionalInvbalance
 			var invbalanceSet = CommonHandler._getAdditionalResource(eventContext,'invbalance');
 			CommonHandler._clearFilterForResource(eventContext,invbalanceSet);
@@ -673,7 +1380,30 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			binList = [];
 		
-			return invbalanceSet;
+			return invbalanceSet; 
+			*/
+
+			// set lookup filter on getDistinctBin
+			var distinctBin = CommonHandler._getAdditionalResource(eventContext,'getDistinctBin');
+			CommonHandler._clearFilterForResource(eventContext,distinctBin);
+			var binList = [];
+			
+			arrayUtil.forEach(distinctBin.data, function(item){
+				var binnum = item.get('binnum');
+				if (binnum){
+					if (binList.indexOf(binnum)<0){
+						binList.push(binnum);
+					} else {
+						item.deleteLocal();
+					}
+				} else {
+					item.deleteLocal();
+				}
+			});
+			
+			binList = [];
+		
+			return distinctBin;
 
 		},
 		
@@ -683,10 +1413,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		clearAdhocFields : function (eventContext){
 			var search = eventContext.application.getResource("searchItems").getCurrentRecord();
 			search.setNullValue('itemnum');
-			search.setNullValue('location');
+			//search.setNullValue('location');
 			search.setNullValue('binnum');
 			search.setNullValue('lotnum');
 			search.setNullValue('siteid');
+
+			// Loc
+			search.setNullValue('description');
+			search.setNullValue('binfrom');
+			search.setNullValue('binto');
 		},
 		
 		adhocInit : function (eventContext) {
@@ -765,7 +1500,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		validateCount : function (eventContext) {
 			var currentRecord = eventContext.getCurrentRecord();
 			var count = currentRecord.getPendingOrOriginalValue('count');
-					
+
 			if (count!='' && (numberUtil.parse(count, this.application.getUserLocale()) < 0)) {
 				throw new PlatformRuntimeException('newReadingNaN',[count]);
 			}

@@ -81,19 +81,31 @@ require([ "dojo/_base/declare", "dojo/parser", "dojo/ready", "dojo/Deferred",
 			var newUrl = url;
 			if (this.isProxyEnabled(mapManager) == true
 					&& url.indexOf(this.urlProxy) == -1) {
-				newUrl = this.getProxyURL() + url;
+				newUrl = this.getProxyURL(mapManager) + url;
 			}
 			return newUrl;
+		},
+		
+		getMobileMaximoSpatialInstance: function() {
+			var spatialMapHandler = WL.application["platform.handlers.spatial.SpatialMapHandler"];
+			var mobileMaximoSpatial = spatialMapHandler["getMobileMaximoSpatialInstance"]();
+			return mobileMaximoSpatial;
 		},
 
 		/**
 		 * Method to return the base proxy URL, usually: <host>:<ip>/webclient/pluss/proxy.jsp?
 		 * @returns {String}
 		 */
-		getProxyURL : function() {
-			var mapServiceMeta = ResourceMetaData
-					.getResourceMetadata("plussmapservice");
-			return mapServiceMeta.getURLBase() + this.urlProxy;
+		getProxyURL : function(mapManager) {
+			var maximoUrl;
+			if (mapManager){
+				maximoUrl = mapManager.maximoAddress;
+			}else{
+				var mobileMaximoSpatial = this.getMobileMaximoSpatialInstance();
+				maximoUrl = mobileMaximoSpatial.mapManager.maximoAddress;
+			}
+			
+			return maximoUrl + this.urlProxy;
 		},
 
 		/**
@@ -146,7 +158,7 @@ require([ "dojo/_base/declare", "dojo/parser", "dojo/ready", "dojo/Deferred",
 
 						var urlToRequest = url;
 						var skipMaximo = !this.isProxyEnabled(mapManager);
-						var maximoUrl = mapServiceMeta.getURLBase();
+						var maximoUrl = mapManager.maximoAddress;
 
 						if (method == WLResourceRequest.GET) {
 							resourceRequest.setQueryParameter('url',

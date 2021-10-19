@@ -6,20 +6,20 @@
     <displayName>IBMCount</displayName>
     <description>Physical Count</description>
     <author>
-        <name>Viet Nguyen</name>
-        <email>viet.nguyen@avenue-net.com</email>
-        <homepage>http://avenue-net.com</homepage>
-        <copyright>Copyright by Avenue JSC</copyright>
+        <name>application's author</name>
+        <email>application author's e-mail</email>
+        <homepage>http://mycompany.com</homepage>
+        <copyright>Copyright My Company</copyright>
     </author>
     <mainFile>index.html</mainFile>
     <features>
         <JSONStore/>
     </features>
     <thumbnailImage>common/images/thumbnail.png</thumbnailImage>
-    <iphone applicationId="Physical Count" bundleId="com.avenue.maximoanywhere.PhysicalCount" version="7.6.4">
+    <iphone applicationId="Physical Count" bundleId="com.ibm.maximo.anywhere.physicalcount" version="7.6.4">
         <worklightSettings include="true"/>
     </iphone>
-    <android version="7.6.2">
+    <android version="7.6.4">
         <worklightSettings include="true"/>
         <security>
             <encryptWebResources enabled="false"/>

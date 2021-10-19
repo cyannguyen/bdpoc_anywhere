@@ -78,6 +78,12 @@ function(declare, Deferred, arrayUtil, lang, all, CommunicationManager, JsonTran
 			}
 			
 		} else {
+			if (typeof query[fieldName] === "object" && valueToFormat != null && ("from" in valueToFormat || "to" in valueToFormat)){
+				formattedValue = {};
+				arrayUtil.forEach(Object.keys(valueToFormat), function(key) {
+					formattedValue[key] = '"' + valueToFormat[key] + '"';
+				});
+			} else
 			formattedValue = '"' + query[fieldName] + '"';
 		}
 		return formattedValue;

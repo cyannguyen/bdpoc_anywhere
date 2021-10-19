@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<app id="Esignature" version="202002190944" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
+<app id="Esignature" version="201812271215" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
     <ui id="ui">
 
         <dialog id="Platform.EsigLoginView" label="Electronic Signature Authentication" resource="PlatformEsigResource">

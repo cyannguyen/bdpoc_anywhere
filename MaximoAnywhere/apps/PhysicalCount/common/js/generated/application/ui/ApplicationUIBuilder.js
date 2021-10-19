@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2021-06-24 15:10:34
+// Build: 2021-10-15 16:02:21
 //----------------------------------------------------------------//
 define(   "generated/application/ui/ApplicationUIBuilder", 
       [
@@ -43,7 +43,6 @@ define(   "generated/application/ui/ApplicationUIBuilder",
          "application/handlers/InventoryHandler", 
          "platform/ui/control/Actions", 
          "platform/ui/control/Action", 
-         "application/handlers/CodeScannerHandlerExt", 
          "platform/handlers/WorkOfflineHandler", 
          "platform/ui/control/ProgressIndicator", 
          "platform/ui/control/List", 
@@ -62,14 +61,12 @@ define(   "generated/application/ui/ApplicationUIBuilder",
          "platform/ui/control/SearchAttribute", 
          "platform/ui/control/ReturnAttributes", 
          "platform/ui/control/ReturnAttribute", 
+         "platform/handlers/AttachmentHandler", 
          "platform/handlers/PseudoOfflineModeHandler", 
          "platform/handlers/CreateQueryBaseHandler", 
          "platform/ui/control/ErrorActions", 
          "platform/handlers/LookupHandler", 
          "platform/handlers/PushNotificationDialogHandler", 
-         "platform/handlers/AttachmentHandler", 
-         "platform/handlers/EsigHandler", 
-         "platform/signature/handler/SignatureHandler", 
          "platform/ui/control/DateTimePicker", 
          "platform/handlers/SettingsHandler", 
          "platform/handlers/ChangePasswordHandler", 
@@ -78,10 +75,12 @@ define(   "generated/application/ui/ApplicationUIBuilder",
          "platform/logging/handler/LoggerReportHandler", 
          "platform/performance/handler/TimeTrackHandler", 
          "platform/handlers/DialogHandler", 
-         "platform/ui/control/DurationPicker"
+         "platform/ui/control/DurationPicker", 
+         "platform/handlers/EsigHandler", 
+         "platform/signature/handler/SignatureHandler"
       ],
 
-function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManager, AdditionalDataUIManager, MessageService, Application, UserInterface, Dialog, Container, Text, Button, SSOHandler, LoginHandler, View, Image, _ApplicationHandlerBase, Queries, Query, InventoryHandler, Actions, Action, CodeScannerHandlerExt, WorkOfflineHandler, ProgressIndicator, List, FindByScan, SortOptions, SortOption, SortAttribute, ListItemTemplate, ListText, Group, GroupItem, ErrorIndicator, Footer, Lookup, SearchAttributes, SearchAttribute, ReturnAttributes, ReturnAttribute, PseudoOfflineModeHandler, CreateQueryBaseHandler, ErrorActions, LookupHandler, PushNotificationDialogHandler, AttachmentHandler, EsigHandler, SignatureHandler, DateTimePicker, SettingsHandler, ChangePasswordHandler, AdditionalDataDialogHandler, RadioButton, LoggerReportHandler, TimeTrackHandler, DialogHandler, DurationPicker) {
+function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManager, AdditionalDataUIManager, MessageService, Application, UserInterface, Dialog, Container, Text, Button, SSOHandler, LoginHandler, View, Image, _ApplicationHandlerBase, Queries, Query, InventoryHandler, Actions, Action, WorkOfflineHandler, ProgressIndicator, List, FindByScan, SortOptions, SortOption, SortAttribute, ListItemTemplate, ListText, Group, GroupItem, ErrorIndicator, Footer, Lookup, SearchAttributes, SearchAttribute, ReturnAttributes, ReturnAttribute, AttachmentHandler, PseudoOfflineModeHandler, CreateQueryBaseHandler, ErrorActions, LookupHandler, PushNotificationDialogHandler, DateTimePicker, SettingsHandler, ChangePasswordHandler, AdditionalDataDialogHandler, RadioButton, LoggerReportHandler, TimeTrackHandler, DialogHandler, DurationPicker, EsigHandler, SignatureHandler) {
       return declare("generated.application.ui.ApplicationUIBuilder", BuilderBase, {
 
          build : function() {
@@ -109,7 +108,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             'globalization.use.mock' : false,
             'run.bvt.scripts' : false,
             'build.update.check.enabled' : true,
-            'pushnotification.enabled' : true,
+            'pushnotification.enabled' : false,
             'map.enabled' : false,
 
             });
@@ -332,7 +331,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
             var image001 = new Image({
-               'image' : '..\/..\/..\/..\/..\/..\/images\/mdpi\/app_icon_main.svg',
+               'image' : '..\/..\/..\/..\/..\/..\/images\/mdpi\/BDPOCLogo.png',
                'cssClass' : 'productLogo',
                'artifactId' : 'platform.LoginView_image_0',
                'id' : 'aw9576ccdf',
@@ -475,6 +474,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
             var query001 = new Query({
+               'system' : 'true',
                'artifactId' : 'Inventory.ItemsView_physicalcount',
                'id' : 'aw943dab82',
                'label' : MessageService.createStaticMessage('Physical Count'),
@@ -482,8 +482,19 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             });
             queries001.addChild( query001 );
 
+            var eventHandlers007 = [
+               {
+                     'method' : 'loadInvbalanceByQueryBase',
+                     'artifactId' : 'Inventory.ItemsView_physicalcount_eventHandlers_render',
+                     'id' : 'awdfc28e51',
+                     'event' : 'click',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            query001.eventHandlers = eventHandlers007;
 
             var query002 = new Query({
+               'system' : 'true',
                'artifactId' : 'Inventory.ItemsView_physicalcountNB',
                'id' : 'awff40445c',
                'label' : MessageService.createStaticMessage('Physical Count NB'),
@@ -491,6 +502,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             });
             queries001.addChild( query002 );
 
+            var eventHandlers008 = [
+               {
+                     'method' : 'loadInvbalanceByQueryBase',
+                     'artifactId' : 'Inventory.ItemsView_physicalcountNB_eventHandlers_render',
+                     'id' : 'awec280a78',
+                     'event' : 'click',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            query002.eventHandlers = eventHandlers008;
 
             var query003 = new Query({
                'system' : 'true',
@@ -501,7 +522,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             });
             queries001.addChild( query003 );
 
-            var eventHandlers007 = [
+            var eventHandlers009 = [
                {
                      'method' : 'hideShowErrorMenu',
                      'artifactId' : 'Inventory.ItemsView___errored___eventHandlers_render_hideShowErrorMenu',
@@ -510,7 +531,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            query003.eventHandlers = eventHandlers007;
+            query003.eventHandlers = eventHandlers009;
 
             var query004 = new Query({
                'system' : 'true',
@@ -530,34 +551,14 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
             var action001 = new Action({
-               'image' : 'header_barcode_OFF.svg',
-               'enableFeatureByProperty' : 'barcode.enabled',
-               'artifactId' : 'Inventory.ItemsView_ScanBarCode_action',
-               'id' : 'aw817bbff7',
-               'label' : MessageService.createStaticMessage('Scan Bar Code'),
-            });
-            actions001.addChild( action001 );
-
-            var eventHandlers008 = [
-               {
-                     'method' : 'findByScan',
-                     'artifactId' : 'Inventory.ItemsView_ScanBarCode_action_eventHandlers_click_findByScan',
-                     'id' : 'aw305f7f1c',
-                     'event' : 'click',
-                     'class' : 'application.handlers.CodeScannerHandlerExt',
-               }
-            ];
-            action001.eventHandlers = eventHandlers008;
-
-            var action002 = new Action({
                'overflow' : true,
                'artifactId' : 'Inventory.ItemsView_DownloadWorkList_action',
                'id' : 'awe198234',
                'label' : MessageService.createStaticMessage('Download Work List'),
             });
-            actions001.addChild( action002 );
+            actions001.addChild( action001 );
 
-            var eventHandlers009 = [
+            var eventHandlers010 = [
                {
                      'method' : 'workoffline',
                      'artifactId' : 'WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_click_workoffline',
@@ -573,16 +574,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            action002.eventHandlers = eventHandlers009;
+            action001.eventHandlers = eventHandlers010;
 
-            var action003 = new Action({
+            var action002 = new Action({
                'image' : '\/images\/header_recount_OFF.svg',
                'transitionTo' : 'Inventory.ItemRecountView',
                'artifactId' : 'Inventory.ItemsView_Recount_action',
                'id' : 'awaf3f032e',
                'label' : MessageService.createStaticMessage('Recount'),
             });
-            actions001.addChild( action003 );
+            actions001.addChild( action002 );
 
             var requiredResources002 = {
                'invbalance' : {
@@ -593,6 +594,11 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                   'artifactId' : 'Inventory.ItemsView_appInfo',
                   'id' : 'aw90d85426',
                },
+               'storeRoomResource' : {
+                  'reload' : true,
+                  'artifactId' : 'Inventory.ItemsView_additionalstoreroom',
+                  'id' : 'awa2b2173a',
+               },
             };
             view002.addRequiredResources( requiredResources002 );
 
@@ -601,6 +607,25 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awed262ada',
             });
             view002.addChild( progressIndicator001 );
+
+
+            var container008 = new Container({
+               'cssClass' : 'storeRoomHeaderContainer',
+               'resource' : 'storeRoomResource',
+               'artifactId' : 'Inventory.ItemsView_StoreRoom_container_',
+               'id' : 'awf25bf19d',
+            });
+            view002.addChild( container008 );
+
+
+            var text011 = new Text({
+               'resourceAttribute' : 'location',
+               'cssClass' : 'storeRoomHeader',
+               'editable' : false,
+               'artifactId' : 'Inventory.ItemsView.StoreRoom_Label',
+               'id' : 'awd8a949f',
+            });
+            container008.addChild( text011 );
 
 
 
@@ -662,77 +687,160 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
             var sortOption003 = new SortOption({
-               'artifactId' : 'Inventory.ItemsView_sortOption_ABCType',
-               'id' : 'awe065db68',
-               'label' : MessageService.createStaticMessage('ABC Type'),
+               'artifactId' : 'Inventory.ItemsView_sortOption_CountDate',
+               'id' : 'aw2970d975',
+               'label' : MessageService.createStaticMessage('Count Date'),
             });
             sortOptions001.addChild( sortOption003 );
 
 
             var sortAttribute004 = new SortAttribute({
-               'name' : 'abctype',
-               'artifactId' : 'Inventory.ItemsView_ABCType_sortAttribute_abctype',
-               'id' : 'awe1cafc26',
-               'direction' : 'asc',
+               'name' : 'dateparse',
+               'artifactId' : 'Inventory.ItemsView_CountDate_sortAttribute_physcntdate',
+               'id' : 'aw791fd773',
+               'direction' : 'desc',
             });
             sortOption003.addChild( sortAttribute004 );
 
 
 
             var listItemTemplate001 = new ListItemTemplate({
-               'layout' : 'ItemList',
+               'layout' : 'ItemList3',
                'artifactId' : 'Inventory.ItemsView_invbalance_listItemTemplate_ItemList',
                'id' : 'aw7c94012a',
             });
 
             var listtext001 = new ListText({
-               'resourceAttribute' : 'itemnum',
-               'cssClass' : 'bold textappearance-medium',
-               'layoutInsertAt' : 'item1',
-               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList_itemnum',
-               'id' : 'awd1c4ddef',
+               'resourceAttribute' : 'description',
+               'cssClass' : 'bold textappearance-smallerer descriptionListItem',
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row1',
+               'id' : 'aw4cfe2d40',
             });
             listItemTemplate001.addChild( listtext001 );
 
 
             var listtext002 = new ListText({
-               'resourceAttribute' : 'description',
-               'cssClass' : 'bold textappearance-medium',
-               'layoutInsertAt' : 'item2',
-               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList_itemnumdesc',
-               'id' : 'aw5ebaab51',
+               'cssClass' : 'bold textappearance-smaller listItemTiltle',
+               'layoutInsertAt' : 'item3',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row2_col0',
+               'id' : 'aw96416c27',
+               'value' : MessageService.createStaticMessage('Item: '),
             });
             listItemTemplate001.addChild( listtext002 );
 
 
             var listtext003 = new ListText({
-               'resourceAttribute' : 'location',
-               'layoutInsertAt' : 'item3',
-               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList_location',
-               'id' : 'aw6e52dfc7',
+               'resourceAttribute' : 'itemnum',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item4',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row2_col1',
+               'id' : 'awe1465cb1',
             });
             listItemTemplate001.addChild( listtext003 );
 
 
             var listtext004 = new ListText({
-               'resourceAttribute' : 'binnum',
-               'layoutInsertAt' : 'item4',
-               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList_binnum',
-               'id' : 'awed7aa78b',
+               'cssClass' : 'bold textappearance-smaller listItemTiltle',
+               'layoutInsertAt' : 'item5',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row2_col2',
+               'id' : 'aw784f0d0b',
+               'value' : MessageService.createStaticMessage('Bin Num: '),
             });
             listItemTemplate001.addChild( listtext004 );
 
 
             var listtext005 = new ListText({
-               'resourceAttribute' : 'lotnum',
-               'layoutInsertAt' : 'item5',
-               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList_lotnum',
-               'id' : 'aw679484a0',
+               'resourceAttribute' : 'binnum',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item6',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row2_col3',
+               'id' : 'awf483d9d',
             });
             listItemTemplate001.addChild( listtext005 );
 
 
-            var eventHandlers010 = [
+            var listtext006 = new ListText({
+               'cssClass' : 'bold textappearance-smaller listItemTiltle',
+               'layoutInsertAt' : 'item7',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row3_col0',
+               'id' : 'aw5d1dbf82',
+               'value' : MessageService.createStaticMessage('Unit: '),
+            });
+            listItemTemplate001.addChild( listtext006 );
+
+
+            var listtext007 = new ListText({
+               'resourceAttribute' : 'issueunit',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item8',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row3_col1',
+               'id' : 'aw2a1a8f14',
+            });
+            listItemTemplate001.addChild( listtext007 );
+
+
+            var listtext008 = new ListText({
+               'cssClass' : 'bold textappearance-smaller listItemTiltle',
+               'layoutInsertAt' : 'item9',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row3_col2',
+               'id' : 'awb313deae',
+               'value' : MessageService.createStaticMessage('Qty: '),
+            });
+            listItemTemplate001.addChild( listtext008 );
+
+
+            var listtext009 = new ListText({
+               'resourceAttribute' : 'curbal',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item10',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row3_col3',
+               'id' : 'awc414ee38',
+            });
+            listItemTemplate001.addChild( listtext009 );
+
+
+            var listtext010 = new ListText({
+               'cssClass' : 'bold textappearance-smaller listItemTiltle',
+               'layoutInsertAt' : 'item11',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row4_col0',
+               'id' : 'aw40188f3a',
+               'value' : MessageService.createStaticMessage('Part no: '),
+            });
+            listItemTemplate001.addChild( listtext010 );
+
+
+            var listtext011 = new ListText({
+               'resourceAttribute' : 'modelnum',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item12',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row4_col1',
+               'id' : 'aw371fbfac',
+            });
+            listItemTemplate001.addChild( listtext011 );
+
+
+            var listtext012 = new ListText({
+               'resourceAttribute' : 'joinedlastcountdate',
+               'cssClass' : 'bold textappearance-smaller listItemMargin',
+               'layoutInsertAt' : 'item13',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row5_col1',
+               'id' : 'awfc436c09',
+            });
+            listItemTemplate001.addChild( listtext012 );
+
+
+            var image003 = new Image({
+               'resourceAttribute' : 'row0',
+               'cssClass' : 'checkImage',
+               'layoutInsertAt' : 'item14',
+               'artifactId' : 'Inventory.ItemsView_invbalance_ItemList2_row0',
+               'id' : 'aw3bf91dd6',
+            });
+            listItemTemplate001.addChild( image003 );
+
+
+            var eventHandlers011 = [
                {
                      'method' : 'initializeBarcodeScanner',
                      'artifactId' : 'Inventory.ItemsView_invbalance_list_eventHandlers_render_initializeBarcodeScanner',
@@ -757,13 +865,13 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'findByScan' : findByScan001,
                'listItemTemplate' : listItemTemplate001,
                'artifactId' : 'Inventory.ItemsView_invbalance_list',
-               'eventHandlers' : eventHandlers010,
+               'eventHandlers' : eventHandlers011,
                'id' : 'awbdfd7f95',
                'displayPageSize' : '20',
             });
             view002.addChild( list001 );
 
-            var eventHandlers011 = [
+            var eventHandlers012 = [
                {
                      'method' : 'showBusyList',
                      'artifactId' : 'Inventory.ItemsView_eventHandlers_render_showBusyList',
@@ -772,7 +880,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            view002.eventHandlers = eventHandlers011;
+            view002.eventHandlers = eventHandlers012;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -784,7 +892,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
             var view003 = new View({
                'resource' : 'invbalance',
-               'showKeyboard' : 'true',
+               'showOverflow' : false,
+               'showKeyboard' : 'false',
                'id' : 'Inventory.ItemDetailView',
                'label' : MessageService.createStaticMessage('Item Details'),
             });
@@ -806,69 +915,198 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             };
             view003.addRequiredResources( requiredResources003 );
 
+            var actions002 = new Actions({
+               'artifactId' : 'Inventory.ItemDetailView_actions',
+               'id' : 'awe6c67933',
+            });
+            view003.addChild( actions002 );
+
+
+            var action003 = new Action({
+               'image' : 'left_arrow.png',
+               'overflow' : false,
+               'artifactId' : 'Inventory.ItemDetailView_Previous_action',
+               'id' : 'aw9b6881c3',
+               'label' : MessageService.createStaticMessage('Previous'),
+            });
+            actions002.addChild( action003 );
+
+            var eventHandlers013 = [
+               {
+                     'method' : 'previousRecord',
+                     'artifactId' : 'Inventory.ItemDetailView_Previous_action_eventHandlers_click',
+                     'id' : 'aw9d6d367f',
+                     'event' : 'click',
+                     'class' : 'application.handlers.InventoryHandler',
+               },
+               {
+                     'method' : 'disableOnFirstRecord',
+                     'artifactId' : 'Inventory.ItemDetailView_Previous_action_eventHandlers_datachange_disableOnFirstRecord',
+                     'id' : 'aw81a83ddc',
+                     'event' : 'datachange',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            action003.eventHandlers = eventHandlers013;
+
+            var action004 = new Action({
+               'image' : 'right_arrow.png',
+               'overflow' : false,
+               'artifactId' : 'Inventory.ItemDetailView_Next_action',
+               'id' : 'aw87224ce7',
+               'label' : MessageService.createStaticMessage('Next'),
+            });
+            actions002.addChild( action004 );
+
+            var eventHandlers014 = [
+               {
+                     'method' : 'nextRecord',
+                     'artifactId' : 'Inventory.ItemDetailView_Next_action_eventHandlers_click',
+                     'id' : 'aw30f6da9',
+                     'event' : 'click',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            action004.eventHandlers = eventHandlers014;
+
 
             var listItemTemplate002 = new ListItemTemplate({
-               'layout' : 'ItemList',
+               'layout' : 'DetailItemList',
                'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_listItemTemplate_ItemList',
                'id' : 'aw95cd7028',
             });
 
-            var listtext006 = new ListText({
-               'resourceAttribute' : 'itemnum',
-               'cssClass' : 'bold textappearance-medium',
-               'layoutInsertAt' : 'item1',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_itemnum',
-               'id' : 'awfb73d9ed',
-            });
-            listItemTemplate002.addChild( listtext006 );
-
-
-            var listtext007 = new ListText({
-               'resourceAttribute' : 'location',
-               'layoutInsertAt' : 'item2',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_location',
-               'id' : 'aw807609ef',
-            });
-            listItemTemplate002.addChild( listtext007 );
-
-
-            var listtext008 = new ListText({
+            var listtext013 = new ListText({
                'resourceAttribute' : 'description',
+               'cssClass' : 'detailDescriptionItem',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row0',
+               'id' : 'aw6ac7c7d6',
+            });
+            listItemTemplate002.addChild( listtext013 );
+
+
+            var listtext014 = new ListText({
+               'cssClass' : 'detailItemTitle',
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row1_col0',
+               'id' : 'awd469e3fb',
+               'value' : MessageService.createStaticMessage('Item'),
+            });
+            listItemTemplate002.addChild( listtext014 );
+
+
+            var listtext015 = new ListText({
+               'cssClass' : 'detailItemTitle',
                'layoutInsertAt' : 'item3',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_itemdesc',
-               'id' : 'aw7f234eb8',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row1_col1',
+               'id' : 'awa36ed36d',
+               'value' : MessageService.createStaticMessage('Part No:'),
             });
-            listItemTemplate002.addChild( listtext008 );
+            listItemTemplate002.addChild( listtext015 );
 
 
-            var listtext009 = new ListText({
-               'resourceAttribute' : 'binnum',
+            var listtext016 = new ListText({
+               'resourceAttribute' : 'itemnum',
+               'cssClass' : 'detailItem',
                'layoutInsertAt' : 'item4',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_binnum',
-               'id' : 'aw35553170',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row2_col0',
+               'id' : 'aw52fd9155',
             });
-            listItemTemplate002.addChild( listtext009 );
+            listItemTemplate002.addChild( listtext016 );
 
 
-            var listtext010 = new ListText({
-               'resourceAttribute' : 'lot',
+            var listtext017 = new ListText({
+               'resourceAttribute' : 'modelnum',
+               'cssClass' : 'detailItem',
                'layoutInsertAt' : 'item5',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_lot',
-               'id' : 'awf73c8bc7',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row2_col1',
+               'id' : 'aw25faa1c3',
             });
-            listItemTemplate002.addChild( listtext010 );
+            listItemTemplate002.addChild( listtext017 );
 
 
-            var listtext011 = new ListText({
-               'resourceAttribute' : 'unit',
+            var listtext018 = new ListText({
+               'cssClass' : 'detailItemTitle',
                'layoutInsertAt' : 'item6',
-               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_unit',
-               'id' : 'aw53222f0e',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row3_col0',
+               'id' : 'aw99a142f0',
+               'value' : MessageService.createStaticMessage('Quantity:'),
             });
-            listItemTemplate002.addChild( listtext011 );
+            listItemTemplate002.addChild( listtext018 );
 
 
-            var eventHandlers012 = [
+            var listtext019 = new ListText({
+               'cssClass' : 'detailItemTitle',
+               'layoutInsertAt' : 'item7',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row3_col1',
+               'id' : 'aweea67266',
+               'value' : MessageService.createStaticMessage('Bin Num:'),
+            });
+            listItemTemplate002.addChild( listtext019 );
+
+
+            var listtext020 = new ListText({
+               'resourceAttribute' : 'curbal',
+               'cssClass' : 'detailItem',
+               'layoutInsertAt' : 'item8',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row4_col0',
+               'id' : 'aw84a47248',
+            });
+            listItemTemplate002.addChild( listtext020 );
+
+
+            var listtext021 = new ListText({
+               'resourceAttribute' : 'binnum',
+               'cssClass' : 'detailItem',
+               'layoutInsertAt' : 'item9',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row4_col1',
+               'id' : 'awf3a342de',
+            });
+            listItemTemplate002.addChild( listtext021 );
+
+
+            var listtext022 = new ListText({
+               'cssClass' : 'detailItemTitle',
+               'layoutInsertAt' : 'item10',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row5_col0',
+               'id' : 'aw4ff8a1ed',
+               'value' : MessageService.createStaticMessage('Unit:'),
+            });
+            listItemTemplate002.addChild( listtext022 );
+
+
+            var listtext023 = new ListText({
+               'cssClass' : 'detailItemTitle',
+               'layoutInsertAt' : 'item11',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row_col1',
+               'id' : 'aw76ab60ae',
+               'value' : MessageService.createStaticMessage('Last Count Date:'),
+            });
+            listItemTemplate002.addChild( listtext023 );
+
+
+            var listtext024 = new ListText({
+               'resourceAttribute' : 'unit',
+               'cssClass' : 'detailItem',
+               'layoutInsertAt' : 'item12',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row6_col0',
+               'id' : 'awc96cd343',
+            });
+            listItemTemplate002.addChild( listtext024 );
+
+
+            var listtext025 = new ListText({
+               'resourceAttribute' : 'lastcountdate',
+               'cssClass' : 'detailItem',
+               'layoutInsertAt' : 'item13',
+               'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_ItemList_row6_col1',
+               'id' : 'awbe6be3d5',
+            });
+            listItemTemplate002.addChild( listtext025 );
+
+
+            var eventHandlers015 = [
                {
                      'method' : 'populateItemDetail',
                      'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_list_eventHandlers_render_populateItemDetail',
@@ -883,25 +1121,25 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'showHeader' : false,
                'listItemTemplate' : listItemTemplate002,
                'artifactId' : 'Inventory.ItemDetailView_itemDetailResource_list',
-               'eventHandlers' : eventHandlers012,
+               'eventHandlers' : eventHandlers015,
                'id' : 'aw85ecaeec',
             });
             view003.addChild( list002 );
 
 
-            var container008 = new Container({
+            var container009 = new Container({
                'resource' : 'invbalance',
                'artifactId' : 'Inventory.ItemDetailView_invbalance_container_0',
                'id' : 'awba4bbe78',
             });
-            view003.addChild( container008 );
+            view003.addChild( container009 );
 
 
             var group001 = new Group({
                'artifactId' : 'Inventory.ItemDetailView_group_0',
                'id' : 'aw7e912056',
             });
-            container008.addChild( group001 );
+            container009.addChild( group001 );
 
 
             var groupitem001 = new GroupItem({
@@ -912,26 +1150,26 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             group001.addChild( groupitem001 );
 
 
-            var text011 = new Text({
+            var text012 = new Text({
                'editable' : false,
                'layoutInsertAt' : 'item1',
                'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_0_CurrentBalance',
                'id' : 'awa9e0e343',
                'label' : MessageService.createStaticMessage('Current Balance:'),
             });
-            groupitem001.addChild( text011 );
+            groupitem001.addChild( text012 );
 
 
-            var text012 = new Text({
+            var text013 = new Text({
                'resourceAttribute' : 'curbal',
                'editable' : false,
                'layoutInsertAt' : 'item2',
                'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_0_curbal',
                'id' : 'aw356cdaba',
             });
-            groupitem001.addChild( text012 );
+            groupitem001.addChild( text013 );
 
-            var eventHandlers013 = [
+            var eventHandlers016 = [
                {
                      'method' : 'showCurrentBalance',
                      'artifactId' : 'Inventory.ItemDetailView_container_0_eventHandlers_render_showCurrentBalance',
@@ -940,135 +1178,89 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            container008.eventHandlers = eventHandlers013;
+            container009.eventHandlers = eventHandlers016;
 
-            var container009 = new Container({
+            var container010 = new Container({
                'resource' : 'invbalance',
                'artifactId' : 'Inventory.ItemDetailView_invbalance_container_1',
                'id' : 'awcd4c8eee',
             });
-            view003.addChild( container009 );
+            view003.addChild( container010 );
 
 
             var errorIndicator001 = new ErrorIndicator({
                'artifactId' : 'Inventory.ItemDetailView_errorIndicator',
                'id' : 'aw1bdc6d63',
             });
-            container009.addChild( errorIndicator001 );
+            container010.addChild( errorIndicator001 );
 
 
-            var group002 = new Group({
-               'artifactId' : 'Inventory.ItemDetailView_group_1',
-               'id' : 'aw99610c0',
+            var container011 = new Container({
+               'cssClass' : 'blankContainer',
+               'artifactId' : 'Inventory.ItemDetailView_invbalance_container_blank',
+               'id' : 'aw231ec3d7',
             });
-            container009.addChild( group002 );
+            view003.addChild( container011 );
 
 
-            var groupitem002 = new GroupItem({
-               'layout' : 'ItemList',
-               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_1',
-               'id' : 'aw88971ffd',
+            var container012 = new Container({
+               'cssClass' : 'inputCountContainer',
+               'resource' : 'invbalance',
+               'artifactId' : 'Inventory.ItemDetailView_invbalance_container_2',
+               'id' : 'aw5445df54',
             });
-            group002.addChild( groupitem002 );
-
-
-            var text013 = new Text({
-               'resourceAttribute' : 'physcnt',
-               'editable' : false,
-               'layoutInsertAt' : 'item1',
-               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_1_physcnt_LastCount',
-               'id' : 'awd18a7c0c',
-               'label' : MessageService.createStaticMessage('Last Count'),
-            });
-            groupitem002.addChild( text013 );
+            view003.addChild( container012 );
 
 
             var text014 = new Text({
-               'resourceAttribute' : 'physcntdate',
-               'editable' : false,
-               'layoutInsertAt' : 'item2',
-               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_1_physcntdate_Date',
-               'id' : 'awbf9e15fe',
-               'label' : MessageService.createStaticMessage('Date'),
+               'cssClass' : 'inputCountLabel',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_3_label_PhysicalCount',
+               'id' : 'awed906e0c',
+               'value' : MessageService.createStaticMessage('New Physical Count'),
             });
-            groupitem002.addChild( text014 );
-
-            var eventHandlers014 = [
-               {
-                     'method' : 'showLastPhysicalCount',
-                     'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_1_eventHandlers_render_showLastPhysicalCount',
-                     'id' : 'aw83794130',
-                     'event' : 'render',
-                     'class' : 'application.handlers.InventoryHandler',
-               }
-            ];
-            groupitem002.eventHandlers = eventHandlers014;
-
-            var groupitem003 = new GroupItem({
-               'layout' : 'ItemList',
-               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_2',
-               'id' : 'aw119e4e47',
-            });
-            group002.addChild( groupitem003 );
+            container012.addChild( text014 );
 
 
             var text015 = new Text({
                'resourceAttribute' : 'count',
+               'cssClass' : 'inputCountText',
                'editable' : true,
-               'layoutInsertAt' : 'item1',
-               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_2_count_PhysicalCount',
-               'id' : 'awce0bf496',
-               'label' : MessageService.createStaticMessage('Physical Count'),
-               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Inventory.ItemDetailView_invbalance_groupitem_3_count_PhysicalCount',
+               'id' : 'aw51d17708',
+               'placeHolder' : MessageService.createStaticMessage('e.g. 2 (must be non-negative)'),
             });
-            groupitem003.addChild( text015 );
+            container012.addChild( text015 );
 
 
-            var footer001 = new Footer({
-               'artifactId' : 'Inventory.ItemDetailView_footer',
-               'id' : 'awfb2cbdb',
+            var container013 = new Container({
+               'cssClass' : 'detailButtonContainer',
+               'artifactId' : 'Inventory.ItemDetailView_invbalance_container_3',
+               'id' : 'aw2342efc2',
             });
-            view003.addChild( footer001 );
+            view003.addChild( container013 );
 
 
             var button005 = new Button({
-               'artifactId' : 'Inventory.ItemDetailView_Cancel_button',
-               'id' : 'aw917f4e4',
-               'label' : MessageService.createStaticMessage('Cancel'),
+               'cssClass' : 'mblUpdateButton',
+               'artifactId' : 'Inventory.ItemDetailView_Update_button',
+               'id' : 'awc8e6e9d0',
+               'label' : MessageService.createStaticMessage('Update Physical Count'),
             });
-            var eventHandlers015 = [
-               {
-                     'method' : 'cancelCount',
-                     'artifactId' : 'Inventory.ItemDetailView_Cancel_button_eventHandlers_click_cancelCount',
-                     'id' : 'aw5d1d8e94',
-                     'event' : 'click',
-                     'class' : 'application.handlers.InventoryHandler',
-               }
-            ];
-            button005.eventHandlers = eventHandlers015;
-            footer001.addChild( button005 );
-
-
-            var button006 = new Button({
-               'cssClass' : 'mblPrimaryButton',
-               'artifactId' : 'Inventory.ItemDetailView_Done_button',
-               'id' : 'aw60aeae4b',
-               'label' : MessageService.createStaticMessage('Done'),
-               'primary' : 'true',
-            });
-            var eventHandlers016 = [
+            var eventHandlers017 = [
                {
                      'method' : 'processCount',
-                     'artifactId' : 'Inventory.ItemDetailView_Done_button_eventHandlers_click_processCount',
-                     'id' : 'awe3e86fa9',
+                     'artifactId' : 'Inventory.ItemDetailView_Update_button_eventHandlers_click_processCount',
+                     'id' : 'aw28c603ee',
                      'event' : 'click',
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button006.eventHandlers = eventHandlers016;
-            footer001.addChild( button006 );
+            button005.eventHandlers = eventHandlers017;
+            container013.addChild( button005 );
 
-            var eventHandlers017 = [
+            var eventHandlers018 = [
                {
                      'method' : 'handleBackButton',
                      'artifactId' : 'Inventory.ItemDetailView_eventHandlers_back_handleBackButton',
@@ -1077,7 +1269,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            view003.eventHandlers = eventHandlers017;
+            view003.eventHandlers = eventHandlers018;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -1102,29 +1294,37 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                   'artifactId' : 'Inventory.ItemRecountView_itemsResource',
                   'id' : 'aweb0e81a4',
                },
+               'locTestDomain' : {
+                  'artifactId' : 'Inventory.ItemRecountView_locTestDomain',
+                  'id' : 'aw23d8b2f3',
+               },
+               'getDistinctBin' : {
+                  'artifactId' : 'Inventory.ItemRecountView_getDistinctBin',
+                  'id' : 'aw232a08c8',
+               },
             };
             view004.addRequiredResources( requiredResources004 );
 
-            var container010 = new Container({
+            var container014 = new Container({
                'resource' : 'searchItems',
                'artifactId' : 'Inventory.ItemRecountView_searchItems_container_0',
                'id' : 'aw2084deb9',
             });
-            view004.addChild( container010 );
+            view004.addChild( container014 );
 
 
-            var group003 = new Group({
+            var group002 = new Group({
                'artifactId' : 'Inventory.ItemRecountView_group_0',
                'id' : 'awba003c60',
             });
-            container010.addChild( group003 );
+            container014.addChild( group002 );
 
 
-            var groupitem004 = new GroupItem({
+            var groupitem002 = new GroupItem({
                'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_0',
                'id' : 'aw655f4faa',
             });
-            group003.addChild( groupitem004 );
+            group002.addChild( groupitem002 );
 
 
             var text016 = new Text({
@@ -1138,67 +1338,128 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'lookupAttribute' : 'itemnum',
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem004.addChild( text016 );
+            groupitem002.addChild( text016 );
 
-
-            var groupitem005 = new GroupItem({
-               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1',
-               'id' : 'aw12587f3c',
-            });
-            group003.addChild( groupitem005 );
-
-
-            var text017 = new Text({
-               'resourceAttribute' : 'location',
-               'lookup' : 'Inventory.StoreroomLookup',
-               'editable' : true,
-               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1_location_Storeroom',
-               'id' : 'aw755a4400',
-               'label' : MessageService.createStaticMessage('Storeroom'),
-               'codeScannable' : true,
-               'lookupAttribute' : 'location',
-               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
-            });
-            groupitem005.addChild( text017 );
-
-            var eventHandlers018 = [
+            var eventHandlers019 = [
                {
-                     'method' : 'clearSite',
-                     'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1_location_Storeroom_eventHandlers_validate_clearSite',
-                     'id' : 'aw3b9319df',
-                     'event' : 'validate',
+                     'method' : 'setFieldsReadonly',
+                     'artifactId' : 'Inventory.ItemRecountView_searchItems_eventHandlers_click_setSearchQuery',
+                     'id' : 'awa86e03a1',
+                     'event' : 'datachange',
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            text017.eventHandlers = eventHandlers018;
+            text016.eventHandlers = eventHandlers019;
 
-            var groupitem006 = new GroupItem({
+            var groupitem003 = new GroupItem({
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1',
+               'id' : 'aw12587f3c',
+            });
+            group002.addChild( groupitem003 );
+
+
+            var text017 = new Text({
+               'resourceAttribute' : 'description',
+               'cssClass' : 'recountlDescription',
+               'editable' : true,
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1_description_Description',
+               'id' : 'aw535686f8',
+               'label' : MessageService.createStaticMessage('Description'),
+               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
+            });
+            groupitem003.addChild( text017 );
+
+
+            var groupitem004 = new GroupItem({
                'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_2',
                'id' : 'aw8b512e86',
             });
-            group003.addChild( groupitem006 );
+            group002.addChild( groupitem004 );
 
 
             var text018 = new Text({
                'resourceAttribute' : 'binnum',
+               'lookup' : 'Inventory.BinLookup',
                'editable' : true,
                'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_2_binnum_Bin',
                'id' : 'awda4b0bee',
                'label' : MessageService.createStaticMessage('Bin'),
                'codeScannable' : true,
+               'lookupAttribute' : 'binnum',
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem006.addChild( text018 );
+            groupitem004.addChild( text018 );
 
+            var eventHandlers020 = [
+               {
+                     'method' : 'handleConditionBinnum',
+                     'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_1_binnum_Bin_eventHandlers_render_handleConditionBinnum',
+                     'id' : 'aw2439c190',
+                     'event' : 'render',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            groupitem004.eventHandlers = eventHandlers020;
 
-            var groupitem007 = new GroupItem({
-               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_3',
-               'id' : 'awfc561e10',
+            var groupitem005 = new GroupItem({
+               'layout' : 'ItemBinRange',
+               'cssClass' : 'binRangeContainer',
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_4',
+               'id' : 'aw62328bb3',
             });
-            group003.addChild( groupitem007 );
+            group002.addChild( groupitem005 );
 
 
             var text019 = new Text({
+               'resourceAttribute' : 'binfrom',
+               'lookup' : 'Inventory.BinLookup',
+               'cssClass' : 'binRange',
+               'editable' : true,
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_2_binfrom_BinFrom',
+               'id' : 'aw83b57c58',
+               'label' : MessageService.createStaticMessage('Bin from'),
+               'codeScannable' : true,
+               'lookupAttribute' : 'binnum',
+               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
+            });
+            groupitem005.addChild( text019 );
+
+
+            var text020 = new Text({
+               'resourceAttribute' : 'binto',
+               'lookup' : 'Inventory.BinLookup',
+               'cssClass' : 'binRange',
+               'editable' : true,
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_2_binto_BinTo',
+               'id' : 'awe0a5ec05',
+               'label' : MessageService.createStaticMessage('Bin to'),
+               'codeScannable' : true,
+               'lookupAttribute' : 'binnum',
+               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
+            });
+            groupitem005.addChild( text020 );
+
+            var eventHandlers021 = [
+               {
+                     'method' : 'handleConditionBinRange',
+                     'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_4_bin_BinRange_eventHandlers_render_handleConditionBinRange',
+                     'id' : 'aw880f3468',
+                     'event' : 'render',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            groupitem005.eventHandlers = eventHandlers021;
+
+            var groupitem006 = new GroupItem({
+               'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_3',
+               'id' : 'awfc561e10',
+            });
+            group002.addChild( groupitem006 );
+
+
+            var text021 = new Text({
                'resourceAttribute' : 'lotnum',
                'editable' : true,
                'artifactId' : 'Inventory.ItemRecountView_searchItems_groupitem_3_lotnum_Lot',
@@ -1207,22 +1468,22 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'codeScannable' : true,
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem007.addChild( text019 );
+            groupitem006.addChild( text021 );
 
 
-            var footer002 = new Footer({
+            var footer001 = new Footer({
                'artifactId' : 'Inventory.ItemRecountView_footer',
                'id' : 'awffe44522',
             });
-            view004.addChild( footer002 );
+            view004.addChild( footer001 );
 
 
-            var button007 = new Button({
+            var button006 = new Button({
                'artifactId' : 'Inventory.ItemRecountView_Clear_button',
                'id' : 'aw37e500cb',
                'label' : MessageService.createStaticMessage('Clear'),
             });
-            var eventHandlers019 = [
+            var eventHandlers022 = [
                {
                      'method' : 'clearAdhocFields',
                      'artifactId' : 'Inventory.ItemRecountView_Clear_button_eventHandlers_click_clearAdhocFields',
@@ -1231,18 +1492,18 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button007.eventHandlers = eventHandlers019;
-            footer002.addChild( button007 );
+            button006.eventHandlers = eventHandlers022;
+            footer001.addChild( button006 );
 
 
-            var button008 = new Button({
+            var button007 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Inventory.ItemRecountView_Search_button',
                'id' : 'awf6bb264f',
                'label' : MessageService.createStaticMessage('Search'),
                'primary' : 'true',
             });
-            var eventHandlers020 = [
+            var eventHandlers023 = [
                {
                      'method' : 'setSearchQuery',
                      'artifactId' : 'Inventory.ItemRecountView_Search_button_eventHandlers_click_setSearchQuery',
@@ -1251,10 +1512,10 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button008.eventHandlers = eventHandlers020;
-            footer002.addChild( button008 );
+            button007.eventHandlers = eventHandlers023;
+            footer001.addChild( button007 );
 
-            var eventHandlers021 = [
+            var eventHandlers024 = [
                {
                      'method' : 'initSearchData',
                      'artifactId' : 'Inventory.ItemRecountView_eventHandlers_initialize_initSearchData',
@@ -1277,7 +1538,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            view004.eventHandlers = eventHandlers021;
+            view004.eventHandlers = eventHandlers024;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -1301,51 +1562,51 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw55fea464',
             });
 
-            var listtext012 = new ListText({
+            var listtext026 = new ListText({
                'resourceAttribute' : 'itemnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'WorkExecution.WOMeterList_temp_ItemList_itemnum',
                'id' : 'aw100cb385',
             });
-            listItemTemplate003.addChild( listtext012 );
+            listItemTemplate003.addChild( listtext026 );
 
 
-            var listtext013 = new ListText({
+            var listtext027 = new ListText({
                'resourceAttribute' : 'description',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item2',
                'artifactId' : 'WorkExecution.WOMeterList_temp_ItemList_itemnumdesc',
                'id' : 'awa728f57c',
             });
-            listItemTemplate003.addChild( listtext013 );
+            listItemTemplate003.addChild( listtext027 );
 
 
-            var listtext014 = new ListText({
+            var listtext028 = new ListText({
                'resourceAttribute' : 'location',
                'layoutInsertAt' : 'item3',
                'artifactId' : 'WorkExecution.WOMeterList_temp_ItemList_location',
                'id' : 'awc3f49fef',
             });
-            listItemTemplate003.addChild( listtext014 );
+            listItemTemplate003.addChild( listtext028 );
 
 
-            var listtext015 = new ListText({
+            var listtext029 = new ListText({
                'resourceAttribute' : 'binnum',
                'layoutInsertAt' : 'item4',
                'artifactId' : 'WorkExecution.WOMeterList_temp_ItemList_binnum',
                'id' : 'aw440966b5',
             });
-            listItemTemplate003.addChild( listtext015 );
+            listItemTemplate003.addChild( listtext029 );
 
 
-            var listtext016 = new ListText({
+            var listtext030 = new ListText({
                'resourceAttribute' : 'lotnum',
                'layoutInsertAt' : 'item5',
                'artifactId' : 'WorkExecution.WOMeterList_temp_ItemList_lotnum',
                'id' : 'awcee7459e',
             });
-            listItemTemplate003.addChild( listtext016 );
+            listItemTemplate003.addChild( listtext030 );
 
 
 
@@ -1361,7 +1622,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             });
             view005.addChild( list003 );
 
-            var eventHandlers022 = [
+            var eventHandlers025 = [
                {
                      'method' : 'showBusyList',
                      'artifactId' : 'WorkExecution.WOMeterList_eventHandlers_render_showBusyList',
@@ -1370,7 +1631,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            view005.eventHandlers = eventHandlers022;
+            view005.eventHandlers = eventHandlers025;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -1388,110 +1649,110 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             ui001.addChild( view006 );
 
 
-            var container011 = new Container({
+            var container015 = new Container({
                'resource' : 'temp',
                'artifactId' : 'Inventory.ItemDetailTempView_temp_container_0',
                'id' : 'awf5b29bfa',
             });
-            view006.addChild( container011 );
+            view006.addChild( container015 );
 
 
             var errorIndicator002 = new ErrorIndicator({
                'artifactId' : 'Inventory.ItemDetailTempView_errorIndicator',
                'id' : 'awd8335db3',
             });
-            container011.addChild( errorIndicator002 );
+            container015.addChild( errorIndicator002 );
 
 
-            var group004 = new Group({
+            var group003 = new Group({
                'artifactId' : 'Inventory.ItemDetailTempView_group_0',
                'id' : 'aw61160a81',
             });
-            container011.addChild( group004 );
+            container015.addChild( group003 );
 
 
-            var groupitem008 = new GroupItem({
+            var groupitem007 = new GroupItem({
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_0',
                'id' : 'awb0690ae9',
             });
-            group004.addChild( groupitem008 );
+            group003.addChild( groupitem007 );
 
 
-            var text020 = new Text({
+            var text022 = new Text({
                'resourceAttribute' : 'itemnum',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_0_itemnum_Item',
                'id' : 'awcd4d180a',
                'label' : MessageService.createStaticMessage('Item'),
             });
-            groupitem008.addChild( text020 );
+            groupitem007.addChild( text022 );
 
 
-            var text021 = new Text({
+            var text023 = new Text({
                'resourceAttribute' : 'description',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_0_itemnumdesc_Description',
                'id' : 'awa819c47d',
                'label' : MessageService.createStaticMessage('Description'),
             });
-            groupitem008.addChild( text021 );
+            groupitem007.addChild( text023 );
 
 
-            var groupitem009 = new GroupItem({
+            var groupitem008 = new GroupItem({
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_1',
                'id' : 'awc76e3a7f',
             });
-            group004.addChild( groupitem009 );
+            group003.addChild( groupitem008 );
 
 
-            var text022 = new Text({
+            var text024 = new Text({
                'resourceAttribute' : 'location',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_1_location_Storeroom',
                'id' : 'awb548db0f',
                'label' : MessageService.createStaticMessage('Storeroom'),
             });
-            groupitem009.addChild( text022 );
+            groupitem008.addChild( text024 );
 
 
-            var text023 = new Text({
+            var text025 = new Text({
                'resourceAttribute' : 'binnum',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_1_binnum_Bin',
                'id' : 'aw893aab34',
                'label' : MessageService.createStaticMessage('Bin'),
             });
-            groupitem009.addChild( text023 );
+            groupitem008.addChild( text025 );
 
 
-            var text024 = new Text({
+            var text026 = new Text({
                'resourceAttribute' : 'lotnum',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_1_lotnum_Lot',
                'id' : 'awa834bc18',
                'label' : MessageService.createStaticMessage('Lot'),
             });
-            groupitem009.addChild( text024 );
+            groupitem008.addChild( text026 );
 
 
-            var text025 = new Text({
+            var text027 = new Text({
                'resourceAttribute' : 'physcnt',
                'editable' : false,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_1_physcnt_PhysicalCount',
                'id' : 'aw8ca97d3a',
                'label' : MessageService.createStaticMessage('Physical Count'),
             });
-            groupitem009.addChild( text025 );
+            groupitem008.addChild( text027 );
 
 
-            var groupitem010 = new GroupItem({
+            var groupitem009 = new GroupItem({
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_2',
                'id' : 'aw5e676bc5',
             });
-            group004.addChild( groupitem010 );
+            group003.addChild( groupitem009 );
 
 
-            var text026 = new Text({
+            var text028 = new Text({
                'resourceAttribute' : 'adjustedphyscnt',
                'editable' : true,
                'artifactId' : 'Inventory.ItemDetailTempView_temp_groupitem_2_adjustedphyscnt_PhysicalCount',
@@ -1499,9 +1760,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'label' : MessageService.createStaticMessage('Physical Count'),
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem010.addChild( text026 );
+            groupitem009.addChild( text028 );
 
-            var eventHandlers023 = [
+            var eventHandlers026 = [
                {
                      'method' : 'renderDetail',
                      'artifactId' : 'Inventory.ItemDetailTempView_container_0_eventHandlers_render_renderDetail',
@@ -1510,21 +1771,21 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            container011.eventHandlers = eventHandlers023;
+            container015.eventHandlers = eventHandlers026;
 
-            var footer003 = new Footer({
+            var footer002 = new Footer({
                'artifactId' : 'Inventory.ItemDetailTempView_footer',
                'id' : 'aw521b7208',
             });
-            view006.addChild( footer003 );
+            view006.addChild( footer002 );
 
 
-            var button009 = new Button({
+            var button008 = new Button({
                'artifactId' : 'Inventory.ItemDetailTempView_Cancel_button',
                'id' : 'aweaa98519',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers024 = [
+            var eventHandlers027 = [
                {
                      'method' : 'cancelCount',
                      'artifactId' : 'Inventory.ItemDetailTempView_Cancel_button_eventHandlers_click_cancelCount',
@@ -1533,18 +1794,18 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button009.eventHandlers = eventHandlers024;
-            footer003.addChild( button009 );
+            button008.eventHandlers = eventHandlers027;
+            footer002.addChild( button008 );
 
 
-            var button010 = new Button({
+            var button009 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Inventory.ItemDetailTempView_Done_button',
                'id' : 'aw173def24',
                'label' : MessageService.createStaticMessage('Done'),
                'primary' : 'true',
             });
-            var eventHandlers025 = [
+            var eventHandlers028 = [
                {
                      'method' : 'processCount',
                      'artifactId' : 'Inventory.ItemDetailTempView_Done_button_eventHandlers_click_processCount',
@@ -1553,23 +1814,76 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button010.eventHandlers = eventHandlers025;
-            footer003.addChild( button010 );
+            button009.eventHandlers = eventHandlers028;
+            footer002.addChild( button009 );
 
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
 
             var lookup001 = new Lookup({
+               'resource' : 'locTestDomain',
+               'id' : 'Inventory.LocTestLookup',
+               'label' : MessageService.createStaticMessage('Select LocTest'),
+            });
+            ui001.addChild( lookup001 );
+
+            var requiredResources005 = {
+               'locTestDomain' : {
+                  'reload' : true,
+                  'artifactId' : 'Inventory.LocTestLookup_requireResource',
+                  'id' : 'aw88f6c100',
+               },
+            };
+            lookup001.addRequiredResources( requiredResources005 );
+
+
+            var listItemTemplate004 = new ListItemTemplate({
+               'layout' : 'ItemLookup',
+               'artifactId' : 'Inventory.LocTestLookup_listItemTemplate',
+               'id' : 'aw792ced64',
+            });
+
+            var listtext031 = new ListText({
+               'resourceAttribute' : 'value',
+               'cssClass' : 'bold textappearance-medium',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Inventory.LocTestLookup_listItemTemplate_value',
+               'id' : 'aw65aab9d3',
+            });
+            listItemTemplate004.addChild( listtext031 );
+
+
+            var listtext032 = new ListText({
+               'resourceAttribute' : 'description',
+               'cssClass' : 'bold textappearance-medium',
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Inventory.LocTestLookup_listItemTemplate_desc',
+               'id' : 'awd19de91c',
+            });
+            listItemTemplate004.addChild( listtext032 );
+
+
+
+            var list004 = new List({
+               'resource' : 'locTestDomain',
+               'listItemTemplate' : listItemTemplate004,
+               'artifactId' : 'Inventory.LocTestLookup_list',
+               'id' : 'awd6e764cf',
+            });
+            lookup001.addChild( list004 );
+
+
+            var lookup002 = new Lookup({
                'filterMethod' : 'filterItemsForLookup',
                'resource' : 'itemsResource',
                'filterClass' : 'application.handlers.InventoryHandler',
                'id' : 'Inventory.ItemsLookup',
                'label' : MessageService.createStaticMessage('Select Item'),
             });
-            ui001.addChild( lookup001 );
+            ui001.addChild( lookup002 );
 
-            var requiredResources005 = {
+            var requiredResources006 = {
                'searchItems' : {
                   'artifactId' : 'Inventory.ItemsLookup_searchItems',
                   'id' : 'awef379fc0',
@@ -1589,7 +1903,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                   'id' : 'awa02ed1e9',
                },
             };
-            lookup001.addRequiredResources( requiredResources005 );
+            lookup002.addRequiredResources( requiredResources006 );
 
 
             var searchAttributes001 = new SearchAttributes({
@@ -1606,69 +1920,69 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
 
-            var listItemTemplate004 = new ListItemTemplate({
+            var listItemTemplate005 = new ListItemTemplate({
                'layout' : 'ItemList',
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_listItemTemplate_ItemList',
                'id' : 'aw79d923d5',
             });
 
-            var listtext017 = new ListText({
+            var listtext033 = new ListText({
                'resourceAttribute' : 'itemnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_ItemList_itemnum',
                'id' : 'aw2bcc5e5e',
             });
-            listItemTemplate004.addChild( listtext017 );
+            listItemTemplate005.addChild( listtext033 );
 
 
-            var listtext018 = new ListText({
+            var listtext034 = new ListText({
                'resourceAttribute' : 'description',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item2',
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_ItemList_description',
                'id' : 'awc9c1d017',
             });
-            listItemTemplate004.addChild( listtext018 );
+            listItemTemplate005.addChild( listtext034 );
 
 
-            var listtext019 = new ListText({
+            var listtext035 = new ListText({
                'resourceAttribute' : 'binnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item3',
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_ItemList_binnum',
                'id' : 'aweac47595',
             });
-            listItemTemplate004.addChild( listtext019 );
+            listItemTemplate005.addChild( listtext035 );
 
 
-            var listtext020 = new ListText({
+            var listtext036 = new ListText({
                'resourceAttribute' : 'lotnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item4',
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_ItemList_lotnum',
                'id' : 'aw602a56be',
             });
-            listItemTemplate004.addChild( listtext020 );
+            listItemTemplate005.addChild( listtext036 );
 
 
 
-            var list004 = new List({
+            var list005 = new List({
                'resource' : 'itemsResource',
-               'listItemTemplate' : listItemTemplate004,
+               'listItemTemplate' : listItemTemplate005,
                'artifactId' : 'Inventory.ItemsLookup_itemsResource_list',
                'id' : 'awd6faf949',
                'searchAttributes' : searchAttributes001,
                'displayPageSize' : '40',
             });
-            lookup001.addChild( list004 );
+            lookup002.addChild( list005 );
 
 
             var returnAttributes001 = new ReturnAttributes({
                'artifactId' : 'Inventory.ItemsLookup_returnAttributes',
                'id' : 'awd1a4ebea',
             });
-            lookup001.addChild( returnAttributes001 );
+            lookup002.addChild( returnAttributes001 );
 
 
             var returnAttribute001 = new ReturnAttribute({
@@ -1707,23 +2021,23 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             returnAttributes001.addChild( returnAttribute004 );
 
 
-            var lookup002 = new Lookup({
+            var lookup003 = new Lookup({
                'filterMethod' : 'filterBinLookup',
-               'resource' : 'invbalance',
+               'resource' : 'getDistinctBin',
                'filterClass' : 'application.handlers.InventoryHandler',
                'id' : 'Inventory.BinLookup',
                'label' : MessageService.createStaticMessage('Select Bin'),
             });
-            ui001.addChild( lookup002 );
+            ui001.addChild( lookup003 );
 
-            var requiredResources006 = {
-               'invbalance' : {
+            var requiredResources007 = {
+               'getDistinctBin' : {
                   'reload' : true,
                   'artifactId' : 'Inventory.BinLookup_invbalance',
                   'id' : 'aw1bce60c4',
                },
             };
-            lookup002.addRequiredResources( requiredResources006 );
+            lookup003.addRequiredResources( requiredResources007 );
 
 
             var searchAttributes002 = new SearchAttributes({
@@ -1740,43 +2054,103 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
 
 
 
-            var listItemTemplate005 = new ListItemTemplate({
+            var listItemTemplate006 = new ListItemTemplate({
                'layout' : 'ItemLookup',
                'artifactId' : 'Inventory.BinLookup_invbalance_listItemTemplate_ItemLookup',
                'id' : 'aw9932a136',
             });
 
-            var listtext021 = new ListText({
+            var listtext037 = new ListText({
                'resourceAttribute' : 'binnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'Inventory.BinLookup_invbalance_ItemLookup_binnum',
                'id' : 'awa1891a28',
             });
-            listItemTemplate005.addChild( listtext021 );
+            listItemTemplate006.addChild( listtext037 );
 
 
 
-            var list005 = new List({
-               'resource' : 'invbalance',
-               'listItemTemplate' : listItemTemplate005,
+            var list006 = new List({
+               'resource' : 'getDistinctBin',
+               'listItemTemplate' : listItemTemplate006,
                'artifactId' : 'Inventory.BinLookup_invbalance_list',
                'id' : 'awc5941cb',
                'searchAttributes' : searchAttributes002,
             });
-            lookup002.addChild( list005 );
+            lookup003.addChild( list006 );
 
 
-            var lookup003 = new Lookup({
+            var lookup004 = new Lookup({
+               'filterMethod' : 'filterBinLookupTo',
+               'resource' : 'invbalance',
+               'filterClass' : 'application.handlers.InventoryHandler',
+               'id' : 'Inventory.BinLookupTo',
+               'label' : MessageService.createStaticMessage('Select Bin To'),
+            });
+            ui001.addChild( lookup004 );
+
+            var requiredResources008 = {
+               'invbalance' : {
+                  'reload' : true,
+                  'artifactId' : 'Inventory.BinLookupTo_invbalance',
+                  'id' : 'awfba9471b',
+               },
+            };
+            lookup004.addRequiredResources( requiredResources008 );
+
+
+            var searchAttributes003 = new SearchAttributes({
+               'artifactId' : 'Inventory.BinLookupTo_invbalance_searchAttributes',
+               'id' : 'awc6c86449',
+            });
+
+            var searchAttribute003 = new SearchAttribute({
+               'name' : 'binnum',
+               'artifactId' : 'Inventory.BinLookupTo_invbalance_searchAttribute_binnum',
+               'id' : 'awf2041958',
+            });
+            searchAttributes003.addChild( searchAttribute003 );
+
+
+
+            var listItemTemplate007 = new ListItemTemplate({
+               'layout' : 'ItemLookup',
+               'artifactId' : 'Inventory.BinLookupTo_invbalance_listItemTemplate_ItemLookup',
+               'id' : 'aw6793fa93',
+            });
+
+            var listtext038 = new ListText({
+               'resourceAttribute' : 'binnum',
+               'cssClass' : 'bold textappearance-medium',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Inventory.BinLookupTo_invbalance_ItemLookup_binnum',
+               'id' : 'awab83faa2',
+            });
+            listItemTemplate007.addChild( listtext038 );
+
+
+
+            var list007 = new List({
+               'resource' : 'invbalance',
+               'listItemTemplate' : listItemTemplate007,
+               'artifactId' : 'Inventory.BinLookupTo_invbalance_list',
+               'id' : 'aw29ff108d',
+               'searchAttributes' : searchAttributes003,
+            });
+            lookup004.addChild( list007 );
+
+
+            var lookup005 = new Lookup({
                'filterMethod' : 'filterStoreroomForLookup',
                'resource' : 'additionalstoreroom',
                'filterClass' : 'application.handlers.InventoryHandler',
                'id' : 'Inventory.StoreroomLookup',
                'label' : MessageService.createStaticMessage('Select Storeroom'),
             });
-            ui001.addChild( lookup003 );
+            ui001.addChild( lookup005 );
 
-            var requiredResources007 = {
+            var requiredResources009 = {
                'additionalstoreroom' : {
                   'reload' : true,
                   'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom',
@@ -1788,73 +2162,73 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                   'id' : 'aw9f0c3351',
                },
             };
-            lookup003.addRequiredResources( requiredResources007 );
+            lookup005.addRequiredResources( requiredResources009 );
 
 
-            var searchAttributes003 = new SearchAttributes({
+            var searchAttributes004 = new SearchAttributes({
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_searchAttributes',
                'id' : 'aw6f33d893',
             });
 
-            var searchAttribute003 = new SearchAttribute({
+            var searchAttribute004 = new SearchAttribute({
                'name' : 'locationForSearch',
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_searchAttribute_locationForSearch',
                'id' : 'aw9b6a8705',
             });
-            searchAttributes003.addChild( searchAttribute003 );
+            searchAttributes004.addChild( searchAttribute004 );
 
 
-            var searchAttribute004 = new SearchAttribute({
+            var searchAttribute005 = new SearchAttribute({
                'name' : 'description',
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_searchAttribute_description',
                'id' : 'aw629bc0b7',
             });
-            searchAttributes003.addChild( searchAttribute004 );
+            searchAttributes004.addChild( searchAttribute005 );
 
 
 
-            var listItemTemplate006 = new ListItemTemplate({
+            var listItemTemplate008 = new ListItemTemplate({
                'layout' : 'ItemLookup',
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_listItemTemplate_ItemLookup',
                'id' : 'awbf0880fb',
             });
 
-            var listtext022 = new ListText({
+            var listtext039 = new ListText({
                'resourceAttribute' : 'location',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_ItemLookup_location',
                'id' : 'awddcf51f3',
             });
-            listItemTemplate006.addChild( listtext022 );
+            listItemTemplate008.addChild( listtext039 );
 
 
-            var listtext023 = new ListText({
+            var listtext040 = new ListText({
                'resourceAttribute' : 'description',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'desc1',
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_ItemLookup_description',
                'id' : 'aw1211daf8',
             });
-            listItemTemplate006.addChild( listtext023 );
+            listItemTemplate008.addChild( listtext040 );
 
 
 
-            var list006 = new List({
+            var list008 = new List({
                'resource' : 'additionalstoreroom',
-               'listItemTemplate' : listItemTemplate006,
+               'listItemTemplate' : listItemTemplate008,
                'artifactId' : 'Inventory.StoreroomLookup_additionalstoreroom_list',
                'id' : 'awf5b2318e',
-               'searchAttributes' : searchAttributes003,
+               'searchAttributes' : searchAttributes004,
             });
-            lookup003.addChild( list006 );
+            lookup005.addChild( list008 );
 
 
             var returnAttributes002 = new ReturnAttributes({
                'artifactId' : 'Inventory.StoreroomLookup_returnAttributes',
                'id' : 'awfa695426',
             });
-            lookup003.addChild( returnAttributes002 );
+            lookup005.addChild( returnAttributes002 );
 
 
             var returnAttribute005 = new ReturnAttribute({
@@ -1875,72 +2249,72 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             returnAttributes002.addChild( returnAttribute006 );
 
 
-            var lookup004 = new Lookup({
+            var lookup006 = new Lookup({
                'resource' : 'invlot',
                'id' : 'Inventory.LotLookup',
                'label' : MessageService.createStaticMessage('Select Lot'),
             });
-            ui001.addChild( lookup004 );
+            ui001.addChild( lookup006 );
 
-            var requiredResources008 = {
+            var requiredResources010 = {
                'invlot' : {
                   'reload' : true,
                   'artifactId' : 'Inventory.LotLookup_invlot',
                   'id' : 'aw27b0126a',
                },
             };
-            lookup004.addRequiredResources( requiredResources008 );
+            lookup006.addRequiredResources( requiredResources010 );
 
 
-            var searchAttributes004 = new SearchAttributes({
+            var searchAttributes005 = new SearchAttributes({
                'artifactId' : 'Inventory.LotLookup_invlot_searchAttributes',
                'id' : 'aw2b474979',
             });
 
-            var searchAttribute005 = new SearchAttribute({
+            var searchAttribute006 = new SearchAttribute({
                'name' : 'lotnum',
                'artifactId' : 'Inventory.LotLookup_invlot_searchAttribute_lotnum',
                'id' : 'aw51c133f5',
             });
-            searchAttributes004.addChild( searchAttribute005 );
+            searchAttributes005.addChild( searchAttribute006 );
 
 
 
-            var listItemTemplate007 = new ListItemTemplate({
+            var listItemTemplate009 = new ListItemTemplate({
                'layout' : 'ItemLookup',
                'artifactId' : 'Inventory.LotLookup_invlot_listItemTemplate_ItemLookup',
                'id' : 'aw5463c6c1',
             });
 
-            var listtext024 = new ListText({
+            var listtext041 = new ListText({
                'resourceAttribute' : 'lotnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'Inventory.LotLookup_invlot_ItemLookup_lotnum',
                'id' : 'aw7596608',
             });
-            listItemTemplate007.addChild( listtext024 );
+            listItemTemplate009.addChild( listtext041 );
 
 
-            var listtext025 = new ListText({
+            var listtext042 = new ListText({
                'resourceAttribute' : 'mfglotnum',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'desc1',
                'artifactId' : 'Inventory.LotLookup_invlot_ItemLookup_mfglotnum',
                'id' : 'awe7cb64a6',
             });
-            listItemTemplate007.addChild( listtext025 );
+            listItemTemplate009.addChild( listtext042 );
 
 
 
-            var list007 = new List({
+            var list009 = new List({
                'resource' : 'invlot',
-               'listItemTemplate' : listItemTemplate007,
+               'listItemTemplate' : listItemTemplate009,
                'artifactId' : 'Inventory.LotLookup_invlot_list',
                'id' : 'aw2fe4348e',
-               'searchAttributes' : searchAttributes004,
+               'searchAttributes' : searchAttributes005,
             });
-            lookup004.addChild( list007 );
+            lookup006.addChild( list009 );
 
 
             var dialog004 = new Dialog({
@@ -1949,29 +2323,29 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             ui001.addChild( dialog004 );
 
 
-            var container012 = new Container({
+            var container016 = new Container({
                'artifactId' : 'Inventory.RequiredSearchFieldMissing_container_0',
                'id' : 'aw20f79bc9',
             });
-            dialog004.addChild( container012 );
+            dialog004.addChild( container016 );
 
 
-            var text027 = new Text({
+            var text029 = new Text({
                'editable' : false,
                'artifactId' : 'Inventory.RequiredSearchFieldMissing_container_0_Somerequiredfields',
                'id' : 'aw2345266f',
                'value' : MessageService.createStaticMessage('Some required fields are empty. Specify the missing information.'),
             });
-            container012.addChild( text027 );
+            container016.addChild( text029 );
 
 
-            var button011 = new Button({
+            var button010 = new Button({
                'artifactId' : 'Inventory.RequiredSearchFieldMissing_Ok_button',
                'id' : 'aw5ae1873c',
                'label' : MessageService.createStaticMessage('Ok'),
                'primary' : 'true',
             });
-            var eventHandlers026 = [
+            var eventHandlers029 = [
                {
                      'method' : 'hideDialog',
                      'artifactId' : 'Inventory.RequiredSearchFieldMissing_Ok_button_eventHandlers_click_hideDialog',
@@ -1980,343 +2354,104 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            button011.eventHandlers = eventHandlers026;
-            container012.addChild( button011 );
+            button010.eventHandlers = eventHandlers029;
+            container016.addChild( button010 );
 
 
-            var actions002 = new Actions({
-               'artifactId' : 'actions',
-               'id' : 'aw548f1ef',
+            var dialog005 = new Dialog({
+               'id' : 'Inventory.NotExistStoreRoomWarning',
             });
-            ui001.addChild( actions002 );
+            ui001.addChild( dialog005 );
 
 
-            var action004 = new Action({
-               'overflow' : true,
-               'artifactId' : 'ResetWorkList_action',
-               'id' : 'aw956f5d3b',
-               'label' : MessageService.createStaticMessage('Reset Work List'),
+            var container017 = new Container({
+               'cssClass' : 'mblSimpleDialogText',
+               'artifactId' : 'Platform.LogOutPrompt_container_0',
+               'id' : 'awcf20d41b',
             });
-            actions002.addChild( action004 );
+            dialog005.addChild( container017 );
 
-            var eventHandlers027 = [
-               {
-                     'method' : 'resetWorkList',
-                     'artifactId' : 'ResetWorkList_action_eventHandlers_click_findByScan',
-                     'id' : 'aw11a2bd29',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.WorkOfflineHandler',
-               },
-               {
-                     'method' : 'enableResetWorkList',
-                     'artifactId' : 'ResetWorkList_action_eventHandlers_render_enableResetWorkList',
-                     'id' : 'awfb6356a8',
-                     'event' : 'render',
-                     'class' : 'platform.handlers.WorkOfflineHandler',
-               }
-            ];
-            action004.eventHandlers = eventHandlers027;
 
-            var action005 = new Action({
-               'overflow' : true,
-               'enableFeatureByProperty' : 'pushnotification.enabled',
-               'transitionTo' : 'Platform.Notifications',
-               'artifactId' : 'Notifications_action',
-               'id' : 'aw1fc4c6b4',
-               'label' : MessageService.createStaticMessage('Notifications'),
+            var text030 = new Text({
+               'editable' : false,
+               'artifactId' : 'Platform.LogOutPrompt_container_0_Doyouwanttologo',
+               'id' : 'aw15a96005',
+               'value' : MessageService.createStaticMessage('Not exist this storeRoom'),
             });
-            actions002.addChild( action005 );
+            container017.addChild( text030 );
 
-            var eventHandlers028 = [
-               {
-                     'method' : 'enableNotification',
-                     'artifactId' : 'Notifications_action_eventHandlers_render_enableResetWorkList',
-                     'id' : 'awc608296f',
-                     'event' : 'render',
-                     'class' : 'platform.handlers.WorkOfflineHandler',
-               }
-            ];
-            action005.eventHandlers = eventHandlers028;
 
-            var action006 = new Action({
-               'overflow' : true,
-               'artifactId' : 'PseudoOffline_goOffline',
-               'id' : 'aw90309912',
-               'label' : MessageService.createStaticMessage('Enable Offline Mode'),
+            var container018 = new Container({
+               'cssClass' : 'mblSimpleDialogFooter',
+               'artifactId' : 'Inventory.NotExistStoreRoomWarning_container_1',
+               'id' : 'aw71cc0fd5',
             });
-            actions002.addChild( action006 );
+            dialog005.addChild( container018 );
 
-            var eventHandlers029 = [
-               {
-                     'method' : 'toggleOfflineMode',
-                     'artifactId' : 'PseudoOffline_enableoffline_action_eventHandlers_click',
-                     'id' : 'aw33d3b70c',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.PseudoOfflineModeHandler',
-               }
-            ];
-            action006.eventHandlers = eventHandlers029;
 
-            var action007 = new Action({
-               'overflow' : true,
-               'transitionTo' : 'Platform.Settings',
-               'artifactId' : 'Settings_action',
-               'id' : 'awc0b1927e',
-               'label' : MessageService.createStaticMessage('Settings'),
+            var button011 = new Button({
+               'artifactId' : 'Inventory.NotExistStoreRoomWarning_Ok_button',
+               'id' : 'aw1b79baf1',
+               'label' : MessageService.createStaticMessage('Ok'),
+               'primary' : 'true',
             });
-            actions002.addChild( action007 );
-
-
-            var action008 = new Action({
-               'overflow' : true,
-               'transitionTo' : 'Platform.HelpAbout',
-               'artifactId' : 'About_action',
-               'id' : 'aw49fae06b',
-               'label' : MessageService.createStaticMessage('About'),
-            });
-            actions002.addChild( action008 );
-
-
-            var action009 = new Action({
-               'overflow' : true,
-               'transitionTo' : 'Platform.LogOutPrompt',
-               'artifactId' : 'LogOut_action',
-               'id' : 'awd566efa2',
-               'label' : MessageService.createStaticMessage('Log Out'),
-            });
-            actions002.addChild( action009 );
-
-
-            var action010 = new Action({
-               'artifactId' : 'action',
-               'id' : 'aw47cc8c92',
-            });
-            actions002.addChild( action010 );
-
             var eventHandlers030 = [
                {
-                     'artifactId' : 'action_eventHandlers_click',
-                     'id' : 'aw871940b2',
+                     'method' : 'clearChooseStoreRoom',
+                     'artifactId' : 'Inventory.NotExistStoreRoomWarning_Ok_button_eventHandlers_click_hideDialog',
+                     'id' : 'awfb602c75',
                      'event' : 'click',
-                     'class' : 'platform.handlers.CreateQueryBaseHandler',
+                     'class' : 'application.handlers.InventoryHandler',
                }
             ];
-            action010.eventHandlers = eventHandlers030;
+            button011.eventHandlers = eventHandlers030;
+            container018.addChild( button011 );
 
-            var erroractions001 = new ErrorActions({
-               'artifactId' : 'erroractions',
-               'id' : 'aw6a5d95e9',
-            });
-            ui001.addChild( erroractions001 );
-
-
-            var action011 = new Action({
-               'artifactId' : 'UndoChanges_action',
-               'id' : 'aw2236d58a',
-               'label' : MessageService.createStaticMessage('Undo Changes'),
-            });
-            erroractions001.addChild( action011 );
-
-            var eventHandlers031 = [
-               {
-                     'method' : 'confirmClearChanges',
-                     'artifactId' : 'UndoChanges_action_eventHandlers_click_confirmClearChanges',
-                     'id' : 'awcf857f5c',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.WorkOfflineHandler',
-               }
-            ];
-            action011.eventHandlers = eventHandlers031;
-
-            var action012 = new Action({
-               'artifactId' : 'ResendChanges_action',
-               'id' : 'awccf9e70e',
-               'label' : MessageService.createStaticMessage('Resend Changes'),
-            });
-            erroractions001.addChild( action012 );
-
-            var eventHandlers032 = [
-               {
-                     'method' : 'retryRecordChanges',
-                     'artifactId' : 'ResendChanges_action_eventHandlers_click_retryRecordChanges',
-                     'id' : 'aw543ac47e',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.WorkOfflineHandler',
-               }
-            ];
-            action012.eventHandlers = eventHandlers032;
-            var eventHandlers033 = [
-               {
-                     'method' : 'none',
-                     'artifactId' : 'eventHandlers_none_none',
-                     'id' : 'aw1e2e7ded',
-                     'event' : 'none',
-                     'class' : 'platform.handlers.LookupHandler',
-               }
-            ];
-            ui001.eventHandlers = eventHandlers033;
-
-            if (trackTimeEnabled) {
-               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.emptyview', false);
-               trackTimer.startTracking();
-            }
-
-            var view007 = new View({
-               'showHeader' : false,
-               'id' : 'Platform.emptyview',
-               'showFooter' : false,
-            });
-            ui001.addChild( view007 );
-
-            if (trackTimeEnabled) {
-               trackTimer.stopTracking();
-            }
-
-            if (trackTimeEnabled) {
-               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.Notifications', false);
-               trackTimer.startTracking();
-            }
-
-            var view008 = new View({
-               'id' : 'Platform.Notifications',
-               'label' : MessageService.createStaticMessage('My Notifications'),
-               'fullScreen' : 'true',
-            });
-            ui001.addChild( view008 );
-
-            var requiredResources009 = {
-               'osusernotification' : {
-                  'reload' : true,
-                  'artifactId' : 'Platform.Notifications_osusernotification',
-                  'id' : 'awed6a5e70',
-               },
-               'PlatformTempPushNotification' : {
-                  'reload' : true,
-                  'artifactId' : 'Platform.Notifications_PlatformTempPushNotification',
-                  'id' : 'aw9993c5cb',
-               },
-            };
-            view008.addRequiredResources( requiredResources009 );
-
-
-            var listItemTemplate008 = new ListItemTemplate({
-               'layout' : 'NotificationList',
-               'artifactId' : 'Platform.Notifications_listItemTemplate',
-               'id' : 'aw718eb447',
-            });
-
-            var listtext026 = new ListText({
-               'resourceAttribute' : 'uiDate',
-               'layoutInsertAt' : 'date1',
-               'artifactId' : 'Platform.Notifications_uiDate',
-               'id' : 'aw56b07378',
-            });
-            listItemTemplate008.addChild( listtext026 );
-
-
-            var listtext027 = new ListText({
-               'resourceAttribute' : 'itemnum',
-               'layoutInsertAt' : 'item1',
-               'artifactId' : 'Platform.Notifications_itemnum',
-               'id' : 'aw4dbbd111',
-            });
-            listItemTemplate008.addChild( listtext027 );
-
-
-            var listtext028 = new ListText({
-               'resourceAttribute' : 'itemDesc',
-               'layoutInsertAt' : 'item2',
-               'artifactId' : 'Platform.Notifications_itemDesc',
-               'id' : 'aw6bac97b9',
-            });
-            listItemTemplate008.addChild( listtext028 );
-
-            var eventHandlers034 = [
-               {
-                     'method' : 'openFromMsgHistory',
-                     'artifactId' : 'Platform.Notifications_Open_button_eventHandlers_click_FromList',
-                     'id' : 'awf03f57bd',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.PushNotificationDialogHandler',
-               },
-               {
-                     'method' : 'renderMsgHistoryItem',
-                     'artifactId' : 'Platform.Notifications_Open_button_eventHandlers_render_FromList',
-                     'id' : 'awfd2341e9',
-                     'event' : 'render',
-                     'class' : 'platform.handlers.PushNotificationDialogHandler',
-               }
-            ];
-            listItemTemplate008.eventHandlers = eventHandlers034;
-
-
-            var list008 = new List({
-               'resource' : 'osusernotification',
-               'listItemTemplate' : listItemTemplate008,
-               'artifactId' : 'Platform.Notifications_list',
-               'id' : 'awb4916253',
-               'label' : MessageService.createStaticMessage('List of notifications'),
-            });
-            view008.addChild( list008 );
-
-            var eventHandlers035 = [
-               {
-                     'method' : 'renderMsgHistory',
-                     'artifactId' : 'Platform.Notifications_eventHandlers_render_FromList',
-                     'id' : 'awa8aedc90',
-                     'event' : 'render',
-                     'class' : 'platform.handlers.PushNotificationDialogHandler',
-               }
-            ];
-            view008.eventHandlers = eventHandlers035;
-            if (trackTimeEnabled) {
-               trackTimer.stopTracking();
-            }
 
             if (trackTimeEnabled) {
                var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.AttachmentInfoView', false);
                trackTimer.startTracking();
             }
 
-            var view009 = new View({
+            var view007 = new View({
                'resource' : 'PlatformAttachmentInfoResource',
                'id' : 'Platform.AttachmentInfoView',
                'label' : MessageService.createStaticMessage('Attachment Details'),
             });
-            ui001.addChild( view009 );
+            ui001.addChild( view007 );
 
-            var requiredResources010 = {
+            var requiredResources011 = {
                'PlatformAttachmentInfoResource' : {
                   'reload' : true,
                   'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource',
                   'id' : 'awedbd920b',
                },
             };
-            view009.addRequiredResources( requiredResources010 );
+            view007.addRequiredResources( requiredResources011 );
 
-            var container013 = new Container({
+            var container019 = new Container({
                'resource' : 'PlatformAttachmentInfoResource',
                'artifactId' : 'Platform.AttachmentInfoView_container_0',
                'id' : 'aw22b80d5f',
             });
-            view009.addChild( container013 );
+            view007.addChild( container019 );
 
 
-            var group005 = new Group({
+            var group004 = new Group({
                'artifactId' : 'Platform.AttachmentInfoView_group_0',
                'id' : 'aw80e7b381',
             });
-            container013.addChild( group005 );
+            container019.addChild( group004 );
 
 
-            var groupitem011 = new GroupItem({
+            var groupitem010 = new GroupItem({
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_0',
                'id' : 'aw15768e0',
             });
-            group005.addChild( groupitem011 );
+            group004.addChild( groupitem010 );
 
 
-            var text028 = new Text({
+            var text031 = new Text({
                'resourceAttribute' : 'name',
                'editable' : true,
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_0_name_Name',
@@ -2324,17 +2459,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'label' : MessageService.createStaticMessage('Name'),
                'required' : true,
             });
-            groupitem011.addChild( text028 );
+            groupitem010.addChild( text031 );
 
 
-            var groupitem012 = new GroupItem({
+            var groupitem011 = new GroupItem({
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_1',
                'id' : 'aw76505876',
             });
-            group005.addChild( groupitem012 );
+            group004.addChild( groupitem011 );
 
 
-            var text029 = new Text({
+            var text032 = new Text({
                'resourceAttribute' : 'description',
                'editable' : true,
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_1_description_Description',
@@ -2342,17 +2477,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'label' : MessageService.createStaticMessage('Description'),
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem012.addChild( text029 );
+            groupitem011.addChild( text032 );
 
 
-            var groupitem013 = new GroupItem({
+            var groupitem012 = new GroupItem({
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_2',
                'id' : 'awef5909cc',
             });
-            group005.addChild( groupitem013 );
+            group004.addChild( groupitem012 );
 
 
-            var text030 = new Text({
+            var text033 = new Text({
                'resourceAttribute' : 'category',
                'lookup' : 'PlatformAttachmentIn.CategoryLookup',
                'editable' : false,
@@ -2362,9 +2497,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'lookupAttribute' : 'folderName',
                'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
             });
-            groupitem013.addChild( text030 );
+            groupitem012.addChild( text033 );
 
-            var eventHandlers036 = [
+            var eventHandlers031 = [
                {
                      'method' : 'renderCategory',
                      'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_2_category_Folder_eventHandlers_render_renderCategory',
@@ -2373,47 +2508,47 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AttachmentHandler',
                }
             ];
-            text030.eventHandlers = eventHandlers036;
+            text033.eventHandlers = eventHandlers031;
 
-            var groupitem014 = new GroupItem({
+            var groupitem013 = new GroupItem({
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_3',
                'id' : 'aw985e395a',
             });
-            group005.addChild( groupitem014 );
+            group004.addChild( groupitem013 );
 
 
-            var text031 = new Text({
+            var text034 = new Text({
                'resourceAttribute' : 'fileType',
                'editable' : false,
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_3_fileType_FileType',
                'id' : 'awf0b55f9',
                'label' : MessageService.createStaticMessage('File Type'),
             });
-            groupitem014.addChild( text031 );
+            groupitem013.addChild( text034 );
 
 
-            var groupitem015 = new GroupItem({
+            var groupitem014 = new GroupItem({
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_4',
                'id' : 'aw63aacf9',
             });
-            group005.addChild( groupitem015 );
+            group004.addChild( groupitem014 );
 
 
-            var text032 = new Text({
+            var text035 = new Text({
                'resourceAttribute' : 'fileSize',
                'editable' : false,
                'artifactId' : 'Platform.AttachmentInfoView_PlatformAttachmentInfoResource_groupitem_4_fileSize_FileSizeKB',
                'id' : 'awa8aac05f',
                'label' : MessageService.createStaticMessage('File Size (KB)'),
             });
-            groupitem015.addChild( text032 );
+            groupitem014.addChild( text035 );
 
 
-            var footer004 = new Footer({
+            var footer003 = new Footer({
                'artifactId' : 'Platform.AttachmentInfoView_footer',
                'id' : 'awad3a6a43',
             });
-            view009.addChild( footer004 );
+            view007.addChild( footer003 );
 
 
             var button012 = new Button({
@@ -2421,7 +2556,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw61842429',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers037 = [
+            var eventHandlers032 = [
                {
                      'method' : 'handleBackButtonAttachmentDetailsView',
                      'artifactId' : 'Platform.AttachmentInfoView_Cancel_button_eventHandlers_click_handleBackButtonAttachmentDetailsView',
@@ -2430,8 +2565,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AttachmentHandler',
                }
             ];
-            button012.eventHandlers = eventHandlers037;
-            footer004.addChild( button012 );
+            button012.eventHandlers = eventHandlers032;
+            footer003.addChild( button012 );
 
 
             var button013 = new Button({
@@ -2440,7 +2575,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw8904293b',
                'label' : MessageService.createStaticMessage('Save'),
             });
-            var eventHandlers038 = [
+            var eventHandlers033 = [
                {
                      'method' : 'commitAttachmentEntry',
                      'artifactId' : 'Platform.AttachmentInfoView_Save_button_eventHandlers_click_commitAttachmentEntry',
@@ -2449,10 +2584,10 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AttachmentHandler',
                }
             ];
-            button013.eventHandlers = eventHandlers038;
-            footer004.addChild( button013 );
+            button013.eventHandlers = eventHandlers033;
+            footer003.addChild( button013 );
 
-            var eventHandlers039 = [
+            var eventHandlers034 = [
                {
                      'method' : 'init',
                      'artifactId' : 'Platform.AttachmentInfoView_eventHandlers_initialize_init',
@@ -2468,7 +2603,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AttachmentHandler',
                }
             ];
-            view009.eventHandlers = eventHandlers039;
+            view007.eventHandlers = eventHandlers034;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -2478,17 +2613,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view010 = new View({
+            var view008 = new View({
                'id' : 'Platform.AttachmentFileDialog',
             });
-            ui001.addChild( view010 );
+            ui001.addChild( view008 );
 
 
-            var footer005 = new Footer({
+            var footer004 = new Footer({
                'artifactId' : 'Platform.AttachmentFileDialog_footer',
                'id' : 'awb513dc05',
             });
-            view010.addChild( footer005 );
+            view008.addChild( footer004 );
 
 
             var button014 = new Button({
@@ -2497,7 +2632,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw150d1bc',
                'label' : MessageService.createStaticMessage('Close'),
             });
-            var eventHandlers040 = [
+            var eventHandlers035 = [
                {
                      'method' : 'closeFileDialog',
                      'artifactId' : 'Platform.AttachmentFileDialog_closeDialog',
@@ -2506,75 +2641,75 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AttachmentHandler',
                }
             ];
-            button014.eventHandlers = eventHandlers040;
-            footer005.addChild( button014 );
+            button014.eventHandlers = eventHandlers035;
+            footer004.addChild( button014 );
 
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
 
-            var lookup005 = new Lookup({
+            var lookup007 = new Lookup({
                'resource' : 'PlatformAttachmentCategoryResource',
                'id' : 'PlatformAttachmentIn.CategoryLookup',
                'label' : MessageService.createStaticMessage('Select Folder'),
             });
-            ui001.addChild( lookup005 );
+            ui001.addChild( lookup007 );
 
-            var requiredResources011 = {
+            var requiredResources012 = {
                'PlatformAttachmentCategoryResource' : {
                   'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource',
                   'id' : 'aw18cc3542',
                },
             };
-            lookup005.addRequiredResources( requiredResources011 );
+            lookup007.addRequiredResources( requiredResources012 );
 
 
-            var searchAttributes005 = new SearchAttributes({
+            var searchAttributes006 = new SearchAttributes({
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource_searchAttributes',
                'id' : 'awb7d9341f',
             });
 
-            var searchAttribute006 = new SearchAttribute({
+            var searchAttribute007 = new SearchAttribute({
                'name' : 'folderName',
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource_searchAttribute_folderName',
                'id' : 'aw9514e6e6',
             });
-            searchAttributes005.addChild( searchAttribute006 );
+            searchAttributes006.addChild( searchAttribute007 );
 
 
 
-            var listItemTemplate009 = new ListItemTemplate({
+            var listItemTemplate010 = new ListItemTemplate({
                'layout' : 'Item2Desc2',
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource_listItemTemplate_Item2Desc2',
                'id' : 'aweb3659e3',
             });
 
-            var listtext029 = new ListText({
+            var listtext043 = new ListText({
                'resourceAttribute' : 'folderName',
                'cssClass' : 'bold textappearance-medium',
                'layoutInsertAt' : 'item1',
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource_Item2Desc2_folderName',
                'id' : 'aw48fc196b',
             });
-            listItemTemplate009.addChild( listtext029 );
+            listItemTemplate010.addChild( listtext043 );
 
 
 
-            var list009 = new List({
+            var list010 = new List({
                'resource' : 'PlatformAttachmentCategoryResource',
-               'listItemTemplate' : listItemTemplate009,
+               'listItemTemplate' : listItemTemplate010,
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_PlatformAttachmentCategoryResource_list',
                'id' : 'awe6857cc4',
-               'searchAttributes' : searchAttributes005,
+               'searchAttributes' : searchAttributes006,
             });
-            lookup005.addChild( list009 );
+            lookup007.addChild( list010 );
 
 
             var returnAttributes003 = new ReturnAttributes({
                'artifactId' : 'PlatformAttachmentIn.CategoryLookup_returnAttributes',
                'id' : 'aw4860e6b5',
             });
-            lookup005.addChild( returnAttributes003 );
+            lookup007.addChild( returnAttributes003 );
 
 
             var returnAttribute007 = new ReturnAttribute({
@@ -2586,326 +2721,283 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
             returnAttributes003.addChild( returnAttribute007 );
 
 
-            var dialog005 = new Dialog({
-               'resource' : 'PlatformEsigResource',
-               'id' : 'Platform.EsigLoginView',
-               'label' : MessageService.createStaticMessage('Electronic Signature Authentication'),
+            var actions003 = new Actions({
+               'artifactId' : 'actions',
+               'id' : 'aw548f1ef',
             });
-            ui001.addChild( dialog005 );
+            ui001.addChild( actions003 );
 
-            var requiredResources012 = {
-               'attemptResultDomain' : {
-                  'enableFeatureByProperty' : 'esig.enabled',
-                  'artifactId' : 'Platform.EsigLoginView_attemptResultDomain',
-                  'id' : 'aw3c53638b',
+
+            var action005 = new Action({
+               'overflow' : true,
+               'artifactId' : 'ResetWorkList_action',
+               'id' : 'aw956f5d3b',
+               'label' : MessageService.createStaticMessage('Reset Work List'),
+            });
+            actions003.addChild( action005 );
+
+            var eventHandlers036 = [
+               {
+                     'method' : 'resetWorkList',
+                     'artifactId' : 'ResetWorkList_action_eventHandlers_click_findByScan',
+                     'id' : 'aw11a2bd29',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.WorkOfflineHandler',
                },
-            };
-            dialog005.addRequiredResources( requiredResources012 );
+               {
+                     'method' : 'enableResetWorkList',
+                     'artifactId' : 'ResetWorkList_action_eventHandlers_render_enableResetWorkList',
+                     'id' : 'awfb6356a8',
+                     'event' : 'render',
+                     'class' : 'platform.handlers.WorkOfflineHandler',
+               }
+            ];
+            action005.eventHandlers = eventHandlers036;
 
-            var container014 = new Container({
-               'artifactId' : 'Platform.EsigLoginView_container_0',
-               'id' : 'aw44fd9611',
+            var action006 = new Action({
+               'overflow' : true,
+               'artifactId' : 'PseudoOffline_goOffline',
+               'id' : 'aw90309912',
+               'label' : MessageService.createStaticMessage('Enable Offline Mode'),
             });
-            dialog005.addChild( container014 );
+            actions003.addChild( action006 );
 
+            var eventHandlers037 = [
+               {
+                     'method' : 'toggleOfflineMode',
+                     'artifactId' : 'PseudoOffline_enableoffline_action_eventHandlers_click',
+                     'id' : 'aw33d3b70c',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.PseudoOfflineModeHandler',
+               }
+            ];
+            action006.eventHandlers = eventHandlers037;
 
-            var group006 = new Group({
-               'artifactId' : 'Platform.EsigLoginView_group_0',
-               'id' : 'aw7bf6135f',
+            var action007 = new Action({
+               'overflow' : true,
+               'transitionTo' : 'Platform.Settings',
+               'artifactId' : 'Settings_action',
+               'id' : 'awc0b1927e',
+               'label' : MessageService.createStaticMessage('Settings'),
             });
-            container014.addChild( group006 );
+            actions003.addChild( action007 );
 
 
-            var groupitem016 = new GroupItem({
-               'artifactId' : 'Platform.EsigLoginView_group_0_groupitem_1',
-               'id' : 'aw209714b9',
+            var action008 = new Action({
+               'overflow' : true,
+               'transitionTo' : 'Platform.HelpAbout',
+               'artifactId' : 'About_action',
+               'id' : 'aw49fae06b',
+               'label' : MessageService.createStaticMessage('About'),
             });
-            group006.addChild( groupitem016 );
+            actions003.addChild( action008 );
 
 
-            var text033 = new Text({
-               'border' : 'true',
-               'resourceAttribute' : 'userName',
-               'cssClass' : 'loginUsername',
-               'editable' : false,
-               'artifactId' : 'Platform.EsigLoginView_container_0_username',
-               'id' : 'aw15aabb30',
-               'label' : MessageService.createStaticMessage('User Name'),
-               'placeHolder' : MessageService.createStaticMessage('User name'),
+            var action009 = new Action({
+               'overflow' : true,
+               'transitionTo' : 'Platform.LogOutPrompt',
+               'artifactId' : 'LogOut_action',
+               'id' : 'awd566efa2',
+               'label' : MessageService.createStaticMessage('Log Out'),
             });
-            groupitem016.addChild( text033 );
+            actions003.addChild( action009 );
 
 
-            var text034 = new Text({
-               'border' : 'true',
-               'resourceAttribute' : 'password',
-               'cssClass' : 'loginPassword',
-               'editable' : true,
-               'artifactId' : 'Platform.EsigLoginView_container_0_password',
-               'id' : 'awd836fb92',
-               'label' : MessageService.createStaticMessage('Password'),
-               'type' : 'password',
-               'placeHolder' : MessageService.createStaticMessage('Password'),
-               'required' : true,
+            var action010 = new Action({
+               'artifactId' : 'action',
+               'id' : 'aw47cc8c92',
             });
-            groupitem016.addChild( text034 );
+            actions003.addChild( action010 );
 
+            var eventHandlers038 = [
+               {
+                     'artifactId' : 'action_eventHandlers_click',
+                     'id' : 'aw871940b2',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.CreateQueryBaseHandler',
+               }
+            ];
+            action010.eventHandlers = eventHandlers038;
 
-            var text035 = new Text({
-               'resourceAttribute' : 'reason',
-               'cssClass' : 'loginUsername',
-               'editable' : true,
-               'artifactId' : 'Platform.EsigLoginView_container_0_reason',
-               'id' : 'aw6ccf562d',
-               'label' : MessageService.createStaticMessage('Reason for Change'),
-               'placeHolder' : MessageService.createStaticMessage('Reason for Change'),
-               'required' : true,
+            var erroractions001 = new ErrorActions({
+               'artifactId' : 'erroractions',
+               'id' : 'aw6a5d95e9',
             });
-            groupitem016.addChild( text035 );
+            ui001.addChild( erroractions001 );
 
 
-            var container015 = new Container({
-               'cssClass' : 'mblSimpleDialogFooter',
-               'artifactId' : 'Platform.EsigLoginView_footer',
-               'id' : 'aw68d6d11c',
+            var action011 = new Action({
+               'artifactId' : 'UndoChanges_action',
+               'id' : 'aw2236d58a',
+               'label' : MessageService.createStaticMessage('Undo Changes'),
             });
-            dialog005.addChild( container015 );
+            erroractions001.addChild( action011 );
 
+            var eventHandlers039 = [
+               {
+                     'method' : 'confirmClearChanges',
+                     'artifactId' : 'UndoChanges_action_eventHandlers_click_confirmClearChanges',
+                     'id' : 'awcf857f5c',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.WorkOfflineHandler',
+               }
+            ];
+            action011.eventHandlers = eventHandlers039;
 
-            var button015 = new Button({
-               'artifactId' : 'Platform.EsigLoginView_Cancel_button',
-               'id' : 'aw68a36a2b',
-               'label' : MessageService.createStaticMessage('Cancel'),
+            var action012 = new Action({
+               'artifactId' : 'ResendChanges_action',
+               'id' : 'awccf9e70e',
+               'label' : MessageService.createStaticMessage('Resend Changes'),
             });
+            erroractions001.addChild( action012 );
+
+            var eventHandlers040 = [
+               {
+                     'method' : 'retryRecordChanges',
+                     'artifactId' : 'ResendChanges_action_eventHandlers_click_retryRecordChanges',
+                     'id' : 'aw543ac47e',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.WorkOfflineHandler',
+               }
+            ];
+            action012.eventHandlers = eventHandlers040;
             var eventHandlers041 = [
                {
-                     'method' : 'cancelEsig',
-                     'artifactId' : 'Platform.EsigLoginView_Cancel_button_eventHandlers_click_cancelEsig',
-                     'id' : 'awdba9800d',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.EsigHandler',
+                     'method' : 'none',
+                     'artifactId' : 'eventHandlers_none_none',
+                     'id' : 'aw1e2e7ded',
+                     'event' : 'none',
+                     'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button015.eventHandlers = eventHandlers041;
-            container015.addChild( button015 );
-
-
-            var button016 = new Button({
-               'cssClass' : 'mblPrimaryButton',
-               'artifactId' : 'Platform.EsigLoginView_Save_button',
-               'id' : 'awef41b275',
-               'label' : MessageService.createStaticMessage('OK'),
-               'primary' : 'true',
-            });
-            var eventHandlers042 = [
-               {
-                     'method' : 'submitEsig',
-                     'artifactId' : 'Platform.EsigLoginView_Save_button_eventHandlers_click_submitEsig',
-                     'id' : 'awa9f3497f',
-                     'event' : 'click',
-                     'class' : 'platform.handlers.EsigHandler',
-               }
-            ];
-            button016.eventHandlers = eventHandlers042;
-            container015.addChild( button016 );
-
-            var eventHandlers043 = [
-               {
-                     'method' : 'initializeEsig',
-                     'artifactId' : 'Platform.EsigLoginView_eventHandlers_show_initializeEsig',
-                     'id' : 'aw681e6384',
-                     'event' : 'show',
-                     'class' : 'platform.handlers.EsigHandler',
-               }
-            ];
-            dialog005.eventHandlers = eventHandlers043;
+            ui001.eventHandlers = eventHandlers041;
 
             if (trackTimeEnabled) {
-               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.Signature', false);
+               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.emptyview', false);
                trackTimer.startTracking();
             }
 
-            var view011 = new View({
-               'id' : 'Platform.Signature',
-               'label' : MessageService.createStaticMessage('Capture Real Signature'),
+            var view009 = new View({
+               'showHeader' : false,
+               'id' : 'Platform.emptyview',
+               'showFooter' : false,
             });
-            ui001.addChild( view011 );
+            ui001.addChild( view009 );
+
+            if (trackTimeEnabled) {
+               trackTimer.stopTracking();
+            }
+
+            if (trackTimeEnabled) {
+               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.Notifications', false);
+               trackTimer.startTracking();
+            }
+
+            var view010 = new View({
+               'id' : 'Platform.Notifications',
+               'label' : MessageService.createStaticMessage('My Notifications'),
+               'fullScreen' : 'true',
+            });
+            ui001.addChild( view010 );
 
             var requiredResources013 = {
-               'PlatformAttachmentInfoResource' : {
-                  'artifactId' : 'Platform.Signature_PlatformAttachmentInfoResource',
-                  'id' : 'aw8cc44736',
+               'osusernotification' : {
+                  'reload' : true,
+                  'artifactId' : 'Platform.Notifications_osusernotification',
+                  'id' : 'awed6a5e70',
+               },
+               'PlatformTempPushNotification' : {
+                  'reload' : true,
+                  'artifactId' : 'Platform.Notifications_PlatformTempPushNotification',
+                  'id' : 'aw9993c5cb',
                },
             };
-            view011.addRequiredResources( requiredResources013 );
+            view010.addRequiredResources( requiredResources013 );
 
-            var footer006 = new Footer({
-               'artifactId' : 'Platform.Signature_footer',
-               'id' : 'aw16b9ee39',
+
+            var listItemTemplate011 = new ListItemTemplate({
+               'layout' : 'NotificationList',
+               'artifactId' : 'Platform.Notifications_listItemTemplate',
+               'id' : 'aw718eb447',
             });
-            view011.addChild( footer006 );
 
-
-            var button017 = new Button({
-               'artifactId' : 'Platform.Signature_Cancel_button',
-               'id' : 'aw9088fe5b',
-               'label' : MessageService.createStaticMessage('Cancel'),
+            var listtext044 = new ListText({
+               'resourceAttribute' : 'uiDate',
+               'layoutInsertAt' : 'date1',
+               'artifactId' : 'Platform.Notifications_uiDate',
+               'id' : 'aw56b07378',
             });
-            var eventHandlers044 = [
+            listItemTemplate011.addChild( listtext044 );
+
+
+            var listtext045 = new ListText({
+               'resourceAttribute' : 'itemnum',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Platform.Notifications_itemnum',
+               'id' : 'aw4dbbd111',
+            });
+            listItemTemplate011.addChild( listtext045 );
+
+
+            var listtext046 = new ListText({
+               'resourceAttribute' : 'itemDesc',
+               'layoutInsertAt' : 'item2',
+               'artifactId' : 'Platform.Notifications_itemDesc',
+               'id' : 'aw6bac97b9',
+            });
+            listItemTemplate011.addChild( listtext046 );
+
+            var eventHandlers042 = [
                {
-                     'method' : 'cancelSignature',
-                     'artifactId' : 'Platform.Signature_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView',
-                     'id' : 'awc27cd6a4',
+                     'method' : 'openFromMsgHistory',
+                     'artifactId' : 'Platform.Notifications_Open_button_eventHandlers_click_FromList',
+                     'id' : 'awf03f57bd',
                      'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
+                     'class' : 'platform.handlers.PushNotificationDialogHandler',
+               },
+               {
+                     'method' : 'renderMsgHistoryItem',
+                     'artifactId' : 'Platform.Notifications_Open_button_eventHandlers_render_FromList',
+                     'id' : 'awfd2341e9',
+                     'event' : 'render',
+                     'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button017.eventHandlers = eventHandlers044;
-            footer006.addChild( button017 );
+            listItemTemplate011.eventHandlers = eventHandlers042;
 
 
-            var button018 = new Button({
-               'artifactId' : 'Platform.Signature_Clear_button',
-               'id' : 'awc6576044',
-               'label' : MessageService.createStaticMessage('Clear'),
+            var list011 = new List({
+               'resource' : 'osusernotification',
+               'listItemTemplate' : listItemTemplate011,
+               'artifactId' : 'Platform.Notifications_list',
+               'id' : 'awb4916253',
+               'label' : MessageService.createStaticMessage('List of notifications'),
             });
-            var eventHandlers045 = [
+            view010.addChild( list011 );
+
+            var eventHandlers043 = [
                {
-                     'method' : 'clearSignature',
-                     'artifactId' : 'Platform.Signature_Clear_button_eventHandlers_click_handleBackButtonClickEditAssetView',
-                     'id' : 'aw90653ab1',
-                     'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
+                     'method' : 'renderMsgHistory',
+                     'artifactId' : 'Platform.Notifications_eventHandlers_render_FromList',
+                     'id' : 'awa8aedc90',
+                     'event' : 'render',
+                     'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button018.eventHandlers = eventHandlers045;
-            footer006.addChild( button018 );
-
-
-            var button019 = new Button({
-               'cssClass' : 'mblPrimaryButton',
-               'artifactId' : 'Platform.Signature_Save_button',
-               'id' : 'awbc1f2293',
-               'label' : MessageService.createStaticMessage('Save'),
-               'primary' : 'true',
-            });
-            var eventHandlers046 = [
-               {
-                     'method' : 'saveSignature',
-                     'artifactId' : 'Platform.Signature_Save_button_eventHandlers_click_saveSignature',
-                     'id' : 'aw7d8e432b',
-                     'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            button019.eventHandlers = eventHandlers046;
-            footer006.addChild( button019 );
-
-            var eventHandlers047 = [
-               {
-                     'method' : 'initSignature',
-                     'artifactId' : 'Platform.Signature_eventHandlers_show_initStopWorkView',
-                     'id' : 'awb8cf4cb7',
-                     'event' : 'initialize',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            view011.eventHandlers = eventHandlers047;
+            view010.eventHandlers = eventHandlers043;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
 
             var dialog006 = new Dialog({
-               'id' : 'Platform.SignatureDialog',
-            });
-            ui001.addChild( dialog006 );
-
-
-            var container016 = new Container({
-               'cssClass' : 'mblSimpleDialogFooter',
-               'artifactId' : 'Platform.SignatureDialog_container_buttons',
-               'id' : 'aw91450791',
-            });
-            dialog006.addChild( container016 );
-
-
-            var button020 = new Button({
-               'cssClass' : 'dialogButton',
-               'artifactId' : 'Platform.SignatureDialog_container_buttons_Cancel_button',
-               'id' : 'aw51ebe6e8',
-               'label' : MessageService.createStaticMessage('Cancel'),
-            });
-            var eventHandlers048 = [
-               {
-                     'method' : 'cancelSignatureDialog',
-                     'artifactId' : 'Platform.SignatureDialog_container_buttons_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView',
-                     'id' : 'aw198ca753',
-                     'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            button020.eventHandlers = eventHandlers048;
-            container016.addChild( button020 );
-
-
-            var button021 = new Button({
-               'cssClass' : 'dialogButton',
-               'artifactId' : 'Platform.SignatureDialog_container_buttons_clear_button',
-               'id' : 'awdc63a382',
-               'label' : MessageService.createStaticMessage('Clear'),
-            });
-            var eventHandlers049 = [
-               {
-                     'method' : 'clearSignature',
-                     'artifactId' : 'Platform.SignatureDialog_container_buttons_clear_button_eventHandlers_click_handleBackButtonClickEditAssetView',
-                     'id' : 'aw72eacc40',
-                     'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            button021.eventHandlers = eventHandlers049;
-            container016.addChild( button021 );
-
-
-            var button022 = new Button({
-               'cssClass' : 'mblPrimaryButton dialogButton',
-               'artifactId' : 'Platform.SignatureDialog_container_buttons_Save_button',
-               'id' : 'awd4941650',
-               'label' : MessageService.createStaticMessage('Save'),
-               'primary' : 'true',
-            });
-            var eventHandlers050 = [
-               {
-                     'method' : 'saveSignature',
-                     'artifactId' : 'Platform.SignatureDialog_container_buttons_Save_button_eventHandlers_click_saveSignature',
-                     'id' : 'awa59c7577',
-                     'event' : 'click',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            button022.eventHandlers = eventHandlers050;
-            container016.addChild( button022 );
-
-            var eventHandlers051 = [
-               {
-                     'method' : 'initSignature',
-                     'artifactId' : 'Platform.SignatureDialog_eventHandlers_show_initStopWorkView',
-                     'id' : 'aw71e7bce4',
-                     'event' : 'show',
-                     'class' : 'platform.signature.handler.SignatureHandler',
-               }
-            ];
-            dialog006.eventHandlers = eventHandlers051;
-
-            var dialog007 = new Dialog({
                'cssClass' : 'dialogDateTimeLookup',
                'resource' : 'PlatformDateLookupResource',
                'id' : 'Platform.DateTimeLookup',
                'label' : MessageService.createStaticMessage('Change Time or Date'),
             });
-            ui001.addChild( dialog007 );
+            ui001.addChild( dialog006 );
 
-            var eventHandlers052 = [
+            var eventHandlers044 = [
                {
                      'method' : 'initLookup',
                      'artifactId' : 'Platform.DateTimeLookup_eventHandlers_show_initLookup',
@@ -2914,36 +3006,36 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            dialog007.eventHandlers = eventHandlers052;
+            dialog006.eventHandlers = eventHandlers044;
 
-            var container017 = new Container({
+            var container020 = new Container({
                'artifactId' : 'Platform.DateTimeLookup_container_0',
                'id' : 'aw3cdb37d7',
             });
-            dialog007.addChild( container017 );
+            dialog006.addChild( container020 );
 
 
             var datetimepicker001 = new DateTimePicker({
                'artifactId' : 'Platform.DateTimeLookup_datetimepicker_0',
                'id' : 'aw7d2f0e0d',
             });
-            container017.addChild( datetimepicker001 );
+            container020.addChild( datetimepicker001 );
 
 
-            var container018 = new Container({
+            var container021 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.DateTimeLookup_container_1',
                'id' : 'aw4bdc0741',
             });
-            dialog007.addChild( container018 );
+            dialog006.addChild( container021 );
 
 
-            var button023 = new Button({
+            var button015 = new Button({
                'artifactId' : 'Platform.DateTimeLookup_Cancel_button',
                'id' : 'aw54d2f1bb',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers053 = [
+            var eventHandlers045 = [
                {
                      'method' : 'Cancel',
                      'artifactId' : 'Platform.DateTimeLookup_Cancel_button_eventHandlers_click_Cancel',
@@ -2952,16 +3044,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button023.eventHandlers = eventHandlers053;
-            container018.addChild( button023 );
+            button015.eventHandlers = eventHandlers045;
+            container021.addChild( button015 );
 
 
-            var button024 = new Button({
+            var button016 = new Button({
                'artifactId' : 'Platform.DateTimeLookup_Clear_button',
                'id' : 'awfd1238bd',
                'label' : MessageService.createStaticMessage('Clear'),
             });
-            var eventHandlers054 = [
+            var eventHandlers046 = [
                {
                      'method' : 'Clear',
                      'artifactId' : 'Platform.DateTimeLookup_Clear_button_eventHandlers_click_Clear',
@@ -2970,18 +3062,18 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button024.eventHandlers = eventHandlers054;
-            container018.addChild( button024 );
+            button016.eventHandlers = eventHandlers046;
+            container021.addChild( button016 );
 
 
-            var button025 = new Button({
+            var button017 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.DateTimeLookup_OK_button',
                'id' : 'awb1e0d280',
                'label' : MessageService.createStaticMessage('OK'),
                'primary' : 'true',
             });
-            var eventHandlers055 = [
+            var eventHandlers047 = [
                {
                      'method' : 'SetSelection',
                      'artifactId' : 'Platform.DateTimeLookup_OK_button_eventHandlers_click_SetSelection',
@@ -2990,8 +3082,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button025.eventHandlers = eventHandlers055;
-            container018.addChild( button025 );
+            button017.eventHandlers = eventHandlers047;
+            container021.addChild( button017 );
 
 
             if (trackTimeEnabled) {
@@ -2999,29 +3091,29 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view012 = new View({
+            var view011 = new View({
                'resource' : 'PlatformLoginResource',
                'id' : 'Platform.HelpAbout',
                'label' : MessageService.createStaticMessage('About'),
                'fullScreen' : 'true',
             });
-            ui001.addChild( view012 );
+            ui001.addChild( view011 );
 
 
-            var container019 = new Container({
+            var container022 = new Container({
                'cssClass' : 'platformHelpAboutContainer',
                'artifactId' : 'Platform.HelpAbout_container_0',
                'id' : 'awf8c0259e',
             });
-            view012.addChild( container019 );
+            view011.addChild( container022 );
 
 
-            var image003 = new Image({
+            var image004 = new Image({
                'image' : 'ibmLogoDark.svg',
                'artifactId' : 'Platform.HelpAbout_image_0',
                'id' : 'awfebf608a',
             });
-            container019.addChild( image003 );
+            container022.addChild( image004 );
 
 
             var text036 = new Text({
@@ -3031,7 +3123,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'artifactId' : 'Platform.HelpAbout_container_0_appName',
                'id' : 'aw27632fa8',
             });
-            container019.addChild( text036 );
+            container022.addChild( text036 );
 
 
             var text037 = new Text({
@@ -3041,7 +3133,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awf060501a',
                'value' : MessageService.createStaticMessage('Version 7.6.4.0'),
             });
-            container019.addChild( text037 );
+            container022.addChild( text037 );
 
 
             var text038 = new Text({
@@ -3051,7 +3143,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awd289f042',
                'value' : MessageService.createStaticMessage('Build number @build@'),
             });
-            container019.addChild( text038 );
+            container022.addChild( text038 );
 
 
             var text039 = new Text({
@@ -3060,24 +3152,24 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw31046f88',
                'value' : MessageService.createStaticMessage('Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms.'),
             });
-            container019.addChild( text039 );
+            container022.addChild( text039 );
 
 
-            var group007 = new Group({
+            var group005 = new Group({
                'debugOnly' : 'true',
                'artifactId' : 'Platform.Settings_group_2',
                'id' : 'awc5ac5572',
             });
-            container019.addChild( group007 );
+            container022.addChild( group005 );
 
 
-            var groupitem017 = new GroupItem({
+            var groupitem015 = new GroupItem({
                'layout' : 'ScreenInfo',
                'cssClass' : 'screenInfo',
                'artifactId' : 'Platform.Settings_screenInfo_item',
                'id' : 'aw5de3d82',
             });
-            group007.addChild( groupitem017 );
+            group005.addChild( groupitem015 );
 
 
             var text040 = new Text({
@@ -3087,7 +3179,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awd295621c',
                'value' : MessageService.createStaticMessage('Screen Information'),
             });
-            groupitem017.addChild( text040 );
+            groupitem015.addChild( text040 );
 
 
             var text041 = new Text({
@@ -3099,7 +3191,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw4219624',
                'label' : MessageService.createStaticMessage('PPI'),
             });
-            groupitem017.addChild( text041 );
+            groupitem015.addChild( text041 );
 
 
             var text042 = new Text({
@@ -3111,7 +3203,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6564040e',
                'label' : MessageService.createStaticMessage('Width'),
             });
-            groupitem017.addChild( text042 );
+            groupitem015.addChild( text042 );
 
 
             var text043 = new Text({
@@ -3123,7 +3215,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awcd6ab682',
                'label' : MessageService.createStaticMessage('Height'),
             });
-            groupitem017.addChild( text043 );
+            groupitem015.addChild( text043 );
 
 
             var text044 = new Text({
@@ -3135,7 +3227,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awd74c1b0',
                'label' : MessageService.createStaticMessage('Layout Size'),
             });
-            groupitem017.addChild( text044 );
+            groupitem015.addChild( text044 );
 
 
             var text045 = new Text({
@@ -3147,7 +3239,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw22df9e6f',
                'label' : MessageService.createStaticMessage('Orientation'),
             });
-            groupitem017.addChild( text045 );
+            groupitem015.addChild( text045 );
 
 
             var text046 = new Text({
@@ -3159,7 +3251,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6b4b20e2',
                'label' : MessageService.createStaticMessage('Density'),
             });
-            groupitem017.addChild( text046 );
+            groupitem015.addChild( text046 );
 
 
             var text047 = new Text({
@@ -3171,7 +3263,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw39d3d4a7',
                'label' : MessageService.createStaticMessage('Pane 1 Size'),
             });
-            groupitem017.addChild( text047 );
+            groupitem015.addChild( text047 );
 
 
             var text048 = new Text({
@@ -3183,7 +3275,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw4ed4e431',
                'label' : MessageService.createStaticMessage('Pane 2 Size'),
             });
-            groupitem017.addChild( text048 );
+            groupitem015.addChild( text048 );
 
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
@@ -3194,26 +3286,34 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view013 = new View({
+            var view012 = new View({
                'id' : 'Platform.Settings',
                'label' : MessageService.createStaticMessage('Settings'),
                'fullScreen' : 'true',
             });
-            ui001.addChild( view013 );
+            ui001.addChild( view012 );
 
             var requiredResources014 = {
                'LastADDownload' : {
                   'artifactId' : 'Platform.Settings_LastADDownload',
                   'id' : 'aw879343e2',
                },
+               'chooseStoreRoomResource' : {
+                  'artifactId' : 'Platform.Settings_storeRoomResource',
+                  'id' : 'aw3199f2b0',
+               },
+               'additionalstoreroom' : {
+                  'artifactId' : 'Platform.Settings_additionalstoreroom',
+                  'id' : 'aw66f0bf80',
+               },
             };
-            view013.addRequiredResources( requiredResources014 );
+            view012.addRequiredResources( requiredResources014 );
 
-            var actions003 = new Actions({
+            var actions004 = new Actions({
                'artifactId' : 'Platform.Settings_actions',
                'id' : 'awb3f56d3b',
             });
-            view013.addChild( actions003 );
+            view012.addChild( actions004 );
 
 
             var action013 = new Action({
@@ -3222,9 +3322,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awccb0ee65',
                'label' : MessageService.createStaticMessage('Refresh System Data'),
             });
-            actions003.addChild( action013 );
+            actions004.addChild( action013 );
 
-            var eventHandlers056 = [
+            var eventHandlers048 = [
                {
                      'method' : 'openDownloadSystemDataDialog',
                      'artifactId' : 'Platform.Settings_RefreshSystemData_action_eventHandlers_click_downloadSystemData',
@@ -3240,29 +3340,29 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            action013.eventHandlers = eventHandlers056;
+            action013.eventHandlers = eventHandlers048;
 
-            var container020 = new Container({
+            var container023 = new Container({
                'resource' : 'LastADDownload',
                'artifactId' : 'Platform.Settings_container_0',
                'id' : 'aw74ff68b5',
             });
-            view013.addChild( container020 );
+            view012.addChild( container023 );
 
 
-            var group008 = new Group({
+            var group006 = new Group({
                'artifactId' : 'Platform.Settings_group_0',
                'id' : 'aw2ba2345e',
             });
-            container020.addChild( group008 );
+            container023.addChild( group006 );
 
 
-            var groupitem018 = new GroupItem({
+            var groupitem016 = new GroupItem({
                'transitionTo' : 'Platform.ChangePassword',
                'artifactId' : 'Platform.Settings_LastADDownload_groupitem_Platform.ChangePassword_0',
                'id' : 'awd48342a3',
             });
-            group008.addChild( groupitem018 );
+            group006.addChild( groupitem016 );
 
 
             var text049 = new Text({
@@ -3271,9 +3371,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6c14924a',
                'value' : MessageService.createStaticMessage('Change Password'),
             });
-            groupitem018.addChild( text049 );
+            groupitem016.addChild( text049 );
 
-            var eventHandlers057 = [
+            var eventHandlers049 = [
                {
                      'method' : 'enableChangePasswordFunction',
                      'artifactId' : 'Platform.Settings_LastADDownload_groupitem_Platform.ChangePassword_0_eventHandlers_render_enableChangePasswordFunction',
@@ -3282,13 +3382,13 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            groupitem018.eventHandlers = eventHandlers057;
+            groupitem016.eventHandlers = eventHandlers049;
 
-            var groupitem019 = new GroupItem({
+            var groupitem017 = new GroupItem({
                'artifactId' : 'Platform.Settings_LastADDownload_groupitem_0',
                'id' : 'aw82635ebb',
             });
-            group008.addChild( groupitem019 );
+            group006.addChild( groupitem017 );
 
 
             var text050 = new Text({
@@ -3297,7 +3397,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awcddf2167',
                'value' : MessageService.createStaticMessage('Refresh Lookup Data'),
             });
-            groupitem019.addChild( text050 );
+            groupitem017.addChild( text050 );
 
 
             var text051 = new Text({
@@ -3306,9 +3406,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'artifactId' : 'Platform.Settings_LastADDownload_groupitem_0_downloadStatus',
                'id' : 'aw8a1673e3',
             });
-            groupitem019.addChild( text051 );
+            groupitem017.addChild( text051 );
 
-            var eventHandlers058 = [
+            var eventHandlers050 = [
                {
                      'method' : 'renderLastDownload',
                      'artifactId' : 'Platform.Settings_LastADDownload_groupitem_0_downloadStatus_eventHandlers_render_renderLastDownload',
@@ -3317,7 +3417,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text051.eventHandlers = eventHandlers058;
+            text051.eventHandlers = eventHandlers050;
 
             var text052 = new Text({
                'cssClass' : 'textappearance-small',
@@ -3326,9 +3426,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw38a24bec',
                'value' : MessageService.createStaticMessage('Updates the lookup data on your device. Lookup data includes objects, such as assets and locations, that can be added to records.'),
             });
-            groupitem019.addChild( text052 );
+            groupitem017.addChild( text052 );
 
-            var eventHandlers059 = [
+            var eventHandlers051 = [
                {
                      'method' : 'refreshAdditionalData',
                      'artifactId' : 'Platform.Settings_LastADDownload_groupitem_0_eventHandlers_click_refreshAdditionalData',
@@ -3337,13 +3437,13 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            groupitem019.eventHandlers = eventHandlers059;
+            groupitem017.eventHandlers = eventHandlers051;
 
-            var groupitem020 = new GroupItem({
+            var groupitem018 = new GroupItem({
                'artifactId' : 'Platform.Settings_LastADDownload_groupitem_3_Number_of_day_to_sync',
                'id' : 'aw97e66cd6',
             });
-            group008.addChild( groupitem020 );
+            group006.addChild( groupitem018 );
 
 
             var text053 = new Text({
@@ -3353,9 +3453,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw69a517e3',
                'label' : MessageService.createStaticMessage('How often changes need to be refresh in days:'),
             });
-            groupitem020.addChild( text053 );
+            groupitem018.addChild( text053 );
 
-            var eventHandlers060 = [
+            var eventHandlers052 = [
                {
                      'method' : 'renderDayToSYnc',
                      'artifactId' : 'Platform.Settings_LastADDownload_text_Number_of_day_to_sync_eventHandlers_renderDayToSYnc',
@@ -3371,14 +3471,14 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            text053.eventHandlers = eventHandlers060;
+            text053.eventHandlers = eventHandlers052;
 
-            var groupitem021 = new GroupItem({
+            var groupitem019 = new GroupItem({
                'transitionTo' : 'Platform.AdvancedSettings',
                'artifactId' : 'Platform.Settings_LastADDownload_groupitem_Platform.AdvancedSettings_0',
                'id' : 'aw741c4d60',
             });
-            group008.addChild( groupitem021 );
+            group006.addChild( groupitem019 );
 
 
             var text054 = new Text({
@@ -3387,29 +3487,29 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw2d662633',
                'value' : MessageService.createStaticMessage('Advanced Settings'),
             });
-            groupitem021.addChild( text054 );
+            groupitem019.addChild( text054 );
 
 
-            var container021 = new Container({
+            var container024 = new Container({
                'artifactId' : 'ConnectionContainer',
                'id' : 'awef0b2658',
             });
-            view013.addChild( container021 );
+            view012.addChild( container024 );
 
 
-            var group009 = new Group({
+            var group007 = new Group({
                'artifactId' : 'Platform.Settings.ConnectionManagement.group',
                'id' : 'aw9ad5002d',
             });
-            container021.addChild( group009 );
+            container024.addChild( group007 );
 
 
-            var groupitem022 = new GroupItem({
+            var groupitem020 = new GroupItem({
                'layout' : 'ConnectionManagementLayout',
                'artifactId' : 'Platform.Settings.ConnectionManagement.groupItem1',
                'id' : 'aw81b0980b',
             });
-            group009.addChild( groupitem022 );
+            group007.addChild( groupitem020 );
 
 
             var text055 = new Text({
@@ -3419,7 +3519,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw1de21387',
                'value' : MessageService.createStaticMessage('Connection Behavior'),
             });
-            groupitem022.addChild( text055 );
+            groupitem020.addChild( text055 );
 
 
             var text056 = new Text({
@@ -3429,7 +3529,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6b506a6f',
                'value' : MessageService.createStaticMessage('Specifies which network connections should enable the application to work online'),
             });
-            groupitem022.addChild( text056 );
+            groupitem020.addChild( text056 );
 
 
             var radiobutton001 = new RadioButton({
@@ -3440,9 +3540,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awcb83aecb',
                'label' : MessageService.createStaticMessage('All Types'),
             });
-            groupitem022.addChild( radiobutton001 );
+            groupitem020.addChild( radiobutton001 );
 
-            var eventHandlers061 = [
+            var eventHandlers053 = [
                {
                      'method' : 'renderConnetionManagementSetting',
                      'artifactId' : 'Platform.Settings.ConnectionManagement.AllConnection.EventHandler1',
@@ -3458,7 +3558,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            radiobutton001.eventHandlers = eventHandlers061;
+            radiobutton001.eventHandlers = eventHandlers053;
 
             var radiobutton002 = new RadioButton({
                'name' : 'Connectiongrp',
@@ -3467,9 +3567,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw42dec2bb',
                'label' : MessageService.createStaticMessage('Only WiFi'),
             });
-            groupitem022.addChild( radiobutton002 );
+            groupitem020.addChild( radiobutton002 );
 
-            var eventHandlers062 = [
+            var eventHandlers054 = [
                {
                      'method' : 'renderConnetionManagementSetting',
                      'artifactId' : 'Platform.Settings.ConnectionManagement.AllConnection.EventHandler2',
@@ -3485,7 +3585,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            radiobutton002.eventHandlers = eventHandlers062;
+            radiobutton002.eventHandlers = eventHandlers054;
 
             var radiobutton003 = new RadioButton({
                'name' : 'Connectiongrp',
@@ -3494,9 +3594,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw7032481d',
                'label' : MessageService.createStaticMessage('Only Cellular'),
             });
-            groupitem022.addChild( radiobutton003 );
+            groupitem020.addChild( radiobutton003 );
 
-            var eventHandlers063 = [
+            var eventHandlers055 = [
                {
                      'method' : 'renderConnetionManagementSetting',
                      'artifactId' : 'Platform.Settings.ConnectionManagement.AllConnection.EventHandler3',
@@ -3512,7 +3612,61 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            radiobutton003.eventHandlers = eventHandlers063;
+            radiobutton003.eventHandlers = eventHandlers055;
+
+            var container025 = new Container({
+               'resource' : 'chooseStoreRoomResource',
+               'artifactId' : 'Platform.Settings_Storeroom_container',
+               'id' : 'aw3fbd7348',
+            });
+            view012.addChild( container025 );
+
+
+            var group008 = new Group({
+               'artifactId' : 'Platform.Settings_Storeroom_group_0',
+               'id' : 'awabbbc405',
+            });
+            container025.addChild( group008 );
+
+
+            var groupitem021 = new GroupItem({
+               'artifactId' : 'Platform.Settings_groupitem_Platform.Storeroom_0',
+               'id' : 'awdda12a79',
+            });
+            group008.addChild( groupitem021 );
+
+
+            var text057 = new Text({
+               'cssClass' : 'relatedRecords',
+               'artifactId' : 'Platform.Settings_groupitem_Platform.Storeroom_0_Label',
+               'id' : 'aw928420df',
+               'value' : MessageService.createStaticMessage('Change Default Storeroom'),
+            });
+            groupitem021.addChild( text057 );
+
+
+            var text058 = new Text({
+               'resourceAttribute' : 'location',
+               'lookup' : 'Platform.Settings_Storeroom.StoreroomLookup',
+               'cssClass' : 'textLookupNoScan',
+               'editable' : true,
+               'artifactId' : 'Platform.Settings_groupitem_Platform.Storeroom_0_StoreroomChange',
+               'id' : 'awb2a85828',
+               'lookupAttribute' : 'location',
+               'placeHolder' : MessageService.createStaticMessage('Tap to enter'),
+            });
+            groupitem021.addChild( text058 );
+
+            var eventHandlers056 = [
+               {
+                     'method' : 'validateChooseStoreRoom',
+                     'artifactId' : 'Platform.Settings_groupitem_Platform.Storeroom_0_Change_eventHandler',
+                     'id' : 'awd46b9fba',
+                     'event' : 'validate',
+                     'class' : 'application.handlers.InventoryHandler',
+               }
+            ];
+            text058.eventHandlers = eventHandlers056;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -3522,79 +3676,79 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view014 = new View({
+            var view013 = new View({
                'id' : 'Platform.AdvancedSettings',
                'label' : MessageService.createStaticMessage('Settings'),
             });
-            ui001.addChild( view014 );
+            ui001.addChild( view013 );
 
 
-            var container022 = new Container({
+            var container026 = new Container({
                'artifactId' : 'Platform.AdvancedSettings_container_0',
                'id' : 'aw5c13274d',
             });
-            view014.addChild( container022 );
+            view013.addChild( container026 );
 
 
-            var group010 = new Group({
+            var group009 = new Group({
                'artifactId' : 'Platform.AdvancedSettings_group_0',
                'id' : 'awebdfb82c',
             });
-            container022.addChild( group010 );
+            container026.addChild( group009 );
 
 
-            var groupitem023 = new GroupItem({
+            var groupitem022 = new GroupItem({
                'transitionTo' : 'Platform.TimeTrackReport',
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.TimeTrackReport_0',
                'id' : 'awba4384a8',
             });
-            group010.addChild( groupitem023 );
+            group009.addChild( groupitem022 );
 
 
-            var text057 = new Text({
+            var text059 = new Text({
                'cssClass' : 'relatedRecords',
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.TimeTrackReport_0_TrackPerformanceDa',
                'id' : 'awc0a6dde7',
                'value' : MessageService.createStaticMessage('Track Performance Data'),
             });
-            groupitem023.addChild( text057 );
+            groupitem022.addChild( text059 );
 
 
-            var text058 = new Text({
+            var text060 = new Text({
                'cssClass' : 'red-text',
                'editable' : false,
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.TimeTrackReport_0_Thisoptionusesmem',
                'id' : 'aw4367e95f',
                'value' : MessageService.createStaticMessage('This option uses memory and might slow the performance of your device. Disable performance tracking when you are done.'),
             });
-            groupitem023.addChild( text058 );
+            groupitem022.addChild( text060 );
 
 
-            var groupitem024 = new GroupItem({
+            var groupitem023 = new GroupItem({
                'transitionTo' : 'Platform.LoggerReport',
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.LoggerReport_0',
                'id' : 'aw10ca73e0',
             });
-            group010.addChild( groupitem024 );
+            group009.addChild( groupitem023 );
 
 
-            var text059 = new Text({
+            var text061 = new Text({
                'cssClass' : 'relatedRecords',
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.LoggerReport_0_Logging',
                'id' : 'awffa3ff9c',
                'value' : MessageService.createStaticMessage('Logging'),
             });
-            groupitem024.addChild( text059 );
+            groupitem023.addChild( text061 );
 
 
-            var text060 = new Text({
+            var text062 = new Text({
                'cssClass' : 'red-text',
                'editable' : false,
                'artifactId' : 'Platform.AdvancedSettings_groupitem_Platform.LoggerReport_0_Thisoptionusesmem',
                'id' : 'aw30da1efa',
                'value' : MessageService.createStaticMessage('This option uses memory and might slow the performance of your device. Disable logging when you are done.'),
             });
-            groupitem024.addChild( text060 );
+            groupitem023.addChild( text062 );
 
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
@@ -3605,20 +3759,20 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view015 = new View({
+            var view014 = new View({
                'cssClass' : 'loggerReport',
                'scrollDir' : 'vh',
                'id' : 'Platform.LoggerReport',
                'label' : MessageService.createStaticMessage('Logging Data'),
             });
-            ui001.addChild( view015 );
+            ui001.addChild( view014 );
 
 
-            var actions004 = new Actions({
+            var actions005 = new Actions({
                'artifactId' : 'Platform.LoggerReport_actions',
                'id' : 'aw5b090344',
             });
-            view015.addChild( actions004 );
+            view014.addChild( actions005 );
 
 
             var action014 = new Action({
@@ -3627,9 +3781,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awc05e82b4',
                'label' : MessageService.createStaticMessage('Enable Error Logging'),
             });
-            actions004.addChild( action014 );
+            actions005.addChild( action014 );
 
-            var eventHandlers064 = [
+            var eventHandlers057 = [
                {
                      'method' : 'enableDisableLoggerErro',
                      'artifactId' : 'Platform.LoggerReport_EnableErrorLogging_action_eventHandlers_click_enableDisableLoggerErro',
@@ -3645,7 +3799,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action014.eventHandlers = eventHandlers064;
+            action014.eventHandlers = eventHandlers057;
 
             var action015 = new Action({
                'overflow' : true,
@@ -3653,9 +3807,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6d618335',
                'label' : MessageService.createStaticMessage('Enable Info Logging'),
             });
-            actions004.addChild( action015 );
+            actions005.addChild( action015 );
 
-            var eventHandlers065 = [
+            var eventHandlers058 = [
                {
                      'method' : 'enableDisableLoggerInfo',
                      'artifactId' : 'Platform.LoggerReport_EnableInfoLogging_action_eventHandlers_click_enableDisableLoggerInfo',
@@ -3671,7 +3825,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action015.eventHandlers = eventHandlers065;
+            action015.eventHandlers = eventHandlers058;
 
             var action016 = new Action({
                'overflow' : true,
@@ -3679,9 +3833,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awaa11689b',
                'label' : MessageService.createStaticMessage('Enable Debug Logging'),
             });
-            actions004.addChild( action016 );
+            actions005.addChild( action016 );
 
-            var eventHandlers066 = [
+            var eventHandlers059 = [
                {
                      'method' : 'enableDisableLoggerDebug',
                      'artifactId' : 'Platform.LoggerReport_EnableDebugLogging_action_eventHandlers_click_enableDisableLoggerDebug',
@@ -3697,7 +3851,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action016.eventHandlers = eventHandlers066;
+            action016.eventHandlers = eventHandlers059;
 
             var action017 = new Action({
                'overflow' : true,
@@ -3706,7 +3860,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awdaed3d40',
                'label' : MessageService.createStaticMessage('View Transaction Log'),
             });
-            actions004.addChild( action017 );
+            actions005.addChild( action017 );
 
 
             var action018 = new Action({
@@ -3715,9 +3869,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awb6d3895c',
                'label' : MessageService.createStaticMessage('Clear Log Data'),
             });
-            actions004.addChild( action018 );
+            actions005.addChild( action018 );
 
-            var eventHandlers067 = [
+            var eventHandlers060 = [
                {
                      'method' : 'clear',
                      'artifactId' : 'Platform.LoggerReport_ClearLogData_action_eventHandlers_click_clear',
@@ -3726,7 +3880,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action018.eventHandlers = eventHandlers067;
+            action018.eventHandlers = eventHandlers060;
 
             var action019 = new Action({
                'overflow' : true,
@@ -3734,9 +3888,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw7510fce3',
                'label' : MessageService.createStaticMessage('Save Log'),
             });
-            actions004.addChild( action019 );
+            actions005.addChild( action019 );
 
-            var eventHandlers068 = [
+            var eventHandlers061 = [
                {
                      'method' : 'showIfConnected',
                      'artifactId' : 'Platform.LoggerReport_UploadLog_action_eventHandlers_render_uploadCurrent',
@@ -3752,7 +3906,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action019.eventHandlers = eventHandlers068;
+            action019.eventHandlers = eventHandlers061;
 
             var action020 = new Action({
                'overflow' : true,
@@ -3760,9 +3914,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw90d8a401',
                'label' : MessageService.createStaticMessage('Email Log'),
             });
-            actions004.addChild( action020 );
+            actions005.addChild( action020 );
 
-            var eventHandlers069 = [
+            var eventHandlers062 = [
                {
                      'method' : 'emailCurrent',
                      'artifactId' : 'Platform.LoggerReport_EmailLog_action_eventHandlers_click_emailCurrent',
@@ -3771,8 +3925,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action020.eventHandlers = eventHandlers069;
-            var eventHandlers070 = [
+            action020.eventHandlers = eventHandlers062;
+            var eventHandlers063 = [
                {
                      'method' : 'renderLoggerReport',
                      'artifactId' : 'Platform.LoggerReport_eventHandlers_show_renderLoggerReport',
@@ -3781,7 +3935,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            view015.eventHandlers = eventHandlers070;
+            view014.eventHandlers = eventHandlers063;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -3791,19 +3945,19 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view016 = new View({
+            var view015 = new View({
                'scrollDir' : 'vh',
                'id' : 'Platform.TransLoggerReport',
                'label' : MessageService.createStaticMessage('Logging Data'),
             });
-            ui001.addChild( view016 );
+            ui001.addChild( view015 );
 
 
-            var actions005 = new Actions({
+            var actions006 = new Actions({
                'artifactId' : 'Platform.TransLoggerReport_actions',
                'id' : 'aw49b00040',
             });
-            view016.addChild( actions005 );
+            view015.addChild( actions006 );
 
 
             var action021 = new Action({
@@ -3812,9 +3966,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'awdce21e26',
                'label' : MessageService.createStaticMessage('Clear Log Data'),
             });
-            actions005.addChild( action021 );
+            actions006.addChild( action021 );
 
-            var eventHandlers071 = [
+            var eventHandlers064 = [
                {
                      'method' : 'clearTransLog',
                      'artifactId' : 'Platform.TransLoggerReport_ClearLogData_action_eventHandlers_click_clear',
@@ -3823,7 +3977,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action021.eventHandlers = eventHandlers071;
+            action021.eventHandlers = eventHandlers064;
 
             var action022 = new Action({
                'overflow' : true,
@@ -3831,9 +3985,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw29f3639',
                'label' : MessageService.createStaticMessage('Email Log'),
             });
-            actions005.addChild( action022 );
+            actions006.addChild( action022 );
 
-            var eventHandlers072 = [
+            var eventHandlers065 = [
                {
                      'method' : 'emailCurrentTranslog',
                      'artifactId' : 'Platform.TransLoggerReport_EmailLog_action_eventHandlers_click_emailCurrent',
@@ -3842,8 +3996,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            action022.eventHandlers = eventHandlers072;
-            var eventHandlers073 = [
+            action022.eventHandlers = eventHandlers065;
+            var eventHandlers066 = [
                {
                      'method' : 'renderTransLoggerReport',
                      'artifactId' : 'Platform.TransLoggerReport_eventHandlers_show_renderTransLoggerReport',
@@ -3852,7 +4006,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.logging.handler.LoggerReportHandler',
                }
             ];
-            view016.eventHandlers = eventHandlers073;
+            view015.eventHandlers = eventHandlers066;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -3862,43 +4016,43 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view017 = new View({
+            var view016 = new View({
                'resource' : 'PlatformChangePasswordForm',
                'id' : 'Platform.ChangePassword',
                'label' : MessageService.createStaticMessage('Change Password'),
             });
-            ui001.addChild( view017 );
+            ui001.addChild( view016 );
 
 
-            var container023 = new Container({
+            var container027 = new Container({
                'cssClass' : 'changePasswordForm',
                'artifactId' : 'Platform.ChangePassword_container_0',
                'id' : 'awf7c2a2a',
             });
-            view017.addChild( container023 );
+            view016.addChild( container027 );
 
 
-            var text061 = new Text({
+            var text063 = new Text({
                'resourceAttribute' : 'errorMsg',
                'cssClass' : 'errorMsg',
                'editable' : false,
                'artifactId' : 'Platform.ChangePassword_container_0_errorMsg',
                'id' : 'aw3ed16fe1',
             });
-            container023.addChild( text061 );
+            container027.addChild( text063 );
 
 
-            var text062 = new Text({
+            var text064 = new Text({
                'resourceAttribute' : 'infoMsg',
                'cssClass' : 'infoMsg',
                'editable' : false,
                'artifactId' : 'Platform.ChangePassword_container_0_infoMsg',
                'id' : 'awe28ebedd',
             });
-            container023.addChild( text062 );
+            container027.addChild( text064 );
 
 
-            var text063 = new Text({
+            var text065 = new Text({
                'border' : 'true',
                'resourceAttribute' : 'currentpassword',
                'editable' : true,
@@ -3907,9 +4061,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'type' : 'password',
                'placeHolder' : MessageService.createStaticMessage('Current password'),
             });
-            container023.addChild( text063 );
+            container027.addChild( text065 );
 
-            var eventHandlers074 = [
+            var eventHandlers067 = [
                {
                      'method' : 'hidePasswordField',
                      'artifactId' : 'Platform.ChangePassword_container_0_currentpassword_eventHandlers_render_hidePasswordField',
@@ -3918,9 +4072,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            text063.eventHandlers = eventHandlers074;
+            text065.eventHandlers = eventHandlers067;
 
-            var text064 = new Text({
+            var text066 = new Text({
                'border' : 'true',
                'resourceAttribute' : 'newpassword',
                'editable' : true,
@@ -3929,10 +4083,10 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'type' : 'password',
                'placeHolder' : MessageService.createStaticMessage('New password'),
             });
-            container023.addChild( text064 );
+            container027.addChild( text066 );
 
 
-            var text065 = new Text({
+            var text067 = new Text({
                'border' : 'true',
                'resourceAttribute' : 'confirmnewpassword',
                'editable' : true,
@@ -3941,15 +4095,15 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'type' : 'password',
                'placeHolder' : MessageService.createStaticMessage('Confirm password'),
             });
-            container023.addChild( text065 );
+            container027.addChild( text067 );
 
 
-            var button026 = new Button({
+            var button018 = new Button({
                'artifactId' : 'Platform.ChangePassword_Cancel_button',
                'id' : 'aw96c63135',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers075 = [
+            var eventHandlers068 = [
                {
                      'method' : 'cancelPasswordClickHandler',
                      'artifactId' : 'Platform.ChangePassword_Cancel_button_eventHandlers_click_cancelPasswordClickHandler',
@@ -3958,17 +4112,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button026.eventHandlers = eventHandlers075;
-            container023.addChild( button026 );
+            button018.eventHandlers = eventHandlers068;
+            container027.addChild( button018 );
 
 
-            var button027 = new Button({
+            var button019 = new Button({
                'artifactId' : 'Platform.ChangePassword_Change_button',
                'id' : 'aw5cd0477f',
                'label' : MessageService.createStaticMessage('Change'),
                'primary' : 'true',
             });
-            var eventHandlers076 = [
+            var eventHandlers069 = [
                {
                      'method' : 'changePasswordClickHandler',
                      'artifactId' : 'Platform.ChangePassword_Change_button_eventHandlers_click_changePasswordClickHandler',
@@ -3977,10 +4131,10 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button027.eventHandlers = eventHandlers076;
-            container023.addChild( button027 );
+            button019.eventHandlers = eventHandlers069;
+            container027.addChild( button019 );
 
-            var eventHandlers077 = [
+            var eventHandlers070 = [
                {
                      'method' : 'initializeChangePasswordView',
                      'artifactId' : 'Platform.ChangePassword_eventHandlers_show_initializeChangePasswordView',
@@ -3996,7 +4150,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            view017.eventHandlers = eventHandlers077;
+            view016.eventHandlers = eventHandlers070;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
@@ -4006,43 +4160,43 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view018 = new View({
+            var view017 = new View({
                'resource' : 'PlatformChangePasswordForm',
                'showHeader' : false,
                'showOverflow' : false,
                'id' : 'Platform.RetrieveOldPassword',
                'label' : MessageService.createStaticMessage('Recover App Data'),
             });
-            ui001.addChild( view018 );
+            ui001.addChild( view017 );
 
 
-            var container024 = new Container({
+            var container028 = new Container({
                'cssClass' : 'changePasswordForm',
                'artifactId' : 'Platform.RetrieveOldPassword_container_0',
                'id' : 'awecdef66d',
             });
-            view018.addChild( container024 );
+            view017.addChild( container028 );
 
 
-            var text066 = new Text({
+            var text068 = new Text({
                'artifactId' : 'Platform.RetrieveOldPassword_container_0_Enterthepasswordt',
                'id' : 'aw14ebf03b',
                'value' : MessageService.createStaticMessage('Enter the password that you last used to log in to the app. If you do not have this password, you must reset the app before you can log in.'),
             });
-            container024.addChild( text066 );
+            container028.addChild( text068 );
 
 
-            var text067 = new Text({
+            var text069 = new Text({
                'resourceAttribute' : 'errorMsg',
                'cssClass' : 'errorMsg',
                'editable' : false,
                'artifactId' : 'Platform.RetrieveOldPassword_container_0_errorMsg',
                'id' : 'aw9574c917',
             });
-            container024.addChild( text067 );
+            container028.addChild( text069 );
 
 
-            var text068 = new Text({
+            var text070 = new Text({
                'border' : 'true',
                'resourceAttribute' : 'currentpassword',
                'editable' : true,
@@ -4051,16 +4205,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'type' : 'password',
                'placeHolder' : MessageService.createStaticMessage('Previous password'),
             });
-            container024.addChild( text068 );
+            container028.addChild( text070 );
 
 
-            var button028 = new Button({
+            var button020 = new Button({
                'artifactId' : 'Platform.RetrieveOldPassword_Recover_button',
                'id' : 'aw3a0ff2',
                'label' : MessageService.createStaticMessage('Recover'),
                'primary' : 'true',
             });
-            var eventHandlers078 = [
+            var eventHandlers071 = [
                {
                      'method' : 'recoverOldPasswordClickHandler',
                      'artifactId' : 'Platform.RetrieveOldPassword_Recover_button_eventHandlers_click_recoverOldPasswordClickHandler',
@@ -4069,16 +4223,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button028.eventHandlers = eventHandlers078;
-            container024.addChild( button028 );
+            button020.eventHandlers = eventHandlers071;
+            container028.addChild( button020 );
 
 
-            var button029 = new Button({
+            var button021 = new Button({
                'artifactId' : 'Platform.RetrieveOldPassword_Reset_button',
                'id' : 'aw8bb551dc',
                'label' : MessageService.createStaticMessage('Reset'),
             });
-            var eventHandlers079 = [
+            var eventHandlers072 = [
                {
                      'method' : 'resetStorageClickHandler',
                      'artifactId' : 'Platform.RetrieveOldPassword_Reset_button_eventHandlers_click_resetStorageClickHandler',
@@ -4087,10 +4241,10 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button029.eventHandlers = eventHandlers079;
-            container024.addChild( button029 );
+            button021.eventHandlers = eventHandlers072;
+            container028.addChild( button021 );
 
-            var eventHandlers080 = [
+            var eventHandlers073 = [
                {
                      'method' : 'initializeRetrieveOldPasswordView',
                      'artifactId' : 'Platform.RetrieveOldPassword_eventHandlers_show_initializeRetrieveOldPasswordView',
@@ -4099,50 +4253,50 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            view018.eventHandlers = eventHandlers080;
+            view017.eventHandlers = eventHandlers073;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
 
-            var dialog008 = new Dialog({
+            var dialog007 = new Dialog({
                'closeOnBackgroundClick' : 'true',
                'id' : 'Platform.ConfirmResetDataStore',
             });
-            ui001.addChild( dialog008 );
+            ui001.addChild( dialog007 );
 
 
-            var container025 = new Container({
+            var container029 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.ConfirmResetDataStore_container_0',
                'id' : 'awacb7e535',
             });
-            dialog008.addChild( container025 );
+            dialog007.addChild( container029 );
 
 
-            var text069 = new Text({
+            var text071 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.ConfirmResetDataStore_container_0_WarningAllappdat',
                'id' : 'aw68bdf3e8',
                'value' : MessageService.createStaticMessage('Warning! All app data on the device will be cleared. Any data that has not been sent to the server will be lost.'),
             });
-            container025.addChild( text069 );
+            container029.addChild( text071 );
 
 
-            var container026 = new Container({
+            var container030 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.ConfirmResetDataStore_container_1',
                'id' : 'awdbb0d5a3',
             });
-            dialog008.addChild( container026 );
+            dialog007.addChild( container030 );
 
 
-            var button030 = new Button({
+            var button022 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.ConfirmResetDataStore_Continue_button',
                'id' : 'awba645d10',
                'label' : MessageService.createStaticMessage('Continue'),
             });
-            var eventHandlers081 = [
+            var eventHandlers074 = [
                {
                      'method' : 'resetDataStoreClickHandler',
                      'artifactId' : 'Platform.ConfirmResetDataStore_Continue_button_eventHandlers_click_resetDataStoreClickHandler',
@@ -4151,17 +4305,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button030.eventHandlers = eventHandlers081;
-            container026.addChild( button030 );
+            button022.eventHandlers = eventHandlers074;
+            container030.addChild( button022 );
 
 
-            var button031 = new Button({
+            var button023 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.ConfirmResetDataStore_Cancel_button',
                'id' : 'aw50474341',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers082 = [
+            var eventHandlers075 = [
                {
                      'method' : 'cancelResetDataStoreClickHandler',
                      'artifactId' : 'Platform.ConfirmResetDataStore_Cancel_button_eventHandlers_click_cancelResetDataStoreClickHandler',
@@ -4170,8 +4324,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.ChangePasswordHandler',
                }
             ];
-            button031.eventHandlers = eventHandlers082;
-            container026.addChild( button031 );
+            button023.eventHandlers = eventHandlers075;
+            container030.addChild( button023 );
 
 
             if (trackTimeEnabled) {
@@ -4179,13 +4333,13 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                trackTimer.startTracking();
             }
 
-            var view019 = new View({
+            var view018 = new View({
                'cssClass' : 'loggerReport',
                'scrollDir' : 'vh',
                'id' : 'Platform.TimeTrackReport',
                'label' : MessageService.createStaticMessage('Performance Data'),
             });
-            ui001.addChild( view019 );
+            ui001.addChild( view018 );
 
             var requiredResources015 = {
                'timeTrack' : {
@@ -4193,13 +4347,13 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                   'id' : 'aw8d707cee',
                },
             };
-            view019.addRequiredResources( requiredResources015 );
+            view018.addRequiredResources( requiredResources015 );
 
-            var actions006 = new Actions({
+            var actions007 = new Actions({
                'artifactId' : 'Platform.TimeTrackReport_actions',
                'id' : 'aw9d9a4864',
             });
-            view019.addChild( actions006 );
+            view018.addChild( actions007 );
 
 
             var action023 = new Action({
@@ -4208,9 +4362,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw34736a63',
                'label' : MessageService.createStaticMessage('Enable Performance Tracking'),
             });
-            actions006.addChild( action023 );
+            actions007.addChild( action023 );
 
-            var eventHandlers083 = [
+            var eventHandlers076 = [
                {
                      'method' : 'enableDisableTT',
                      'artifactId' : 'Platform.TimeTrackReport_EnablePerformanceTracking_action_eventHandlers_click_enableDisableTT',
@@ -4226,7 +4380,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.performance.handler.TimeTrackHandler',
                }
             ];
-            action023.eventHandlers = eventHandlers083;
+            action023.eventHandlers = eventHandlers076;
 
             var action024 = new Action({
                'overflow' : true,
@@ -4234,9 +4388,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw1edf54cf',
                'label' : MessageService.createStaticMessage('Clear Performance Data'),
             });
-            actions006.addChild( action024 );
+            actions007.addChild( action024 );
 
-            var eventHandlers084 = [
+            var eventHandlers077 = [
                {
                      'method' : 'clear',
                      'artifactId' : 'Platform.TimeTrackReport_ClearPerformanceData_action_eventHandlers_click_clear',
@@ -4245,7 +4399,7 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.performance.handler.TimeTrackHandler',
                }
             ];
-            action024.eventHandlers = eventHandlers084;
+            action024.eventHandlers = eventHandlers077;
 
             var action025 = new Action({
                'overflow' : true,
@@ -4253,9 +4407,9 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                'id' : 'aw6ff8fae1',
                'label' : MessageService.createStaticMessage('Email Report'),
             });
-            actions006.addChild( action025 );
+            actions007.addChild( action025 );
 
-            var eventHandlers085 = [
+            var eventHandlers078 = [
                {
                      'method' : 'emailCurrent',
                      'artifactId' : 'Platform.TimeTrackReport_EmailReport_action_eventHandlers_click_emailCurrent',
@@ -4264,8 +4418,8 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.performance.handler.TimeTrackHandler',
                }
             ];
-            action025.eventHandlers = eventHandlers085;
-            var eventHandlers086 = [
+            action025.eventHandlers = eventHandlers078;
+            var eventHandlers079 = [
                {
                      'method' : 'renderTT',
                      'artifactId' : 'Platform.TimeTrackReport_eventHandlers_show_renderTT',
@@ -4274,73 +4428,176 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.performance.handler.TimeTrackHandler',
                }
             ];
-            view019.eventHandlers = eventHandlers086;
+            view018.eventHandlers = eventHandlers079;
             if (trackTimeEnabled) {
                trackTimer.stopTracking();
             }
 
-            var dialog009 = new Dialog({
+            var lookup008 = new Lookup({
+               'filterMethod' : 'filterStoreroomLookup',
+               'resource' : 'additionalstoreroom',
+               'filterClass' : 'application.handlers.InventoryHandler',
+               'id' : 'Platform.Settings_Storeroom.StoreroomLookup',
+               'label' : MessageService.createStaticMessage('Select Storeroom'),
+            });
+            ui001.addChild( lookup008 );
+
+            var requiredResources016 = {
+               'additionalstoreroom' : {
+                  'reload' : true,
+                  'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom',
+                  'id' : 'awc07370c4',
+               },
+            };
+            lookup008.addRequiredResources( requiredResources016 );
+
+
+            var searchAttributes007 = new SearchAttributes({
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttributes',
+               'id' : 'awbfcfcbad',
+            });
+
+            var searchAttribute008 = new SearchAttribute({
+               'name' : 'locationForSearch',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttribute_locationForSearch',
+               'id' : 'aw8505f9f4',
+            });
+            searchAttributes007.addChild( searchAttribute008 );
+
+
+            var searchAttribute009 = new SearchAttribute({
+               'name' : 'description',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttribute_description',
+               'id' : 'awa2c1dcd4',
+            });
+            searchAttributes007.addChild( searchAttribute009 );
+
+
+
+            var listItemTemplate012 = new ListItemTemplate({
+               'layout' : 'ItemLookup',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_listItemTemplate_ItemLookup',
+               'id' : 'aw7f529c98',
+            });
+
+            var listtext047 = new ListText({
+               'resourceAttribute' : 'location',
+               'cssClass' : 'bold textappearance-medium',
+               'layoutInsertAt' : 'item1',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_ItemLookup_location',
+               'id' : 'aw26de661c',
+            });
+            listItemTemplate012.addChild( listtext047 );
+
+
+            var listtext048 = new ListText({
+               'resourceAttribute' : 'description',
+               'cssClass' : 'bold textappearance-medium',
+               'layoutInsertAt' : 'desc1',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_ItemLookup_description',
+               'id' : 'aw4a18cd58',
+            });
+            listItemTemplate012.addChild( listtext048 );
+
+
+
+            var list012 = new List({
+               'resource' : 'additionalstoreroom',
+               'listItemTemplate' : listItemTemplate012,
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_list',
+               'id' : 'awf30a67c3',
+               'searchAttributes' : searchAttributes007,
+            });
+            lookup008.addChild( list012 );
+
+
+            var returnAttributes004 = new ReturnAttributes({
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_returnAttributes',
+               'id' : 'aw5d21c671',
+            });
+            lookup008.addChild( returnAttributes004 );
+
+
+            var returnAttribute008 = new ReturnAttribute({
+               'targetAttribute' : 'location',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_location_location',
+               'id' : 'awd6e3f47a',
+               'sourceAttribute' : 'location',
+            });
+            returnAttributes004.addChild( returnAttribute008 );
+
+
+            var returnAttribute009 = new ReturnAttribute({
+               'targetAttribute' : 'siteid',
+               'artifactId' : 'Platform.Settings_Storeroom.StoreroomLookup_siteid_siteid',
+               'id' : 'aw346d63e7',
+               'sourceAttribute' : 'siteid',
+            });
+            returnAttributes004.addChild( returnAttribute009 );
+
+
+            var dialog008 = new Dialog({
                'closeOnBackgroundClick' : 'true',
                'id' : 'Platform.ListLongPressDialog',
             });
-            ui001.addChild( dialog009 );
+            ui001.addChild( dialog008 );
 
 
 
-            var listItemTemplate010 = new ListItemTemplate({
+            var listItemTemplate013 = new ListItemTemplate({
                'cssClass' : 'dialogListItem textappearance-medium',
                'artifactId' : 'Platform.ListLongPressDialog_PlatformLongPressResource_listItemTemplate',
                'id' : 'awefd72fd8',
             });
 
-            var listtext030 = new ListText({
+            var listtext049 = new ListText({
                'resourceAttribute' : 'label',
                'artifactId' : 'Platform.ListLongPressDialog_PlatformLongPressResource_label',
                'id' : 'awe2e495b2',
             });
-            listItemTemplate010.addChild( listtext030 );
+            listItemTemplate013.addChild( listtext049 );
 
 
 
-            var list010 = new List({
+            var list013 = new List({
                'resource' : 'PlatformLongPressResource',
                'showHeader' : false,
-               'listItemTemplate' : listItemTemplate010,
+               'listItemTemplate' : listItemTemplate013,
                'artifactId' : 'Platform.ListLongPressDialog_PlatformLongPressResource_list',
                'id' : 'aw64ff84d9',
                'queryBase' : '',
             });
-            dialog009.addChild( list010 );
+            dialog008.addChild( list013 );
 
 
-            var dialog010 = new Dialog({
+            var dialog009 = new Dialog({
                'id' : 'Platform.LoadingAdditionalData',
             });
-            ui001.addChild( dialog010 );
+            ui001.addChild( dialog009 );
 
 
-            var container027 = new Container({
+            var container031 = new Container({
                'artifactId' : 'Platform.LoadingAdditionalData_container_0',
                'id' : 'aw48b509d9',
             });
-            dialog010.addChild( container027 );
+            dialog009.addChild( container031 );
 
 
-            var text070 = new Text({
+            var text072 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadingAdditionalData_container_0_Downloadinglookupd',
                'id' : 'aw4cec47c0',
                'value' : MessageService.createStaticMessage('Downloading lookup data.'),
             });
-            container027.addChild( text070 );
+            container031.addChild( text072 );
 
 
-            var button032 = new Button({
+            var button024 = new Button({
                'artifactId' : 'Platform.LoadingAdditionalData_Cancel_button',
                'id' : 'awb30b5f0',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers087 = [
+            var eventHandlers080 = [
                {
                      'method' : 'cancelADDownload',
                      'artifactId' : 'Platform.LoadingAdditionalData_Cancel_button_eventHandlers_click_cancelADDownload',
@@ -4349,47 +4606,47 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button032.eventHandlers = eventHandlers087;
-            container027.addChild( button032 );
+            button024.eventHandlers = eventHandlers080;
+            container031.addChild( button024 );
 
 
-            var dialog011 = new Dialog({
+            var dialog010 = new Dialog({
                'id' : 'Platform.AdditionalDataNoConn',
             });
-            ui001.addChild( dialog011 );
+            ui001.addChild( dialog010 );
 
 
-            var container028 = new Container({
+            var container032 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.AdditionalDataNoConn_container_0',
                'id' : 'aw666da461',
             });
-            dialog011.addChild( container028 );
+            dialog010.addChild( container032 );
 
 
-            var text071 = new Text({
+            var text073 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.AdditionalDataNoConn_container_0_Lookupdatacouldno',
                'id' : 'aw96b90fd8',
                'value' : MessageService.createStaticMessage('Lookup data could not be downloaded. Go to Settings > Refresh Lookup Data when you are online.'),
             });
-            container028.addChild( text071 );
+            container032.addChild( text073 );
 
 
-            var container029 = new Container({
+            var container033 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.AdditionalDataNoConn_container_1',
                'id' : 'aw116a94f7',
             });
-            dialog011.addChild( container029 );
+            dialog010.addChild( container033 );
 
 
-            var button033 = new Button({
+            var button025 = new Button({
                'artifactId' : 'Platform.AdditionalDataNoConn_OK_button',
                'id' : 'aw9b370278',
                'label' : MessageService.createStaticMessage('OK'),
             });
-            var eventHandlers088 = [
+            var eventHandlers081 = [
                {
                      'method' : 'closeDialogAndShowDefaultViewIfNeeded',
                      'artifactId' : 'Platform.AdditionalDataNoConn_OK_button_eventHandlers_click_closeDialogAndShowDefaultViewIfNeeded',
@@ -4398,48 +4655,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button033.eventHandlers = eventHandlers088;
-            container029.addChild( button033 );
+            button025.eventHandlers = eventHandlers081;
+            container033.addChild( button025 );
 
 
-            var dialog012 = new Dialog({
+            var dialog011 = new Dialog({
                'id' : 'Platform.ConfirmReloadWorkList',
             });
-            ui001.addChild( dialog012 );
+            ui001.addChild( dialog011 );
 
 
-            var container030 = new Container({
+            var container034 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.ConfirmReloadWorkList_container_0',
                'id' : 'aw2054aa9e',
             });
-            dialog012.addChild( container030 );
+            dialog011.addChild( container034 );
 
 
-            var text072 = new Text({
+            var text074 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.ConfirmReloadWorkList_container_0_Doyouwanttoclose',
                'id' : 'aw83f81a4b',
                'value' : MessageService.createStaticMessage('Reloading the work list takes time if you are downloading large amounts of data.  Are you sure that you want to continue?'),
             });
-            container030.addChild( text072 );
+            container034.addChild( text074 );
 
 
-            var container031 = new Container({
+            var container035 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.ConfirmReloadWorkList_container_1',
                'id' : 'aw57539a08',
             });
-            dialog012.addChild( container031 );
+            dialog011.addChild( container035 );
 
 
-            var button034 = new Button({
+            var button026 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.ConfirmReloadWorkList_Yes_button',
                'id' : 'aw5bc89627',
                'label' : MessageService.createStaticMessage('Yes'),
             });
-            var eventHandlers089 = [
+            var eventHandlers082 = [
                {
                      'method' : 'reloadConfirmed',
                      'artifactId' : 'Platform.ConfirmReloadWorkList_Yes_button_eventHandlers_click_processDialog',
@@ -4448,17 +4705,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button034.eventHandlers = eventHandlers089;
-            container031.addChild( button034 );
+            button026.eventHandlers = eventHandlers082;
+            container035.addChild( button026 );
 
 
-            var button035 = new Button({
+            var button027 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.ConfirmReloadWorkList_No_button',
                'id' : 'aw4487e9e7',
                'label' : MessageService.createStaticMessage('No'),
             });
-            var eventHandlers090 = [
+            var eventHandlers083 = [
                {
                      'method' : 'closeDialog',
                      'artifactId' : 'Platform.ConfirmReloadWorkList_No_button_eventHandlers_click_closeDialog',
@@ -4467,71 +4724,71 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button035.eventHandlers = eventHandlers090;
-            container031.addChild( button035 );
+            button027.eventHandlers = eventHandlers083;
+            container035.addChild( button027 );
 
 
-            var dialog013 = new Dialog({
+            var dialog012 = new Dialog({
                'resource' : 'PlatformProgressResource',
                'id' : 'Platform.ReloadingCurrentWorklist',
             });
-            ui001.addChild( dialog013 );
+            ui001.addChild( dialog012 );
 
 
-            var container032 = new Container({
+            var container036 = new Container({
                'cssClass' : 'mblSimpleMessageText',
                'artifactId' : 'Platform.ReloadCurrentWorklist_container_0',
                'id' : 'awce0c0b72',
             });
-            dialog013.addChild( container032 );
+            dialog012.addChild( container036 );
 
 
-            var text073 = new Text({
+            var text075 = new Text({
                'resourceAttribute' : 'progressMsg',
                'editable' : false,
                'artifactId' : 'Platform.ReloadCurrentWorklist_container_0_progressMsg',
                'id' : 'awaa894933',
             });
-            container032.addChild( text073 );
+            container036.addChild( text075 );
 
 
-            var dialog014 = new Dialog({
+            var dialog013 = new Dialog({
                'id' : 'Platform.AdditionalDataFailed',
             });
-            ui001.addChild( dialog014 );
+            ui001.addChild( dialog013 );
 
 
-            var container033 = new Container({
+            var container037 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.AdditionalDataFailed.container',
                'id' : 'aw275627fb',
             });
-            dialog014.addChild( container033 );
+            dialog013.addChild( container037 );
 
 
-            var text074 = new Text({
+            var text076 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.AdditionalDataFailed.text',
                'id' : 'awb25e5b66',
                'value' : MessageService.createStaticMessage('Lookup data could not be downloaded. If you are connected, go to Settings > Refresh Lookup Data.'),
             });
-            container033.addChild( text074 );
+            container037.addChild( text076 );
 
 
-            var container034 = new Container({
+            var container038 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.AdditionalDataFailed.container2',
                'id' : 'aw309dc3be',
             });
-            dialog014.addChild( container034 );
+            dialog013.addChild( container038 );
 
 
-            var button036 = new Button({
+            var button028 = new Button({
                'artifactId' : 'Platform.AdditionalDataFailed.button',
                'id' : 'aw39111677',
                'label' : MessageService.createStaticMessage('OK'),
             });
-            var eventHandlers091 = [
+            var eventHandlers084 = [
                {
                      'method' : 'closeDialogAndShowDefaultViewIfNeeded',
                      'artifactId' : 'Platform.AdditionalDataFailed.eventHandler',
@@ -4540,66 +4797,66 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button036.eventHandlers = eventHandlers091;
-            container034.addChild( button036 );
+            button028.eventHandlers = eventHandlers084;
+            container038.addChild( button028 );
 
 
-            var dialog015 = new Dialog({
+            var dialog014 = new Dialog({
                'resource' : 'PlatformProgressResource',
                'id' : 'Platform.LoadingSystemData',
             });
-            ui001.addChild( dialog015 );
+            ui001.addChild( dialog014 );
 
 
-            var container035 = new Container({
+            var container039 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.LoadingSystemData_container_0',
                'id' : 'aw13d3cc6a',
             });
-            dialog015.addChild( container035 );
+            dialog014.addChild( container039 );
 
 
-            var text075 = new Text({
+            var text077 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadingSystemData_container_0_Downloadingsystemd',
                'id' : 'awfc1b5f79',
                'value' : MessageService.createStaticMessage('Downloading system data.'),
             });
-            container035.addChild( text075 );
+            container039.addChild( text077 );
 
 
-            var text076 = new Text({
+            var text078 = new Text({
                'resourceAttribute' : 'progressMsg',
                'editable' : false,
                'artifactId' : 'Platform.LoadingSystemData_container_0_progressMsg',
                'id' : 'aw635d9968',
             });
-            container035.addChild( text076 );
+            container039.addChild( text078 );
 
 
-            var dialog016 = new Dialog({
+            var dialog015 = new Dialog({
                'id' : 'Platform.LoadAdditionalDataYesNo',
             });
-            ui001.addChild( dialog016 );
+            ui001.addChild( dialog015 );
 
 
-            var container036 = new Container({
+            var container040 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0',
                'id' : 'aw22834650',
             });
-            dialog016.addChild( container036 );
+            dialog015.addChild( container040 );
 
 
-            var text077 = new Text({
+            var text079 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Thelookupdatafor',
                'id' : 'aw89be3f27',
                'value' : MessageService.createStaticMessage('The lookup data for this app must be downloaded. Download it now or later?'),
             });
-            container036.addChild( text077 );
+            container040.addChild( text079 );
 
-            var eventHandlers092 = [
+            var eventHandlers085 = [
                {
                      'method' : 'theLookupdataText',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Thelookupdatafor_eventHandlers_render_setAdditionalDownloadText',
@@ -4608,17 +4865,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text077.eventHandlers = eventHandlers092;
+            text079.eventHandlers = eventHandlers085;
 
-            var text078 = new Text({
+            var text080 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Retrylookupdatafor',
                'id' : 'awb287d1cc',
                'value' : MessageService.createStaticMessage('Lookup data was partially downloaded. Click Retry to download the remaining lookup data. Click Reset to refresh all of the lookup data. Click Close if you are through downloading lookup data.'),
             });
-            container036.addChild( text078 );
+            container040.addChild( text080 );
 
-            var eventHandlers093 = [
+            var eventHandlers086 = [
                {
                      'method' : 'retrylookupdataText',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Retrylookupdatafor_eventHandlers_render_setAdditionalDownloadText',
@@ -4627,17 +4884,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text078.eventHandlers = eventHandlers093;
+            text080.eventHandlers = eventHandlers086;
 
-            var text079 = new Text({
+            var text081 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Whenrunninginabr',
                'id' : 'awb757e4d5',
                'value' : MessageService.createStaticMessage('When running in a browser, a maximum of 200 records are downloaded per lookup.'),
             });
-            container036.addChild( text079 );
+            container040.addChild( text081 );
 
-            var eventHandlers094 = [
+            var eventHandlers087 = [
                {
                      'method' : 'showInPreview',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_0_Whenrunninginabr_eventHandlers_render_showInPreview',
@@ -4646,23 +4903,23 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text079.eventHandlers = eventHandlers094;
+            text081.eventHandlers = eventHandlers087;
 
-            var container037 = new Container({
+            var container041 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_container_1',
                'id' : 'aw558476c6',
             });
-            dialog016.addChild( container037 );
+            dialog015.addChild( container041 );
 
 
-            var button037 = new Button({
+            var button029 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_Later_button',
                'id' : 'awa2501fe3',
                'label' : MessageService.createStaticMessage('Later'),
             });
-            var eventHandlers095 = [
+            var eventHandlers088 = [
                {
                      'method' : 'closeDialogAndShowDefaultViewIfNeeded',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_Later_button_eventHandlers_click_closeDialogAndShowDefaultViewIfNeeded',
@@ -4678,17 +4935,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button037.eventHandlers = eventHandlers095;
-            container037.addChild( button037 );
+            button029.eventHandlers = eventHandlers088;
+            container041.addChild( button029 );
 
 
-            var button038 = new Button({
+            var button030 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_Now_button',
                'id' : 'aw35a14c11',
                'label' : MessageService.createStaticMessage('Now'),
             });
-            var eventHandlers096 = [
+            var eventHandlers089 = [
                {
                      'method' : 'confirmADDownload',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_Now_button_eventHandlers_click_confirmADDownload',
@@ -4704,17 +4961,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button038.eventHandlers = eventHandlers096;
-            container037.addChild( button038 );
+            button030.eventHandlers = eventHandlers089;
+            container041.addChild( button030 );
 
 
-            var button039 = new Button({
+            var button031 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.LoadAdditionalDataYesNo_Retry_button',
                'id' : 'aw626b616d',
                'label' : MessageService.createStaticMessage('Retry'),
             });
-            var eventHandlers097 = [
+            var eventHandlers090 = [
                {
                      'method' : 'retryADDownload',
                      'artifactId' : 'Platform.LoadAdditionalDataYesNo_Retry_button_eventHandlers_click_retryADDownload',
@@ -4730,69 +4987,69 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button039.eventHandlers = eventHandlers097;
-            container037.addChild( button039 );
+            button031.eventHandlers = eventHandlers090;
+            container041.addChild( button031 );
 
 
-            var dialog017 = new Dialog({
+            var dialog016 = new Dialog({
                'id' : 'Platform.LoadAdditionalDataDeltaDownload',
             });
-            ui001.addChild( dialog017 );
+            ui001.addChild( dialog016 );
 
 
-            var container038 = new Container({
+            var container042 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0',
                'id' : 'aw79883531',
             });
-            dialog017.addChild( container038 );
+            dialog016.addChild( container042 );
 
 
-            var text080 = new Text({
+            var text082 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_Thelookupdatafor',
                'id' : 'aw3d94f20f',
                'value' : MessageService.createStaticMessage('Click Changes to download only lookup data changes.'),
             });
-            container038.addChild( text080 );
+            container042.addChild( text082 );
 
 
-            var text081 = new Text({
+            var text083 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_Retrylookupdatafor',
                'id' : 'awa0f7541',
                'value' : MessageService.createStaticMessage('Click All to download all the lookup data.'),
             });
-            container038.addChild( text081 );
+            container042.addChild( text083 );
 
 
-            var text082 = new Text({
+            var text084 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_cancel',
                'id' : 'aw62270e4c',
                'value' : MessageService.createStaticMessage('Click Cancel to cancel the lookup download.'),
             });
-            container038.addChild( text082 );
+            container042.addChild( text084 );
 
 
-            var text083 = new Text({
+            var text085 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_action',
                'id' : 'aw73fd47ac',
                'value' : MessageService.createStaticMessage('Which refresh do you want to perform?'),
             });
-            container038.addChild( text083 );
+            container042.addChild( text085 );
 
 
-            var text084 = new Text({
+            var text086 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_Whenrunninginabr',
                'id' : 'aw37d29fd',
                'value' : MessageService.createStaticMessage('When running in a browser, a maximum of 200 records are downloaded per lookup.'),
             });
-            container038.addChild( text084 );
+            container042.addChild( text086 );
 
-            var eventHandlers098 = [
+            var eventHandlers091 = [
                {
                      'method' : 'showInPreview',
                      'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_0_Whenrunninginabr_eventHandlers_render_showInPreview',
@@ -4801,22 +5058,22 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text084.eventHandlers = eventHandlers098;
+            text086.eventHandlers = eventHandlers091;
 
-            var container039 = new Container({
+            var container043 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_container_1',
                'id' : 'awe8f05a7',
             });
-            dialog017.addChild( container039 );
+            dialog016.addChild( container043 );
 
 
-            var button040 = new Button({
+            var button032 = new Button({
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_Cancel_button',
                'id' : 'awb2f881ae',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers099 = [
+            var eventHandlers092 = [
                {
                      'method' : 'closeDialogAndShowDefaultViewIfNeeded',
                      'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_Later_button_eventHandlers_click_closeDialogAndShowDefaultViewIfNeeded',
@@ -4825,16 +5082,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button040.eventHandlers = eventHandlers099;
-            container039.addChild( button040 );
+            button032.eventHandlers = eventHandlers092;
+            container043.addChild( button032 );
 
 
-            var button041 = new Button({
+            var button033 = new Button({
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_RefreshAll_button',
                'id' : 'aw8ab2882',
                'label' : MessageService.createStaticMessage('All'),
             });
-            var eventHandlers100 = [
+            var eventHandlers093 = [
                {
                      'method' : 'confirmADDownload',
                      'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_Now_button_eventHandlers_click_confirmADDownload',
@@ -4843,17 +5100,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button041.eventHandlers = eventHandlers100;
-            container039.addChild( button041 );
+            button033.eventHandlers = eventHandlers093;
+            container043.addChild( button033 );
 
 
-            var button042 = new Button({
+            var button034 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_RefreshChanges_button',
                'id' : 'aw9c0cf49a',
                'label' : MessageService.createStaticMessage('Changes'),
             });
-            var eventHandlers101 = [
+            var eventHandlers094 = [
                {
                      'method' : 'confirmADDeltaDownload',
                      'artifactId' : 'Platform.LoadAdditionalDataDeltaDownload_Later_button_eventHandlers_click_confirmADDeltaDownload',
@@ -4862,69 +5119,69 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            button042.eventHandlers = eventHandlers101;
-            container039.addChild( button042 );
+            button034.eventHandlers = eventHandlers094;
+            container043.addChild( button034 );
 
 
-            var dialog018 = new Dialog({
+            var dialog017 = new Dialog({
                'id' : 'Platform.LoadSystemDataDeltaDownload',
             });
-            ui001.addChild( dialog018 );
+            ui001.addChild( dialog017 );
 
 
-            var container040 = new Container({
+            var container044 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0',
                'id' : 'aw47beed1c',
             });
-            dialog018.addChild( container040 );
+            dialog017.addChild( container044 );
 
 
-            var text085 = new Text({
+            var text087 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_Thelookupdatafor',
                'id' : 'aw682ebd2f',
                'value' : MessageService.createStaticMessage('Click Changes to download only the system data changes.'),
             });
-            container040.addChild( text085 );
+            container044.addChild( text087 );
 
 
-            var text086 = new Text({
+            var text088 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_Retrylookupdatafor',
                'id' : 'aw79e85858',
                'value' : MessageService.createStaticMessage('Click All to download all the system data.'),
             });
-            container040.addChild( text086 );
+            container044.addChild( text088 );
 
 
-            var text087 = new Text({
+            var text089 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_cancel',
                'id' : 'awcb50ae6',
                'value' : MessageService.createStaticMessage('Click Cancel to cancel the system download.'),
             });
-            container040.addChild( text087 );
+            container044.addChild( text089 );
 
 
-            var text088 = new Text({
+            var text090 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_action',
                'id' : 'aw1d6f4306',
                'value' : MessageService.createStaticMessage('Which refresh do you want to perform?'),
             });
-            container040.addChild( text088 );
+            container044.addChild( text090 );
 
 
-            var text089 = new Text({
+            var text091 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_Whenrunninginabr',
                'id' : 'aw56c766dd',
                'value' : MessageService.createStaticMessage('When running in a browser, a maximum of 200 records are downloaded per System.'),
             });
-            container040.addChild( text089 );
+            container044.addChild( text091 );
 
-            var eventHandlers102 = [
+            var eventHandlers095 = [
                {
                      'method' : 'showInPreview',
                      'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_0_Whenrunninginabr_eventHandlers_render_showInPreview',
@@ -4933,22 +5190,22 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.AdditionalDataDialogHandler',
                }
             ];
-            text089.eventHandlers = eventHandlers102;
+            text091.eventHandlers = eventHandlers095;
 
-            var container041 = new Container({
+            var container045 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_container_1',
                'id' : 'aw30b9dd8a',
             });
-            dialog018.addChild( container041 );
+            dialog017.addChild( container045 );
 
 
-            var button043 = new Button({
+            var button035 = new Button({
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_Cancel_button',
                'id' : 'aw1adabf91',
                'label' : MessageService.createStaticMessage('cancel'),
             });
-            var eventHandlers103 = [
+            var eventHandlers096 = [
                {
                      'method' : 'closeDialogAndShowDefaultViewIfNeeded',
                      'artifactId' : 'Platform.LoadSystemDataDeltaDownload_Later_button_eventHandlers_click_closeDialogAndShowDefaultViewIfNeeded',
@@ -4957,16 +5214,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            button043.eventHandlers = eventHandlers103;
-            container041.addChild( button043 );
+            button035.eventHandlers = eventHandlers096;
+            container045.addChild( button035 );
 
 
-            var button044 = new Button({
+            var button036 = new Button({
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_RefreshAll_button',
                'id' : 'awf1a96515',
                'label' : MessageService.createStaticMessage('All'),
             });
-            var eventHandlers104 = [
+            var eventHandlers097 = [
                {
                      'method' : 'downloadSystemData',
                      'artifactId' : 'Platform.LoadSystemDataDeltaDownload_Now_button_eventHandlers_click_confirmdownloadSystemData',
@@ -4975,17 +5232,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            button044.eventHandlers = eventHandlers104;
-            container041.addChild( button044 );
+            button036.eventHandlers = eventHandlers097;
+            container045.addChild( button036 );
 
 
-            var button045 = new Button({
+            var button037 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.LoadSystemDataDeltaDownload_RefreshChanges_button',
                'id' : 'aw328e1b2e',
                'label' : MessageService.createStaticMessage('Changes'),
             });
-            var eventHandlers105 = [
+            var eventHandlers098 = [
                {
                      'method' : 'confirmSystemDataDeltaDownload',
                      'artifactId' : 'Platform.LoadSystemDataDeltaDownload_Later_button_eventHandlers_click_confirmSystemDataDeltaDownload',
@@ -4994,48 +5251,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.SettingsHandler',
                }
             ];
-            button045.eventHandlers = eventHandlers105;
-            container041.addChild( button045 );
+            button037.eventHandlers = eventHandlers098;
+            container045.addChild( button037 );
 
 
-            var dialog019 = new Dialog({
+            var dialog018 = new Dialog({
                'id' : 'Platform.ExitApplicationPrompt',
             });
-            ui001.addChild( dialog019 );
+            ui001.addChild( dialog018 );
 
 
-            var container042 = new Container({
+            var container046 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.ExitApplicationPrompt_container_0',
                'id' : 'aw71d2ddca',
             });
-            dialog019.addChild( container042 );
+            dialog018.addChild( container046 );
 
 
-            var text090 = new Text({
+            var text092 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.ExitApplicationPrompt_container_0_Doyouwanttoclose',
                'id' : 'aw4e0184c3',
                'value' : MessageService.createStaticMessage('Do you want to close the app?'),
             });
-            container042.addChild( text090 );
+            container046.addChild( text092 );
 
 
-            var container043 = new Container({
+            var container047 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.ExitApplicationPrompt_container_1',
                'id' : 'aw6d5ed5c',
             });
-            dialog019.addChild( container043 );
+            dialog018.addChild( container047 );
 
 
-            var button046 = new Button({
+            var button038 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.ExitApplicationPrompt_Yes_button',
                'id' : 'aw3bff816',
                'label' : MessageService.createStaticMessage('Yes'),
             });
-            var eventHandlers106 = [
+            var eventHandlers099 = [
                {
                      'method' : 'processDialog',
                      'artifactId' : 'Platform.ExitApplicationPrompt_Yes_button_eventHandlers_click_processDialog',
@@ -5044,17 +5301,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button046.eventHandlers = eventHandlers106;
-            container043.addChild( button046 );
+            button038.eventHandlers = eventHandlers099;
+            container047.addChild( button038 );
 
 
-            var button047 = new Button({
+            var button039 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.ExitApplicationPrompt_No_button',
                'id' : 'aw5ba5c9da',
                'label' : MessageService.createStaticMessage('No'),
             });
-            var eventHandlers107 = [
+            var eventHandlers100 = [
                {
                      'method' : 'closeDialog',
                      'artifactId' : 'Platform.ExitApplicationPrompt_No_button_eventHandlers_click_closeDialog',
@@ -5063,48 +5320,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button047.eventHandlers = eventHandlers107;
-            container043.addChild( button047 );
+            button039.eventHandlers = eventHandlers100;
+            container047.addChild( button039 );
 
 
-            var dialog020 = new Dialog({
+            var dialog019 = new Dialog({
                'id' : 'Platform.LogOutPrompt',
             });
-            ui001.addChild( dialog020 );
+            ui001.addChild( dialog019 );
 
 
-            var container044 = new Container({
+            var container048 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.LogOutPrompt_container_0',
                'id' : 'awcf20d41b',
             });
-            dialog020.addChild( container044 );
+            dialog019.addChild( container048 );
 
 
-            var text091 = new Text({
+            var text093 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.LogOutPrompt_container_0_Doyouwanttologo',
                'id' : 'aw15a96005',
                'value' : MessageService.createStaticMessage('Do you want to log out of the app?'),
             });
-            container044.addChild( text091 );
+            container048.addChild( text093 );
 
 
-            var container045 = new Container({
+            var container049 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.LogOutPrompt_container_1',
                'id' : 'awb827e48d',
             });
-            dialog020.addChild( container045 );
+            dialog019.addChild( container049 );
 
 
-            var button048 = new Button({
+            var button040 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.LogOutPrompt_No_button',
                'id' : 'awfbbbd446',
                'label' : MessageService.createStaticMessage('No'),
             });
-            var eventHandlers108 = [
+            var eventHandlers101 = [
                {
                      'method' : 'closeDialog',
                      'artifactId' : 'Platform.LogOutPrompt_No_button_eventHandlers_click_closeDialog',
@@ -5113,17 +5370,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button048.eventHandlers = eventHandlers108;
-            container045.addChild( button048 );
+            button040.eventHandlers = eventHandlers101;
+            container049.addChild( button040 );
 
 
-            var button049 = new Button({
+            var button041 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.LogOutPrompt_Yes_button',
                'id' : 'awfaa63964',
                'label' : MessageService.createStaticMessage('Yes'),
             });
-            var eventHandlers109 = [
+            var eventHandlers102 = [
                {
                      'method' : 'logoutDialog',
                      'artifactId' : 'Platform.LogOutPrompt_Yes_button_eventHandlers_click_logoutDialog',
@@ -5132,19 +5389,19 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button049.eventHandlers = eventHandlers109;
-            container045.addChild( button049 );
+            button041.eventHandlers = eventHandlers102;
+            container049.addChild( button041 );
 
 
-            var dialog021 = new Dialog({
+            var dialog020 = new Dialog({
                'cssClass' : 'dialogDurationLookup',
                'resource' : 'PlatformDateLookupResource',
                'id' : 'Platform.DurationLookup',
                'label' : MessageService.createStaticMessage('Change Duration'),
             });
-            ui001.addChild( dialog021 );
+            ui001.addChild( dialog020 );
 
-            var eventHandlers110 = [
+            var eventHandlers103 = [
                {
                      'method' : 'initLookup',
                      'artifactId' : 'Platform.DurationLookup_eventHandlers_show_initLookup',
@@ -5153,36 +5410,36 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            dialog021.eventHandlers = eventHandlers110;
+            dialog020.eventHandlers = eventHandlers103;
 
-            var container046 = new Container({
+            var container050 = new Container({
                'artifactId' : 'Platform.DurationLookup_container_0',
                'id' : 'awc7b6d6e2',
             });
-            dialog021.addChild( container046 );
+            dialog020.addChild( container050 );
 
 
             var durationpicker001 = new DurationPicker({
                'artifactId' : 'Platform.DurationLookup_durationpicker_0',
                'id' : 'awbdafea4f',
             });
-            container046.addChild( durationpicker001 );
+            container050.addChild( durationpicker001 );
 
 
-            var container047 = new Container({
+            var container051 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.DurationLookup_container_1',
                'id' : 'awb0b1e674',
             });
-            dialog021.addChild( container047 );
+            dialog020.addChild( container051 );
 
 
-            var button050 = new Button({
+            var button042 = new Button({
                'artifactId' : 'Platform.DurationLookup_Cancel_button',
                'id' : 'aw21ee1a8e',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers111 = [
+            var eventHandlers104 = [
                {
                      'method' : 'Cancel',
                      'artifactId' : 'Platform.DurationLookup_Cancel_button_eventHandlers_click_Cancel',
@@ -5191,16 +5448,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button050.eventHandlers = eventHandlers111;
-            container047.addChild( button050 );
+            button042.eventHandlers = eventHandlers104;
+            container051.addChild( button042 );
 
 
-            var button051 = new Button({
+            var button043 = new Button({
                'artifactId' : 'Platform.DurationLookup_Clear_button',
                'id' : 'awab5a917f',
                'label' : MessageService.createStaticMessage('Clear'),
             });
-            var eventHandlers112 = [
+            var eventHandlers105 = [
                {
                      'method' : 'Clear',
                      'artifactId' : 'Platform.DurationLookup_Clear_button_eventHandlers_click_Clear',
@@ -5209,18 +5466,18 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button051.eventHandlers = eventHandlers112;
-            container047.addChild( button051 );
+            button043.eventHandlers = eventHandlers105;
+            container051.addChild( button043 );
 
 
-            var button052 = new Button({
+            var button044 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.DurationLookup_OK_button',
                'id' : 'aw7a6484f6',
                'label' : MessageService.createStaticMessage('OK'),
                'primary' : 'true',
             });
-            var eventHandlers113 = [
+            var eventHandlers106 = [
                {
                      'method' : 'SetSelection',
                      'artifactId' : 'Platform.DurationLookup_OK_button_eventHandlers_click_SetSelection',
@@ -5229,48 +5486,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.LookupHandler',
                }
             ];
-            button052.eventHandlers = eventHandlers113;
-            container047.addChild( button052 );
+            button044.eventHandlers = eventHandlers106;
+            container051.addChild( button044 );
 
 
-            var dialog022 = new Dialog({
+            var dialog021 = new Dialog({
                'id' : 'Platform.CancelDownload',
             });
-            ui001.addChild( dialog022 );
+            ui001.addChild( dialog021 );
 
 
-            var container048 = new Container({
+            var container052 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.CancelDownload_container_0',
                'id' : 'awf839de44',
             });
-            dialog022.addChild( container048 );
+            dialog021.addChild( container052 );
 
 
-            var text092 = new Text({
+            var text094 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.CancelDownload_container_0_Doyouwanttostop',
                'id' : 'awdb2316b3',
                'value' : MessageService.createStaticMessage('Do you want to stop downloading work list records?'),
             });
-            container048.addChild( text092 );
+            container052.addChild( text094 );
 
 
-            var container049 = new Container({
+            var container053 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.CancelDownload_container_1',
                'id' : 'aw8f3eeed2',
             });
-            dialog022.addChild( container049 );
+            dialog021.addChild( container053 );
 
 
-            var button053 = new Button({
+            var button045 = new Button({
                'cssClass' : 'mblPrimaryButton dialogButton',
                'artifactId' : 'Platform.CancelDownload_Yes_button',
                'id' : 'aw3b97968f',
                'label' : MessageService.createStaticMessage('Yes'),
             });
-            var eventHandlers114 = [
+            var eventHandlers107 = [
                {
                      'method' : 'cancelDownload',
                      'artifactId' : 'Platform.CancelDownload_Yes_button_eventHandlers_click_cancelDownload',
@@ -5279,17 +5536,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button053.eventHandlers = eventHandlers114;
-            container049.addChild( button053 );
+            button045.eventHandlers = eventHandlers107;
+            container053.addChild( button045 );
 
 
-            var button054 = new Button({
+            var button046 = new Button({
                'cssClass' : 'dialogButton',
                'artifactId' : 'Platform.CancelDownload_No_button',
                'id' : 'awab099478',
                'label' : MessageService.createStaticMessage('No'),
             });
-            var eventHandlers115 = [
+            var eventHandlers108 = [
                {
                      'method' : 'closeDialog',
                      'artifactId' : 'Platform.CancelDownload_No_button_eventHandlers_click_closeDialog',
@@ -5298,47 +5555,47 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.DialogHandler',
                }
             ];
-            button054.eventHandlers = eventHandlers115;
-            container049.addChild( button054 );
+            button046.eventHandlers = eventHandlers108;
+            container053.addChild( button046 );
 
 
-            var dialog023 = new Dialog({
+            var dialog022 = new Dialog({
                'id' : 'Platform.ConfirmClearChanges',
             });
-            ui001.addChild( dialog023 );
+            ui001.addChild( dialog022 );
 
 
-            var container050 = new Container({
+            var container054 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.ConfirmClearChanges_container_0',
                'id' : 'aw3965500f',
             });
-            dialog023.addChild( container050 );
+            dialog022.addChild( container054 );
 
 
-            var text093 = new Text({
+            var text095 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.ConfirmClearChanges_container_0_Changesthathaveno',
                'id' : 'aw66e22f87',
                'value' : MessageService.createStaticMessage('Changes that have not been sent to the server will be discarded.'),
             });
-            container050.addChild( text093 );
+            container054.addChild( text095 );
 
 
-            var container051 = new Container({
+            var container055 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.ConfirmClearChanges_container_1',
                'id' : 'aw4e626099',
             });
-            dialog023.addChild( container051 );
+            dialog022.addChild( container055 );
 
 
-            var button055 = new Button({
+            var button047 = new Button({
                'artifactId' : 'Platform.ConfirmClearChanges_Cancel_button',
                'id' : 'awcee54fe9',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers116 = [
+            var eventHandlers109 = [
                {
                      'method' : 'cancelClearChanges',
                      'artifactId' : 'Platform.ConfirmClearChanges_Cancel_button_eventHandlers_click_cancelClearChanges',
@@ -5347,17 +5604,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button055.eventHandlers = eventHandlers116;
-            container051.addChild( button055 );
+            button047.eventHandlers = eventHandlers109;
+            container055.addChild( button047 );
 
 
-            var button056 = new Button({
+            var button048 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.ConfirmClearChanges_OK_button',
                'id' : 'aw8a3b05f2',
                'label' : MessageService.createStaticMessage('OK'),
             });
-            var eventHandlers117 = [
+            var eventHandlers110 = [
                {
                      'method' : 'doClearChanges',
                      'artifactId' : 'Platform.ConfirmClearChanges_OK_button_eventHandlers_click_doClearChanges',
@@ -5366,48 +5623,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button056.eventHandlers = eventHandlers117;
-            container051.addChild( button056 );
+            button048.eventHandlers = eventHandlers110;
+            container055.addChild( button048 );
 
 
-            var dialog024 = new Dialog({
+            var dialog023 = new Dialog({
                'resource' : 'PlatformProgressResource',
                'id' : 'Platform.DownloadCurrentWorklist',
             });
-            ui001.addChild( dialog024 );
+            ui001.addChild( dialog023 );
 
 
-            var container052 = new Container({
+            var container056 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.DownloadCurrentWorklist_container_0',
                'id' : 'awfd35c5df',
             });
-            dialog024.addChild( container052 );
+            dialog023.addChild( container056 );
 
 
-            var text094 = new Text({
+            var text096 = new Text({
                'resourceAttribute' : 'progressMsg',
                'editable' : false,
                'artifactId' : 'Platform.DownloadCurrentWorklist_container_0_progressMsg',
                'id' : 'aw3c55ae56',
             });
-            container052.addChild( text094 );
+            container056.addChild( text096 );
 
 
-            var container053 = new Container({
+            var container057 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.DownloadCurrentWorklist_container_1',
                'id' : 'aw8a32f549',
             });
-            dialog024.addChild( container053 );
+            dialog023.addChild( container057 );
 
 
-            var button057 = new Button({
+            var button049 = new Button({
                'artifactId' : 'Platform.DownloadCurrentWorklist_Cancel_button',
                'id' : 'awcfb8296d',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers118 = [
+            var eventHandlers111 = [
                {
                      'method' : 'cancelDownload',
                      'artifactId' : 'Platform.DownloadCurrentWorklist_Cancel_button_eventHandlers_click_cancelDownload',
@@ -5416,47 +5673,47 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button057.eventHandlers = eventHandlers118;
-            container053.addChild( button057 );
+            button049.eventHandlers = eventHandlers111;
+            container057.addChild( button049 );
 
 
-            var dialog025 = new Dialog({
+            var dialog024 = new Dialog({
                'id' : 'Platform.NoRecordFoundDialog',
             });
-            ui001.addChild( dialog025 );
+            ui001.addChild( dialog024 );
 
 
-            var container054 = new Container({
+            var container058 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.NoRecordFoundDialog_container_0',
                'id' : 'awa73a1c57',
             });
-            dialog025.addChild( container054 );
+            dialog024.addChild( container058 );
 
 
-            var text095 = new Text({
+            var text097 = new Text({
                'artifactId' : 'Platform.NoRecordFoundDialog_container_0_Stopthetimeronwo',
                'id' : 'awd6cf8f25',
                'value' : MessageService.createStaticMessage('No record was found. If you are working offline, try downloading worklist when online to access your workorder'),
             });
-            container054.addChild( text095 );
+            container058.addChild( text097 );
 
 
-            var container055 = new Container({
+            var container059 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.NoRecordFoundDialog_container_1',
                'id' : 'awd03d2cc1',
             });
-            dialog025.addChild( container055 );
+            dialog024.addChild( container059 );
 
 
-            var button058 = new Button({
+            var button050 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.NoRecordFoundDialog_OK_button',
                'id' : 'aw3de0cad2',
                'label' : MessageService.createStaticMessage('Close'),
             });
-            var eventHandlers119 = [
+            var eventHandlers112 = [
                {
                      'method' : 'closeNoRecord',
                      'artifactId' : 'Platform.NoRecordFoundDialog_OK_button_multiple',
@@ -5465,47 +5722,47 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button058.eventHandlers = eventHandlers119;
-            container055.addChild( button058 );
+            button050.eventHandlers = eventHandlers112;
+            container059.addChild( button050 );
 
 
-            var dialog026 = new Dialog({
+            var dialog025 = new Dialog({
                'id' : 'Platform.MultiplePushNotificationDialog',
             });
-            ui001.addChild( dialog026 );
+            ui001.addChild( dialog025 );
 
 
-            var container056 = new Container({
+            var container060 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.MultiplePushNotificationDialog_container_0',
                'id' : 'aw7b338e5e',
             });
-            dialog026.addChild( container056 );
+            dialog025.addChild( container060 );
 
 
-            var text096 = new Text({
+            var text098 = new Text({
                'artifactId' : 'Platform.MultiplePushNotificationDialog_container_0_Stopthetimeronwo',
                'id' : 'aw72fc5fcc',
                'value' : MessageService.createStaticMessage('Multiple notification were recieved. Go to notification view to access them.'),
             });
-            container056.addChild( text096 );
+            container060.addChild( text098 );
 
 
-            var container057 = new Container({
+            var container061 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.MultiplePushNotificationDialog_container_1',
                'id' : 'awc34bec8',
             });
-            dialog026.addChild( container057 );
+            dialog025.addChild( container061 );
 
 
-            var button059 = new Button({
+            var button051 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.MultiplePushNotificationDialog_OK_button',
                'id' : 'awc2c9277e',
                'label' : MessageService.createStaticMessage('Close'),
             });
-            var eventHandlers120 = [
+            var eventHandlers113 = [
                {
                      'method' : 'close',
                      'artifactId' : 'Platform.MultiplePushNotificationDialog_OK_button_multiple',
@@ -5514,49 +5771,49 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button059.eventHandlers = eventHandlers120;
-            container057.addChild( button059 );
+            button051.eventHandlers = eventHandlers113;
+            container061.addChild( button051 );
 
 
-            var dialog027 = new Dialog({
+            var dialog026 = new Dialog({
                'resource' : 'PlatformTempPushNotification',
                'id' : 'Platform.PushNotificationDialog',
             });
-            ui001.addChild( dialog027 );
+            ui001.addChild( dialog026 );
 
 
-            var container058 = new Container({
+            var container062 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.PushNotificationDialog_container_0',
                'id' : 'awb0eedc9',
             });
-            dialog027.addChild( container058 );
+            dialog026.addChild( container062 );
 
 
-            var text097 = new Text({
+            var text099 = new Text({
                'artifactId' : 'Platform.PushNotificationDialog_container_0_Stopthetimeronwo',
                'id' : 'aw35fc28ff',
                'value' : MessageService.createDynamicMessage('{0} {1} {2}', 'platform.handlers.PushNotificationDialogHandler', 'resolveMessageProps'),
                'resolverFunction' : 'resolveMessageProps',
                'resolverClass' : 'platform.handlers.PushNotificationDialogHandler',
             });
-            container058.addChild( text097 );
+            container062.addChild( text099 );
 
 
-            var container059 = new Container({
+            var container063 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.PushNotificationDialog_container_1',
                'id' : 'aw7c09dd5f',
             });
-            dialog027.addChild( container059 );
+            dialog026.addChild( container063 );
 
 
-            var button060 = new Button({
+            var button052 = new Button({
                'artifactId' : 'Platform.PushNotificationDialog_Open_button',
                'id' : 'aw4151795',
                'label' : MessageService.createStaticMessage('Open'),
             });
-            var eventHandlers121 = [
+            var eventHandlers114 = [
                {
                      'method' : 'openRecord',
                      'artifactId' : 'Platform.PushNotificationDialog_Open_button_eventHandlers_click_WOStartedDialogNoClickHandler',
@@ -5572,17 +5829,17 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button060.eventHandlers = eventHandlers121;
-            container059.addChild( button060 );
+            button052.eventHandlers = eventHandlers114;
+            container063.addChild( button052 );
 
 
-            var button061 = new Button({
+            var button053 = new Button({
                'cssClass' : 'mblPrimaryButton',
                'artifactId' : 'Platform.PushNotificationDialog_OK_button',
                'id' : 'aw3d64070a',
                'label' : MessageService.createStaticMessage('OK'),
             });
-            var eventHandlers122 = [
+            var eventHandlers115 = [
                {
                      'method' : 'close',
                      'artifactId' : 'Platform.PushNotificationDialog_OK_button_eventHandlers_click_WOStartedDialogYesClickHandler',
@@ -5591,48 +5848,48 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.PushNotificationDialogHandler',
                }
             ];
-            button061.eventHandlers = eventHandlers122;
-            container059.addChild( button061 );
+            button053.eventHandlers = eventHandlers115;
+            container063.addChild( button053 );
 
 
-            var dialog028 = new Dialog({
+            var dialog027 = new Dialog({
                'resource' : 'PlatformDemoModeResource',
                'id' : 'Platform.DemoDownloadWarning',
             });
-            ui001.addChild( dialog028 );
+            ui001.addChild( dialog027 );
 
 
-            var container060 = new Container({
+            var container064 = new Container({
                'cssClass' : 'mblSimpleDialogText',
                'artifactId' : 'Platform.DemoDownloadWarning_container_0',
                'id' : 'awf840ab79',
             });
-            dialog028.addChild( container060 );
+            dialog027.addChild( container064 );
 
 
-            var text098 = new Text({
+            var text100 = new Text({
                'editable' : false,
                'artifactId' : 'Platform.DemoDownloadWarning_container_0_progressMsg',
                'id' : 'awf3cb0903',
                'value' : MessageService.createStaticMessage('MessageText'),
             });
-            container060.addChild( text098 );
+            container064.addChild( text100 );
 
 
-            var container061 = new Container({
+            var container065 = new Container({
                'cssClass' : 'mblSimpleDialogFooter',
                'artifactId' : 'Platform.DemoDownloadWarning_container_1',
                'id' : 'aw8f479bef',
             });
-            dialog028.addChild( container061 );
+            dialog027.addChild( container065 );
 
 
-            var button062 = new Button({
+            var button054 = new Button({
                'artifactId' : 'Platform.DemoDownloadWarning_Continue_button',
                'id' : 'aw2659f8c8',
                'label' : MessageService.createStaticMessage('Continue'),
             });
-            var eventHandlers123 = [
+            var eventHandlers116 = [
                {
                      'method' : 'doClearChanges',
                      'artifactId' : 'Platform.DemoDownloadWarning_Continue_button_eventHandlers_click_doClearChanges',
@@ -5641,16 +5898,16 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button062.eventHandlers = eventHandlers123;
-            container061.addChild( button062 );
+            button054.eventHandlers = eventHandlers116;
+            container065.addChild( button054 );
 
 
-            var button063 = new Button({
+            var button055 = new Button({
                'artifactId' : 'Platform.DemoDownloadWarning_Cancel_button',
                'id' : 'aw9def7b28',
                'label' : MessageService.createStaticMessage('Cancel'),
             });
-            var eventHandlers124 = [
+            var eventHandlers117 = [
                {
                      'method' : 'cancelDownload',
                      'artifactId' : 'Platform.DemoDownloadWarning_Cancel_button_eventHandlers_click_cancelDownload',
@@ -5659,10 +5916,320 @@ function(declare, all, BuilderBase, window, array, ioQuery, AdditionalDataManage
                      'class' : 'platform.handlers.WorkOfflineHandler',
                }
             ];
-            button063.eventHandlers = eventHandlers124;
-            container061.addChild( button063 );
+            button055.eventHandlers = eventHandlers117;
+            container065.addChild( button055 );
 
-            app001.addHandler( {name : 'application.handlers.CodeScannerHandlerExt', 'class': new CodeScannerHandlerExt()} );
+
+            var dialog028 = new Dialog({
+               'resource' : 'PlatformEsigResource',
+               'id' : 'Platform.EsigLoginView',
+               'label' : MessageService.createStaticMessage('Electronic Signature Authentication'),
+            });
+            ui001.addChild( dialog028 );
+
+            var requiredResources017 = {
+               'attemptResultDomain' : {
+                  'enableFeatureByProperty' : 'esig.enabled',
+                  'artifactId' : 'Platform.EsigLoginView_attemptResultDomain',
+                  'id' : 'aw3c53638b',
+               },
+            };
+            dialog028.addRequiredResources( requiredResources017 );
+
+            var container066 = new Container({
+               'artifactId' : 'Platform.EsigLoginView_container_0',
+               'id' : 'aw44fd9611',
+            });
+            dialog028.addChild( container066 );
+
+
+            var group010 = new Group({
+               'artifactId' : 'Platform.EsigLoginView_group_0',
+               'id' : 'aw7bf6135f',
+            });
+            container066.addChild( group010 );
+
+
+            var groupitem024 = new GroupItem({
+               'artifactId' : 'Platform.EsigLoginView_group_0_groupitem_1',
+               'id' : 'aw209714b9',
+            });
+            group010.addChild( groupitem024 );
+
+
+            var text101 = new Text({
+               'border' : 'true',
+               'resourceAttribute' : 'userName',
+               'cssClass' : 'loginUsername',
+               'editable' : false,
+               'artifactId' : 'Platform.EsigLoginView_container_0_username',
+               'id' : 'aw15aabb30',
+               'label' : MessageService.createStaticMessage('User Name'),
+               'placeHolder' : MessageService.createStaticMessage('User name'),
+            });
+            groupitem024.addChild( text101 );
+
+
+            var text102 = new Text({
+               'border' : 'true',
+               'resourceAttribute' : 'password',
+               'cssClass' : 'loginPassword',
+               'editable' : true,
+               'artifactId' : 'Platform.EsigLoginView_container_0_password',
+               'id' : 'awd836fb92',
+               'label' : MessageService.createStaticMessage('Password'),
+               'type' : 'password',
+               'placeHolder' : MessageService.createStaticMessage('Password'),
+               'required' : true,
+            });
+            groupitem024.addChild( text102 );
+
+
+            var text103 = new Text({
+               'resourceAttribute' : 'reason',
+               'cssClass' : 'loginUsername',
+               'editable' : true,
+               'artifactId' : 'Platform.EsigLoginView_container_0_reason',
+               'id' : 'aw6ccf562d',
+               'label' : MessageService.createStaticMessage('Reason for Change'),
+               'placeHolder' : MessageService.createStaticMessage('Reason for Change'),
+               'required' : true,
+            });
+            groupitem024.addChild( text103 );
+
+
+            var container067 = new Container({
+               'cssClass' : 'mblSimpleDialogFooter',
+               'artifactId' : 'Platform.EsigLoginView_footer',
+               'id' : 'aw68d6d11c',
+            });
+            dialog028.addChild( container067 );
+
+
+            var button056 = new Button({
+               'artifactId' : 'Platform.EsigLoginView_Cancel_button',
+               'id' : 'aw68a36a2b',
+               'label' : MessageService.createStaticMessage('Cancel'),
+            });
+            var eventHandlers118 = [
+               {
+                     'method' : 'cancelEsig',
+                     'artifactId' : 'Platform.EsigLoginView_Cancel_button_eventHandlers_click_cancelEsig',
+                     'id' : 'awdba9800d',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.EsigHandler',
+               }
+            ];
+            button056.eventHandlers = eventHandlers118;
+            container067.addChild( button056 );
+
+
+            var button057 = new Button({
+               'cssClass' : 'mblPrimaryButton',
+               'artifactId' : 'Platform.EsigLoginView_Save_button',
+               'id' : 'awef41b275',
+               'label' : MessageService.createStaticMessage('OK'),
+               'primary' : 'true',
+            });
+            var eventHandlers119 = [
+               {
+                     'method' : 'submitEsig',
+                     'artifactId' : 'Platform.EsigLoginView_Save_button_eventHandlers_click_submitEsig',
+                     'id' : 'awa9f3497f',
+                     'event' : 'click',
+                     'class' : 'platform.handlers.EsigHandler',
+               }
+            ];
+            button057.eventHandlers = eventHandlers119;
+            container067.addChild( button057 );
+
+            var eventHandlers120 = [
+               {
+                     'method' : 'initializeEsig',
+                     'artifactId' : 'Platform.EsigLoginView_eventHandlers_show_initializeEsig',
+                     'id' : 'aw681e6384',
+                     'event' : 'show',
+                     'class' : 'platform.handlers.EsigHandler',
+               }
+            ];
+            dialog028.eventHandlers = eventHandlers120;
+
+            if (trackTimeEnabled) {
+               var trackTimer = new TrackTime('ApplicationUIBuilder', 'build', 'Creating View: ' + 'Platform.Signature', false);
+               trackTimer.startTracking();
+            }
+
+            var view019 = new View({
+               'id' : 'Platform.Signature',
+               'label' : MessageService.createStaticMessage('Capture Real Signature'),
+            });
+            ui001.addChild( view019 );
+
+            var requiredResources018 = {
+               'PlatformAttachmentInfoResource' : {
+                  'artifactId' : 'Platform.Signature_PlatformAttachmentInfoResource',
+                  'id' : 'aw8cc44736',
+               },
+            };
+            view019.addRequiredResources( requiredResources018 );
+
+            var footer005 = new Footer({
+               'artifactId' : 'Platform.Signature_footer',
+               'id' : 'aw16b9ee39',
+            });
+            view019.addChild( footer005 );
+
+
+            var button058 = new Button({
+               'artifactId' : 'Platform.Signature_Cancel_button',
+               'id' : 'aw9088fe5b',
+               'label' : MessageService.createStaticMessage('Cancel'),
+            });
+            var eventHandlers121 = [
+               {
+                     'method' : 'cancelSignature',
+                     'artifactId' : 'Platform.Signature_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView',
+                     'id' : 'awc27cd6a4',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button058.eventHandlers = eventHandlers121;
+            footer005.addChild( button058 );
+
+
+            var button059 = new Button({
+               'artifactId' : 'Platform.Signature_Clear_button',
+               'id' : 'awc6576044',
+               'label' : MessageService.createStaticMessage('Clear'),
+            });
+            var eventHandlers122 = [
+               {
+                     'method' : 'clearSignature',
+                     'artifactId' : 'Platform.Signature_Clear_button_eventHandlers_click_handleBackButtonClickEditAssetView',
+                     'id' : 'aw90653ab1',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button059.eventHandlers = eventHandlers122;
+            footer005.addChild( button059 );
+
+
+            var button060 = new Button({
+               'cssClass' : 'mblPrimaryButton',
+               'artifactId' : 'Platform.Signature_Save_button',
+               'id' : 'awbc1f2293',
+               'label' : MessageService.createStaticMessage('Save'),
+               'primary' : 'true',
+            });
+            var eventHandlers123 = [
+               {
+                     'method' : 'saveSignature',
+                     'artifactId' : 'Platform.Signature_Save_button_eventHandlers_click_saveSignature',
+                     'id' : 'aw7d8e432b',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button060.eventHandlers = eventHandlers123;
+            footer005.addChild( button060 );
+
+            var eventHandlers124 = [
+               {
+                     'method' : 'initSignature',
+                     'artifactId' : 'Platform.Signature_eventHandlers_show_initStopWorkView',
+                     'id' : 'awb8cf4cb7',
+                     'event' : 'initialize',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            view019.eventHandlers = eventHandlers124;
+            if (trackTimeEnabled) {
+               trackTimer.stopTracking();
+            }
+
+            var dialog029 = new Dialog({
+               'id' : 'Platform.SignatureDialog',
+            });
+            ui001.addChild( dialog029 );
+
+
+            var container068 = new Container({
+               'cssClass' : 'mblSimpleDialogFooter',
+               'artifactId' : 'Platform.SignatureDialog_container_buttons',
+               'id' : 'aw91450791',
+            });
+            dialog029.addChild( container068 );
+
+
+            var button061 = new Button({
+               'cssClass' : 'dialogButton',
+               'artifactId' : 'Platform.SignatureDialog_container_buttons_Cancel_button',
+               'id' : 'aw51ebe6e8',
+               'label' : MessageService.createStaticMessage('Cancel'),
+            });
+            var eventHandlers125 = [
+               {
+                     'method' : 'cancelSignatureDialog',
+                     'artifactId' : 'Platform.SignatureDialog_container_buttons_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView',
+                     'id' : 'aw198ca753',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button061.eventHandlers = eventHandlers125;
+            container068.addChild( button061 );
+
+
+            var button062 = new Button({
+               'cssClass' : 'dialogButton',
+               'artifactId' : 'Platform.SignatureDialog_container_buttons_clear_button',
+               'id' : 'awdc63a382',
+               'label' : MessageService.createStaticMessage('Clear'),
+            });
+            var eventHandlers126 = [
+               {
+                     'method' : 'clearSignature',
+                     'artifactId' : 'Platform.SignatureDialog_container_buttons_clear_button_eventHandlers_click_handleBackButtonClickEditAssetView',
+                     'id' : 'aw72eacc40',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button062.eventHandlers = eventHandlers126;
+            container068.addChild( button062 );
+
+
+            var button063 = new Button({
+               'cssClass' : 'mblPrimaryButton dialogButton',
+               'artifactId' : 'Platform.SignatureDialog_container_buttons_Save_button',
+               'id' : 'awd4941650',
+               'label' : MessageService.createStaticMessage('Save'),
+               'primary' : 'true',
+            });
+            var eventHandlers127 = [
+               {
+                     'method' : 'saveSignature',
+                     'artifactId' : 'Platform.SignatureDialog_container_buttons_Save_button_eventHandlers_click_saveSignature',
+                     'id' : 'awa59c7577',
+                     'event' : 'click',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            button063.eventHandlers = eventHandlers127;
+            container068.addChild( button063 );
+
+            var eventHandlers128 = [
+               {
+                     'method' : 'initSignature',
+                     'artifactId' : 'Platform.SignatureDialog_eventHandlers_show_initStopWorkView',
+                     'id' : 'aw71e7bce4',
+                     'event' : 'show',
+                     'class' : 'platform.signature.handler.SignatureHandler',
+               }
+            ];
+            dialog029.eventHandlers = eventHandlers128;
             app001.addHandler( {name : 'application.handlers.InventoryHandler', 'class': new InventoryHandler()} );
             app001.addHandler( {name : 'platform.handlers.AdditionalDataDialogHandler', 'class': new AdditionalDataDialogHandler()} );
             app001.addHandler( {name : 'platform.handlers.AttachmentHandler', 'class': new AttachmentHandler()} );

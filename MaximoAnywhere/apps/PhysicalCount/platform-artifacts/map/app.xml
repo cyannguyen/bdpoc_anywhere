@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<app enableFeatureByProperty="map.enabled" id="map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" enableFeatureByProperty="map.enabled" id="map" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
 	<ui id="ui">
 		<view id="platform.DirectionsView" label="Directions">
 			<container id="platform.DirectionsView_container_0" layout="MapEndPoint" resource="PlatformMapMarkerInfo">
@@ -136,88 +136,27 @@
 				<attribute describedByProperty="dcterms:identifier" id="mapmanager_1_1_1" index="true" name="identifier"/>
 				<attribute describedByProperty="dcterms:title" id="mapmanager_1_1_2" index="true" name="description"/>
 				<attribute describedByProperty="spi:active" id="mapmanager_1_1_3" index="true" name="active"/>
-				<attribute describedByProperty="spi:mapsites" id="mapmanager_1_1_4"  index="true" name="mapsiteslist" />
-				<attribute describedByProperty="spi:ismobile" id="mapmanager_1_1_6"  index="true" name="ismobile" />
-				<attribute describedByProperty="spi:mapprovider" id="mapmanager_1_1_7"  index="true" name="mapprovider" />
-				<attribute describedByProperty="spi:bmapslicense" id="mapmanager_1_1_8"  index="true" name="bmapslicense" />
-				<attribute describedByProperty="spi:gmapsapikey" id="mapmanager_1_1_9"  index="true" name="gmapsapikey" />
+				<attribute describedByProperty="spi:mapsites" id="mapmanager_1_1_4" index="true" name="mapsiteslist"/>
+				<attribute describedByProperty="spi:ismobile" id="mapmanager_1_1_6" index="true" name="ismobile"/>
+				<attribute describedByProperty="spi:mapprovider" id="mapmanager_1_1_7" index="true" name="mapprovider"/>
+				<attribute describedByProperty="spi:bmapslicense" id="mapmanager_1_1_8" index="true" name="bmapslicense"/>
+				<attribute describedByProperty="spi:gmapsapikey" id="mapmanager_1_1_9" index="true" name="gmapsapikey"/>
 			</attributes>
 			<queryBases id="mapmanager_1_2">
 	 			<queryBase defaultForSearch="true" id="mapmanager_1_2_1" name="defaultquery" queryUri="/oslc/os/oslcmapmanager"/>
 			</queryBases>
-			<whereClause id="mapmanager_1_3" clause="spi:ismobile=1" />
+			<whereClause clause="spi:ismobile=1" id="mapmanager_1_3"/>
 			
 		</resource> 
 		
-		<resource describedBy="http://jazz.net/ns/ism/spatial/smarter_physical_infrastructure#PlusSMapManager" hasManagedQuery="true" id="plussmapmanager" name="plussmapmanager" pageSize="200" providedBy="/oslc/sp/Spatial">
-			<attributes id="plussmapmanager_1_1">
-				<!-- limits the scope of attributes used from full Work Order RDF -->
-				<attribute describedByProperty="dcterms:identifier" id="plussmapmanager_1_1_1" index="true" name="identifier"/>
-				<attribute describedByProperty="dcterms:title" id="plussmapmanager_1_1_2" index="true" name="description"/>
-				<attribute describedByProperty="spi_spatial:active" id="plussmapmanager_1_1_3" index="true" name="active"/>
-				<attribute describedByProperty="spi_spatial:mapsites" id="plussmapmanager_1_1_4"  index="true" name="mapsiteslist" />
-				<attribute describedByProperty="spi_spatial:plussmapservice" id="plussmapmanager_1_1_5"  index="true" name="servicelist" />
-				<attribute describedByProperty="spi_spatial:ismobile" id="plussmapmanager_1_1_6"  index="true" name="ismobile" />
-				<attribute describedByProperty="spi_spatial:spatialtokensecurity" id="plussmapmanager_1_1_7"  index="true" name="spatialtokensecurity" />
-				<attribute describedByProperty="spi_spatial:useproxy" id="plussmapmanager_1_1_8"  index="true" name="useproxy" />
-			</attributes>
-			<queryBases id="plussmapmanager_1_2">
-	 			<queryBase defaultForSearch="true" id="plussmapmanager_1_2_1" name="defaultquery" queryUri="/oslc/os/oslcplussmapmanager"/>
-			</queryBases>
-			<whereClause id="plussmapmanager_1_3" clause="spi_spatial:ismobile=1" />
-			
-		</resource> 
-		
-		<resource describedBy="http://jazz.net/ns/ism/spatial/smarter_physical_infrastructure#PlusSMapService"  defaultOrderBy="serviceorder desc"  hasManagedQuery="true" id="plussmapservice" name="plussmapservice" pageSize="200" providedBy="/oslc/sp/Spatial">
-			<attributes id="plussmapservice_attr">
-				<attribute describedByProperty="dcterms:identifier" id="plussmapservice_1" index="true" name="identifier"/>
-				<attribute describedByProperty="dcterms:title" id="plussmapservice_2" index="true" name="servicename"/>
-				<attribute describedByProperty="spi_spatial:serviceorder" id="plussmapservice_3"  index="true" name="serviceorder"/>
-				<attribute describedByProperty="spi_spatial:url" id="plussmapservice_4"  index="true" name="url"/>
-				<attribute describedByProperty="spi_spatial:transparency" id="plussmapservice_5"  index="true" name="transparency"/>
-				<attribute describedByProperty="spi_spatial:proxy" id="plussmapservice_6"  index="true" name="proxy"/>
-				<attribute describedByProperty="spi_spatial:mapname" id="plussmapservice_7"  index="true" name="mapname"/>
-				<attribute describedByProperty="spi_spatial:visible" id="plussmapservice_9"  index="true" name="visible"/>
-				<attribute describedByProperty="spi_spatial:tokensecurityusername" id="plussmapservice_10"  index="true" name="tokensecurityusername"/>
-				<attribute describedByProperty="spi_spatial:tokensecuritypswd" id="plussmapservice_11"  index="true" name="tokensecuritypswd"/>
-				<attribute describedByProperty="spi_spatial:webmapdefined" id="plussmapservice_12"  index="true" name="webmapdefined"/>
-				<attribute describedByProperty="spi_spatial:istiledlayer" id="plussmapservice_13"  index="true" name="istiledlayer"/>
-				<attribute describedByProperty="spi_spatial:jsonlayers" id="plussmapservice_14"  index="true" name="jsonlayers"/>
-				<attribute describedByProperty="spi_spatial:jsonfeatureserver" id="plussmapservice_15"  index="true" name="jsonfeatureserver"/>
-				<attribute describedByProperty="spi_spatial:jsonmapserver" id="plussmapservice_16"  index="true" name="jsonmapserver"/>
-			</attributes>
-			<queryBases id="plussmapservice_queryBase">
-	 			<queryBase defaultForSearch="true" id="plussmapservice_defaultqueryBase" name="defaultquery" queryUri="/oslc/os/oslcplussmapservice"/>
-			</queryBases>
-			<whereClause id="plussmapservice_whereclause" clause="" />
-			
-		</resource>
-		
-		<resource describedBy="http://jazz.net/ns/ism/spatial/smarter_physical_infrastructure#PlussToken"  hasManagedQuery="true" id="PLUSSSECURITYTOKEN" name="PLUSSSECURITYTOKEN" pageSize="200" providedBy="/oslc/sp/Spatial">
-			<attributes id="PLUSSSECURITYTOKEN_attr">
-				<attribute describedByProperty="dcterms:identifier" id="PLUSSSECURITYTOKEN_1" index="true" name="identifier"/>	
-				<attribute describedByProperty="spi_spatial:expiretime" id="PLUSSSECURITYTOKEN_2"  index="true" name="expiretime"/>
-				<attribute describedByProperty="spi_spatial:expireresetlimit" id="PLUSSSECURITYTOKEN_3"  index="true" name="expireresetlimit"/>			
-			</attributes>
-			<queryBases id="PLUSSSECURITYTOKEN_queryBase">
-	 			<queryBase defaultForSearch="true" id="PLUSSSECURITYTOKEN_defaultqueryBase" name="defaultquery" queryUri="/oslc/os/oslcplusstoken"/>
-			</queryBases>
-			<whereClause id="PLUSSSECURITYTOKEN_whereclause" clause="" />
-			
-		</resource>
+		 
 		
 		
-		<resource describedBy="http://jazz.net/ns/ism/spatial/smarter_physical_infrastructure#PlussLinkedMbo"  hasManagedQuery="true" id="PLUSSLINKEDMBO" name="PLUSSLINKEDMBO" pageSize="200" providedBy="/oslc/sp/Spatial">
-			<attributes id="PLUSSLINKEDMBO_attr">
-				<attribute describedByProperty="dcterms:identifier" id="PLUSSLINKEDMBO_1" index="true" name="identifier"/>	
-				<attribute describedByProperty="spi_spatial:jsonmbo" id="PLUSSLINKEDMBO_2"  index="true" name="jsonmbo"/>
-			</attributes>
-			<queryBases id="PLUSSLINKEDMBO_queryBase">
-	 			<queryBase defaultForSearch="true" id="PLUSSLINKEDMBO_defaultqueryBase" name="defaultquery" queryUri="/oslc/os/oslcplusslinkedmbo"/>
-			</queryBases>
-			<whereClause id="PLUSSLINKEDMBO_whereclause" clause="" />
-			
-		</resource>
+		
+		
+		
+		
+		
 		
 		
 		

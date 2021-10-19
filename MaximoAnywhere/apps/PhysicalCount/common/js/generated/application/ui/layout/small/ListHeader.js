@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2021-06-24 15:10:35
+// Build: 2021-10-15 16:02:24
 //----------------------------------------------------------------//
 define(   "generated/application/ui/layout/small/ListHeader", 
       [
@@ -90,7 +90,7 @@ function(declare, _LayoutWidgetBase, array, domConstruct, domClass) {
             
             var col_count = row.insertCell(-1);
             col_count.className  = 'ListHeader_count_column';
-            col_count.colSpan = '2';
+            col_count.colSpan = '6';
             col_count.style['vertical-align'] = 'middle';
             col_count.style['text-align'] = 'center';
             var div_count = domConstruct.create('div');

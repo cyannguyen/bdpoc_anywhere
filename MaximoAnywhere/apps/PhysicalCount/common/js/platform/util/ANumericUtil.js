@@ -112,7 +112,9 @@ define(
 										}
 									}
 									
-									this.mresource.getCurrentRecord().set(this.mresource.resourceAttribute, value);
+									if(!this.mresource.getCurrentRecord().get(this.mresource.resourceAttribute) == value){
+										this.mresource.getCurrentRecord().set(this.mresource.resourceAttribute, value);	
+									}
 
 								}
 

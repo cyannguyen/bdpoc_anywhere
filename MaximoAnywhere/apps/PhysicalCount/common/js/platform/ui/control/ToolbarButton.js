@@ -37,12 +37,21 @@ function(declare, ControlBase, ToolBarButton, lang, touch, on, registry) {
 		   if(oldButton){
 			   oldButton.destroyRecursive(false);
 		   }
+		   
+		   var marginText = null;
+		   if(this.changeMarginRight)
+		   {
+			   marginText = ':5px !important';
+		   }else{
+			   marginText = ':0px !important';
+		   }
+		   
 		   this.baseWidget = this.createWidget(ToolBarButton, {
 			   id: this.getId(),
 			   icon: this.getImagePathFor(this.icon),
 			   alt: this.alt,
 			   'class' : this.cssClass ? this.cssClass : '',
-			   style: (this.overFlow)?'float:'+floatDir+';margin-'+floatDir+':0px !important':'float:'+floatDir
+			   style: (this.overFlow)?'float:'+floatDir+';margin-'+floatDir+marginText:'float:'+floatDir
 		   });
 			
 		    if(this.transitionTo){ //do this instead of native moveTo of button to allow # and other navigation add-ons

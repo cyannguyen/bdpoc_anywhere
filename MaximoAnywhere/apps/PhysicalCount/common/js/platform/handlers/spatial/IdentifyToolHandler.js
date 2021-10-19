@@ -136,10 +136,8 @@ MaximoSpatialStore, MapProperties, array, all, Deferred, locale) {
 				for (var attributeName in attributes) {
 					if (attributeName.toLowerCase() == fieldName.toLowerCase()) {
 						attributeFound = true;
-					}
-				}
-				if (attributeFound) {
-					var attrValue = attributes[fieldName];
+
+						var attrValue = attributes[attributeName];
 					if (attrValue != null && attrValue != "") {
 						actualWorkOrder.set("asset", attrValue);
 						ModelService.save(workOrderSet).then(lang.hitch(this, function() {
@@ -149,7 +147,11 @@ MaximoSpatialStore, MapProperties, array, all, Deferred, locale) {
 						//Feature is not linked
 						WL.application.showMessage(MessageService.createStaticMessage("featureIsNotLinked").getMessage());
 					}
-				} else {
+					break;
+					}
+				}
+						
+				if (!attributeFound) {
 					//Link field does not exist in the feature
 					var errorMessage = MessageService.createResolvedMessage("featureDoesNotHaveLinkAttr", [fieldName]);
 					WL.application.showMessage(errorMessage);

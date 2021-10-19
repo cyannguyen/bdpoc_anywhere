@@ -183,6 +183,11 @@ define("platform/attachment/AttachmentService",
         		saveAsPath = decodeURI(saveAsPath);
         	}
 			
+			
+        	if(decodeURI(saveAsPath) != saveAsPath){
+        		saveAsPath = decodeURI(saveAsPath);
+        	}
+			
 			transfer.download(encodeURI(serverAddress), saveAsPath, onSuccess, onError, ACCEPT_ALL_CERTIFICATES, options);	
 			setTimeout(function(){				
 				if(!started){
@@ -544,13 +549,58 @@ define("platform/attachment/AttachmentService",
 			return deferred.promise;
 		},
 		
+		//LAFIX for COOR (347964)
+		/**
+		 * Check if the url has a slash "/" at the end. If its true, just return the path and if not, add a slash at the of the string and return
+		 * @param string path The full path from the device
+		 */
+		checkSlashFromPath: function(path){
+			var slash = "/";
+			var checkSlash = path.substr(-1);
+		
+			if(checkSlash !== slash) {
+				path = path + slash;
+			}
+		  
+		  return path;
+		},
+
+		/**
+		 * Return the url encoded to fix special characters problems during the download
+		 * @param string path The full path from the device
+		 * @param string filename File name recovered from Maximo
+		 */
+		getUri: function(path, filename){
+            var self = this;
+			var uri  = null;
+			var res  = null;
+			
+			uri = self.checkSlashFromPath(path) + filename;
+			res = encodeURI(uri);
+			
+			return res;
+		},
 		downloadAttachmentForRecord: function(attachmentData, attachmentMetadata, ownerResourseName, ownerId, currentUser, sessionId){
 			var deferred = new Deferred();
 			var fileNameField = attachmentData["fullFileName"];
 			var self = this;
 			if(fileNameField != null){
 				FileService.baseDirectoryForWithPromise(currentUser, ownerResourseName, ownerId).then(function(targetInfo){
-					var targetFile = targetInfo.fullPath + "/" + fileNameField;
+					//Lafix - Vyshantha 
+					var popUpExtensions = ["PNG", "JPG", "JPEG", "MP4", "M4A", "MP3", "WAV", "TXT", "PDF", "DOC", "DOCX"];
+					var filesplitArr = fileNameField.split('.'), s = 0, filesplitstring = "";
+					if (filesplitArr.length > 2) {
+						while (s < filesplitArr.length - 1) {
+							filesplitstring = filesplitArr[s++];
+						}
+					} else {
+						filesplitstring = filesplitArr[0];
+					}
+					if (popUpExtensions.indexOf(filesplitArr[filesplitArr.length - 1]) > -1)
+						fileNameField = filesplitstring + "." + filesplitArr[filesplitArr.length - 1].toLowerCase();
+					//Lafix - end
+					//LAFIX for COOR (347964);
+					var targetFile = self.getUri(targetInfo.fullPath, fileNameField);
 					self.downloadFileAsPromise(targetFile, attachmentData[PlatformConstants.LOCAL_UNIQUEID_ATTRIBUTE], sessionId).then(function(downloadResult){
 								deferred.resolve(downloadResult.fullPath);
 					}, null, 

@@ -677,7 +677,7 @@ function(declare, array, lang, ServerPreferredDataAccessStrategy, LocalDataAcces
 		},
 
 		getResourceMetrics: function(queryBase){
-			if(queryBase && !this.serverOnlyMode && queryBase != PlatformConstants.ERRORED_QUERYBASE && queryBase != PlatformConstants.CREATED_QUERYBASE){
+			if(queryBase && !this.serverOnlyMode && queryBase != PlatformConstants.ERRORED_QUERYBASE){
 				var metric = ResourceMetrics.getMetricsForResource(this.name, queryBase);
 				/*if(this.additionalData){
 					metric.set('Tyep','LOOKUP');

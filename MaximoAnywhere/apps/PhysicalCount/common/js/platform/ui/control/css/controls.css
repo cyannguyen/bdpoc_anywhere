@@ -96,6 +96,7 @@ body, form {
 
 .changePasswordForm {
 	margin: 30px;
+	transform: translate3d(0px, 0px, 0px);
 }
 
 .changePasswordForm .errorMsg {
@@ -921,7 +922,8 @@ table.layout td {
 
 table.layout td .hideextra * {
 	white-space: nowrap;
-	overflow: hidden;
+	/* Loc */
+	/* overflow: hidden; */
 	text-overflow: ellipsis;
 }
 

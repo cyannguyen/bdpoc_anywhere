@@ -448,18 +448,17 @@ require( [
 			var current_projection = new ol.proj.Projection({code: "EPSG:4326"});
 			var sourceProj = this.mobileMaximoSpatial.map.getView().getProjection();
 			feature.getGeometry().transform(sourceProj, current_projection);
-			var area_m = Math.abs(ol.sphere.getArea(feature.getGeometry()));
+			var area_m = Math.abs(ol.sphere.getArea(feature.getGeometry(),{projection:current_projection}));
 			var areaUnit = this.sketchConfig.measuresAreaUnit;
 			var area = this.mobileMaximoSpatial.convertAreaMeasures('SQUARE_METERS', areaUnit, area_m);
-			area = parseFloat(Math.round(area * 100) / 100).toFixed(2);
+			area = area.toFixed(3);
 			var areaLabelUnit = this.mobileMaximoSpatial.measureUnitToLabel(areaUnit);
 			var textLabel = '' + area + ' ' + areaLabelUnit;
-
 			feature.getGeometry().transform(current_projection, sourceProj);
 			var extent = feature.getGeometry().getExtent();
 			var polygonCentroid = ol.extent.getCenter(extent);
-			
 			this.createTextFeature(polygonCentroid, textLabel, 0, true);
+     
 		},
 		
 		_createMeasurePoints: function(points, textPosition) {
@@ -600,10 +599,9 @@ require( [
 							this._createMeasurePoints(realPoints, 'end');
 						} else { // Polygon
 							realPoints = dojo.clone(coords[0]);
+							this._createMeasurePoints([realPoints[0], realPoints[realPoints.length-1]], 'middle');
+							realPoints.push(realPoints[0]);
 							this._createMeasurePoints(realPoints, 'end');
-							realPoints = realPoints.slice(-2);
-							this._createMeasurePoints(realPoints, 'middle');
-							
 							this._createAreaMeasure(feature);
 						}
                     }
@@ -643,7 +641,12 @@ require( [
 					var source = this.vectorLayer.getSource();
 					if (param.selected.length > 0) {
 						var featureToDelete = param.selected[0];
-						var idToDelete = featureToDelete.get(this.idField);
+						var idToDelete;
+						if ( featureToDelete.get(this.parentIdField) !== null && featureToDelete.get(this.parentIdField) !== undefined ) {
+							idToDelete = featureToDelete.get(this.parentIdField);
+						} else {
+						 	idToDelete = featureToDelete.get(this.idField);
+						}
 						var features = source.getFeatures();
 						var length = features.length;
 						if (length > 0) {

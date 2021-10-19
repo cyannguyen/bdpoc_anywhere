@@ -27,12 +27,14 @@ define("platform/map/spatial/SpatialTilePackageManager",
 			var TILE_PATH = "" ;
 			var _lodMap = [];
 			var maxZoom = 0;
+			var minZoom = 0;
 			var target_id = "";
 			var loadingTPKFile = false;
 			var isTPKloadingComplete = false;
 			var tempstateFolderName = "";
 			var entriesFile = [];
 			var directoriesToLoad = [];
+			var mapServerPath = "";
 
 			/** @class platform.map.esriTilePackageManager */
 		return {
@@ -282,9 +284,15 @@ define("platform/map/spatial/SpatialTilePackageManager",
 										self._inMemTilesPath = {};
 										var configFiles = [];
 										var tileFiles = [];
+										self.maxZoom = 0;
+										self.minZoom = 99;
 										self.entriesFile.forEach(lang.hitch(this, function(entryFile) {
 											var filename = entryFile.toUpperCase();
-											if (filename.indexOf("CONF.XML") > -1 || filename.indexOf("CONF.CDI") > -1) {
+											if (filename.indexOf("CONF.XML") > -1 || filename.indexOf("CONF.CDI") > -1 
+													|| filename.indexOf("MAPSERVER.JSON") > -1) {
+												if (filename.indexOf("MAPSERVER.JSON") > -1){
+													self.mapServerPath=filename;
+												}
 												configFiles.push(entryFile);
 											} else {
 												tileFiles.push(entryFile);
@@ -299,8 +307,13 @@ define("platform/map/spatial/SpatialTilePackageManager",
 									        if(indexLevel != -1){
 									        	var zoomLevel = filename.slice(indexLevel+12,indexLevel+14);
 									        	zoomLevel = Number(zoomLevel);
+									        	//Get Max Zoom
 									        	if (zoomLevel > self.maxZoom) {
-									        		maxZoom = zoomLevel;
+									        		self.maxZoom = zoomLevel;
+									        	}
+									        	//Get Min Zoom
+									        	if (zoomLevel < self.minZoom) {
+									        		self.minZoom = zoomLevel;
 									        	}
 									        	
 									        }
@@ -313,7 +326,7 @@ define("platform/map/spatial/SpatialTilePackageManager",
 										var promiseInitMap = self.initMap(configFiles, true);
 										promiseInitMap.then(lang.hitch(this, function() {
 											//self.initMap(tileFiles, false);
-											createTPKFileStoreDeferred.resolve(self.maxZoom);
+											createTPKFileStoreDeferred.resolve([self.maxZoom,self.minZoom]);
 										}));
 									}));
 								};
@@ -342,6 +355,23 @@ define("platform/map/spatial/SpatialTilePackageManager",
 					
 					return createTPKFileStoreDeferred.promise;
 				},
+				
+				getTPKCenterPoint : function () {
+					
+					var tempMapServerPath = this._inMemTilesObject[this.mapServerPath];
+					if(tempMapServerPath == undefined ){
+						 console.log("Error in getting MapServerPath return X=0, Y=0");
+						return 0,0 ;
+					} 
+					
+					tempMapServerPath= JSON.parse(tempMapServerPath);
+					var tempInitialExtent = tempMapServerPath.contents.initialExtent;
+					var xMin = tempInitialExtent.xmin;
+					var XMax = tempInitialExtent.xmax;
+					var YMin = tempInitialExtent.ymin;
+					var YMax = tempInitialExtent.ymax;
+					return [(xMin + XMax) / 2 , (YMin + YMax) / 2];
+				},	
 
 		    showProgressBar : function (target) {
 

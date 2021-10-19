@@ -358,6 +358,9 @@ function(declare, array, Deferred, Logger, ModelService) {
 					deferred.resolve(false);
 				});
 			}
+		    else if (this._metrics && this._metrics.queryBase && this._metrics.queryBase == '__created__'){
+				deferred.resolve(true);
+			}
 			else{
 				deferred.resolve(this.getPagesLoaded() >= nextPageNumber);
 			} 

@@ -126,22 +126,28 @@ require( [
 			 */
 			deleteOfflineData: function(offlineAreaId) {
 				var deferred = new Deferred();
-				var offlineAreasAvailable = [];
-				var directory_path = this._getOfflineStorage() + "/" + this.replicaFolderName ;
-				window.resolveLocalFileSystemURL(directory_path, function(dir) {
-					Logger.trace("Got replicas dir", dir);
-					dir.getDirectory(""+offlineAreaId, {}, function(offlineReplicaDir) {
-						Logger.trace("Deleting replica dir", offlineReplicaDir);
-						offlineReplicaDir.removeRecursively(function() {
-							deferred.resolve();
-				        }, function(error) {
-				        	Logger.trace("Failed to delete fir " + offlineReplicaDir +" offlineAreaId: ", offlineAreaId);
-				        });		
-						
+				var promise = this._closeFilesForReplica( offlineAreaId );
+				promise.then(lang.hitch(this, function(result) {
+					Logger.trace( "Databases closed " );
+					console.log("Databases closed ");
+					var directory_path = this._getOfflineStorage() + "/" + this.replicaFolderName ;
+					window.resolveLocalFileSystemURL(directory_path, function(dir) {
+						Logger.trace("Got replicas dir", dir);
+						dir.getDirectory(""+offlineAreaId, {}, function(offlineReplicaDir) {
+							Logger.trace("Deleting replica dir", offlineReplicaDir);
+							offlineReplicaDir.removeRecursively(function() {
+								deferred.resolve();
+							}, function(error) {
+								Logger.trace("Failed to delete fir " + offlineReplicaDir +" offlineAreaId: ", offlineAreaId);
+							});		
+						});
+					}, function(error) {
+						deferred.reject(error); 
 					});
-				}, function(error) {
-		    		deferred.reject(error); 
-		    	});
+				})).otherwise(lang.hitch(this, function(resultJson){
+					console.error(resultJson);
+					deferred.reject(resultJson); 
+			}));
 				return deferred.promise;
 			},
 			
@@ -246,7 +252,8 @@ require( [
                             for (i=0; i<entries.length; i++) {
                             	if( entries[i].isFile) {
                             		var fileName = entries[i].name;
-                            		if (fileName.indexOf('journal') == -1 && fileName.indexOf('.json') == -1) {
+                            		if (fileName.indexOf('journal') == -1 && fileName.indexOf('.json') == -1 
+                            				&& fileName.indexOf('-wal') == -1 && fileName.indexOf('-shm') == -1) {
                             			countFilesToLoad++;
                             		}
                             	}   
@@ -259,7 +266,8 @@ require( [
                                     	var fileName = entries[i].name;
                                     	
                                     	
-                                    	if (fileName.indexOf('journal') == -1 && fileName.indexOf('.json') == -1) {
+                                    	if (fileName.indexOf('journal') == -1 && fileName.indexOf('.json') == -1 
+                                    			&& fileName.indexOf('-wal') == -1 && fileName.indexOf('-shm') == -1) {
                                     		Logger.trace('File found ' + file);
                                     		files.push({'filePath': file, 'fileName': fileName});
                                         	
@@ -1084,13 +1092,18 @@ require( [
 				return deferred.promise;
 			},
 			
+			getMobileMaximoSpatialInstance: function() {
+				var spatialMapHandler = WL.application["platform.handlers.spatial.SpatialMapHandler"];
+				var mobileMaximoSpatial = spatialMapHandler["getMobileMaximoSpatialInstance"]();
+				return mobileMaximoSpatial;
+			},
+			
 			/**
 			 * Get the Maximo URL from the resource, the address is configurable in build.properties
 			 */
 			_getMaximoURL : function() {
-				var mapServiceMeta = ResourceMetaData
-						.getResourceMetadata("plussmapmanager");
-				return mapServiceMeta.getURLBase();
+				var mobileMaximoSpatial = this.getMobileMaximoSpatialInstance();
+				return mobileMaximoSpatial.mapManager.maximoAddress;
 			},
 			
 			/**
@@ -1111,6 +1124,7 @@ require( [
 				var baseUrl = this._getMaximoURL();	
 				Logger.trace("_getGeodatabase baseUrl " + baseUrl);
 				var requestURL = baseUrl + "/oslc/plussofflinemapservicereplica";
+				var requestSecURL = baseUrl + "/j_security_check";
 				Logger.trace("_getGeodatabase requestURL " + requestURL);
 				
 				var params = {
@@ -1119,7 +1133,29 @@ require( [
 						"maxBytes": self.replicaBlockSize,
 						"position": sizeAlreadLoaded
 				};
+				
+				var segurityParams = {
+						"j_username": WL.application.getResource('PlatformLoginResource').getCurrentRecord().username,
+						"j_password": WL.application.getResource('PlatformLoginResource').getCurrentRecord().password
+				};
+				
 				Logger.trace("_getGeodatabase params " + JSON.stringify(params));
+				
+				//Do the post request to enable LDAP if necessary
+				xhr(requestSecURL, {
+					method: "POST",
+					data: segurityParams,
+					sync: true,
+					headers: {
+						"Content-type":"application/x-www-form-urlencoded"
+					}
+					
+				}).then(function(checkUseLDAP){
+					Logger.trace("_getGeodatabase LDAP enabled. ");
+					
+				}, function(err){
+					  Logger.log("_getGeodatabase LDAP not enabled. ");
+				  });
 				
 				// Do the post request to Maximo to get the geodatabase
 				xhr(requestURL, {
@@ -1740,7 +1776,10 @@ require( [
 			 * Method to check the replica response.
 			 */
 			_syncReplicaResponse: function(data, deferred, countCheckStatus, token, mobileMaximoSpatial, dbInfo, syncObject, layersToSync) { 
-				var dataJson = JSON.parse(data);
+				if (typeof data === 'string' || data instanceof String) {
+					data = JSON.parse(data);
+				}
+				var dataJson = data;
 				if (dataJson.error != null) {
 					mobileMaximoSpatial.logEvent('[SpatialReplicaManager] _syncReplica return ERROR, data: ' + data);
 			    	var errorJson = {};
@@ -2134,6 +2173,13 @@ require( [
 								if ((field.type == "esriFieldTypeString" || field.type == "esriFieldTypeGlobalID"
 									) && attributeValue != null && attributeValue != "null" ) {
 									attributeValue = "'" + attributeValue +"'";
+								}
+								
+								if (field.type == "esriFieldTypeDate" && attributeValue != null && attributeValue != "null") {
+									var esriDate = new Date(attributeValue);
+									var esriTime = esriDate.getTime();
+									//days since epoch  - subtract offset,  +  days from 4713 B.C. to 1970 A.D.
+									attributeValue = ((esriTime / 86400000) - (esriDate.getTimezoneOffset()/1440) + 2440587.5);
 								}
 								attributeValues += attributeValue + ",";
 							}

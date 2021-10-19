@@ -35,7 +35,9 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
                 if (anywherePropValMeta) {
                     anywherePropValQueryBase = Object.keys(anywherePropValMeta.queryBases)[0];
                 }
-               
+                deferred.promise.always(function() {
+                    SystemProperties.save();
+                });
                 /**
                  * Use the App Id configured in app.xml "<app ... id='myId'>", this ID must be the same used in Maximo, on
                  * Anywhere Administration
@@ -96,9 +98,9 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
                                     	continue;
                                     }
                                     
-                                    SystemProperties.setProperty(propertiesSetData[prop].propid, propertiesSetData[prop].value, true);
+                                    SystemProperties.setProperty(propertiesSetData[prop].propid, propertiesSetData[prop].value, false);
                                 }
-
+                                
                                 Logger.log('End Refresh of System data for application ' + appName);
                             }
                             
@@ -112,26 +114,26 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
                                 anywhereResValQueryBase = Object.keys(anywhereResValMeta.queryBases)[0];
                             }
 
-                            var querybase_local = null;
-                            ModelService.allCached("anywhereResVal", anywhereResValQueryBase, 1000).then(function(anywhereResValSet_local) {
+                            var querybase_local = {};
+                            ModelService.allCached("anywhereResVal", null, 1000).then(function(anywhereResValSet_local) {
                                 var anywhereResValsetFilter_local = anywhereResValSet_local.filter("$1[appName] && $2[groupName]", appKeys, groupKeys)
                                 querybase_local = self._getQuerybases(anywhereResValsetFilter_local.data);
-                                
+
 
                                 //only query fro resource configuration if load resources value.
-                                
+
                             }).always(function(){
                             	var resMeta = ResourceContext.getResourceMetadata("anywhereResVal");
                             	resMeta.setWhereClause(resMeta.getField('appName').remoteName + "=%22"+ appName +"%22%20and%20spi:queryid=%22*%22");
                             	ResourceContext.putResourceMetadata(resMeta);
-                            	
+
                                 ModelService.all("anywhereResVal", anywhereResValQueryBase, 1000, accessStartegy).then(function(anywhereResValSet) {
                                     if (anywhereResValSet.count() > 0) {
                                         var anywhereResValSetFiltered = anywhereResValSet.filter("$1[appName] && $2[groupName]", appKeys, groupKeys);
 
                                         Logger.log('Refresh of System data for application ' + appName);
                                         var propertiesSetData = self._getAssociatedQuerybases(anywhereResValSetFiltered.data, groupKeys);
-                                        
+
                                         if(Object.keys(querybase_local).length > 0)
                                         {
                                         	var querybase_server = self._getQuerybases(propertiesSetData);
@@ -140,20 +142,20 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
 
                                             //var querybase_diff = self._subtract(querybase_local, querybase_server);
                                             //var resource_names = [];
-                                        
+
                                            for (var res in resource_based_queries_diff)
                                            {
                                             	if(resource_based_queries_diff[res].type == 'LOOKUP' && resource_based_queries_diff[res].queries.length > 0)
                                             	{
-                                            		SystemProperties.setProperty(PlatformConstants.META_DATA_UPDATED, true, true);
-                                            		
+                                            		SystemProperties.setProperty(PlatformConstants.META_DATA_UPDATED, true, false);
+
                                             	}
 
                                             	var querybase_diff = resource_based_queries_diff[res].queries;
                                             	 var updatesRec = ResourceContext.getResourceMetadata(resource_based_queries_diff[res]['resource'].resourceId);
                                             	for (query in querybase_diff)
                                             	{
-                                            		
+
                                                 	PersistenceManager.removeQuerybase(updatesRec, querybase_diff[query]);
 
                                             	}
@@ -181,12 +183,12 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
 	                                            //recovery existing URI to built new queries
 	                                            var queryKey = Object.keys(updatesRec.queryBases);
 	                                            var existingQueryUri = updatesRec.queryBases[queryKey[0]];
-	
+
 	                                            if (existingQueryUri.indexOf('?') > 0) {
 	                                                existingQueryUri = existingQueryUri.substring(0, existingQueryUri.indexOf('?'));
 	                                            }
-	
-	
+
+
 	                                            //build  queries for resource
 	                                            var newQueries = [];
 	                                            for (var i in toPop) {
@@ -200,10 +202,10 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
 													if(i == 0 && propertiesSetData[toPop[i]].type != 'TRANSEC'){
 														tempQueries['defaultForSearch'] = true;
 													}
-	
+
 	                                                newQueries.push(tempQueries);
 	                                            }
-	                                            
+
 	                                            if(propertiesSetData[toPop[0]].type == 'TRANSEC' ){
 	                                            	var currentDefaultQuery = updatesRec.queryBaseForSearch;
 	                                            	//var currentDefaultQueryVal = updatesRec.queryBases[currentDefaultQuery];
@@ -213,13 +215,13 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
 	        												newQueries.push(tempQueries);
 	                                            		}
 	                                            	}
-													
+
 												}
-	
+
 	                                            /*Check if was defined query base in admin app before apply it to resource
 											      if no query was defined for resource at admin app we use the one that incoming from app.xml*/
 	                                            if (propertiesSetData[prop].query) {
-	
+
 	                                                //clean and set new queries
 	                                                updatesRec.queryBases = {};
 	                                                //clean query label
@@ -231,25 +233,25 @@ define("platform/auth/AdminModeManager", ["platform/store/_ResourceMetadataConte
 	                                                updatesRec.setWhereClause(null);
 	                                                //put the updated resource at resources context
 	                                                ResourceContext.putResourceMetadata(updatesRec);
-	
+
 	                                            }
-	
+
 	                                            //remove resources that query as set
 	                                            for (var i = toPop.length - 1; i >= 0; i--) {
-	
+
 	                                                propertiesSetData.splice(toPop[i], 1);
 	                                            }
-	                                            
+
 	                                            prop = -1;
 	                                            resLen = propertiesSetData.length;
 	                                            /*}*/
 	                                        }
-	
+
 	                                    }
                                     }
                                     deferred.resolve();
                                 }).otherwise(function(e) {
-                                    //The download fail because resource does not exist at server side, 
+                                    //The download fail because resource does not exist at server side,
                                     //so we just set the time out for the last time that we got when downloading user info
                                     Logger.log('No anywhereResValSet found ');
                                     SystemProperties.setProperty("si.device.connectivity.lasttimeout", lastTimeout, true);

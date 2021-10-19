@@ -28,6 +28,7 @@ function(declare, ApplicationHandlerBase, LoginHandler) {
 			
 			// TODO get event/method to handle from event context and call it
 			if(eventContext.getParent().getParent().id == "Platform.ExitApplicationPrompt") {
+				this.logoutDialog(eventContext);
 				return WL.App.close();
 			}
 				
@@ -37,7 +38,7 @@ function(declare, ApplicationHandlerBase, LoginHandler) {
 		
 		logoutDialog: function(eventContext){
 
-			if(eventContext.getParent().getParent().id == "Platform.LogOutPrompt") {
+			if(eventContext.getParent().getParent().id == "Platform.LogOutPrompt" || eventContext.getParent().getParent().id == "Platform.ExitApplicationPrompt") {
 				var handler = new LoginHandler();
 				
 				handler.logout(eventContext);			

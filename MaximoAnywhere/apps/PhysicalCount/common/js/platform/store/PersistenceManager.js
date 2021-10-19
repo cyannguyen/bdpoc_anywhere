@@ -635,11 +635,30 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 				});
 			});
 		},
+
+		 _sanitize: function(data) {
+			// Sanitise the Work Logs by unescaping the HTML entity characters when sending to the jsonstore
+			if (data[0] && data[0].json && data[0].json.workloglist) {
+				for (i in data[0].json.workloglist) {
+					if (data[0].json.workloglist[i].summary && (data[0].json.workloglist[i].summary.indexOf("&gt;") != -1 || data[0].json.workloglist[i].summary.indexOf("&lt;") != -1))
+						data[0].json.workloglist[i].summary = data[0].json.workloglist[i].summary.replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+				}
+			} else if (data[0] && data[0].json && data[0].json.payload && data[0].json.payload.workloglist) {
+				for (i in data[0].json.payload.workloglist) {
+					if (data[0].json.payload.workloglist[i].summary && (data[0].json.payload.workloglist[i].summary.indexOf("&gt;") != -1 || data[0].json.payload.workloglist[i].summary.indexOf("&lt;") != -1))
+						data[0].json.payload.workloglist[i].summary = data[0].json.payload.workloglist[i].summary.replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+				}
+			}
+			return data;
+		 },
 		
 		_asDojoPromise: function(jqueryDeferred){
 			var deferred = new Deferred();
+			var self = this;
 			if(jqueryDeferred && jqueryDeferred["done"]){
 				jqueryDeferred.done(function(data){
+					if (data && data[0] && data[0].json && (data[0].json.payload || data[0].json.workloglist))
+						data = self._sanitize(data);
 					deferred.resolve(data);
 				})
 				.fail(function(err){

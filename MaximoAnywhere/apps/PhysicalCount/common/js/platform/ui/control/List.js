@@ -89,6 +89,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
         errorImage: null,
         errorCountLabel: null,
         errorSeparator: null,
+        storeroomLabel: null,
 		
         constructor: function (options) {
             this._controlType = 'List';
@@ -162,19 +163,52 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             if (searchString && searchString.length > 0) {
                 isExactMatch = this.searchRecord.get('exact');
             }
+            //In-Loc
+            /* else {
+                return;
+            } */
+            //Out-Loc
+
             var self = this;
             if (query && Object.keys(query[0]).length) {
                 return ModelService.filtered(currentModelDataSet.getResourceName(), currentModelDataSet.getQueryBase(), query, null, false, isExactMatch).
 		    	then(function (dataSet) {
 		    	    self.application.addResource(dataSet);
+		    	    //In-Loc
+		    	    //self.application.addResource(self.distinctBin(dataSet));
+                    //Out-Loc
 		    	});
             } else {
                 return ModelService.all(currentModelDataSet.getResourceName(), currentModelDataSet.getQueryBase(), null, false).
 		    	then(function (dataSet) {
 		    	    self.application.addResource(dataSet);
+                    //In-Loc
+		    	    //self.application.addResource(self.distinctBin(dataSet));
+                    //Out-Loc
 		    	});
             }
         },
+
+        //In-Loc
+        distinctBin: function(dataSet){
+            var binList = [];
+
+			array.forEach(dataSet.data, function(item){
+				var binnum = item.get('binnum');
+				if (binnum){
+					if (binList.indexOf(binnum)<0){
+						binList.push(binnum);
+					} else {
+						item.deleteLocal();
+					}
+				} else {
+					item.deleteLocal();
+				}
+			});
+		
+			return dataSet;
+        },
+        //Out-Loc
 
         build: function () {
             //		summary:
@@ -291,6 +325,23 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                 this.header["listControlId"] = this.id + this._controlType;
 
                 var sortable = this.hasSorting();
+
+                /* this.storeroomLabel = new Text({
+                    control: this,
+                    labelClassName: "listCount textappearance-medium",
+                    label: 'AAA',
+                    editable: false,
+                    cssClass: "count",
+                    role: "presentation",
+                    layoutInsertAt: "storeRoom",
+                });
+                this.header.addChild(this.storeroomLabel);
+
+                if(this.storeroomLabel){
+                    var currentRecord = this.application.getResource('storeRoomResource').getCurrentRecord();
+                    currentLocation = currentRecord != null ? currentRecord.get("location") : "";
+                    this.storeroomLabel.label = currentLocation;
+                } */
 
                 // Sort needs the labels
                 // We will not show the sort if the list is searchable
@@ -440,7 +491,9 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                         style: 'display: none;'
 
                     });
-                    this.refreshButton.label = MessageService.createStaticMessage('Refresh').getMessage();
+
+                    // aria-label takes care of accessibiliy, removing text for better aesthetic
+                    // this.refreshButton.label = MessageService.createStaticMessage('Refresh').getMessage();
                     this.header.addChild(this.refreshButton);
                     this.reloadButton = new Button({
                         control: this,
@@ -449,7 +502,8 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                         style: 'display: none;'
                     });
 
-                    this.reloadButton.label = MessageService.createStaticMessage('Reload').getMessage();
+                    // aria-label takes care of accessibiliy, removing text for better aesthetic
+                    // this.reloadButton.label = MessageService.createStaticMessage('Reload').getMessage();
                     this.header.addChild(this.reloadButton);
                 }
 
@@ -516,7 +570,9 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 	    		if(this.getResource() && this.showHeader){
                     //set list count
                     this.getResource().getListCount().then(function (count) {
-                        self.countLabel.setLabel(count);
+                        //Loc
+                        //self.countLabel.setLabel(count);
+                        self.setCustomListCount(count);
                     });
                 }
 	    		//Need to hide the busy icon after building the list
@@ -565,6 +621,15 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             return createdBaseWidget;
         },
 
+        // Loc
+        setCustomListCount : function(count){
+            if (this.searchable) {
+            	this.countLabel.setLabel(count);
+            } else {
+                this.countLabel.setLabel("Number record: " + count);
+            }
+        },
+
         _setupSearchCriteria: function(metadata) {
         	var performStoreSearch = false;
             this.searchResource = this.application.getResource('PlatformListSearchResource');
@@ -596,7 +661,9 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             }
             else {
                 this.searchRecord = searchSet.getRecordAt(0);
-                if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName) {
+                //Loc: show all List when searching was previous time (ex: the lookup has searching keyword)
+                //if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName) {
+                if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName || this.searchRecord.get('querybase') == null) {
                     this.searchRecord.set('querybase', "");
                     this.searchRecord.set('search', "");
                     this.searchRecord.set('fromscan', false);
@@ -738,7 +805,9 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                 //   		 		}
 
                 store.getListCount().then(function (count) {
-                    self.countLabel.setLabel(count);
+                    // Loc
+                    //self.countLabel.setLabel(count);
+                    self.setCustomListCount(count);
                 });
 
             }
@@ -1274,7 +1343,9 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
     		if(this.showHeader){
     			resource.getListCount().then(function (count) {
                     try{
-    				self.countLabel.setLabel(count);
+                    // Loc
+    				//self.countLabel.setLabel(count);
+    				self.setCustomListCount(count);
                     }catch(e){};
     			});
     		}
@@ -1375,6 +1446,6 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 		    });
 		    return true;
 	    }
-    
+
     });
 });

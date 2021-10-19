@@ -680,7 +680,8 @@ define("platform/comm/CommunicationManager", [
 					   
 					var anywhereUploadPath = attach[PlatformConstants.ATTACH_UPLOAD_PATH];
 					if (anywhereUploadPath && anywhereUploadPath.indexOf("created") >= 0){
-						anywhereUploadPath = WL.StaticAppProps.WORKLIGHT_BASE_URL + changeRecord.identifier.substr(resourceMetadata._urlBase.length,changeRecord.identifier.length) + anywhereUploadPath.slice(anywhereUploadPath.indexOf("/"));
+						//anywhereUploadPath = WL.StaticAppProps.WORKLIGHT_BASE_URL + changeRecord.identifier.substr(resourceMetadata._urlBase.length,changeRecord.identifier.length) + anywhereUploadPath.slice(anywhereUploadPath.indexOf("/"));
+						anywhereUploadPath = changeRecord.identifier + anywhereUploadPath.slice(anywhereUploadPath.indexOf("/"));
 					}
 					
 					var anywhereAttachPath = attach[PlatformConstants.ATTACH_LOCATION_ATTR];

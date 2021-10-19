@@ -68,7 +68,7 @@
 /* login View */
 
 .mainLogin > .mblScrollableViewContainer {
-	transform: unset !important;
+	transform: translate3d(0px, 0px, 0px);
 }
 
 
@@ -79,6 +79,17 @@
 .productLogo {
 	width: 100px;
 }
+
+/* Loc */
+.customProductLogo {
+	width: 100px;
+	height: 140px;
+	margin-top: 10px;
+	margin-left: 10px;
+	/* width: 20%;
+	height: 20%; */
+}
+
 .IBMLogo {
 	width: 75px;
 }
@@ -387,7 +398,7 @@
 .changePasswordForm > div {
 	width:90%;
 	margin-left:0%;
-	
+	transform: translate3d(0px, 0px, 0px);
 }
 .changePasswordForm input {
 	width:96% !important;
@@ -577,7 +588,7 @@
     padding-left: 6px;
     padding-right: 6px;
     background-color: #1D3649;
-    padding-bottom:0;
+	padding-bottom:0;
 }
 
 .mblFooting {

@@ -62,31 +62,23 @@ body {
 	background-image: url(../images/mdpi/header_split_cancel_ON.png) !important;
 	box-shadow: 0 0 5px 5px #B3C1C4 !important;
 }
+
 .reloadIcon {
-	background: url(../images/mdpi/header_split_refreshLocal_OFF.png) no-repeat;
-	width: 32px !important;
-	height: 32px;
+	background: url(../images/mdpi/header_split_refreshLocal_OFF.svg) no-repeat center;
+	min-width: 32px;
+	min-height: 32px;
 	padding: 10px;
 	margin: 0px;
 	border: none;
 }
-
-.reloadIcon:active {
-	background-image: url(../images/mdpi/header_split_refreshLocal_ON.png) !important;
-}
-
 
 .refreshIcon {
-	background: url(../images/mdpi/header_split_refreshLocal_OFF.png) no-repeat;
-	width: 32px !important;
-	height: 32px;
+	background: url(../images/mdpi/header_split_refreshLocal_OFF.svg) no-repeat center;
+	min-width: 32px;
+	min-height: 32px;
 	padding: 10px;
 	margin: 0px;
 	border: none;
-}
-
-.refreshIcon:active {
-	background-image: url(../images/mdpi/header_split_refreshLocal_ON.png) !important;
 }
 
 .lookupIcon {
@@ -123,9 +115,10 @@ body {
 	padding: 10px;
 	padding-left: 0;
 	margin: -7px;
-	margin-left: 0px;
+	/* Loc */
+	/* margin-left: 0px; */
 	margin-right: 7px !important;
-	border: 0;
+	border: 0 !important;
 	vertical-align: middle;	
 	background-position: center !important;
 	box-shadow: none !important;
@@ -269,6 +262,168 @@ body {
 .relatedRecords {
 	font-weight: bold;
 }
+
+/* [Loc]: Add css for textLookupNoScan */
+
+.textappearance-smaller {
+	font-size: 90%;
+}
+
+.right {
+	text-align: right;
+}
+.textLookupNoScan {
+	width: 65% !important;
+}
+
+.storeRoomHeaderContainer {
+	/* margin-top: -2px ; */
+	margin-bottom: -5px ;
+	height: auto;
+	padding-top: 10px;
+	padding-bottom: 0px;
+	text-align: right;
+	background: #325c80;
+}
+
+.storeRoomHeader{
+	color: white;
+	font-family: "IBM Plex Sans" !important;
+}
+
+.listItemMargin {
+	/* margin-top: 5px;
+	margin-bottom: 5px; */
+	margin-top: 2px;
+	margin-bottom: 2px;
+	text-align: left;
+	/* overflow-wrap: break-word !important;
+	word-wrap: break-word !important;
+	hyphens: auto !important; */
+
+	/* text-overflow: clip !important; */
+	/* white-space: normal !important; */
+}
+
+/* .descriptionListItem {
+	font-size: 1rem;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	line-height: 1.3;
+	font-weight: bolder;
+	white-space: normal !important; */
+	
+	/* -webkit-line-clamp: 2 !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden; */
+/* } */
+.descriptionListItem {
+	font-size: 1rem;
+	line-height: 1.3;
+	font-weight: bolder;
+	white-space: nowrap !important;
+}
+
+/* .listItemTiltle{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-weight: bolder;
+} */
+.listItemTiltle {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+.checkImage{
+	text-align: right !important;
+	margin: 0px 0px !important;
+}
+
+.detailDescriptionItem {
+	font-size: 1.3rem;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	line-height: 1.3;
+	font-weight: bolder;
+	white-space: normal !important;
+}
+
+.detailItemTitle {
+	margin-top: 20px;
+}
+
+.detailItem {
+	margin-top: 5px;
+	font-weight: bolder;
+}
+
+.blankContainer{
+	background-color: #e6e6e6 !important;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 100% !important;
+	height: 40px !important;
+}
+
+.inputCountContainer{
+	padding-left: 20px;
+}
+
+.inputCountLabel{
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	color: black !important;
+	font-weight: 900 !important;
+}
+
+.inputCountText{
+	width: 100% !important;
+	margin-bottom: 20px;
+}
+
+.detailButtonContainer{
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.mblUpdateButton {
+	width: 100%;
+	height: 50px;
+	font-size: 1rem;
+	color: #ffffff !important;
+	font-weight: bold;
+	background-color: #3e3f3e !important;
+	border-color:#3e3f3e !important; 
+	border-radius: 10px !important;
+}
+
+.mblUpdateButton:active {
+	width: 100%;
+	height: 50px;
+	font-size: 1rem;
+	border: 0 !important;
+	background-image: none !important; 
+	background-color: #000 !important; 
+	box-shadow:none !important;
+	border-radius: 10px !important;
+}
+
+.binRange {
+	width: 50% !important;
+	text-overflow: initial !important;
+}
+
+.binRangeContainer {
+	padding-right: 0px !important;
+	margin-right: 0px !important;
+}
+
+.recountlDescription {
+	width: 70% !important;
+}
+
+/* [Loc]: Add css for textLookupNoScan */
 
 .errorIndicator {
 	padding: 0 20px 0 15px;

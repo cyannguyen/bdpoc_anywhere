@@ -390,12 +390,10 @@ define("platform/ui/control/Map",
                             if (currentIndex == markerIndexArray[0]) {
                                 resource._changeAttrValue('_currentIndex', markerIndexArray[0]);
                             }
-                            else {
-                                resource.setCurrentIndex(markerIndexArray[0]);
-                            }
+
 						}
 						//Defect: 159675. When the first record had index 0 we was getting problems and this code fixed it.
-						else if(checkIndex >= 0 && (markerIndexArray[0] == currentIndex || markerIndexArray[0] == 0)){
+						else if(checkIndex >= 0 && (markerIndexArray[0] == currentIndex )){
 							resource._changeAttrValue('_currentIndex', markerIndexArray[0]);
 						}
 						else {

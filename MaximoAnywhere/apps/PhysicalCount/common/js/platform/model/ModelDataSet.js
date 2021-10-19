@@ -4,7 +4,7 @@
  *
  * 5725-M39
  *
- * (C) COPYRIGHT IBM CORP. 2013,2020 All Rights Reserved.
+ * (C) COPYRIGHT IBM CORP. 2020 All Rights Reserved.
  * US Government Users Restricted Rights - Use, duplication or
  * disclosure restricted by GSA ADP Schedule Contract with
  * IBM Corp. 
@@ -280,13 +280,15 @@ define("platform/model/ModelDataSet",
 					return item._id != record._id;
 				});
 			}
+			var removedIndex = this.index[record._id];
 			delete this.index[record._id];
 			
 			// perform reindex after delete
-			var i=0 ;
 			for (var currentIndex in this.index){
-				this.index[currentIndex] = i;
-				i++;
+				var dataIndex = this.index[currentIndex];
+				if (dataIndex > removedIndex){
+					this.index[currentIndex] = --dataIndex;
+				}
 			};
     	
 			
@@ -402,14 +404,23 @@ define("platform/model/ModelDataSet",
 			var deferred = new Deferred();
 			
 			if(self.recordsCount)
-				deferred.resolve(self.recordsCount);
+				//IJ21206 - Fix count error
+				if(self.recordsCount == self.data.length){
+					deferred.resolve(self.recordsCount);
+				}else if (self.recordsCount > self.data.length){
+					deferred.resolve(self.recordsCount);
+				}else{
+					deferred.resolve(self.data.length);
+				}
 			else {
 				CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
 					if (!hasConnectivity)
 					{	
 						// Check if device data is equal to server data then , return false 
 						//TOMR: we do not do the above for counts
-						deferred.resolve(' ');
+						//deferred.resolve(' ');
+						//Loc: set List count for OFFLINE
+						deferred.resolve(self.count());
 					}
 					else 
 					{				

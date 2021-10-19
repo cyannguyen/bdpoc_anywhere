@@ -173,6 +173,14 @@ function(lang, arrayUtil, all, Deferred, PlatformConstants, Logger, SystemProper
 							queryBase: queryBase
 						};
 						
+						// Donot remove WO from List when Timer is still running
+						var classInstanceOfResource = metadata.getClassInstance();
+						if (classInstanceOfResource && classInstanceOfResource.canRemoveRecord && classInstanceOfResource.canRemoveRecord(record)) {
+							self.updateCleanupTokenOnRecord({"record":record, "queryBase": queryBase});
+							recordsToUpdate.push(record);
+							return;
+						}
+						
 						self._removeQueryBaseFromRecord(recParams);
 						self._removeCleanupTokenFromRecord(recParams);
 						

@@ -34,7 +34,7 @@ define("platform/handlers/AttachmentHandler",
 	     "platform/exception/PlatformRuntimeException"],
 function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService, UserAuthenticationManager, PlatformRuntimeWarning, AttachmentService, FileService, PlatformConstants, SystemProperties,HTTPHelper, Logger, Deferred, domConstruct, PlatformRuntimeException) {
 	
-	var popUpExtensions = ["png", "jpg", "jpeg", "mp4", "m4a", "mp3", "wav", "txt", "pdf", "doc", "docx"];
+	var popUpExtensions = ["png", "jpg", "jpeg", "mp4", "m4a", "mp3", "wav", "txt", "pdf", "doc", "docx", "PNG", "JPG", "JPEG", "MP4", "M4A", "MP3", "WAV", "TXT", "PDF", "DOC", "DOCX"];
 	var attachmentDefaultName = '';
 	
 	return declare( ApplicationHandlerBase, {

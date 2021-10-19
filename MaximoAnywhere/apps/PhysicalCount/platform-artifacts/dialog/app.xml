@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<app id="dialog" version="202002190944" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
+<app id="dialog" version="201912191158" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
     <ui id="ui">
 		<dialog cssClass="dialogDateTimeLookup" id="Platform.DateTimeLookup" label="Change Time or Date" resource="PlatformDateLookupResource">
 			<eventHandlers id="Platform.DateTimeLookup_eventHandlers">
@@ -54,6 +54,9 @@
 		<view id="Platform.Settings" label="Settings" fullScreen="true">
 		    <requiredResources id="Platform.Settings_requiredResources">
 				<requiredResource id="Platform.Settings_LastADDownload" name="LastADDownload"/>
+				<!-- <requiredResource id="Platform.Settings_storeRoomResource" name="storeRoomResource"/> -->
+				<requiredResource id="Platform.Settings_storeRoomResource" name="chooseStoreRoomResource"/>
+				<requiredResource id="Platform.Settings_additionalstoreroom" name="additionalstoreroom"/>
 			</requiredResources>
 			
 		    
@@ -149,10 +152,25 @@
 					</groupitem>
 				</group>
 			</container>
+			<!--  IN [Loc]: Add storeRoom -->
+			<!-- <container id="Platform.Settings_Storeroom_container" resource="storeRoomResource"> -->
+			<container id="Platform.Settings_Storeroom_container" resource="chooseStoreRoomResource">
+				<group id="Platform.Settings_Storeroom_group_0">
+					<groupitem id="Platform.Settings_groupitem_Platform.Storeroom_0">
+						<text cssClass="relatedRecords" id="Platform.Settings_groupitem_Platform.Storeroom_0_Label" value="Change Default Storeroom"/>
+						<text cssClass="textLookupNoScan" editable="true" id="Platform.Settings_groupitem_Platform.Storeroom_0_StoreroomChange" lookup="Platform.Settings_Storeroom.StoreroomLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+					    	<eventHandlers id="Platform.Settings_groupitem_Platform.Storeroom_0_Change_eventHandlers">
+								<!-- <eventHandler class="application.handlers.InventoryHandler" event="validate" id="Platform.Settings_groupitem_Platform.Storeroom_0_Change_eventHandler" method="filterAdditionalInvbalanceByStoreRoom"/> -->
+								<eventHandler class="application.handlers.InventoryHandler" event="validate" id="Platform.Settings_groupitem_Platform.Storeroom_0_Change_eventHandler" method="validateChooseStoreRoom"/>
+							</eventHandlers>						
+						</text>
+					</groupitem>
+				</group>
+			</container>
 		</view>
 
 		<view id="Platform.AdvancedSettings" label="Settings">
-
+		
 			<container id="Platform.AdvancedSettings_container_0">
 				<group id="Platform.AdvancedSettings_group_0">
 					<groupitem id="Platform.AdvancedSettings_groupitem_Platform.TimeTrackReport_0" transitionTo="Platform.TimeTrackReport">
@@ -375,6 +393,32 @@
 			</eventHandlers>
 
 		</view>
+		<!--  IN [Loc]: Add storeRoom lookup -->
+		<!-- Storeroom lookup -->
+		<!-- <lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterStoreroomForLookup" id="Platform.Settings_Storeroom.StoreroomLookup" label="Select Storeroom" resource="additionalstoreroom"> -->
+		<lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterStoreroomLookup" id="Platform.Settings_Storeroom.StoreroomLookup" label="Select Storeroom" resource="additionalstoreroom">
+			<requiredResources id="Platform.Settings_Storeroom.StoreroomLookup_requiredResources">
+				<requiredResource id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom" name="additionalstoreroom" reload="true"/>
+				<!-- <requiredResource id="Platform.Settings_Storeroom.StoreroomLookup_additionalInventory" name="additionalInventory" reload="true"/> -->
+			</requiredResources>
+	
+			<list id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_list" resource="additionalstoreroom">
+				<searchAttributes id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttributes">
+					<searchAttribute id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttribute_locationForSearch" name="locationForSearch"/>
+					<searchAttribute id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_listItemTemplate_ItemLookup" layout="ItemLookup">
+					<listtext cssClass="bold textappearance-medium" id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_ItemLookup_location" layoutInsertAt="item1" resourceAttribute="location"/>
+					<listtext cssClass="bold textappearance-medium" id="Platform.Settings_Storeroom.StoreroomLookup_additionalstoreroom_ItemLookup_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Platform.Settings_Storeroom.StoreroomLookup_returnAttributes">
+				<returnAttribute id="Platform.Settings_Storeroom.StoreroomLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
+				<returnAttribute id="Platform.Settings_Storeroom.StoreroomLookup_siteid_siteid" sourceAttribute="siteid" targetAttribute="siteid"/>											
+			</returnAttributes>	
+		</lookup>
+		<!--  OUT [Loc]: Add storeRoom lookup -->
+		
 		<dialog closeOnBackgroundClick="true" id="Platform.ListLongPressDialog">
 			<list id="Platform.ListLongPressDialog_PlatformLongPressResource_list" queryBase="" resource="PlatformLongPressResource" showHeader="false">
 				<listItemTemplate cssClass="dialogListItem textappearance-medium" id="Platform.ListLongPressDialog_PlatformLongPressResource_listItemTemplate">
@@ -879,6 +923,43 @@
 				<localAttribute dataType="boolean" id="PlatformDemoModeResource_mode_indicator" name="DemoONOFF"/>
 				<localAttribute dataType="string" id="PlatformDemoModeResource_message" name="MessageText"/>
 			</attributes>
+		</resource>
+
+		<!-- [Loc]: add resource to load for Change Default StoreRoom-->
+		<!-- Storeroom resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#StoreRoom" id="additionalstoreroom" name="additionalstoreroom" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalstoreroom_attributes">
+
+				<attribute describedByProperty="dcterms:identifier" id="additionalstoreroom_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="additionalstoreroom_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalstoreroom_location_oslcshortTitle" index="true" name="location"/>
+				<!-- need this new locationForSearch attribute so that my inventory filter can still be applied 
+					but also support wildcard search within these fields this based on user input -->
+				<localAttribute dataType="string" formula="${location}" id="additionalstoreroom_locationForSearch_string" index="true" name="locationForSearch"/>
+				<attribute describedByProperty="dcterms:title" id="additionalstoreroom_description_dctermstitle" index="true" name="description"/>
+				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" 
+					/> -->
+				<!-- <attribute name="changeby" describedByProperty="spi:changeby" /> -->
+				<!-- <attribute name="changedate" describedByProperty="spi:changedate" 
+					/> -->
+				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
+				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" 
+					/> -->
+				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" 
+					/> -->
+				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
+					/> -->
+				<attribute describedByProperty="spi:status" id="additionalstoreroom_status_spistatus" name="status"/>
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
+					/> -->
+				<attribute describedByProperty="spi:type" id="additionalstoreroom_type_spitype" name="type"/>
+				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" 
+					/> -->
+			</attributes>
+			<queryBases id="additionalstoreroom_queryBases">
+ 	 			<queryBase id="additionalstoreroom_queryBase_getlocationstoreroom" name="getlocationstoreroom" queryUri="/oslc/os/oslcopersroom"/>
+	 		</queryBases>									
+			<whereClause clause="spi:type in [${additionalloctype[maxvalue=STOREROOM].value}]" id="additionalstoreroom_whereClause"/>
 		</resource>		
 	</data>
 	<messages id="messages">

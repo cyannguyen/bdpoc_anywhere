@@ -100,6 +100,7 @@ require( [
 		delayedOnMoveEnd: null,
 		offlineQueryFeaturesDelay: null,
 		lazyCheckReplicaSync: null,
+		resolutions: null,
 		/*
 		 * Change this property to allow the user to load many offline areas, 
 		 * if the value is one, just the latest area clicked will be loaded,
@@ -767,7 +768,8 @@ require( [
 			promiseLoadTPK.then(lang.hitch(this, function(maxZoom) {
 				// It creates a a url just to execute the tileLoad function (mock), since the map is offline this url will never be reached
 				var xyzproviderurl = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"; 
-				  
+				var centerPoint = SpatialTilePackageManager.getTPKCenterPoint();
+				this.updateMapView( centerPoint[0], centerPoint[1], maxZoom[1], null );
 				var source = new ol.source.XYZ({
     					url: xyzproviderurl
     				});
@@ -1106,10 +1108,11 @@ require( [
 				if (addLayer.isBasemap) {
 					var jsonMapServer = JSON.parse(addLayer.jsonMapServer);
 					var tileInfo = jsonMapServer.tileInfo;
-					if (tileInfo != null) {
+					if (tileInfo != null && this.resolutions == null) {
+						this.resolutions = [];
 						var lods = tileInfo.lods;
 						array.forEach( lods, lang.hitch( this, function ( lod, i ) {
-							resolutions.push(lod.resolution);
+							this.resolutions.push(lod.resolution);
 						}))
 						
 					}
@@ -1294,6 +1297,7 @@ require( [
 		 * @param callBackFuntion
 		 */
 		reloadLayersIfTokenExpired: function(callBackFuntion) {
+			this._onMoveEnd();
 			//It will check the Tokens only if security is enable on Map Manager
 			if (this.mapManager != null && 
 					this.mapManager.spatialtokensecurity != null && this.mapManager.spatialtokensecurity == true && this.showingOnlineMap) {
@@ -1553,8 +1557,8 @@ require( [
 							ol.Observable.unByKey(this.offlineMoveStartHandler);
 							this.offlineMoveEndHandler = null;
 							this.offlineMoveStartHandler = null;
-							
-							this.map = this._createOpenLayerMap(null, 0, 0, 14);
+							var centerPoint = SpatialTilePackageManager.getTPKCenterPoint(); 
+							this.map = this._createOpenLayerMap(null, centerPoint[0],centerPoint[1], 14);	
 							this.loadTools();
 							this._addOnClickMap();
 							
@@ -1801,6 +1805,10 @@ require( [
 										if ( currentUserSite == siteId ) {
 											this.mapManager = mapmanagerinfo;
 											this.mapManager.currentMapSite = mapsite;
+											var remoteId = this.mapManager.remoteid;
+											var maximoAddress = remoteId.substring(0, remoteId.indexOf("/maximo/")) + "/maximo";
+											this.mapManager.maximoAddress = maximoAddress;
+											
 										}
 									} ) );
 

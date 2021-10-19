@@ -133,11 +133,48 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 		return dateTimeISOFormatter.toISOString(asDate); 
 	};
 	var _fromDate = function(dateValue, userLocale){
+		//IJ26031 - Fix the problem to display the date when we try to add a Labor in Anywhere
+		var newDateValue = dateTimeISOFormatter.fromISOString(dateValue);
+		
 		//If no time given and timezone, it calulates to wrong day. Detecting that and stripping the time.
 		if (dateValue && dateValue.indexOf('00:00:00+00:00') > -1){
 			dateValue = dateValue.substring(0,19);
-		}
-		return dateValue ? dateTimeFormatter.format((dateValue instanceof Date) ? dateValue : dateTimeISOFormatter.fromISOString(dateValue), {selector: 'date', formatLength: 'short', locale: userLocale}) :  "";
+		} else {
+            // Leandro's new version (IJ22020)
+            // Separate the datetime string in an array
+            var customDate = dateValue.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)/);
+
+            // Set the local variables to pass as parameters to a new Date() object
+            var year = parseInt(customDate[1]);
+            var month = parseInt(customDate[2]) - 1;
+            var day = parseInt(customDate[3]);
+            var hour = parseInt(customDate[4]);
+            var minute = parseInt(customDate[5]);
+            var second = parseInt(customDate[6]);
+
+            // Get the new Date
+            var dateValue = new Date(year, month, day, hour, minute, second);
+
+            // Getting the timezone offset from the device
+            function getTimezoneOffsetFromDevice(date) {
+                //This function returns part of the result string
+                function z(n) { return (n < 10 ? '0' : '') + n }
+
+                var offset = date.getTimezoneOffset();
+                var sign = offset < 0 ? '+' : '-';
+
+                offset = Math.abs(offset);
+
+                return "T23:59:59.999" + sign + z(offset / 60 | 0) + ":" + z(offset % 60);
+            }
+
+            // Returning the timezone
+            var timezoneOffset = getTimezoneOffsetFromDevice(dateValue);
+
+            newDateValue = dateTimeISOFormatter.fromISOString(timezoneOffset, dateValue);
+        }
+
+        return dateValue ? dateTimeFormatter.format((dateValue instanceof Date) ? dateValue : newDateValue, { selector: 'date', formatLength: 'short', locale: userLocale }) : "";
 	};
 	var _toTime = function(stringValue, userLocale){
 		var nullOrEmpty = !stringValue || stringValue.length == 0;
@@ -167,10 +204,15 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 		return integerValue!=null ? numberFormatter.format(integerValue, {type: "decimal", places: 0, round: -1, locale: userLocale}) : "";
 	};
 	var _toInteger = function(stringValue, userLocale){
-		var nullOrEmpty = !stringValue || stringValue.length == 0;
+		var nullOrEmpty = (!stringValue && stringValue !== 0 ) || stringValue.length == 0;
 		if(nullOrEmpty){
 			return null;
 		}
+		
+		if(typeof stringValue == 'number'){
+			return stringValue;
+		}
+
 		stringValue = stringValue.replace(/\s/g, '');
 		var result = numberFormatter.parse(stringValue, {type: "decimal", places: 0, round: -1, locale: userLocale});		
 		if(isNaN(result) || !isFinite(result) || result % 1 >= 1e-6){
@@ -180,6 +222,20 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 	};
 	var _fromDecimal = function(decimalValue, userLocale, options){
 		options = options || {};
+		var stringValue = (decimalValue) ? decimalValue.toString() : "";
+		// start : Defect - 362081
+		if (options["places"] == null) {
+			if (stringValue.indexOf('.') !== -1 && stringValue.split('.')[1].length >= 3) {
+				options["places"] = stringValue.split('.')[1].length;
+			} else if (stringValue.indexOf(',') !== -1 && stringValue.split(',')[1].length >= 3) {
+				options["places"] = stringValue.split(',')[1].length;
+			} else if (stringValue.indexOf('٫') !== -1 && stringValue.split('٫')[1].length >= 3) {
+				options["places"] = stringValue.split('٫')[1].length;
+			} else if (stringValue.indexOf("'") !== -1 && stringValue.split("'")[1].length >= 3) {
+				options["places"] = stringValue.split("'")[1].length;
+			}
+		}
+		// end
 		var places = options["places"] || 2;
 		var round = (options.round == -1 ? -1 : 0); // 0,-1 are the only valid values.  default to 0 (round) unless it's set to -1 (don't round)
 		return decimalValue!=null ? numberFormatter.format(decimalValue, {type: "decimal", places: places, round: round, locale: userLocale}) : "";
