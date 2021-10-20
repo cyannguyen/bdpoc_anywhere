@@ -1205,15 +1205,15 @@ define("platform/ui/control/View", [
 //							}
 //							else{
 								// Loc: comment the clientwidth fixing for iphone X and same device
-								maxWidthPixels = (document.body.clientWidth * .37);
+								//maxWidthPixels = (document.body.clientWidth * .37);
 //							}
 
 							// Loc: comment the clientwidth fixing for iphone X and same device
-							/* if (document.body.clientWidth < 390){
+							if (document.body.clientWidth < 390){
 								maxWidthPixels = (document.body.clientWidth * .5);
 							} else {
 								maxWidthPixels = (document.body.clientWidth * .37);
-							} */
+							}
 							
 							//another 32px for disconnectImage which is always present plus 8px span each side
 							maxWidthPixels = maxWidthPixels - 48;
