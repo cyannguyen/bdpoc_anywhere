@@ -192,19 +192,19 @@ var app = {
 
     	//Rooted device check
 
-    	if (device.platform == "Android" || device.platform == "iOS") {
+    	/* if (device.platform == "Android" || device.platform == "iOS") {
     		try {
     			await this.checkDevice();
     		} catch (e) {
     			this.showDeviceRooted("RootedJailBroken");
     		}
-    	} 
+    	} */ 
     },
 
     sendToLogin: function() {
     	//window.open(cordova.file.dataDirectory + "www/index.html");
     	SpinnerDialog.hide();
-    	window.open(cordova.file.dataDirectory + "www/index.html");
+    	cordova.InAppBrowser.open(cordova.file.dataDirectory + "www/index.html");
     },
 
     showError: function(message) {
@@ -304,7 +304,7 @@ var app = {
     donwloadAndInstall: function(serverURL, appToDownload) {
 
         let sync = ContentSync.sync({
-            src: serverURL + "?downloadid=" + appToDownload.appid,
+            src: serverURL + "?downloadid=" + parseInt(appToDownload.appid.toString().replace(/[^\d]/g,'')), // Build number generation problem when OS generate number's digit grouping or separator based on . (dot) or , (comma) or ' (single quote) or " " (space) or none 
             id: "www",
             copyCordovaAssets: true,
             type: "merge"
