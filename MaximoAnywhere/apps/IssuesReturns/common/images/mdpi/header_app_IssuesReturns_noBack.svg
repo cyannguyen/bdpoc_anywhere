@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>nany-icon / header / issues-returns</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="nany-icon-/-header-/-issues-returns" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header_app_noBack" transform="translate(4.000000, 5.000000)" fill="#FFFFFF">
+            <path d="M10.5,23 C8.56700338,23 7,21.4329966 7,19.5 C7,17.5670034 8.56700338,16 10.5,16 C12.4329966,16 14,17.5670034 14,19.5 C14,21.4329966 12.4329966,23 10.5,23 Z M10.5,21 C11.3284271,21 12,20.3284271 12,19.5 C12,18.6715729 11.3284271,18 10.5,18 C9.67157288,18 9,18.6715729 9,19.5 C9,20.3284271 9.67157288,21 10.5,21 Z" id="Combined-Shape"></path>
+            <path d="M11.0298262,15.030862 C10.8560515,15.0104805 10.6792497,15 10.5,15 C9.96218845,15 9.44641259,15.094346 8.96832027,15.2673902 L3.6079467,2 L0,2 L0,0 L4.95696373,0 L11.0298262,15.030862 Z M13.9201622,16.5754073 L23.5682082,12.6773437 L24.3174214,14.5317114 L14.8531691,18.3555176 C14.6784893,17.6892915 14.3549186,17.083353 13.9201622,16.5754073 Z" id="Combined-Shape"></path>
+            <path d="M10.5089522,4.50895224 L20.5089522,4.50895224 L20.5089522,14.5089522 L10.5089522,14.5089522 L10.5089522,4.50895224 Z M15.5089522,6.50895224 L15.5089522,8.50895224 L19.5089522,8.50895224 L19.5089522,6.50895224 L15.5089522,6.50895224 Z" id="Combined-Shape" transform="translate(15.508952, 9.508952) rotate(-22.000000) translate(-15.508952, -9.508952) "></path>
+        </g>
+    </g>
+</svg>

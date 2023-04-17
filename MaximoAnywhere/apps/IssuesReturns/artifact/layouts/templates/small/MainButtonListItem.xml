@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Loc-In: Add layout MainButtonListItem -->
+<layout id="MainButtonListItem" version="202303301115" width="100">
+   <row id="row_0">
+      <column colspan="1" columnid="button1" id="item1_column" halign="center"/>
+   </row>
+	<row id="row_1">
+		<column colspan="1" columnid="button2" id="item2_column" halign="center"/>
+	</row>
+	<row id="row_2">
+		<column colspan="1" columnid="button3" id="item3_column" halign="center"/>
+	</row>
+</layout>
+<!-- Loc-Out: Add layout MainButtonListItem-->

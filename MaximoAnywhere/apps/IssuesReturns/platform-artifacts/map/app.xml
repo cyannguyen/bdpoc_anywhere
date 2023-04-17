@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" enableFeatureByProperty="map.enabled" id="map" xsi:noNamespaceSchemaLocation="../../../../Releng/codegen/src/main/java/resources/xsd/app.xsd">
+	<ui id="ui">
+		<view id="platform.DirectionsView" label="Directions">
+			<container id="platform.DirectionsView_container_0" layout="MapEndPoint" resource="PlatformMapMarkerInfo">
+				<image id="platform.DirectionsView_image_0" layoutInsertAt="marker" resourceAttribute="startMarker"/>
+				<text editable="false" id="platform.DirectionsView_container_0_startAddress" layoutInsertAt="address" resourceAttribute="startAddress"/> 
+			</container>
+			<list displayPageSize="25" id="platform.DirectionsView_PlatformDirectionSteps_list" resource="PlatformDirectionSteps" showHeader="false">
+				<listItemTemplate id="platform.DirectionsView_PlatformDirectionSteps_listItemTemplate_DirectionsListItem" layout="DirectionsListItem">
+					<listtext id="platform.DirectionsView_PlatformDirectionSteps_DirectionsListItem_step" layoutInsertAt="step" resourceAttribute="step"/>
+				</listItemTemplate>
+			</list>
+			<container id="platform.DirectionsView_container_1" layout="MapEndPoint" resource="PlatformMapMarkerInfo">
+				<image id="platform.DirectionsView_image_1" layoutInsertAt="marker" resourceAttribute="endMarker"/>
+				<text editable="false" id="platform.DirectionsView_container_1_endAddress" layoutInsertAt="address" resourceAttribute="endAddress"/> 
+			</container>
+		</view>
+		<dialog id="Platform.UseCurrentLocationDialog">
+			<container id="platform.UseCurrentLocation_container">
+				<text editable="false" id="platform.UseCurrentLocation_textField" value="Application Would Like to Use Your Current Location"/>
+				<button id="platform.UseCurrentLocation_doNotAllow_button" label="Do Not Allow">
+					<eventHandlers id="platform.UseCurrentLocation_doNotAllow_handler">
+						<eventHandler class="platform.geolocation.GeoLocationServiceHelper" event="click" id="platform.UseCurrentLocation_doNotAllow_handler_0" method="gpsDoNotAllowClick"/>
+					</eventHandlers>
+				</button>
+				<button id="platform.UseCurrentLocation_ok_button" label="Ok">
+					<eventHandlers id="platform.UseCurrentLocation_ok_handler">
+						<eventHandler class="platform.geolocation.GeoLocationServiceHelper" event="click" id="platform.UseCurrentLocation_doNotAllow_handler_1" method="gpsAllowClick"/>
+					</eventHandlers>
+				</button>
+			</container>
+		</dialog>
+		<dialog id="Platform.DeleteOrSyncCurrentRecord">
+			<container id="platform.DeleteCurrentRecord_container">
+				<text editable="false" id="platform.DeleteCurrentRecord_textField" value="This map is already downloaded, would you like to delete or sync it?"/>
+				
+				<button id="platform.DeleteCurrentRecord_doNotAllow_button" label="Close">
+					<eventHandlers id="platform.DeleteCurrentRecord_doNotAllow_handler">
+						<eventHandler class="platform.handlers.DialogHandler" event="click" id="Platform.DeleteCurrentRecord_closeDialog" method="closeDialog"/>
+					</eventHandlers>
+				</button>
+				
+				<button id="platform.DeleteCurrentRecord_delete_button" label="Delete">
+					<eventHandlers id="platform.DeleteCurrentRecord_delete_handler">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="DeleteOrSyncCurrentRecord_delete_handler" method="deleteCurrentMap"/>
+					</eventHandlers>
+				</button>
+				
+				<button id="platform.DeleteCurrentRecord_sync_button" label="Sync">
+					<eventHandlers id="platform.DeleteCurrentRecord_sync_handler">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="DeleteOrSyncCurrentRecord_sync_handler" method="syncCurrentMap"/>
+					</eventHandlers>
+				</button>
+				
+			</container>
+		</dialog>
+		
+		<dialog id="Platform.DownloadCurrentRecord">
+			<container id="platform.DownloadCurrentRecord_container">
+				<text editable="false" id="platform.DownloadCurrentRecord_textField" value="Are you sure you want to download this record?"/>
+				
+				<button id="platform.DownloadCurrentRecord_doNotAllow_button" label="No">
+					<eventHandlers id="platform.DownloadCurrentRecord_doNotAllow_handler">
+						<eventHandler class="platform.handlers.DialogHandler" event="click" id="Platform.DownloadCurrentRecord_closeDialog" method="closeDialog"/>
+					</eventHandlers>
+				</button>
+				
+				<button id="platform.DownloadCurrentRecord_ok_button" label="Yes">
+					<eventHandlers id="platform.DownloadCurrentRecord_ok_handler">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="DownloadCurrentRecord_doNotAllow_handler_1" method="downloadCurrentMap"/>
+					</eventHandlers>
+				</button>
+				
+			</container>
+		</dialog>
+		<dialog id="Platform.SyncRequired">
+			<container id="platform.SyncRequiredcontainer">
+				<text editable="false" id="platform.SyncRequiredtextField" value="Your offline data expired, a sync is required."/>
+				
+				<button id="platform.SyncRequiredok_button" label="Go To Sync">
+					<eventHandlers id="platform.SyncRequiredok_handler">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="SyncRequiredGoToSync_handler_1" method="initDownLoadOfflineMap"/>
+					</eventHandlers>
+				</button>
+				
+				<button id="platform.SyncRequireddoNotAllow_button" label="OK">
+					<eventHandlers id="platform.SyncRequiredGoToMapOffline_handler">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="SyncRequiredGoToMap_handler_1" method="ignoreExpiredDataAndKeepLoading"/>
+					</eventHandlers>
+				</button>
+				
+			</container>
+		</dialog>
+		<dialog id="Platform.SyncRequiredLazyCheck">
+			<container id="platform.SyncRequiredcontainerLazyCheck">
+				<text editable="false" id="platform.SyncRequiredtextFieldLazyCheck" value="Your offline data expired, a sync is required."/>
+				
+				<button id="platform.SyncRequiredok_buttonLazyCheck" label="Go To Sync">
+					<eventHandlers id="platform.SyncRequiredok_handlerLazyCheck">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="SyncRequiredGoToSync_handler_1LazyCheck" method="initDownLoadOfflineMapLazyCheck"/>
+					</eventHandlers>
+				</button>
+				
+				<button id="platform.SyncRequireddoNotAllow_buttonLazyCheck" label="OK">
+					<eventHandlers id="platform.SyncRequiredGoToMapOffline_handlerLazyCheck">
+						<eventHandler class="platform.handlers.spatial.MapSitesOfflineAreas" event="click" id="SyncRequiredGoToMap_handler_1LazyCheck" method="ignoreExpiredDataAndKeepLoadingLazyCheck"/>
+					</eventHandlers>
+				</button>
+				
+			</container>
+		</dialog>
+		
+		
+		
+	</ui>
+	<data id="data">
+		<resource id="PlatformMapMarkerInfo" inMemory="true" name="PlatformMapMarkerInfo" singleton="true">
+			<attributes id="PlatformMapMarkerInfo_attributes">
+				<localAttribute dataType="string" id="PlatformMapMarkerInfo_startAddress_string" name="startAddress"/>
+				<localAttribute dataType="string" id="PlatformMapMarkerInfo_endAddress_string" name="endAddress"/>
+				<localAttribute dataType="string" id="PlatformMapMarkerInfo_currentMarker_string" name="currentMarker"/>
+				<localAttribute dataType="string" id="PlatformMapMarkerInfo_startMarker_string" name="startMarker"/>
+				<localAttribute dataType="string" id="PlatformMapMarkerInfo_endMarker_string" name="endMarker"/>
+			</attributes>
+		</resource>
+		<resource id="PlatformDirectionSteps" inMemory="true" name="PlatformDirectionSteps">
+			<attributes id="PlatformDirectionSteps_attributes">
+				<localAttribute dataType="string" id="PlatformDirectionSteps_step_string" name="step"/>
+			</attributes>
+		</resource>
+		
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MapManager" hasManagedQuery="true" id="mapmanager" name="mapmanager" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="mapmanager_1_1">
+				<!-- limits the scope of attributes used from full Work Order RDF -->
+				<attribute describedByProperty="dcterms:identifier" id="mapmanager_1_1_1" index="true" name="identifier"/>
+				<attribute describedByProperty="dcterms:title" id="mapmanager_1_1_2" index="true" name="description"/>
+				<attribute describedByProperty="spi:active" id="mapmanager_1_1_3" index="true" name="active"/>
+				<attribute describedByProperty="spi:mapsites" id="mapmanager_1_1_4" index="true" name="mapsiteslist"/>
+				<attribute describedByProperty="spi:ismobile" id="mapmanager_1_1_6" index="true" name="ismobile"/>
+				<attribute describedByProperty="spi:mapprovider" id="mapmanager_1_1_7" index="true" name="mapprovider"/>
+				<attribute describedByProperty="spi:bmapslicense" id="mapmanager_1_1_8" index="true" name="bmapslicense"/>
+				<attribute describedByProperty="spi:gmapsapikey" id="mapmanager_1_1_9" index="true" name="gmapsapikey"/>
+			</attributes>
+			<queryBases id="mapmanager_1_2">
+	 			<queryBase defaultForSearch="true" id="mapmanager_1_2_1" name="defaultquery" queryUri="/oslc/os/oslcmapmanager"/>
+			</queryBases>
+			<whereClause clause="spi:ismobile=1" id="mapmanager_1_3"/>
+			
+		</resource> 
+		
+		 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+	</data>
+	<messages id="messages">
+	    <message defaultMessage="The map file {0} for this view is not available. Check that the file is available on your device. If the problem persists, contact your system administrator." id="localMapUrlDontExist"/>
+	    <message defaultMessage="An exception related to JSON data processing occurred. Review the logs." id="jsonException"/>
+	    <message defaultMessage="Unable to instantiate a map of type {0}." id="unableToInstantiate"/>
+	    <message defaultMessage="{0}" id="esriError"/>
+<!-- 	    <message defaultMessage="Timeout trying to determine your GPS location.  Increase the si.GPS.timeout property." id="gpsTimeout"/>
+	    <message defaultMessage="GPS not available. Unable to find your GPS location" id="unableAcquireGPS"/>
+	    <message defaultMessage="GPS permission was denied by the app.  Please grant permission to capture GPS and restart the app." id="gpsPermission"/> -->
+	    <message defaultMessage="Your GPS location is outside the map boundary" id="outOfBoundsMsg"/>
+	    <message defaultMessage="No records with coordinates were found. Without coordinates, markers cannot be plotted on the map." id="noCoordinates"/>
+	    <message defaultMessage="My Location" id="myLocation"/>
+	    <message defaultMessage="Map directions are not available. Try again later." id="Access to the Esri ArcGIS server is not available. Unable to obtain a route or directions."/>
+	    <message defaultMessage="{0} route and directions were saved to your device." id="{0} route and directions were saved to your device."/>
+	    <message defaultMessage="Unable to save route and directions to your device. If the problem persists, contact your system administrator." id="Unable to save route and directions to your device. If the problem persists, contact your system administrator."/>
+	    <message defaultMessage="The current app version does not support maps. Contact your administrator." id="Unable to retrieve map related data. If the problem persists, contact your system administrator."/>
+	    <message defaultMessage="Downloading map information" id="Downloading map information"/>
+	    <message defaultMessage="Downloading map information failed" id="Downloading map information failed"/>
+	    <message defaultMessage="Downloading map information complete" id="Downloading map information complete"/>
+	    <message defaultMessage="The current app version does not support offline maps. Contact your administrator." id="noNativeMap"/>
+	    <message defaultMessage="Online map could not be retrieved. Verify if network connection is on and try again." id="offNetForMapOnline"/>	   
+	    <message defaultMessage="Current Location" id="currentLocation"/>	
+	    <message defaultMessage="The current map shows the markers for the first {0} records." id="The current map shows the markers for the first {0} records."/>
+	    <message defaultMessage="Unable to show map. It is possible that the value for the providerURL property is invalid. Contact your administrator." id="invalidProviderUrl"/>
+	    <message defaultMessage="A mobile-enabled map was not found for your site, {0}. Contact your administrator." id="noMapManagerFound"/>
+	    <message defaultMessage="Error loading layer [{0}], check if the URL is correct. If security is enable on Map Manager, check the credentials. Contact your administrator." id="errorLoadingLayer"/>
+	    <message defaultMessage="Some services could not be loaded. Contact your administrator." id="errorLoadingSomeLayer"/>
+	    <message defaultMessage="The device is Offline, you must connect to a network to download the Map" id="deviceIsOffline"/>
+	    <message defaultMessage="The device is Offline, you must connect to a network to finish the download" id="downloadInterrupted"/>
+	    <message defaultMessage="It was not possible to Unregister the Replica, check the connection and try again" id="errorUnregisterReplica"/>
+	    <message defaultMessage="You do not have offline data to load, connect to a network, download an offline map and try again" id="noOfflineDataToShow"/>
+	    <message defaultMessage="Last Sync: {0}" id="lastSyncLabel"/>
+	    <message defaultMessage="Expires in {0} day(s)" id="lastSyncExpires"/>
+	    <message defaultMessage="Your data is expired and a sync is required" id="lastSyncExpired"/>	    
+		<message defaultMessage="It was not possible to create the Replica for the layer: {0}. Contact the administrator " id="errorCreatingReplica"/>
+		<message defaultMessage="It was not possible to check the Replica status: {0}" id="errorReplicaStatus"/>
+		<message defaultMessage="It was not possible to delete the Replica for the layer: {0}. Contact the administrator " id="errorDeletingReplica"/>
+		<message defaultMessage="It was not possible to sync the Replica for the layer: {0}. Contact the administrator " id="errorSyncingReplica"/>
+		<message defaultMessage="The device is showing the Offline map, you must change to Online to download a map" id="runningOfflineMode"/>
+		<message defaultMessage="It was not possible to identify features on the layer: {0}. Contact the administrator " id="errorIdentifyLayer"/>
+		<message defaultMessage="The feature selected is not linked to a record. Contact the administrator " id="featureIsNotLinked"/>
+		<message defaultMessage="GPS is not enable and no initial coordinates were found in Map Manager. Contact the administrator " id="gpsNotAvailable"/>
+		<message defaultMessage="The feature selected does not contain the link attribute: {0}. Contact the administrator " id="featureDoesNotHaveLinkAttr"/>
+		<message defaultMessage="No Bing Maps key was provided. Please check your Map Manager configuration." id="bingMapsKeyMissing"/>
+		<message defaultMessage="There is no support for Google Maps on this version." id="noSupportForGoogleMaps"/>
+		<message defaultMessage="Meters." id="meters"/>
+		<message defaultMessage="kilometers." id="kms"/>
+		<message defaultMessage="Feet." id="feet"/>
+		<message defaultMessage="Miles." id="miles"/>
+		<message defaultMessage="Yards." id="yards"/>
+		<message defaultMessage="Square Feet." id="square_feet"/> 
+		<message defaultMessage="Square Miles." id="square_miles"/> 
+		<message defaultMessage="Square Yards." id="square_yards"/>
+		<message defaultMessage="Square Meters." id="square_meters"/>
+		<message defaultMessage="Square Kilometers." id="square_kms"/>
+		<message defaultMessage="Acres." id="acres"/>
+		<message defaultMessage="Hectares." id="hectares"/>
+		<message defaultMessage="It was not possible to save the sketch. Contact the administrator" id="errorSaveSketch"/>
+		<message defaultMessage="It was not possible to load the saved sketches. Contact the administrator" id="errorLoadSketch"/>	
+		<message defaultMessage="Creating replica for service {0}" id="creatingReplica"/>
+		<message defaultMessage="Synchronize replica for service {0}" id="syncReplica"/>	
+		<message defaultMessage="It was not possible to sync the offline area. Contact the administrator" id="errorSyncReplica"/>
+		<message defaultMessage="Waiting map replica #{0}" id="checkingReplica"/>
+		<message defaultMessage="Updating local data" id="updatingLocalDB"/>
+		<message defaultMessage="Updating features {0}%" id="updatingFeaturesCountLocalDB"/>
+		<message defaultMessage="Downloading {0}" id="downloadingMap"/>
+		<message defaultMessage="Saving map service {0}" id="savingMap"/>
+		<message defaultMessage="Saving replica data, features to add: {0}" id="savingReplica"/>	
+		<message defaultMessage="Loading tiles {0}" id="loadingTiles"/>	
+		<message defaultMessage="Loading Features {0}" id="loadingFeatures"/>	
+		<message defaultMessage="Preparing Layers" id="preparingFeatures"/>
+		<message defaultMessage="Loading tiles" id="loadingTilesGeneric"/>
+		<message defaultMessage="Replica created, downloading..." id="downloadingReplica"/>
+		<message defaultMessage="Map did not draw completely, features limit reached: {0}. Zoom in to a smaller region." id="limitFeaturesReached"/>
+		<message defaultMessage="Loading offline data." id="loadingOfflineMap"/>
+		<message defaultMessage="It was not possible to download the map. Contact the administrator " id="errorDownloadingMap"/>
+		<message defaultMessage="Step 1: Deleting the orphan replicas" id="syncStep1"/>
+		<message defaultMessage="Step 2: Syncing replicas" id="syncStep2"/>
+		<message defaultMessage="Step 3: Downloading new replicas" id="syncStep3"/>
+		<message defaultMessage="Step 4: Downloading metadata for the new replicas" id="syncStep4"/>
+		<message defaultMessage="Offline map not configured on Anywhere Administration" id="localMapNotConfigured"/>
+	</messages>
+</app>

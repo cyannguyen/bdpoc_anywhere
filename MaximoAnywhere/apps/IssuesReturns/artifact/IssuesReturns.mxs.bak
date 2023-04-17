@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatescript version="20220526_155012-0400">
+	<app apptype="anywhere" id="issuesReturns">
+		<modify control="IssuesReturns.AdditionalItemsDetailsView_task">
+			<set property="editable" value="true"/>
+		</modify>
+		<add before="issueAdditionalItems_issueQty_string" container="issueAdditionalItems_attributes" control="localAttribute">
+			<set property="dataType" value="integer"/>
+			<set property="id" value="issueAdditionalItems_taskid_integer"/>
+			<set property="name" value="taskid"/>
+		</add>
+		<remove container="issueAdditionalItems_attributes" control="issueAdditionalItems_taskid_string"/>
+	</app>
+</updatescript>

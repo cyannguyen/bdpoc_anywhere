@@ -1,0 +1,78 @@
+/* Reset CSS */
+a, abbr, address, article, aside, audio, b, blockquote, body, canvas, caption, cite, code, dd, del, details, dfn, dialog, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hgroup, html, i, iframe, img, ins, kbd, label, legend, li, mark, menu, nav, object, ol, p, pre, q, samp, section, small, span, strong, sub, summary, sup, table, tbody, td, tfoot, th, thead, time, tr, ul, var, video {
+	margin: 0;
+	padding: 0;
+}
+
+/* Worklight container div */
+body {
+	height: 460px;
+	margin: 0 auto;
+	width: 320px;
+}
+
+.meterIcon {
+	border: 0px;
+	vertical-align: middle;
+	box-shadow: none !important;
+	background-position: center !important;
+	background-color: #fff !important;
+}
+.meterIcon:active {
+	box-shadow: 0 0 5px 5px rgba(64,160,202, 0.75) !important;
+	background-color: rgb(26, 150, 198) !important;
+	background-color: rgba(26, 150, 198, 0.2) !important;
+	background: url(../images/mdpi/action_meterReading_on.png) no-repeat center center !important;
+}
+
+.disabled.meterIcon:active {
+	box-shadow: none !important;
+}
+.meterIconInList {
+	border: 0px;
+	vertical-align: middle;
+	box-shadow: none !important;
+	background-position: center !important;
+}
+.meterIconInList:active {
+	box-shadow: 0 0 5px 5px rgba(64,160,202, 0.75) !important;
+	background-color: rgb(26, 150, 198) !important;
+	background-color: rgba(26, 150, 198, 0.2) !important;
+	background: url(../images/mdpi/action_meterReading_on.png) no-repeat center center !important;
+}
+
+.disabled.meterIconInList:active {
+	box-shadow: none !important;
+}
+
+.specLayoutLeft {
+	position:absolute;
+	display:inline;
+	margin-right:10px;
+	width: 35%;
+}
+
+.specLayoutRight {
+	display:block;
+	float:right;
+	margin-right:4px;
+	width: 65%;
+	text-overflow:ellipsis !important;
+	min-height:10px;
+}
+
+.specLayoutLeftReset {
+	clear:both;
+	display:block;
+	position:static; 
+	padding-top: 4px;
+}
+
+.mblGroupButtonIssueReturnMainView{
+	width: 33%;
+	max-width: 300px;
+	min-width: 250px;
+}
+
+
+

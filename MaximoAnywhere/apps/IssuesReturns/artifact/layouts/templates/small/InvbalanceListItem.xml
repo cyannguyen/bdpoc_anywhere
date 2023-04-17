@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="InvreserveListItem" version="201507162226" width="100">
+   <row id="row_0">
+      <column colspan="3" columnid="item1" id="item1_column" halign="left"/>
+      <column colspan="6" columnid="item2" id="item2_column" halign="left"/>
+<!--       <column colspan="3" columnid="item6" id="item5_column" rowspan="3"/> -->
+   </row>
+	<row id="row_1">
+		<column colspan="3" columnid="item3" id="item3_column" halign="left"/>
+		<column colspan="6" columnid="item4" id="item4_column" halign="left"/>
+	</row>
+	<row id="row_2">
+		<column colspan="5" columnid="item5" id="item5_column" halign="left"/>
+		<column colspan="4" columnid="item6" id="item6_column" halign="left"/>
+	</row>    
+</layout>
