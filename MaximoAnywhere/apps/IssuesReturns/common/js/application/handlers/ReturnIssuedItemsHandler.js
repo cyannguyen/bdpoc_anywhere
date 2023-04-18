@@ -200,11 +200,19 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 							filter.push({gldebitacct: glaccount});
 						}
 						//#region Loc-Out: Add new fields
-						oslcQueryParameters['sqp:itemnum'] =  itemnum;
-						oslcQueryParameters['sqp:storeloc'] =  storeroom;
-						oslcQueryParameters['sqp:siteid'] =  siteid;
-						oslcQueryParameters['sqp:wonum'] =  wonum;
 
+						// validate itemnum has value before adding to the query to search correctly
+						if (itemnum) {
+							oslcQueryParameters["sqp:itemnum"] = itemnum;
+						}
+
+						oslcQueryParameters["sqp:storeloc"] = storeroom;
+						oslcQueryParameters["sqp:siteid"] = siteid;
+
+						// validate wonum has value before adding to the query to search correctly
+						if (wonum) {
+							oslcQueryParameters["sqp:wonum"] = wonum;
+						}
 						//#region Loc-In: Add new fields
 						/* oslcQueryParameters['sqp:formnumber'] =  formnumber;
 						oslcQueryParameters['sqp:location'] =  location;
