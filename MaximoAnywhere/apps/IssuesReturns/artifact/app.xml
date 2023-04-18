@@ -202,6 +202,7 @@
 				<requiredResource id="IssuesReturns.SearchReturnView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemstatus" name="domainitemstatus"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemtype" name="domainitemtype"/>
+				<requiredResource id="IssuesReturns.SearchReturnView_additionalInvuse" name="additionalInvuse"/>
 			</requiredResources>
 			<container cssClass="errorheader" id="IssuesReturns.SearchReturnView_container_0">
 				<link id="IssuesReturns.SearchReturnView_link" label="">
@@ -233,7 +234,7 @@
 					</groupitem>
 					<!-- Loc-In: Add Searching items -->
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_3">
-						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formnumber">
+						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_formno" label="Form No" lookup="IssuesReturns.FormnumberLookup" lookupAttribute="formnumber" placeHolder="Tap to enter" resourceAttribute="formnumber">
 						    <eventHandlers id="IssuesReturns.SearchReturn_formnumber_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_formnumber_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
@@ -1089,7 +1090,26 @@
 			<returnAttributes id="IssuesReturns.IssueToLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.IssueToLookup_personid" sourceAttribute="personid" targetAttribute="issueTo"/>
 			</returnAttributes>			
-		</lookup>		
+		</lookup>
+		
+		<!-- Form nummber lookup -->
+		<lookup id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="additionalInvuse">
+			<requiredResources id="IssuesReturns.FormnumberLookup_requiredResources">
+				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="additionalInvuse" reload="true"/>
+			</requiredResources>
+			<list id="IssuesReturns.FormnumberLookup_list" resource="additionalInvuse">
+				<searchAttributes id="IssuesReturns.FormnumberLookup_additionallocations_searchAttributes">
+					<searchAttribute id="IssuesReturns.FormnumberLookup_additionallocations_searchAttribute_formnumber" name="formnumber"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.FormnumberLookup_listItemTemplate_Item1" layout="Item1">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.FormnumberLookup_Item1Desc1_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="IssuesReturns.FormnumberLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.FormnumberLookup_formno" sourceAttribute="formnumber" targetAttribute="formnumber"/>
+			</returnAttributes>
+		</lookup>
 	</ui>
 
 	<!--DATA DEFINITION SECTION-->
@@ -1184,6 +1204,20 @@
    				<localAttribute dataType="boolean" id="errorResource_hasErrors_boolean" name="hasError"/>
    			</attributes>
    		</resource>
+
+		<!-- Resource for lookup form number -->
+		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invuse" additionalData="true" id="additionalInvuse" name="additionalInvuse" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalInvuseResource_attributes">
+				<attribute describedByProperty="spi:formnumber" id="additionalInvuseResourceResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+			</attributes>
+			<creationFactories id="additionalInvuseResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvuse" id="additionalInvuseResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
+			</creationFactories>
+			<queryBases id="additionalInvuse_queryBases">
+				<queryBase id="additionalInvuse_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
+			</queryBases>
+			<whereClause id="additionalInvuse_whereClause"/>
+		</resource>
    		
 		<!-- Material use Transactions (Issued Items) -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" id="matusetrans" name="matusetrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
