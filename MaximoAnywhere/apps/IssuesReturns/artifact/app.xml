@@ -202,7 +202,7 @@
 				<requiredResource id="IssuesReturns.SearchReturnView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemstatus" name="domainitemstatus"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemtype" name="domainitemtype"/>
-				<requiredResource id="IssuesReturns.SearchReturnView_additionalInvuse" name="additionalInvuse"/>
+				<requiredResource id="IssuesReturns.SearchReturnView_additionalMatusetrans" name="additionalMatusetrans"/>
 			</requiredResources>
 			<container cssClass="errorheader" id="IssuesReturns.SearchReturnView_container_0">
 				<link id="IssuesReturns.SearchReturnView_link" label="">
@@ -1122,11 +1122,11 @@
 		</lookup>
 		
 		<!-- Form nummber lookup -->
-		<lookup id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="additionalInvuse">
+		<lookup id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="additionalMatusetrans">
 			<requiredResources id="IssuesReturns.FormnumberLookup_requiredResources">
-				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="additionalInvuse" reload="true"/>
+				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="additionalMatusetrans" reload="true"/>
 			</requiredResources>
-			<list id="IssuesReturns.FormnumberLookup_list" resource="additionalInvuse">
+			<list id="IssuesReturns.FormnumberLookup_list" resource="additionalMatusetrans">
 				<searchAttributes id="IssuesReturns.FormnumberLookup_additionallocations_searchAttributes">
 					<searchAttribute id="IssuesReturns.FormnumberLookup_additionallocations_searchAttribute_formnumber" name="formnumber"/>
 				</searchAttributes>
@@ -1235,17 +1235,14 @@
    		</resource>
 
 		<!-- Resource for lookup form number -->
-		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invuse" additionalData="true" id="additionalInvuse" name="additionalInvuse" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
-			<attributes id="additionalInvuseResource_attributes">
-				<attribute describedByProperty="spi:formnumber" id="additionalInvuseResourceResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" additionalData="true" id="additionalMatusetrans" name="additionalMatusetrans" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalMatusetransResource_attributes">
+				<attribute describedByProperty="spi:formnumber" id="additionalMatusetransResourceResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
 			</attributes>
-			<creationFactories id="additionalInvuseResource_creationFactories">
-				<creationFactory creationUri="/oslc/os/oslcinvuse" id="additionalInvuseResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
-			</creationFactories>
-			<queryBases id="additionalInvuse_queryBases">
-				<queryBase id="additionalInvuse_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
+			<queryBases id="additionalMatusetrans_queryBases">
+				<queryBase id="additionalMatusetrans_queryBase_matusetrans" name="searchAllMatusetrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
 			</queryBases>
-			<whereClause id="additionalInvuse_whereClause"/>
+			<whereClause clause="spi:formnumber!='null'" id="additionalMatusetrans_whereClause"/>
 		</resource>
 
 		<!-- Resource for lookup bin number -->
