@@ -246,6 +246,33 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				eventContext.application.hideBusy();
 			});							
 		},
+
+		updateFormnumLookupData: function (eventContext) {
+            console.log("Render called");
+            var record = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalMatusetrans"
+            ).getCurrentRecord();
+
+            if (!record) return;
+
+            var storeloc = record.storeloc;
+
+            var formnumberPromise = ModelService.removeAndFilter(
+                "additionalMatusetrans",
+                [{ storeloc: storeloc }],
+                1000,
+                true
+            );
+            formnumberPromise.then(function (data) {
+                if (data.length > 0) {
+                    data.resourceID = "additionalMatusetrans";
+                    eventContext.application.addResource(data);
+
+                    data.filter("formnumber != null");
+                }
+            });
+        },
 		
 		/**
 		 * Cancel process of returning issued items

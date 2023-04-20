@@ -237,6 +237,7 @@
 						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_formno" label="Form No" lookup="IssuesReturns.FormnumberLookup" lookupAttribute="formnumber" placeHolder="Tap to enter" resourceAttribute="formnumber">
 						    <eventHandlers id="IssuesReturns.SearchReturn_formnumber_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_formnumber_eventHandlers_datachange" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.SearchReturn_formnumber_eventHandlers_render" method="updateFormnumLookupData"/>
 							</eventHandlers>
 						</text>
 					</groupitem>
@@ -1237,7 +1238,8 @@
 		<!-- Resource for lookup form number -->
 		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" additionalData="true" id="additionalMatusetrans" name="additionalMatusetrans" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalMatusetransResource_attributes">
-				<attribute describedByProperty="spi:formnumber" id="additionalMatusetransResourceResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:formnumber" id="additionalMatusetransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:storeloc" id="additionalMatusetransResource_item_spi_storeloc" index="true" name="storeloc"/>
 			</attributes>
 			<queryBases id="additionalMatusetrans_queryBases">
 				<queryBase id="additionalMatusetrans_queryBase_matusetrans" name="searchAllMatusetrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
