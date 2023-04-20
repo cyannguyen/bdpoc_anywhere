@@ -1063,42 +1063,29 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 		},
 
-		setFromLotCurbal: function (eventContext) {
-            var self = this;
-            var issueResource = CommonHandler._getAdditionalResource(
-                eventContext,
-                "issueAdditionalItems"
-            ).getCurrentRecord();
-            // if (!issueResource.frombin) return;
-            // customize
-            var invbalTempResource = eventContext.application.getResource("invbalTemp");
-            if (invbalTempResource) {
-                console.log("Current record: ", invbalTempResource.getCurrentRecord());
-                // var invbalTempSet = invbalTempResource.find("binnum == $1", issueResource.frombin);
-                var invbalRecord = invbalTempResource.getCurrentRecord();
-                // if (invbalTempSet.length > 0) {
-                if (invbalRecord) {
-                    // var invbalTempRecord = invbalTempSet.getRecortAt(0);
-                    // issueResource.set("frombincurbal", invbalTempRecord.curbal);
-                    // issueResource.set("fromlot", invbalTempRecord.lotnum);
-                    issueResource.set("frombincurbal", invbalRecord.curbal);
-                    issueResource.set("fromlot", invbalRecord.lotnum);
-                    console.log("fromlot: ", invbalRecord.lotnum);
-                } else {
-                    console.log("set bin 2");
-                    issueResource.setNullValue("frombin");
-                    issueResource.setNullValue("frombincurbal");
-                    issueResource.setNullValue("fromlot");
-                    self.ui.showMessage(
-                        MessageService.createStaticMessage("invalidBin").getMessage()
-                    );
-                }
-            } else {
-                console.log("set bin else");
-                issueResource.setNullValue("frombincurbal");
-                issueResource.setNullValue("fromlot");
-            }
-        },
+		setFromLotCurbal: function(eventContext){
+			var self = this;
+			var issueResource = CommonHandler._getAdditionalResource(eventContext,'issueAdditionalItems').getCurrentRecord();
+			if (!issueResource.frombin) return;
+			
+			var invbalTempResource = eventContext.application.getResource("invbalTemp");
+			if (invbalTempResource) {
+				var invbalTempSet = invbalTempResource.find('binnum == $1', issueResource.frombin);
+				if (invbalTempSet.length > 0){
+					var invbalTempRecord = invbalTempSet.getRecortAt(0);
+					issueResource.set('frombincurbal', invbalTempRecord.curbal);
+					issueResource.set('fromlot', invbalTempRecord.lotnum);
+				} else {
+					issueResource.setNullValue('frombin');
+					issueResource.setNullValue('frombincurbal');
+					issueResource.setNullValue('fromlot');
+					self.ui.showMessage(MessageService.createStaticMessage("invalidBin").getMessage());
+				}
+			} else {
+				issueResource.setNullValue('frombincurbal');
+				issueResource.setNullValue('fromlot');
+			}
+		},
 		
 		/**
 		 * Cancel button for Rotating Asset Select View
