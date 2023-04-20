@@ -777,6 +777,7 @@
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/> 
 							</eventHandlers> 
 						</text>
+						<text id="IssuesReturns.AdditionalItemsDetailsView_lotnum" editable="false" label="Lotnum" resourceAttribute="fromlot"/>
 					</groupitem>
 					
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_actualdate_groupitem_9">
