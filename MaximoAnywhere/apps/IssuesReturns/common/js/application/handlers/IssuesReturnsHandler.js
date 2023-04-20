@@ -73,6 +73,30 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			additionalasset.lookupFilter = filter;	
 		},
+
+		/**
+		 * Bin Lookup Data Filter
+		 */
+		filterBinReservedForLookup: function (eventContext) {
+            console.log("filter reserved bin");
+            var invreserveRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invreserve"
+            ).getCurrentRecord();
+            var filter = [];
+            var records = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalInvbalance"
+            );
+            CommonHandler._clearFilterForResource(eventContext, records);
+            var itemnum = invreserveRecord.item;
+            var location = invreserveRecord.location;
+            console.log("filter reserved bin record before filter: ", records);
+            filter.push({ itemnum: itemnum, location: location });
+            console.log("filter reserved bin filter: ", filter);
+            records.lookupFilter = filter;
+            console.log("filter reserved bin record: ", records);
+        },
 		
 		/**
 		 * Item Lookup Data Filter

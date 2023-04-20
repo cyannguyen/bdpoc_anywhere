@@ -287,6 +287,7 @@
 				<requiredResource id="IssuesReturns.InvreserveListView_requiredResource_invuse" name="invuse">
 					<requiredAttribute id="IssuesReturns.InvreserveListView_requiredResource_invuseline" name="invuseline"/>
 				</requiredResource>
+				<requiredResource id="IssuesReturns.InvreserveListView_additionalInvbalance" name="additionalInvbalance"/>
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
 			</requiredResources>
 			<!-- Loc-In: add View for Reserved Header -->
@@ -371,13 +372,18 @@
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.InvreserveListView_label_eventHandlers_localreservedqty" method="validateQty"/>
 						</eventHandlers>					
 					</text>
-					<text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
-						<button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+					<text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
+						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
-								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_eventhandler_click" method="fromBinLookup"/> 
-							</eventHandlers> 
-						</button>
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_eventhandler_click" method="fromBinLookup"/>
+							</eventHandlers>
+						</button> -->
+						<eventHandlers id="IssuesReturns.InvreserveListView_frombin_eventHandlers">
+							<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.InvreserveListView_frombin_eventhandler_datachange" method="setFromLotCurbalReserved"/>
+						</eventHandlers>
 					</text>
+
+					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
 					
 					<!-- <text id="IssuesReturns.InvreserveListView_tasklabel" label="Task:" layoutInsertAt="item5">
 						<eventHandlers id="IssuesReturns.InvreserveListView_TaskLabel_eventHandlers">
@@ -898,6 +904,28 @@
 				<returnAttribute id="IssuesReturns.FromBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/>
 			</returnAttributes>	
 		</lookup>
+
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterBinReservedForLookup" id="IssuesReturns.FromBinReservedLookup" label="Select Bin" resource="additionalInvbalance">
+			<requiredResources id="IssuesReturns.FromBinReservedLookup_requiredResources">
+				<requiredResource id="IssuesReturns.FromBinReservedLookup_additionalInvbalance" name="additionalInvbalance" reload="false"/>
+				<requiredResource id="IssuesReturns.FromBinReservedLookup_invreserve" name="invreserve"/>
+			</requiredResources>
+			<list id="IssuesReturns.FromBinReservedLookup_list" resource="additionalInvbalance">
+				<searchAttributes id="IssuesReturns.FromBinReservedLookup_searchAttributes">
+					<searchAttribute id="IssuesReturns.FromBinReservedLookup_searchAttribute_binnum" name="binnum"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.FromBinReservedLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.FromBinReservedLookup_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.FromBinReservedLookup_lotnum" layoutInsertAt="item2" resourceAttribute="lotnum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.FromBinReservedLookup_curbal" layoutInsertAt="item3" resourceAttribute="curbal"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="IssuesReturns.FromBinReservedLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.FromBinReservedLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="frombin"/>
+				<returnAttribute id="IssuesReturns.FromBinReservedLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="fromlot"/>
+				<returnAttribute id="IssuesReturns.FromBinReservedLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/>
+			</returnAttributes>
+		</lookup>
 		<!-- Loc-Out: Add View -->
 			
 		<!-- *********************** -->
@@ -1218,6 +1246,21 @@
 				<queryBase id="additionalInvuse_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
 			</queryBases>
 			<whereClause id="additionalInvuse_whereClause"/>
+		</resource>
+
+		<!-- Resource for lookup bin number -->
+		<resource defaultOrderBy="binnum desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" additionalData="true" id="additionalInvbalance" name="additionalInvbalance" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalInvbalanceResource_attributes">
+				<attribute describedByProperty="spi:binnum" id="additionalInvbalanceResource_formnumber_spi_formnumber" index="true" name="binnum"/>
+				<attribute describedByProperty="spi:lotnum" id="additionalInvbalanceResource_lotnum_spilotnum" name="lotnum"/>
+				<attribute describedByProperty="spi:curbal" id="additionalInvbalanceResource_curbal_spicurbal" name="curbal"/>
+				<attribute describedByProperty="spi:itemnum" id="additionalInvbalanceResource_itemnum_spiitemoslcshortTitle" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:location" id="additionalInvbalanceResource_location_spilocation" index="true" name="location"/>
+			</attributes>
+			<queryBases id="additionalInvbalance_queryBases">
+				<queryBase id="additionalInvbalance_queryBase_matusetrans" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
+			</queryBases>
+			<whereClause id="additionalInvbalance_whereClause"/>
 		</resource>
    		
 		<!-- Material use Transactions (Issued Items) -->

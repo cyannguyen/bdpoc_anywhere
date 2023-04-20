@@ -1063,6 +1063,43 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 		},
 
+		setFromLotCurbalReserved: function (eventContext) {
+            var self = this;
+            var issueResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invreserve"
+            ).getCurrentRecord();
+            if (!issueResource.frombin) return;
+
+            var invbalTempResource = eventContext.application.getResource("additionalInvbalance");
+            if (invbalTempResource) {
+                var invbalTempSet = invbalTempResource.find("binnum == $1", issueResource.frombin);
+                if (invbalTempSet.length > 0) {
+                    var invbalTempRecord = invbalTempSet[0];
+                    var lotnum = issueResource.fromlot;
+                    // handle user choose a binnum from lookup which has multiple lotnums
+                    if (invbalTempSet.length > 1 && lotnum) {
+                        invbalTempSet = invbalTempResource.find("lotnum == $1", lotnum);
+                        if (invbalTempSet.length > 0) {
+                            invbalTempRecord = invbalTempSet[0];
+                        }
+                    }
+                    issueResource.set("frombincurbal", invbalTempRecord.curbal);
+                    issueResource.set("fromlot", invbalTempRecord.lotnum);
+                } else {
+                    issueResource.setNullValue("frombin");
+                    issueResource.setNullValue("frombincurbal");
+                    issueResource.setNullValue("fromlot");
+                    self.ui.showMessage(
+                        MessageService.createStaticMessage("invalidBin").getMessage()
+                    );
+                }
+            } else {
+                issueResource.setNullValue("frombincurbal");
+                issueResource.setNullValue("fromlot");
+            }
+        },
+
         setFromLotCurbal: function (eventContext) {
             var self = this;
             var issueResource = CommonHandler._getAdditionalResource(

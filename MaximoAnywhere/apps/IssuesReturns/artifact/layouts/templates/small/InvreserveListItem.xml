@@ -45,6 +45,10 @@
 	<row id="row_4">
 		<column colspan="1" columnid="item9" halign="left" id="item9_column"/>
 		<column colspan="2" columnid="item10" halign="left" id="item10_column"/>
-	</row>  
+	</row>
+	<row id="row_5">
+		<column colspan="1" columnid="item11" halign="left" id="item11_column"/>
+		<column colspan="2" columnid="item12" halign="left" id="item12_column"/>
+	</row> 
 	<!-- Loc-Out: Add layout items-->
 </layout>
