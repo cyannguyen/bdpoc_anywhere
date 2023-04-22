@@ -326,6 +326,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			//var actualDate = issueReservedHeader.get('actualdate');
 			//#endregion Loc-Out: Add attributes
 
+			//validate if checkbox is selected
+            this.checkBoxValidation(eventContext, invreserveSet);
+
 			//show busy message
 			eventContext.application.showBusy();
 		
@@ -1782,6 +1785,18 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				    },10); 
 					
 				}
+			}
+		},
+
+		/**
+         * Validate if a checkbox is selected
+         */
+		checkBoxValidation: function (eventContext, invreserveSet) {
+			//check if checkboxes are selected
+			invreserveSet.filter("reservedIndicator == true");
+
+			if (invreserveSet && invreserveSet.count() == 0) {
+				throw new PlatformRuntimeException("atLeastOneItem");
 			}
 		},
 		 

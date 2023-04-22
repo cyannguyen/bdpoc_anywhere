@@ -388,6 +388,8 @@
 
 					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
 					
+					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
+
 					<!-- <text id="IssuesReturns.InvreserveListView_tasklabel" label="Task:" layoutInsertAt="item5">
 						<eventHandlers id="IssuesReturns.InvreserveListView_TaskLabel_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_label_eventHandlers_render_Task" method="hideTaskLabel"/>
@@ -1370,6 +1372,8 @@
 				<localAttribute dataType="string" id="invreserveResource_issueto" name="issueTo"/>
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" formula="new Date()" id="invreserveResource_actualDate" name="actualdate"/>
+				<localAttribute dataType="boolean" formula="true" id="invreserve_item_reservedindicator" name="reservedIndicator"/>
+
 				<!-- <localAttribute dataType="string" id="invreserveResource_partno" name="modelnum"/> -->
 				<attribute describedByProperty="spi:item{spi:modelnumref}" id="invreserveResource_item_spimodelnumref" name="modelnumref"/>
 				<localAttribute dataType="string" id="invreserveResource_string_frombin" name="frombin"/>
