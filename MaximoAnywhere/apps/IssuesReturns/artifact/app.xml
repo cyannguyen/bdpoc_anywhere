@@ -203,6 +203,7 @@
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemstatus" name="domainitemstatus"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemtype" name="domainitemtype"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_additionalMatusetrans" name="additionalMatusetrans"/>
+				<requiredResource id="IssuesReturns.SearchReturnView_formnumberTemp" name="formnumberTemp" reload="false"/>
 			</requiredResources>
 			<container cssClass="errorheader" id="IssuesReturns.SearchReturnView_container_0">
 				<link id="IssuesReturns.SearchReturnView_link" label="">
@@ -1122,12 +1123,12 @@
 			</returnAttributes>			
 		</lookup>
 		
-		<!-- Form nummber lookup -->
-		<lookup id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="additionalMatusetrans">
+		<!-- Form number lookup -->
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterFornumnumberForLookup" id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
 			<requiredResources id="IssuesReturns.FormnumberLookup_requiredResources">
-				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="additionalMatusetrans" reload="true"/>
+				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="formnumberTemp" reload="false"/>
 			</requiredResources>
-			<list id="IssuesReturns.FormnumberLookup_list" resource="additionalMatusetrans">
+			<list id="IssuesReturns.FormnumberLookup_list" resource="formnumberTemp">
 				<searchAttributes id="IssuesReturns.FormnumberLookup_additionallocations_searchAttributes">
 					<searchAttribute id="IssuesReturns.FormnumberLookup_additionallocations_searchAttribute_formnumber" name="formnumber"/>
 				</searchAttributes>
@@ -1224,6 +1225,12 @@
 				<localAttribute dataType="string" id="invbalTemp_binnum_string" name="binnum"/>
 				<localAttribute dataType="string" id="invbalTemp_lotnum_string" name="lotnum"/>
 				<localAttribute dataType="string" id="invbalTemp_curbal_string" name="curbal"/>
+			</attributes>
+		</resource>
+
+		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">
+			<attributes id="formnumberTemp_attributes">
+				<localAttribute dataType="string" id="formnumberTemp_formnumber_string" name="formnumber"/>
 			</attributes>
 		</resource>
 		<!-- Loc-Out: add Additional usage, Reserved Header, Return Header resource -->

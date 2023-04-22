@@ -247,30 +247,30 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			});							
 		},
 
-		updateFormnumLookupData: function (eventContext) {
-            console.log("Render called");
+        updateFormnumLookupData: function (eventContext) {
             var record = CommonHandler._getAdditionalResource(
                 eventContext,
-                "additionalMatusetrans"
+                "issuesReturns"
             ).getCurrentRecord();
 
-            if (!record) return;
+            var filter = [{ storeloc: record.storeroom, siteid: record.siteid }];
 
-            var storeloc = record.storeloc;
-
-            var formnumberPromise = ModelService.removeAndFilter(
+            var binnumPromise = ModelService.filtered(
                 "additionalMatusetrans",
-                [{ storeloc: storeloc }],
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
                 1000,
-                true
+                true,
+                true,
+                null,
+                false
             );
-            formnumberPromise.then(function (data) {
-                if (data.length > 0) {
-                    data.resourceID = "additionalMatusetrans";
-                    eventContext.application.addResource(data);
-
-                    data.filter("formnumber != null");
-                }
+            binnumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.resourceID = "formnumberTemp";
+                data.filter("formnumber != null");
+                data.filter("issuetype != 'RETURN'");
+                eventContext.application.addResource(data);
             });
         },
 		
