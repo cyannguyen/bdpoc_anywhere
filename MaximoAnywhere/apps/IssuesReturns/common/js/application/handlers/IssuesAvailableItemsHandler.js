@@ -1063,6 +1063,36 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 		},
 
+		updateBinnumLookupReserved: function (eventContext) {
+            var invreserveRecords = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invreserve"
+            );
+
+            var filter = [];
+
+            arrayUtil.forEach(invreserveRecords.data, function (item) {
+                console.log("data push", item, item.item);
+                filter.push({ itemnum: item.item, location: item.location });
+            });
+
+            var binnumPromise = ModelService.filtered(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            binnumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.resourceID = "invbalTempReserved";
+                eventContext.application.addResource(data);
+            });
+        },
+
 		setFromLotCurbalReserved: function (eventContext) {
             var self = this;
             var issueResource = CommonHandler._getAdditionalResource(

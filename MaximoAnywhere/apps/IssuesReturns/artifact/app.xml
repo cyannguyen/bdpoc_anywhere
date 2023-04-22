@@ -289,7 +289,8 @@
 				<requiredResource id="IssuesReturns.InvreserveListView_requiredResource_invuse" name="invuse">
 					<requiredAttribute id="IssuesReturns.InvreserveListView_requiredResource_invuseline" name="invuseline"/>
 				</requiredResource>
-				<requiredResource id="IssuesReturns.InvreserveListView_additionalInvbalance" name="additionalInvbalance"/>
+				<requiredResource id="IssuesReturns.InvreserveListView_invbalance" name="invbalance"/>
+				<requiredResource id="IssuesReturns.InvreserveListView_invbalTempReserved" name="invbalTempReserved" reload="false"/>
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
 			</requiredResources>
 			<!-- Loc-In: add View for Reserved Header -->
@@ -403,6 +404,9 @@
 					
 					<!-- Loc-Out: arrange all fields AND Add partNo, actualDate-->
 					</listItemTemplate>
+					<eventHandlers id="IssuesReturns.InvreserveListView_events">
+						<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_eventhandler_render" method="updateBinnumLookupReserved"/>
+					</eventHandlers>
 			</list>
 			<footer id="IssuesReturns.InvreserveListView_footer">
 				<button id="IssuesReturns.InvreserveListView_Cancel_button" label="Cancel">
@@ -907,12 +911,12 @@
 			</returnAttributes>	
 		</lookup>
 
-		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterBinReservedForLookup" id="IssuesReturns.FromBinReservedLookup" label="Select Bin" resource="additionalInvbalance">
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterBinReservedForLookup" id="IssuesReturns.FromBinReservedLookup" label="Select Bin" resource="invbalTempReserved">
 			<requiredResources id="IssuesReturns.FromBinReservedLookup_requiredResources">
-				<requiredResource id="IssuesReturns.FromBinReservedLookup_additionalInvbalance" name="additionalInvbalance" reload="false"/>
+				<requiredResource id="IssuesReturns.FromBinReservedLookup_invbalTempReserved" name="invbalTempReserved" reload="false"/>
 				<requiredResource id="IssuesReturns.FromBinReservedLookup_invreserve" name="invreserve"/>
 			</requiredResources>
-			<list id="IssuesReturns.FromBinReservedLookup_list" resource="additionalInvbalance">
+			<list id="IssuesReturns.FromBinReservedLookup_list" resource="invbalTempReserved">
 				<searchAttributes id="IssuesReturns.FromBinReservedLookup_searchAttributes">
 					<searchAttribute id="IssuesReturns.FromBinReservedLookup_searchAttribute_binnum" name="binnum"/>
 				</searchAttributes>
@@ -1231,6 +1235,16 @@
 		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">
 			<attributes id="formnumberTemp_attributes">
 				<localAttribute dataType="string" id="formnumberTemp_formnumber_string" name="formnumber"/>
+			</attributes>
+		</resource>
+
+		<resource id="invbalTempReserved" inMemory="true" name="invbalTempReserved" singleton="true">
+			<attributes id="invbalTempReserved_attributes">
+				<localAttribute dataType="string" id="invbalTempReserved_formnumber_spi_formnumber" index="true" name="binnum"/>
+				<localAttribute dataType="string" id="invbalTempReserved_lotnum_spilotnum" name="lotnum"/>
+				<localAttribute dataType="string" id="invbalTempReserved_curbal_spicurbal" name="curbal"/>
+				<localAttribute dataType="string" id="invbalTempReserved_itemnum_spiitemoslcshortTitle" index="true" name="itemnum"/>
+				<localAttribute dataType="string" id="invbalTempReserved_location_spilocation" index="true" name="location"/>
 			</attributes>
 		</resource>
 		<!-- Loc-Out: add Additional usage, Reserved Header, Return Header resource -->
