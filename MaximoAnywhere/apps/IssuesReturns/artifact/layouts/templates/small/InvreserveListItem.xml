@@ -33,6 +33,7 @@
 		<column colspan="1" columnid="item3" halign="left" id="item3_column"/>
 		<column colspan="2" columnid="item4" halign="left" id="item4_column"/>
 		<!-- <column colspan="1" columnid="item9" halign="left" id="item9_column"/> -->
+		<column colspan="1" columnid="flag_cel" id="item3_column" rowspan="3"/>
 	</row>
 	<row id="row_2">
 		<column colspan="1" columnid="item5" id="item5_column"/>
