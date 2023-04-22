@@ -1517,7 +1517,7 @@
 			<queryBases id="invbalance_queryBases">		
 			    <queryBase id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
 	 		</queryBases>									
-			<whereClause id="invbalance_whereClause"/>
+			<whereClause clause="spi:curbal>0" id="invbalance_whereClause"/>
 		</resource>		
 
 		<!-- inmemory rotating asset data -->
