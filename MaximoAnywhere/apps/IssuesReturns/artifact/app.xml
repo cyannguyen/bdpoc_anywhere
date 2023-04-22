@@ -5,25 +5,26 @@
 <!-- =================================== -->
 <!-- ISSUES & RETURNS APPLICATION ARTIFACT -->
 <!-- =================================== -->
-<app blindQuerySupport="false" id="issuesReturns" logLevel="0" requiredRole="ANYWHERE_ISSUES_RETURNS" version="20220526_155012-0400" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">
-	
+<app blindQuerySupport="false" id="issuesReturns" logLevel="0" requiredRole="ANYWHERE_ISSUES_RETURNS" version="20220526_155012-0400"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">
+
 	<!-- Back up this file before you edit it. -->
-	
+
 	<!-- comment this in to enable device side sso login-->
-    <!--
+	<!--
     <eventHandlers id="IssuesReturns_eventHandlers">
 	    <eventHandler class="platform.handlers.SSOHandler" event="initialize" id="IssuesReturns_eventHandlers_initialize_performSSOLogin" method="performSSOLogin"/>
 	</eventHandlers> 	
 	-->
-	 
+
 	<!--UI SECTION-->
 	<!--To change the display name of any element, change the label attribute.-->
 	<!--If you support additional languages, you must also update the label in the common/js/application/translation/nls/<language>/artifact.js file for that language.-->
-	
+
 	<ui id="ui">
-	    
-	<!-- Begin SEARCH VIEWS -->
-	
+
+		<!-- Begin SEARCH VIEWS -->
+
 		<!-- Storeroom Selection View -->
 		<view id="IssuesReturns.StoreroomSelectionView" label="Issues and Returns" resource="issuesReturns" showBackButton="false">
 			<container id="IssuesReturns.StoreroomSelectionView_IssuesReturns_container_0">
@@ -35,7 +36,7 @@
 							</eventHandlers>
 						</text>
 					</groupitem>
-				</group>			    
+				</group>
 				<group id="IssuesReturns.StoreroomSelectionView_group_1">
 					<groupitem id="IssuesReturns.StoreroomSelectionView_storeroom_groupitem_1">
 						<text editable="true" id="IssuesReturns.StoreroomSelectionView_storeroom_groupitem_1_text" label="Storeroom" labelCss="editableLabel" lookup="IssuesReturns.StoreroomLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="storeroom">
@@ -62,14 +63,14 @@
 					</eventHandlers>
 				</button> -->
 				<container id="IssuesReturns.StoreroomSelectionView_IssuesReturns_container_0_1" layout="MainButtonListItem">
-				    <button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_IssueReserved_button" label="Issue Reserved Items" layoutInsertAt="button1">
+					<button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_IssueReserved_button" label="Issue Reserved Items" layoutInsertAt="button1">
 						<eventHandlers id="IssuesReturns.StoreroomSelectionView_IssuePlannedItem_button_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.StoreroomSelectionView_issueplanned_button_eventHandlers_click" method="transitsToIssuePlannedSearchView"/>
 						</eventHandlers>
 					</button>
 					<button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_IssueUnreserved_button" label="Issue Additional Items" layoutInsertAt="button2">
 						<eventHandlers id="IssuesReturns.StoreroomSelectionView_IssueAdditionalItem_button_eventHandlers">
-							<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.StoreroomSelectionView_issueadditionl_button_eventHandlers_click" method="transitsToIssueAdditionalSearchView"/> 
+							<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.StoreroomSelectionView_issueadditionl_button_eventHandlers_click" method="transitsToIssueAdditionalSearchView"/>
 						</eventHandlers>
 					</button>
 					<button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_Return_button" label="Return Items" layoutInsertAt="button3">
@@ -81,13 +82,13 @@
 				<!-- Loc-Out: Layout of all buttons -->
 			</container>
 		</view>
-		 
+
 		<!-- Issue Reserved Search Item View -->
 		<view id="IssuesReturns.SearchInvreserveView" label="Search Reserved Items" resource="issuesReturns">
-		    <requiredResources id="IssuesReturns.SearchInvreserveView_requiredResources">
+			<requiredResources id="IssuesReturns.SearchInvreserveView_requiredResources">
 				<requiredResource id="IssuesReturns.SearchInvreserveView_requiredResource_errorResource" name="errorResource"/>
-			</requiredResources>			
-		   		    
+			</requiredResources>
+
 			<container cssClass="errorheader" id="IssuesReturns.SearchInvreserve_container_0">
 				<link id="link" label="">
 					<eventHandlers id="link_eventHandlers">
@@ -96,7 +97,7 @@
 					</eventHandlers>
 				</link>
 			</container>
-						
+
 			<container id="IssuesReturns.SearchInvreserve_container_1" resource="issuesReturns">
 				<group id="IssuesReturns.SearchInvreserve_group_1">
 					<groupitem id="IssuesReturns.SearchInvreserve_workorder_groupitem_0">
@@ -114,8 +115,8 @@
 						<text editable="true" id="IssuesReturns.SearchInvreserve_asset" label="Asset" lookup="IssuesReturns.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
 							<eventHandlers id="IssuesReturns.SearchInvreserve_asset_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.SearchInvreserve_asset_eventHandler" method="setFieldsReadonly"/>
-							</eventHandlers>						
-						</text>   
+							</eventHandlers>
+						</text>
 					</groupitem>
 					<!-- 
 					<groupitem id="IssuesReturns.SearchInvreserve_location_groupitem_3">
@@ -127,13 +128,13 @@
 					</groupitem>
 					 -->
 				</group>
-			</container>					
+			</container>
 			<footer id="IssuesReturns.SearchInvreserve_footer">
 				<button id="IssuesReturns.SearchInvreserve_Clear_button" label="Clear">
 					<eventHandlers id="IssuesReturns.SearchInvreserve_Clear_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SearchInvreserve_clear_button_eventHandlers_click_Clear" method="clearSearchFields"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button cssClass="mblPrimaryButton" id="IssuesReturns.SearchInvreserve_Search_button" label="Search" primary="true">
 					<eventHandlers id="IssuesReturns.SearchInvreserve_Search_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SearchInvreserve_Search_button_eventHandlers_click_Search" method="searchReservedItem"/>
@@ -144,7 +145,7 @@
 
 		<!-- Issue Unreserved Search Item View -->
 		<view id="IssuesReturns.SearchUnreservedView" label="Search Additional Items" resource="issuesReturns">
-		    <requiredResources id="IssuesReturns.SearchUnreservedView_requiredResources">
+			<requiredResources id="IssuesReturns.SearchUnreservedView_requiredResources">
 				<requiredResource id="IssuesReturns.SearchUnreservedView_requiredResource_errorResource" name="errorResource"/>
 				<requiredResource id="IssuesReturns.SearchUnreservedView_domainitemstatus" name="domainitemstatus"/>
 				<requiredResource id="IssuesReturns.SearchUnreservedView_domainitemtype" name="domainitemtype"/>
@@ -156,7 +157,7 @@
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SearchUnreservedView_link_eventHandlers_render_hideShowSelectLink" method="hideShowErrorLink"/>
 					</eventHandlers>
 				</link>
-			</container>				
+			</container>
 			<container id="IssuesReturns.SearchUnreserved_container_1" resource="issuesReturns">
 				<group id="IssuesReturns.SearchUnreserved_group_1">
 					<groupitem id="IssuesReturns.SearchUnreserved_location_groupitem_0">
@@ -194,10 +195,10 @@
 				</button>
 			</footer>
 		</view>
-		
+
 		<!-- Return Search Item View -->
 		<view id="IssuesReturns.SearchReturnView" label="Search Items for Return" resource="issuesReturns">
-		    <requiredResources id="IssuesReturns.SearchReturnView_requiredResources">
+			<requiredResources id="IssuesReturns.SearchReturnView_requiredResources">
 				<requiredResource id="IssuesReturns.SearchReturnView_requiredResource_errorResource" name="errorResource"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="IssuesReturns.SearchReturnView_domainitemstatus" name="domainitemstatus"/>
@@ -221,14 +222,14 @@
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_1">
 						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_itemnum" label="Item" lookup="IssuesReturns.ItemLookup" lookupAttribute="itemnum" placeHolder="Tap to enter" resourceAttribute="itemnum">
-						    <eventHandlers id="IssuesReturns.SearchReturn_itemnum_eventHandlers">
+							<eventHandlers id="IssuesReturns.SearchReturn_itemnum_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_itemnum_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
 						</text>
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_2">
 						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_workorder" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
-						    <eventHandlers id="IssuesReturns.SearchReturn_wonum_eventHandlers">
+							<eventHandlers id="IssuesReturns.SearchReturn_wonum_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_wonum_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
 						</text>
@@ -236,7 +237,7 @@
 					<!-- Loc-In: Add Searching items -->
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_3">
 						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_formno" label="Form No" lookup="IssuesReturns.FormnumberLookup" lookupAttribute="formnumber" placeHolder="Tap to enter" resourceAttribute="formnumber">
-						    <eventHandlers id="IssuesReturns.SearchReturn_formnumber_eventHandlers">
+							<eventHandlers id="IssuesReturns.SearchReturn_formnumber_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_formnumber_eventHandlers_datachange" method="setFieldsReadonly"/>
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.SearchReturn_formnumber_eventHandlers_render" method="updateFormnumLookupData"/>
 							</eventHandlers>
@@ -244,14 +245,14 @@
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_4">
 						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_location" label="Location" lookup="IssuesReturns.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
-						    <eventHandlers id="IssuesReturns.SearchReturn_location_eventHandlers">
+							<eventHandlers id="IssuesReturns.SearchReturn_location_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_location_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
 						</text>
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_5">
 						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_glaccount" label="GL Debit Account" placeHolder="Tap to enter" resourceAttribute="glaccount">
-						    <eventHandlers id="IssuesReturns.SearchReturn_glaccount_eventHandlers">
+							<eventHandlers id="IssuesReturns.SearchReturn_glaccount_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_glaccount_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
 						</text>
@@ -272,11 +273,15 @@
 					</eventHandlers>
 				</button>
 			</footer>
-		</view>
-		
-	<!-- End SEARCH VIEWS -->
 
-	<!-- Begin LIST/RESULT VIEWS -->
+			<eventHandlers id="IssuesReturns.SearchReturnView_eventHandlers">
+				<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="back" id="IssuesReturns.SearchReturnView_eventHandlers_back" method="clearReadOnlyReturn"/>
+			</eventHandlers>
+		</view>
+
+		<!-- End SEARCH VIEWS -->
+
+		<!-- Begin LIST/RESULT VIEWS -->
 
 		<!-- Issue Reserved List View -->
 		<view id="IssuesReturns.InvreserveListView" label="Issue Reserved Items" resource="invreserve">
@@ -292,13 +297,14 @@
 				<requiredResource id="IssuesReturns.InvreserveListView_invbalance" name="invbalance"/>
 				<requiredResource id="IssuesReturns.InvreserveListView_invbalTempReserved" name="invbalTempReserved" reload="false"/>
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
+
 			</requiredResources>
 			<!-- Loc-In: add View for Reserved Header -->
- 			<container id="IssuesReturns.InvreserveListView_container_1" resource="issueReservedHeader">
- 			    <group id="IssuesReturns.InvreserveListView_group_1">
- 			        <groupitem id="IssuesReturns.InvreserveListView_usage_groupitem_0">
+			<container id="IssuesReturns.InvreserveListView_container_1" resource="issueReservedHeader">
+				<group id="IssuesReturns.InvreserveListView_group_1">
+					<groupitem id="IssuesReturns.InvreserveListView_usage_groupitem_0">
 						<text editable="false" id="IssuesReturns.InvreserveListView_storeroom" label="From Warehouse" resourceAttribute="storeroom"/>
-					</groupitem>					
+					</groupitem>
 					<groupitem id="IssuesReturns.InvreserveListView_usage_groupitem_1">
 						<text editable="true" id="IssuesReturns.InvreserveListView_formno" label="Form No" placeHolder="Tap to enter" required="true" resourceAttribute="formnumber">
 							<eventHandlers id="IssuesReturns.InvreserveListView_Header_formno_eventHandlers">
@@ -330,7 +336,7 @@
 						<sortAttribute direction="asc" id="IssuesReturns.InvreserveListView_invreserve_Item_sortAttribute_item" name="item"/>
 					</sortOption>
 				</sortOptions>
-				<listItemTemplate id="IssuesReturns.InvreserveListView_listItemTemplate" layout="InvreserveListItem">	
+				<listItemTemplate id="IssuesReturns.InvreserveListView_listItemTemplate" layout="InvreserveListItem">
 					<!-- Loc-In: arrange all fields AND Add partNo, actualDate -->
 					<!-- <listtext id="IssuesReturns.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
 					<listtext id="IssuesReturns.InvreserveListView_itemdesc" layoutInsertAt="item2" resourceAttribute="itemdesc"/>
@@ -355,14 +361,14 @@
 					</text>
 					
 					<listtext id="IssuesReturns.InvreserveListView_wonum" layoutInsertAt="item8" resourceAttribute="wonum"/> -->
-					
+
 					<listtext id="IssuesReturns.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
 					<text editable="false" id="IssuesReturns.InvreserveListView_binnum" layoutInsertAt="item2" resourceAttribute="binnum"/>
 					<listtext id="IssuesReturns.InvreserveListView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
 					<text editable="false" id="IssuesReturns.InvreserveListView_modelnum" layoutInsertAt="item4" resourceAttribute="modelnumref"/>
 					<listtext id="IssuesReturns.InvreserveListView_avblbalance" layoutInsertAt="item5" resourceAttribute="avblbalance"/>
 					<text id="IssuesReturns.InvreserveListView_actualdate" layoutInsertAt="item6" required="false" resourceAttribute="actualdate">
-					    <eventHandlers id="IssuesReturns.InvreserveListView_actualDate_eventHandlers">
+						<eventHandlers id="IssuesReturns.InvreserveListView_actualDate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_actualDate_eventHandlers_render" method="setDefaultActualDateReservedItems"/> -->
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.InvreserveListView_actualDate_eventHandlers_datachange" method="validateActualDateIssueReturnItems"/>
 						</eventHandlers>
@@ -373,8 +379,9 @@
 					<text cssClass="copyPlanActual" editable="true" id="IssuesReturns.InvreserveListView_localreservedqty" layoutInsertAt="item9" resourceAttribute="localreservedqty">
 						<eventHandlers id="IssuesReturns.InvreserveListView_localreservedqty_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.InvreserveListView_label_eventHandlers_localreservedqty" method="validateQty"/>
-						</eventHandlers>					
+						</eventHandlers>
 					</text>
+					<!-- customize bin -->
 					<text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
@@ -382,14 +389,13 @@
 							</eventHandlers>
 						</button> -->
 						<eventHandlers id="IssuesReturns.InvreserveListView_frombin_eventHandlers">
-							<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.InvreserveListView_frombin_eventhandler_datachange" method="setFromLotCurbalReserved"/>
+							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.InvreserveListView_frombin_eventhandler_datachange" method="setFromLotCurbalReserved"/>
 						</eventHandlers>
 					</text>
 
 					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
-					
-					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
 
+					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
 					<!-- <text id="IssuesReturns.InvreserveListView_tasklabel" label="Task:" layoutInsertAt="item5">
 						<eventHandlers id="IssuesReturns.InvreserveListView_TaskLabel_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_label_eventHandlers_render_Task" method="hideTaskLabel"/>
@@ -402,20 +408,20 @@
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_label_eventHandlers_render_issueto" method="hideIssueToLabel"/>
 						</eventHandlers>
 					</text> -->
-					
-					
+
+
 					<!-- Loc-Out: arrange all fields AND Add partNo, actualDate-->
-					</listItemTemplate>
-					<eventHandlers id="IssuesReturns.InvreserveListView_events">
-						<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_eventhandler_render" method="updateBinnumLookupReserved"/>
-					</eventHandlers>
+				</listItemTemplate>
+				<eventHandlers id="IssuesReturns.InvreserveListView_events">
+					<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_eventhandler_render" method="updateBinnumLookupReserved"/>
+				</eventHandlers>
 			</list>
 			<footer id="IssuesReturns.InvreserveListView_footer">
 				<button id="IssuesReturns.InvreserveListView_Cancel_button" label="Cancel">
 					<eventHandlers id="IssuesReturns.InvreserveListView_Cancel_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_button_eventHandlers_click_Cancel" method="cancelReservation"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button cssClass="mblPrimaryButton" id="IssuesReturns.InvreserveListView_Complete_button" label="Complete" primary="true">
 					<eventHandlers id="IssuesReturns.InvreserveListView_Complete_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_Complete_button_eventHandlers_click_Complete" method="completeReservation"/>
@@ -426,7 +432,7 @@
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.InvreserveListView_eventHandlers_back" method="transitsBackToIssuePlannedSearchView"/>
 			</eventHandlers>
 		</view>
-		
+
 		<!-- Issue Additional Items List View -->
 		<view id="IssuesReturns.AdditionalItemsListView" label="Issue Additional Items" resource="inventory">
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.AdditionalItemsListView_list" label="Records" resource="inventory" showHeader="true" transitionTo="IssuesReturns.AdditionalItemsDetailsView">
@@ -437,24 +443,24 @@
 					<listtext id="IssuesReturns.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
 					<text id="IssuesReturns.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/>
 					<listtext id="IssuesReturns.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
-				</listItemTemplate>  
+				</listItemTemplate>
 			</list>
 			<eventHandlers id="IssuesReturns.AdditionalItemsListView_eventHandlers">
 				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="back" id="IssuesReturns.AdditionalItemsListView_eventHandlers_back" method="transitsBackToIssueAdditionalSearchView"/>
 			</eventHandlers>
 		</view>
-		
+
 		<!-- Issued List View (Issued item) -->
 		<view id="IssuesReturns.IssuedItemsListView" label="Return Issued Items" resource="matusetrans">
-		    <requiredResources id="IssuesReturns.IssuedItemsListView_requiredResources">
+			<requiredResources id="IssuesReturns.IssuedItemsListView_requiredResources">
 				<requiredResource id="IssuesReturns.IssuedItemsListView_requiredResource_invreserve" name="domaininvusestatus"/>
 				<requiredResource id="IssuesReturns.IssuedItemsListView_requiredResource_domaininvusetype" name="domaininvusetype"/>
 				<requiredResource id="IssuesReturns.IssuedItemsListView_requiredResource_invuse" name="invuse"/>
 				<requiredResource id="IssuesReturns.IssuedItemsListView_requiredResource_statusChangeResource" name="statusChangeResource"/>
-		    </requiredResources>
+			</requiredResources>
 			<!-- Loc-In: add View for Return Header -->
- 			<container id="IssuesReturns.IssuedListView_container_1" resource="issueReturnHeader">
- 			    <group id="IssuesReturns.IssuedListView_group_1">					
+			<container id="IssuesReturns.IssuedListView_container_1" resource="issueReturnHeader">
+				<group id="IssuesReturns.IssuedListView_group_1">
 					<groupitem id="IssuesReturns.IssuedListView_usage_groupitem_1">
 						<text editable="true" id="IssuesReturns.IssuedListView_fromno" label="Form No" placeHolder="Tap to enter" required="true" resourceAttribute="formnumber">
 							<eventHandlers id="IssuesReturns.IssuedListView_Header_formno_eventHandlers">
@@ -493,7 +499,7 @@
 					<listtext id="IssuesReturns.IssuedItemsListView_wonum" layoutInsertAt="wonum_cel" resourceAttribute="wonum"/>
 					<listtext id="IssuesReturns.IssuedItemsListView_rotassetnum" layoutInsertAt="rotating_asset_cel" resourceAttribute="rotassetnum"/>
 					<text id="IssuesReturns.IssuedItemsListView_rotatinglabel" label="Rotating Asset" layoutInsertAt="rotating_asset_label_cel">
-					    <eventHandlers id="IssuesReturns.IssuedItemsListView_RotatingLabel_eventHandlers">
+						<eventHandlers id="IssuesReturns.IssuedItemsListView_RotatingLabel_eventHandlers">
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_rotasset_eventHandlers_render" method="hideRotatingAssetLabel"/>
 						</eventHandlers>
 					</text>
@@ -502,8 +508,8 @@
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_returnQty_eventHandlers_render" method="renderReturnQuantity"/>
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.IssuedItemsListView_returnQty_eventHandlers_datachange" method="validateQuantity"/>
 						</eventHandlers>
-					</text>				
-					<!-- <text id="IssuesReturns.IssuedItemsListView_returnflag"			layoutInsertAt="flag_cel" label="Check Box"/> -->
+					</text>
+					<!-- <text id="IssuesReturns.IssuedItemsListView_returnflag" layoutInsertAt="flag_cel" label="Check Box"/> -->
 					<checkbox cssClass="rightCheckBox" id="IssuesReturns.IssuedItemsListView_returnflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="returnindicator"/>
 					<!-- Loc-In: Add actualDate -->
 					<!-- 
@@ -514,7 +520,7 @@
 					</text> -->
 					<listtext id="IssuesReturns.IssuedItemsListView_partno" layoutInsertAt="partno_cel" resourceAttribute="modelnumref"/>
 					<text id="IssuesReturns.IssuedItemsListView_actualdate" layoutInsertAt="actualdate_cel" resourceAttribute="actualdate">
-					    <eventHandlers id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers">
+						<eventHandlers id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers_render" method="setDefaultActualDateReturnItems"/> -->
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers_datachange" method="validateActualDateIssueReturnItems"/>
 						</eventHandlers>
@@ -527,7 +533,7 @@
 					<eventHandlers id="IssuesReturns.IssuedItemsListView_Cancel_button_eventHandlers">
 						<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="click" id="IssuesReturns.IssuedItemsListView_button_eventHandlers_click_Cancel" method="cancelReturn"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button cssClass="mblPrimaryButton" id="IssuesReturns.IssuedItemsListView_Complete_button" label="Complete" primary="true">
 					<eventHandlers id="IssuesReturns.IssuedItemsListView_Complete_button_eventHandlers">
 						<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="click" id="IssuesReturns.IssuedItemsListView_Complete_button_eventHandlers_click_Complete" method="completeReturn"/>
@@ -537,13 +543,13 @@
 			<eventHandlers id="IssuesReturns.IssuedItemsListView_eventHandlers">
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.IssuedItemsListView_eventHandlers_back" method="transitsBackToReturnSearchView"/>
 			</eventHandlers>
-		</view>	
-		
+		</view>
+
 		<!-- Rotating Item View -->
 		<view id="IssuesReturns.RotatingItemListView" label="Select Rotating Asset" resource="asset">
-		    <requiredResources id="IssuesReturns.RotatingItemListView_requiredResources">
-				<requiredResource id="IssuesReturns.RotatingItemListView_requiredResource_rotatingAssetUsage" name="rotatingAssetUsage"/>			    
-			</requiredResources>	
+			<requiredResources id="IssuesReturns.RotatingItemListView_requiredResources">
+				<requiredResource id="IssuesReturns.RotatingItemListView_requiredResource_rotatingAssetUsage" name="rotatingAssetUsage"/>
+			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.RotatingItemListView_list" label="Records" resource="asset" showHeader="true">
 				<listItemTemplate id="IssuesReturns.RotatingItemListView_listItemTemplate" layout="InvbalanceListItem">
 					<listtext id="IssuesReturns.RotatingItemListView_itemnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
@@ -551,16 +557,16 @@
 					<eventHandlers id="IssuesReturns.RotatingItemListView_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.RotatingItemListView_eventHandlers_click" method="selectRotatingAsset"/>
 					</eventHandlers>
-				</listItemTemplate>  
+				</listItemTemplate>
 			</list>
 			<footer id="IssuesReturns.RotatingItemListView_footer">
 				<button id="IssuesReturns.RotatingItemListView_footer_Cancel_button" label="Cancel">
-				    <eventHandlers id="IssuesReturns.RotatingItemListView_Cancel_button_eventHandlers">
+					<eventHandlers id="IssuesReturns.RotatingItemListView_Cancel_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.RotatingItemListView_button_eventHandlers_click_Cancel" method="cancelRotatingAssetSelection"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button id="IssuesReturns.RotatingItemListView_footer_Clear_button" label="Clear Value">
-				    <eventHandlers id="IssuesReturns.RotatingItemListView_Clear_button_eventHandlers">
+					<eventHandlers id="IssuesReturns.RotatingItemListView_Clear_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.RotatingItemListView_button_eventHandlers_click_Clear" method="clearRotatingAssetSelection"/>
 					</eventHandlers>
 				</button>
@@ -568,13 +574,13 @@
 			<eventHandlers id="IssuesReturns.RotatingItemListView_eventHandlers_view">
 				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="back" id="IssuesReturns.RotatingItemListView_eventHandlers_back" method="transitsBackToIssueAdditionalSearchView"/>
 			</eventHandlers>
-		</view>		
-	<!-- End LIST/RESULT VIEWS -->
+		</view>
+		<!-- End LIST/RESULT VIEWS -->
 
-	<!-- Begin SPLIT/ROTATING VIEW -->
-	
+		<!-- Begin SPLIT/ROTATING VIEW -->
+
 		<!-- IssuesReturns.SplitQtyRotatingAssetView -->
-		<view id="IssuesReturns.SplitQtyRotatingAssetView" label="Split Usage Quantity" resource="splitrotateresource">		
+		<view id="IssuesReturns.SplitQtyRotatingAssetView" label="Split Usage Quantity" resource="splitrotateresource">
 			<requiredResources id="IssuesReturns.SplitQtyRotatingAssetView_requiredResources">
 				<requiredResource id="IssuesReturns.SplitQtyRotatingAssetView_requiredResource_additionalasset" name="additionalasset"/>
 				<requiredResource id="IssuesReturns.SplitQtyRotatingAssetView_requiredResource_rotatingAssets" name="rotatingAssets"/>
@@ -584,7 +590,7 @@
 				<requiredResource id="IssuesReturns.SplitQtyRotatingAssetView_requiredResource_originalData" name="originalDataSplitBinQty"/>
 			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.SplitQtyRotatingAssetView_list" label="Records" resource="splitrotateresource" showHeader="true">
-				<listItemTemplate id="IssuesReturns.SplitQtyRotatingAssetView_listItemTemplate" layout="SplitQtyRotateList">	
+				<listItemTemplate id="IssuesReturns.SplitQtyRotatingAssetView_listItemTemplate" layout="SplitQtyRotateList">
 					<listtext id="IssuesReturns.SplitQtyRotatingAssetView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
 					<listtext id="IssuesReturns.SplitQtyRotatingAssetView_itemdesc" layoutInsertAt="item2" resourceAttribute="description"/>
 					<listtext id="IssuesReturns.SplitQtyRotatingAssetView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
@@ -593,53 +599,53 @@
 					<button id="IssuesReturns.SplitQtyRotatingAssetView_imagesaction_action_split_off.png_button" image="/images/action_split_off.png" layoutInsertAt="button1">
 						<eventHandlers id="IssuesReturns.SplitQtyRotatingAssetView_imagesaction_split.png_button_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_click" method="autoSplit"/>
-							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_render" method="showSplitButton"/> 
-						</eventHandlers> 
+							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_render" method="showSplitButton"/>
+						</eventHandlers>
 					</button>
 					<button id="IssuesReturns.SplitQtyRotatingAssetView_imagesaction_rotate.png_button" image="/images/action_rotatingAsset_off.png" layoutInsertAt="button1">
 						<eventHandlers id="IssuesReturns.SplitQtyRotatingAssetView_imagesaction_rotate.png_button_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_click_rotate" method="autoSplit"/>
-							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_render_rotate" method="showRotateButton"/> 
-						</eventHandlers> 
-					</button>										
+							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SplitQtyRotatingAssetView_eventhandler_render_rotate" method="showRotateButton"/>
+						</eventHandlers>
+					</button>
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="IssuesReturns.SplitQtyRotatingAssetView_groupitem_0_siteid_eventHandlers">
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.SplitQtyRotatingAssetView_backbutton" method="handleBackButtonOnSplitQtyRotView"/>
-			</eventHandlers>						
+			</eventHandlers>
 		</view>
-		
+
 		<!-- IssuesReturns.SplitQtyAcrossBinsView -->
-		<view id="IssuesReturns.SplitQtyAcrossBinsView" label="{0}" resolverClass="application.handlers.IssuesReturnsHandler" resolverFunction="resolveViewLabel" resource="splitqtyacrossbins">		
+		<view id="IssuesReturns.SplitQtyAcrossBinsView" label="{0}" resolverClass="application.handlers.IssuesReturnsHandler" resolverFunction="resolveViewLabel" resource="splitqtyacrossbins">
 			<requiredResources id="IssuesReturns.SplitQtyAcrossBinsView_requiredResources">
-				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_rotatingAssetUsage" name="rotatingAssetUsage"/>			    
+				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_rotatingAssetUsage" name="rotatingAssetUsage"/>
 				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_additionalasset" name="additionalasset"/>
 				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_splitqtyacrossbins" name="splitqtyacrossbins" reload="false"/>
 				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_calculatedDataSplitBinQty" name="calculatedDataSplitBinQty"/>
 				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_originalDataSplitBinQty" name="originalDataSplitBinQty"/>
 				<requiredResource id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_invuse" name="invuse" reload="false">
 					<requiredAttribute id="IssuesReturns.SplitQtyAcrossBinsView_requiredResource_npinvuselinesplit" name="npinvuselinesplit" reload="false"/>
-				</requiredResource>	
+				</requiredResource>
 			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.SplitQtyAcrossBinsView_list" label="Records" resource="splitqtyacrossbins" showHeader="true">
-				<listItemTemplate id="IssuesReturns.SplitQtyAcrossBinsView_listItemTemplate" layout="SplitQtyRotateList">	
+				<listItemTemplate id="IssuesReturns.SplitQtyAcrossBinsView_listItemTemplate" layout="SplitQtyRotateList">
 					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
 					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_itemdesc" layoutInsertAt="item2" resourceAttribute="description"/>
 					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
 					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_binnum" layoutInsertAt="item4" resourceAttribute="binnum"/>
-					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_qty" layoutInsertAt="item6" resourceAttribute="quantity"/>	
-					<text codeScannable="true" editable="true" id="IssuesReturns.SplitQtyAcrossBinsView_rotasset" label="Rotating Asset" layoutInsertAt="item5" placeHolder="Tap to Enter" resourceAttribute="rotassetnum">					    
+					<listtext id="IssuesReturns.SplitQtyAcrossBinsView_qty" layoutInsertAt="item6" resourceAttribute="quantity"/>
+					<text codeScannable="true" editable="true" id="IssuesReturns.SplitQtyAcrossBinsView_rotasset" label="Rotating Asset" layoutInsertAt="item5" placeHolder="Tap to Enter" resourceAttribute="rotassetnum">
 						<eventHandlers id="IssuesReturns.SplitQtyAcrossBinsView_groupitem_0_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SplitQtyAcrossBinsView_hiderotating" method="hideRotatingField"/>
 							<!-- eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.SplitQtyAcrossBinsView_validateRotatingItem" method="asyncvalidateRotatingItemUsage"/-->
-							<eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.SplitQtyAcrossBinsView_eventhandler_clickddd" method="validateRotatingAsset"/> 
+							<eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.SplitQtyAcrossBinsView_eventhandler_clickddd" method="validateRotatingAsset"/>
 						</eventHandlers>
-					    <button id="IssuesReturns.SplitQtyAcrossBinsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+						<button id="IssuesReturns.SplitQtyAcrossBinsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.SplitQtyAcrossBinsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
-								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyAcrossBinsView_eventhandler_click" method="rotateLookup"/> 
-							</eventHandlers> 
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyAcrossBinsView_eventhandler_click" method="rotateLookup"/>
+							</eventHandlers>
 						</button>
-					</text>  						 	
+					</text>
 				</listItemTemplate>
 			</list>
 			<footer id="IssuesReturns.SplitQtyAcrossBinsView_footer">
@@ -647,7 +653,7 @@
 					<eventHandlers id="IssuesReturns.SplitQtyAcrossBinsView_Clear_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyAcrossBinsView_cancel_button_eventHandlers_click_Cancel" method="handleBackButtonOnSplitQtyAcrossBinsView"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button cssClass="mblPrimaryButton" id="IssuesReturns.SplitQtyAcrossBinsView_Search_button" label="Done" primary="true">
 					<eventHandlers id="IssuesReturns.SplitQtyAcrossBinsView_Search_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.SplitQtyAcrossBinsView_Search_button_eventHandlers_click_Search" method="doneSplitQtyAcrossBins"/>
@@ -656,31 +662,31 @@
 			</footer>
 			<eventHandlers id="IssuesReturns.SplitQtyAcrossBinsView_groupitem_0_siteid_eventHandlers">
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.SplitQtyAcrossBinsView_backbutton" method="handleBackButtonOnSplitQtyAcrossBinsView"/>
-			</eventHandlers>												
+			</eventHandlers>
 		</view>
-		
+
 		<!-- Item Details View (Unreserved item) -->
 		<view id="IssuesReturns.AdditionalItemsDetailsView" label="Item Details" resource="inventory">
-		    <requiredResources id="IssuesReturns.AdditionalItemsDetailsView_requiredResources">			
+			<requiredResources id="IssuesReturns.AdditionalItemsDetailsView_requiredResources">
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_oslcmaxvars" name="oslcmaxvars"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_issueAdditionalItems" name="issueAdditionalItems"/>
-				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_person" name="additionalperson"/>	
-				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_invuse" name="invuse"/>		
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_person" name="additionalperson"/>
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_invuse" name="invuse"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_splitrotateresource" name="splitrotateresource"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domaininvusestatus" name="domaininvusestatus"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domainitemtype" name="domainitemtype"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domaininvusetype" name="domaininvusetype"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_splitqtyacrossbins" name="splitqtyacrossbins"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_originalDataSplitBinQty" name="originalDataSplitBinQty"/>
-				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_calculatedDataSplitBinQty" name="calculatedDataSplitBinQty"/>	
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_calculatedDataSplitBinQty" name="calculatedDataSplitBinQty"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_statusChangeResource" name="statusChangeResource"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_rotatingAssets" name="rotatingAssets"/>
-				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_additionalasset" name="additionalasset"/>	
-				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domainwostatus" name="domainwostatus"/>					
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_additionalasset" name="additionalasset"/>
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domainwostatus" name="domainwostatus"/>
 			</requiredResources>
-			
-		    <!-- Loc-In: arrange all fields -->
-		    <!-- <container id="IssuesReturns.AdditionalItemsDetailsView_container_1" resource="inventory">
+
+			<!-- Loc-In: arrange all fields -->
+			<!-- <container id="IssuesReturns.AdditionalItemsDetailsView_container_1" resource="inventory">
 				<group id="IssuesReturns.AdditionalItemsDetailsView_group_1">
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_itemnum_groupitem_1">
 						<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_itemnum" label="Item" resourceAttribute="itemnum"/>
@@ -691,7 +697,7 @@
 					</groupitem>
  				</group>
  			</container> -->
- 			<container id="IssuesReturns.AdditionalItemsDetailsView_container_1" resource="inventory" layout="UnreservedDetailItem">
+			<container id="IssuesReturns.AdditionalItemsDetailsView_container_1" resource="inventory" layout="UnreservedDetailItem">
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_itemnum" label="Item" resourceAttribute="itemnum" layoutInsertAt="item1"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_partno" label="Part #" resourceAttribute="modelnumref" layoutInsertAt="item2"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_warehouse" label="Warehouse" resourceAttribute="location" layoutInsertAt="item3"/>
@@ -700,10 +706,10 @@
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_unit" label="Unit of Measure" resourceAttribute="issueunit" layoutInsertAt="item6"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_itemdesc" label="Item Description" resourceAttribute="description" layoutInsertAt="item7"/>
 			</container>
- 			<!-- Loc-Out: arrange all fields -->
+			<!-- Loc-Out: arrange all fields -->
 			<!-- Loc-In: add View for Usage -->
- 			<container id="IssuesReturns.AdditionalUsageView_container_3" resource="issueAdditionalUsage">
- 			    <group id="IssuesReturns.AdditionalUsageView_group_3">
+			<container id="IssuesReturns.AdditionalUsageView_container_3" resource="issueAdditionalUsage">
+				<group id="IssuesReturns.AdditionalUsageView_group_3">
 					<groupitem id="IssuesReturns.AdditionalUsageView_usage_groupitem_1">
 						<text editable="true" id="IssuesReturns.AdditionalUsageView_fromno" label="Form No" placeHolder="Tap to enter" required="true" resourceAttribute="formnumber">
 							<eventHandlers id="IssuesReturns.AdditionalUsageView_Header_formno_eventHandlers">
@@ -726,8 +732,8 @@
 				</eventHandlers>
 			</container>
 			<!-- Loc-Out: add View for Usage -->
- 			<container id="IssuesReturns.AdditionalItemsDetailsView_container_2" resource="issueAdditionalItems">
- 			    <group id="IssuesReturns.AdditionalItemsDetailsView_group_2">					
+			<container id="IssuesReturns.AdditionalItemsDetailsView_container_2" resource="issueAdditionalItems">
+				<group id="IssuesReturns.AdditionalItemsDetailsView_group_2">
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_issue_groupitem_2">
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_issue" label="Issue To" lookup="IssuesReturns.IssueToLookup" lookupAttribute="personid" placeHolder="Tap to enter" resourceAttribute="issueTo"/>
 					</groupitem>
@@ -773,27 +779,30 @@
 					<!-- Loc-Out: add lookup for location, asset -->
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_issueQty_groupitem_8">
 						<text editable="true" enableNumericKeyboard="true" id="IssuesReturns.AdditionalItemsDetailsView_isseQty" label="Issue Quantity" placeHolder="Tap to enter" required="true" resourceAttribute="issueQty">
-						    <eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_isseQty_eventHandlers">
+							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_isseQty_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="validate" id="IssuesReturns.AdditionalItemsDetailsView_isseQty_eventHandlers_0" method="validateQty"/>
 							</eventHandlers>
 						</text>
 					</groupitem>
-					
+
 					<!-- Loc-In: add ActualDate, FromBin -->
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_frombin_groupitem_10">
+						<!-- <text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="lotnum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin"> -->
 						<text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="binmum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin">
-						    <!-- <button cssClass="lookupIcon" id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+							<!-- <button cssClass="lookupIcon" id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 								<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 									<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.AdditionalItemsDetailsView_eventhandler_click" method="fromBinLookup"/> 
 								</eventHandlers> 
 							</button> -->
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventHandlers">
-								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/> 
-							</eventHandlers> 
+								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/>
+								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_render" method="getInvbalTemList"/>
+							</eventHandlers>
 						</text>
+						<!-- customize -->
 						<text id="IssuesReturns.AdditionalItemsDetailsView_lotnum" editable="false" label="Lotnum" resourceAttribute="fromlot"/>
 					</groupitem>
-					
+
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_actualdate_groupitem_9">
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_actualdate" label="Actual Date" placeHolder="Tap to enter" required="true" type="date" resourceAttribute="actualdate"/>
 					</groupitem>
@@ -817,7 +826,7 @@
 					</eventHandlers>
 				</button>
 			</footer>
-			
+
 			<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers">
 				<eventHandler class="application.handlers.TaskHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers_validate_validateTask" method="validateTask"/>
 				<!-- Loc-In: add initialize Addtional View -->
@@ -825,31 +834,31 @@
 				<!-- Loc-Out: add initialize Addtional View -->
 				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="back" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_back" method="transitsBackToIssueAdditionalSearchView"/>
 			</eventHandlers>
-		</view>	
+		</view>
 
-		
+
 		<!-- Error Detail View -->
-		<view id="IssuesReturns.ErrorDetailPage" label="Error Handling" resource="invuse">		
+		<view id="IssuesReturns.ErrorDetailPage" label="Error Handling" resource="invuse">
 			<container id="IssuesReturns.ErrorDetailPage_container_2" resource="invuse">
- 			    <group id="IssuesReturns.ErrorDetailPage_group_2">					
+				<group id="IssuesReturns.ErrorDetailPage_group_2">
 					<groupitem id="IssuesReturns.ErrorDetailPage_issue_groupitem_2">
 						<text editable="false" id="IssuesReturns.ErrorDetailPage_invuse" label="Invuse" resourceAttribute="invusenum"/>
 						<text editable="false" id="IssuesReturns.ErrorDetailPage_description" label="Description" resourceAttribute="description"/>
-						
+
 						<button id="errorImage" image="/images/status_error.png"/>
-						
+
 						<textarea editable="false" id="IssuesReturns.ErrorDetailPage_errorMessage" resourceAttribute="errorMessage">
-						 	<eventHandlers id="IssuesReturns.ErrorDetailPage_groupitem_0_eventHandlers">
+							<eventHandlers id="IssuesReturns.ErrorDetailPage_groupitem_0_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.ErrorDetailPage_groupitem_0_errormessage" method="setErrorMessage"/>
-							</eventHandlers>   
+							</eventHandlers>
 						</textarea>
-										
+
 						<button id="IssuesReturns.ErrorDetailPage_button" label="RollBack Error" primary="true">
 							<eventHandlers id="IssuesReturns.ErrorDetailPage_button_eventHandlers">
-								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.ErrorDetailPage_eventhandler_click" method="undoAndDelete"/> 
-							</eventHandlers> 
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.ErrorDetailPage_eventhandler_click" method="undoAndDelete"/>
+							</eventHandlers>
 						</button>
-					</groupitem>	
+					</groupitem>
 				</group>
 			</container>
 		</view>
@@ -857,36 +866,36 @@
 		<!-- Loc-In: Add View -->
 		<!-- From Bin View -->
 		<view id="IssuesReturns.FromBinListView" label="Select Bin" resource="invbalTemp">
-		    <requiredResources id="IssuesReturns.FromBinListView_requiredResources">
+			<requiredResources id="IssuesReturns.FromBinListView_requiredResources">
 				<requiredResource id="IssuesReturns.FromBinListView_requiredResource_invbalancestemp" name="invbalTemp" reload="false"/>
-			</requiredResources>	
+			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.FromBinListView_list" label="Records" resource="invbalTemp" showHeader="true">
 				<listItemTemplate id="IssuesReturns.FromBinListView_listItemTemplate" layout="BinLotLookupItem">
 					<listtext id="IssuesReturns.FromBinListView_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
 					<listtext id="IssuesReturns.FromBinListView_lotnum" layoutInsertAt="item2" resourceAttribute="lotnum"/>
-					 <!--eventHandlers id="IssuesReturns.BinListView_groupitem_0_eventHandlers">
+					<!--eventHandlers id="IssuesReturns.BinListView_groupitem_0_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.BinListView_hidelotnum" method="hideLotnum"/>
 					</eventHandlers-->
 					<listtext id="IssuesReturns.FromBinListView_curbal" layoutInsertAt="item3" resourceAttribute="curbal"/>
 					<eventHandlers id="IssuesReturns.FromBinListView_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.FromBinListView_eventHandlers_click" method="selectFromBinLot"/>
 					</eventHandlers>
-				</listItemTemplate>  
+				</listItemTemplate>
 			</list>
-			
+
 			<footer id="IssuesReturns.FromBinListView_footer">
 				<button id="IssuesReturns.FromBinListView_footer_Cancel_button" label="Cancel">
-				    <eventHandlers id="IssuesReturns.FromBinListView_Cancel_button_eventHandlers">
+					<eventHandlers id="IssuesReturns.FromBinListView_Cancel_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.FromBinListView_button_eventHandlers_click_Cancel" method="cancelBinLotSelection"/>
 					</eventHandlers>
-				</button>				
+				</button>
 				<button id="IssuesReturns.FromBinListView_footer_Clear_button" label="Clear Value">
-				    <eventHandlers id="IssuesReturns.FromBinListView_Clear_button_eventHandlers">
+					<eventHandlers id="IssuesReturns.FromBinListView_Clear_button_eventHandlers">
 						<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.FromBinListView_button_eventHandlers_click_Clear" method="clearFromBinLotSelection"/>
 					</eventHandlers>
 				</button>
 			</footer>
-			
+
 			<eventHandlers id="IssuesReturns.FromBinListView_eventHandlers_view">
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.FromBinListView_eventHandlers_back" method="transitsBackToView"/>
 			</eventHandlers>
@@ -910,9 +919,8 @@
 				<returnAttribute id="IssuesReturns.FromBinLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="frombin"/>
 				<returnAttribute id="IssuesReturns.FromBinLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="fromlot"/>
 				<returnAttribute id="IssuesReturns.FromBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/>
-			</returnAttributes>	
+			</returnAttributes>
 		</lookup>
-
 		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterBinReservedForLookup" id="IssuesReturns.FromBinReservedLookup" label="Select Bin" resource="invbalTempReserved">
 			<requiredResources id="IssuesReturns.FromBinReservedLookup_requiredResources">
 				<requiredResource id="IssuesReturns.FromBinReservedLookup_invbalTempReserved" name="invbalTempReserved" reload="false"/>
@@ -935,7 +943,7 @@
 			</returnAttributes>
 		</lookup>
 		<!-- Loc-Out: Add View -->
-			
+
 		<!-- *********************** -->
 		<!-- LOOKUP SECTION -->
 		<!-- *********************** -->
@@ -1009,7 +1017,7 @@
 		</lookup>
 
 		<!-- Rotating Asset lookup -->
-		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterRotAssetForLookup" id="IssuesReturns.RotatingAssetLookup" label="Select Rotating Asset" resource="additionalasset">		
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterRotAssetForLookup" id="IssuesReturns.RotatingAssetLookup" label="Select Rotating Asset" resource="additionalasset">
 			<list id="IssuesReturns.RotatingAssetLookup_additionalasset_list" resource="additionalasset">
 				<searchAttributes id="IssuesReturns.RotatingAssetLookup_additionalasset_searchAttributes">
 					<searchAttribute id="IssuesReturns.RotatingAssetLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
@@ -1020,10 +1028,10 @@
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.RotatingAssetLookup_additionalasset_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
 				</listItemTemplate>
 			</list>
-			
+
 			<returnAttributes id="IssuesReturns.RotatingAssetLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.RotatingAssetLookup_item_itemnum" sourceAttribute="assetnum" targetAttribute="rotassetnum"/>
-			</returnAttributes>			
+			</returnAttributes>
 		</lookup>
 
 		<!-- Bin lookup -->
@@ -1042,13 +1050,13 @@
 				</listItemTemplate>
 			</list>
 		</lookup>
-						
+
 		<!-- Item lookup -->
-		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="asyncfilterItemForLookup" id="IssuesReturns.ItemLookup" label="Select Item" resource="additionalInventory">		
-			
-				<requiredResources id="IssuesReturns.ItemLookup_requiredResources">
-					<requiredResource id="IssuesReturns.ItemLookup_additionalInventory" name="additionalInventory" reload="true"/>
-				</requiredResources>		
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="asyncfilterItemForLookup" id="IssuesReturns.ItemLookup" label="Select Item" resource="additionalInventory">
+
+			<requiredResources id="IssuesReturns.ItemLookup_requiredResources">
+				<requiredResource id="IssuesReturns.ItemLookup_additionalInventory" name="additionalInventory" reload="true"/>
+			</requiredResources>
 			<list id="IssuesReturns.ItemLookup_additionalInventory_list" resource="additionalInventory">
 				<searchAttributes id="IssuesReturns.ItemLookup_additionalInventory_searchAttributes">
 					<searchAttribute id="IssuesReturns.ItemLookup_additionalInventory_searchAttribute_itemnum" name="itemnum"/>
@@ -1064,14 +1072,14 @@
 
 			<returnAttributes id="IssuesReturns.ItemLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.ItemLookup_item_itemnum" sourceAttribute="itemnum" targetAttribute="itemnum"/>
-<!-- 				<returnAttribute id="IssuesReturns.ItemLookup_item_itemdesc" sourceAttribute="description" targetAttribute="itemdesc"/> -->
+				<!-- 				<returnAttribute id="IssuesReturns.ItemLookup_item_itemdesc" sourceAttribute="description" targetAttribute="itemdesc"/> -->
 				<!-- <returnAttribute id="IssuesReturns.ItemLookup_item_binnum" sourceAttribute="binnum" targetAttribute="bin"/> -->
 			</returnAttributes>
 		</lookup>
-		
+
 		<!-- Return item lookup -->
 		<lookup filterClass="application.handlers.ReturnIssuedItemsHandler" filterMethod="filterUsedItemLookup" id="IssuesReturns.UsedItemLookup" label="Select Item" resource="additionalInventory">
-			
+
 			<list id="IssuesReturns.UsedItemLookup_additionalInventory_list" resource="additionalInventory">
 				<searchAttributes id="IssuesReturns.UsedItemLookup_matusetrans_searchAttributes">
 					<searchAttribute id="IssuesReturns.UsedItemLookup_matusetrans_searchAttribute_itemnum" name="itemnum"/>
@@ -1089,7 +1097,7 @@
 				<returnAttribute id="IssuesReturns.UsedItemLookup_item_itemnum" sourceAttribute="itemnum" targetAttribute="itemnum"/>
 			</returnAttributes>
 		</lookup>
-		
+
 		<!-- Task lookup -->
 		<lookup filterClass="application.handlers.TaskHandler" filterMethod="filterAndSortTasks" id="IssuesReturns.TaskLookup" label="Select Task">
 			<requiredResources id="IssuesReturns.TaskLookup_requiredResources">
@@ -1103,15 +1111,15 @@
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.TaskLookup_workOrder_Item1Desc1_taskdescription" layoutInsertAt="desc1" resourceAttribute="taskdescription"/>
 				</listItemTemplate>
 			</list>
-			
+
 			<returnAttributes id="IssuesReturns.TaskLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.TaskLookup_taskid" sourceAttribute="taskid" targetAttribute="taskid"/>
 				<returnAttribute id="IssuesReturns.TaskLookup_glaccount" sourceAttribute="glaccount" targetAttribute="glaccount"/>
 				<returnAttribute id="IssuesReturns.TaskLookup_asset" sourceAttribute="asset" targetAttribute="asset"/>
 				<returnAttribute id="IssuesReturns.TaskLookup_location" sourceAttribute="location" targetAttribute="location"/>
-			</returnAttributes>			
+			</returnAttributes>
 		</lookup>
-		
+
 		<!-- IssueTo lookup -->
 		<lookup id="IssuesReturns.IssueToLookup" label="Select Person">
 			<requiredResources id="IssuesReturns.IssueToLookup_requiredResources">
@@ -1123,12 +1131,12 @@
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.IssueToLookup_Item1Desc1_displayname" layoutInsertAt="desc1" resourceAttribute="displayname"/>
 				</listItemTemplate>
 			</list>
-			
+
 			<returnAttributes id="IssuesReturns.IssueToLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.IssueToLookup_personid" sourceAttribute="personid" targetAttribute="issueTo"/>
-			</returnAttributes>			
+			</returnAttributes>
 		</lookup>
-		
+
 		<!-- Form number lookup -->
 		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterFornumnumberForLookup" id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
 			<requiredResources id="IssuesReturns.FormnumberLookup_requiredResources">
@@ -1150,17 +1158,17 @@
 	</ui>
 
 	<!--DATA DEFINITION SECTION-->
-	<data id="data">	
-		
-  		<resource id="issuesReturnsResource" inMemory="true" name="issuesReturns" singleton="true">
-			<attributes id="issuesReturns_attributes">			
+	<data id="data">
+
+		<resource id="issuesReturnsResource" inMemory="true" name="issuesReturns" singleton="true">
+			<attributes id="issuesReturns_attributes">
 				<localAttribute dataType="string" id="issuesReturns_siteid_string" name="siteid"/>
 				<localAttribute dataType="string" id="issuesReturns_storeroom_string" name="storeroom"/>
 				<localAttribute dataType="string" id="issuesReturns_wotask_string" name="wotask"/>
 				<localAttribute dataType="string" id="issuesReturns_wonum_string" name="wonum"/>
 				<localAttribute dataType="string" id="issuesReturns_asset_string" name="asset"/>
 				<localAttribute dataType="string" id="issuesReturns_location_string" name="location"/>
-				<localAttribute dataType="string" id="issuesReturns_domainid_string" name="glaccount"/>			    
+				<localAttribute dataType="string" id="issuesReturns_domainid_string" name="glaccount"/>
 				<localAttribute dataType="string" id="issuesReturns_itemnum_string" name="itemnum"/>
 				<localAttribute dataType="string" id="issuesReturns_itemdesc_string" name="itemdesc"/>
 				<localAttribute dataType="string" id="issuesReturns_bin_string" name="bin"/>
@@ -1172,10 +1180,10 @@
 				<localAttribute dataType="string" id="issuesReturns_formnumber_string" name="formnumber"/>
 				<!-- Loc-Out: Add partno, formNo -->
 			</attributes>
-			<whereClause id="issueReturs_whereClause"/>			
-		</resource>	 
-  		<resource id="issueAdditionalItemsResource" inMemory="true" name="issueAdditionalItems" singleton="true">
-			<attributes id="issueAdditionalItems_attributes">			
+			<whereClause id="issueReturs_whereClause"/>
+		</resource>
+		<resource id="issueAdditionalItemsResource" inMemory="true" name="issueAdditionalItems" singleton="true">
+			<attributes id="issueAdditionalItems_attributes">
 				<localAttribute dataType="string" id="issueAdditionalItems_wonum_string" name="wonum"/>
 				<localAttribute dataType="string" id="issueAdditionalItems_asset_string" name="asset"/>
 				<localAttribute dataType="string" id="issueAdditionalItems_location_string" name="location"/>
@@ -1183,7 +1191,7 @@
 				<localAttribute dataType="integer" id="issueAdditionalItems_taskid_integer" name="taskid"/>
 				<localAttribute dataType="double" id="issueAdditionalItems_issueQty_string" name="issueQty"/>
 				<localAttribute dataType="string" id="issueAdditionalItems_issueTo_string" name="issueTo"/>
-				
+
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" id="issueAdditionalItems_actualDate_datetime" name="actualdate"/>
 				<localAttribute dataType="string" id="issueAdditionalItems_fromBin_string" name="frombin"/>
@@ -1191,29 +1199,29 @@
 				<localAttribute dataType="double" id="issueAdditionalItems_string_frombincurbal" name="frombincurbal"/>
 				<!-- Loc-Out: add attributes -->
 			</attributes>
-			<whereClause id="issueAdditionalItems_whereClause"/>			
+			<whereClause id="issueAdditionalItems_whereClause"/>
 		</resource>
 
 		<!-- Loc-In: add Additional usage, Reserved Header resource -->
 		<resource id="issueAdditionalUsageResource" inMemory="true" name="issueAdditionalUsage" singleton="true">
-			<attributes id="issueAdditionalUsage_attributes">			
-			    <localAttribute dataType="string" id="issueAdditionalUsage_storeroom_string" name="storeroom"/>			
+			<attributes id="issueAdditionalUsage_attributes">
+				<localAttribute dataType="string" id="issueAdditionalUsage_storeroom_string" name="storeroom"/>
 				<localAttribute dataType="string" id="issueAdditionalUsage_formNumber_string" name="formnumber"/>
 				<localAttribute dataType="string" id="issueAdditionalUsage_description_string" name="description"/>
 				<localAttribute dataType="string" id="issueAdditionalUsage_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueAdditionalUsage_createdate_datetime" name="createdate"/>
 			</attributes>
-			<whereClause id="issueAdditionalUsage_whereClause"/>			
+			<whereClause id="issueAdditionalUsage_whereClause"/>
 		</resource>
 		<resource id="issueReservedHeaderResource" inMemory="true" name="issueReservedHeader" singleton="true">
-			<attributes id="issueReservedHeader_attributes">			
+			<attributes id="issueReservedHeader_attributes">
 				<localAttribute dataType="string" id="issueReservedHeader_storeroom_string" name="storeroom"/>
 				<localAttribute dataType="string" id="issueReservedHeader_formNumber_string" name="formnumber"/>
 				<localAttribute dataType="string" id="issueReservedHeader_description_string" name="description"/>
 				<localAttribute dataType="string" id="issueReservedHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueReservedHeader_createdate_datetime" name="createdate"/>
 			</attributes>
-			<whereClause id="issueReservedHeader_whereClause"/>			
+			<whereClause id="issueReservedHeader_whereClause"/>
 		</resource>
 		<resource id="issueReturnHeaderResource" inMemory="true" name="issueReturnHeader" singleton="true">
 			<attributes id="issueReturnHeader_attributes">
@@ -1222,23 +1230,25 @@
 				<localAttribute dataType="string" id="issueReturnHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueReturnHeader_createdate_datetime" name="createdate"/>
 			</attributes>
-			<whereClause id="issueReturnHeader_whereClause"/>			
+			<whereClause id="issueReturnHeader_whereClause"/>
 		</resource>
 
 		<!-- inmemory original data -->
 		<resource id="invbalTemp" inMemory="true" name="invbalTemp" singleton="true">
-			<attributes id="invbalTemp_attributes">			
+			<attributes id="invbalTemp_attributes">
 				<localAttribute dataType="string" id="invbalTemp_binnum_string" name="binnum"/>
 				<localAttribute dataType="string" id="invbalTemp_lotnum_string" name="lotnum"/>
 				<localAttribute dataType="string" id="invbalTemp_curbal_string" name="curbal"/>
 			</attributes>
 		</resource>
 
+
 		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">
 			<attributes id="formnumberTemp_attributes">
 				<localAttribute dataType="string" id="formnumberTemp_formnumber_string" name="formnumber"/>
 			</attributes>
 		</resource>
+
 
 		<resource id="invbalTempReserved" inMemory="true" name="invbalTempReserved" singleton="true">
 			<attributes id="invbalTempReserved_attributes">
@@ -1249,25 +1259,28 @@
 				<localAttribute dataType="string" id="invbalTempReserved_location_spilocation" index="true" name="location"/>
 			</attributes>
 		</resource>
+
 		<!-- Loc-Out: add Additional usage, Reserved Header, Return Header resource -->
 
-  		<!-- Error resource checker -->
-   		<resource id="errorResource" inMemory="true" name="errorResource" singleton="true">
-   			<attributes id="errorResource_attributes">
-   				<localAttribute dataType="boolean" id="errorResource_hasErrors_boolean" name="hasError"/>
-   			</attributes>
-   		</resource>
+		<!-- Error resource checker -->
+		<resource id="errorResource" inMemory="true" name="errorResource" singleton="true">
+			<attributes id="errorResource_attributes">
+				<localAttribute dataType="boolean" id="errorResource_hasErrors_boolean" name="hasError"/>
+			</attributes>
+		</resource>
 
 		<!-- Resource for lookup form number -->
-		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" additionalData="true" id="additionalMatusetrans" name="additionalMatusetrans" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" id="additionalMatusetrans" name="additionalMatusetrans" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalMatusetransResource_attributes">
 				<attribute describedByProperty="spi:formnumber" id="additionalMatusetransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:storeloc" id="additionalMatusetransResource_item_spi_storeloc" index="true" name="storeloc"/>
+				<attribute describedByProperty="spi:siteid" id="additionalMatusetransResourcematusetrans_item_spi_site" index="true" key="2" name="siteid"/>
+				<attribute describedByProperty="spi:issuetype" id="additionalMatusetransResourcematusetrans_item_spi_issuetype" index="true" name="issuetype"/>
 			</attributes>
 			<queryBases id="additionalMatusetrans_queryBases">
 				<queryBase id="additionalMatusetrans_queryBase_matusetrans" name="searchAllMatusetrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
 			</queryBases>
-			<whereClause clause="spi:formnumber!='null'" id="additionalMatusetrans_whereClause"/>
+			<whereClause clause="spi:formnumber!='null' and spi:issuetype!='RETURN'" id="additionalMatusetrans_whereClause"/>
 		</resource>
 
 		<!-- Resource for lookup bin number -->
@@ -1284,16 +1297,27 @@
 			</queryBases>
 			<whereClause id="additionalInvbalance_whereClause"/>
 		</resource>
-   		
+
+		<!-- Resource for lookup work order number -->
+		<!-- <resource defaultOrderBy="wonum desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" additionalData="true" id="additionalMatusetrans" name="additionalMatusetrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalMatusetrans_attributes">
+				<attribute describedByProperty="spi:wonum" id="additionalMatusetrans_item_spi_wonum" index="true" name="wonum"/>
+			</attributes>
+			<queryBases id="additionalMatusetrans_queryBases">
+				<queryBase id="additionalMatusetrans_queryBase_getAllMatUseTrans" name="getAllMatUseTrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
+			</queryBases>
+			<whereClause clause="spi:wonum!='null'" id="additionalMatusetrans_whereClause"/>
+		</resource> -->
+
 		<!-- Material use Transactions (Issued Items) -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" id="matusetrans" name="matusetrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="matusetrans_attributes">
-			    <!-- <attribute describedByProperty="spi:orgid" id="matusetrans_orgid_spiorgid" name="orgid"/>
+				<!-- <attribute describedByProperty="spi:orgid" id="matusetrans_orgid_spiorgid" name="orgid"/>
 			    <attribute describedByProperty="spi:workorder{oslc:shortTitle}" id="invreserveResource_quantity_spi_wonum" index="true" name="wonum"/> -->
-			    <attribute describedByProperty="spi:itemnum" id="matusetrans_item_spi_item" index="true" name="itemnum"/>
-			    <attribute describedByProperty="spi:itemsetid" id="matusetrans_itemsetid_spi_itemsetid" index="true" name="itemsetid"/>
-			    <attribute describedByProperty="spi:conditioncode" id="matusetrans_conditioncode_spi_conditioncode" name="conditioncode"/>
-			    <attribute describedByProperty="dcterms:title" id="matusetrans_item_spi_itemdesc" name="description"/>
+				<attribute describedByProperty="spi:itemnum" id="matusetrans_item_spi_item" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:itemsetid" id="matusetrans_itemsetid_spi_itemsetid" index="true" name="itemsetid"/>
+				<attribute describedByProperty="spi:conditioncode" id="matusetrans_conditioncode_spi_conditioncode" name="conditioncode"/>
+				<attribute describedByProperty="dcterms:title" id="matusetrans_item_spi_itemdesc" name="description"/>
 				<attribute describedByProperty="spi:storeloc" id="matusetrans_item_spi_storeloc" index="true" name="storeloc"/>
 				<!-- Loc-In: adjust attributes -->
 				<!-- <attribute describedByProperty="spi:location" id="matusetrans_item_spi_location" name="location"/> -->
@@ -1310,10 +1334,10 @@
 				<attribute describedByProperty="spi:quantity" id="matusetrans_item_spi_quantity" name="quantity"/>
 				<attribute describedByProperty="spi:qtyreturned" id="matusetrans_item_spi_qtyreturned" name="qtyreturned"/>
 				<attribute describedByProperty="spi:memo" id="matusetrans_item_spi_memo" name="memo"/>
-				<attribute describedByProperty="spi:mrnum" id="matusetrans_item_spi_mrnum" name="mrnum"/>	
+				<attribute describedByProperty="spi:mrnum" id="matusetrans_item_spi_mrnum" name="mrnum"/>
 				<attribute describedByProperty="spi:mrlinenum" id="matusetrans_item_spi_mrlinenum" name="mrlinenum"/>
-				<attribute describedByProperty="spi:ponum" id="matusetrans_item_spi_ponum" name="ponum"/>	
-				<attribute describedByProperty="spi:polinenum" id="matusetrans_item_spi_polinenum" name="polinenum"/>			
+				<attribute describedByProperty="spi:ponum" id="matusetrans_item_spi_ponum" name="ponum"/>
+				<attribute describedByProperty="spi:polinenum" id="matusetrans_item_spi_polinenum" name="polinenum"/>
 				<attribute describedByProperty="spi:wonum" id="matusetrans_item_spi_wonum" index="true" name="wonum"/>
 				<!-- Loc-In: adjust attributes -->
 				<!-- <attribute describedByProperty="spi:gldebitacct" id="matusetrans_item_spi_gldebitacct" name="gldebitacct"/> -->
@@ -1325,26 +1349,27 @@
 				<attribute describedByProperty="spi:taskid" id="matusetrans_item_spi_taskid" name="taskid"/>
 				<attribute describedByProperty="spi:enteredastask" id="matusetrans_item_spi_enteredastask" name="enteredastask"/>
 				<attribute describedByProperty="spi:issuetype" id="matusetrans_item_spi_issuetype" index="true" name="issuetype"/>
-				<attribute describedByProperty="dcterms:identifier" id="matusetrans_item_spi_matusetransid" key="1" name="matusetransid"/>	
-				<localAttribute dataType="boolean" formula="${rotassetnum} ? true : false" id="matusetrans_rotating" name="rotating"/>							
+				<attribute describedByProperty="dcterms:identifier" id="matusetrans_item_spi_matusetransid" key="1" name="matusetransid"/>
+				<localAttribute dataType="boolean" formula="${rotassetnum} ? true : false" id="matusetrans_rotating" name="rotating"/>
 				<localAttribute dataType="double" formula="(${quantity}*-1) - ${qtyreturned}" id="matusetrans_item_localreturnqty" name="localreturnqty"/>
 				<localAttribute dataType="boolean" id="matusetrans_item_returnindicator" name="returnindicator"/>
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" formula="new Date()" id="matusetrans_actualDate" name="actualdate"/>
 				<attribute describedByProperty="spi:item{spi:modelnumref}" id="matusetrans_spiitem_spimodelnumref" index="true" name="modelnumref"/>
-				<attribute describedByProperty="spi:invuse{spi:formnumber}" id="matusetrans_spiinvuse_spiformnumber" index="true" name="formnumber"/>
+				<!-- <attribute describedByProperty="spi:invuse{spi:formnumber}" id="matusetrans_spiinvuse_spiformnumber" index="true" name="formnumber"/> -->
+				<attribute describedByProperty="spi:formnumber" id="matusetrans_spiformnumber" index="true" name="formnumber"/>
 				<!-- Loc-Out: add attributes -->
 			</attributes>
-			<queryBases id="matusetrans_queryBases">		
-			    <queryBase id="matusetrans_queryBase_getAllMatUseTrans" name="getAllMatUseTrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
-	 		</queryBases>									
+			<queryBases id="matusetrans_queryBases">
+				<queryBase id="matusetrans_queryBase_getAllMatUseTrans" name="getAllMatUseTrans" queryUri="/oslc/os/oslcmatusetrans?savedQuery=getWithComplexQuery"/>
+			</queryBases>
 			<whereClause id="matusetrans_whereClause"/>
 		</resource>
-		   			
+
 		<!-- Invreserve resource -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreserve" name="invreserve" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invreserveResource_attributes">
-			    <attribute describedByProperty="spi:displaytaskid" id="invreserveResource_taskid_spi_wmdisplaytaskid" index="true" name="taskid"/>
+				<attribute describedByProperty="spi:displaytaskid" id="invreserveResource_taskid_spi_wmdisplaytaskid" index="true" name="taskid"/>
 				<attribute describedByProperty="spi:requestnum" id="invreserveResource_requestnum_spi_wmrequestnum" key="1" name="requestnum"/>
 				<attribute describedByProperty="spi:description" id="invreserveResource_itemdesc_spi_wmdescription" name="itemdesc"/>
 				<attribute describedByProperty="spi:reservedqty" id="invreserveResource_quantity_spi_wmitemservedqty" name="reservedqty"/>
@@ -1353,25 +1378,26 @@
 				<attribute describedByProperty="spi:glaccount" id="invreserveResource_quantity_spi_glaccount" name="glaccount"/>
 				<attribute describedByProperty="spi:inventory{spi:itemsetid}" id="invreserveResource_itemsetid_spi_wmitemsetid" index="true" name="itemsetid"/>
 				<attribute describedByProperty="spi:storelocsiteid" id="invreserveResource_storelocsite_string" index="true" key="2" name="siteid"/>
-				<attribute describedByProperty="spi:item{spi:rotating}" id="invreserveResource_rotating_boolean" name="rotating"/>	
+				<attribute describedByProperty="spi:item{spi:rotating}" id="invreserveResource_rotating_boolean" name="rotating"/>
 				<attribute describedByProperty="spi:item{oslc:shortTitle}" id="invreserveResource_item_spi_wmitemnum" name="item"/>
 				<attribute describedByProperty="spi:item{spi:itemtype}" id="invreserveResource_item_spi_itemtype" name="itemtype"/>
 				<attribute describedByProperty="spi:inventory{spi:binnum}" id="invreserveResource_inventory_spi_binnum" name="binnum"/>
-				<attribute describedByProperty="spi:inventory{spi:issueunit}" id="invreserveResource_inventory_spi_issueunit" name="issueunit"/>				
+				<attribute describedByProperty="spi:inventory{spi:issueunit}" id="invreserveResource_inventory_spi_issueunit" name="issueunit"/>
 				<attribute describedByProperty="spi:inventory{spi:lotnum}" id="invreserveResource_inventory_spi_lotnum" name="lotnum"/>
 				<attribute describedByProperty="spi:workorder{oslc:shortTitle}" id="invreserveResource_quantity_spi_wonum" index="true" name="wonum"/>
 				<attribute describedByProperty="spi:workorder{dcterms:title}" id="invreserveResource_quantity_spi_wodesc" index="true" name="wodesc"/>
 				<attribute describedByProperty="spi:requesteddate" id="invreserveResource_requesteddate" name="requestdate"/>
-				<attribute describedByProperty="spi:requireddate" id="invreserveResource_requireddate" index="true" name="requireddate"/>						
+				<attribute describedByProperty="spi:requireddate" id="invreserveResource_requireddate" index="true" name="requireddate"/>
 				<!-- Loc-In: adjust condition for default value of attributes -->
 				<!-- <localAttribute dataType="double" formula="${reservedqty}" id="invreserveResource_localreservation" name="localreservedqty"/>	 -->
-				<localAttribute dataType="double" formula="${reservedqty}" id="invreserveResource_localreservation" name="localreservedqty"/>	
+				<localAttribute dataType="double" formula="${reservedqty}" id="invreserveResource_localreservation" name="localreservedqty"/>
 				<!-- Loc-Out: adjust condition for default value of attributes -->
 				<localAttribute dataType="string" id="invreserveResource_localreservation2" name="tasklabel"/>
 				<localAttribute dataType="string" formula="${binnum}" id="invreserveResource_localbin" name="localsortbin"/>
 				<localAttribute dataType="string" id="invreserveResource_issueto" name="issueTo"/>
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" formula="new Date()" id="invreserveResource_actualDate" name="actualdate"/>
+
 				<localAttribute dataType="boolean" formula="true" id="invreserve_item_reservedindicator" name="reservedIndicator"/>
 
 				<!-- <localAttribute dataType="string" id="invreserveResource_partno" name="modelnum"/> -->
@@ -1382,30 +1408,30 @@
 				<attribute describedByProperty="spi:inventory{spi:avblbalance}" id="invreserveResource_inventory_spi_avblbalance" name="avblbalance"/>
 				<!-- Loc-Out: add attributes -->
 			</attributes>
-	        <creationFactories id="invreserveResource_creationFactories">
-		        <creationFactory creationUri="/oslc/os/oslcinvreserve" id="invreserveResource_creationFactory_invreserveResourceCF" name="invreserveResourceCF"/>
-	        </creationFactories>							  		
+			<creationFactories id="invreserveResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvreserve" id="invreserveResource_creationFactory_invreserveResourceCF" name="invreserveResourceCF"/>
+			</creationFactories>
 			<queryBases id="invreserve_queryBases">
- 	 			<queryBase defaultForSearch="true" id="invreserve_queryBase_searchAllInvreserve" name="searchAllInvreserve" queryUri="/oslc/os/oslcinvreserve?savedQuery=getWithComplexQuery"/>
-	 		</queryBases>			
-			<whereClause id="invreserve_whereClause"/>			 
-		</resource>		
-  		
+				<queryBase defaultForSearch="true" id="invreserve_queryBase_searchAllInvreserve" name="searchAllInvreserve" queryUri="/oslc/os/oslcinvreserve?savedQuery=getWithComplexQuery"/>
+			</queryBases>
+			<whereClause id="invreserve_whereClause"/>
+		</resource>
+
 		<!-- Invuse resource -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invuse" id="invuse" name="invuse" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invuseResource_attributes">
-			    <attribute describedByProperty="dcterms:identifier" id="invuseResourceResource_invuseid_dcterms_invuseid" name="invuseid"/>
-			    <attribute describedByProperty="oslc:shortTitle" id="invuseResourceResource_invusenum_spi_invusenum" name="invusenum"/>
-			    <attribute describedByProperty="dcterms:title" id="invuseResourceResource_description_dcterms_description" name="description"/>
+				<attribute describedByProperty="dcterms:identifier" id="invuseResourceResource_invuseid_dcterms_invuseid" name="invuseid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="invuseResourceResource_invusenum_spi_invusenum" name="invusenum"/>
+				<attribute describedByProperty="dcterms:title" id="invuseResourceResource_description_dcterms_description" name="description"/>
 				<attribute describedByProperty="spi:usetype" id="invuseResourceResource_usetype_spi_usetype" name="usetype"/>
-			    <attribute describedByProperty="spi:status" id="invuseResourceResource_status_spi_status" name="status"/>
-			    <attribute describedByProperty="spi:fromstoreloc" id="invuseResourceResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
-			    <attribute describedByProperty="spi:changeby" id="invuseResourceResource_changeby_spi_changeby" name="changeby"/>
-			    <attribute describedByProperty="spi:changedate" id="invuseResourceResource_changedate_spi_changedate" name="changedate"/>
-			    <attribute describedByProperty="spi:orgid" id="invuseResourceResource_orgid_spi_orgid" name="orgid"/>
-			    <attribute describedByProperty="spi:siteid" id="invuseResourceResource_siteid_spi_siteid" name="siteid"/>
-			    <attribute describedByProperty="spi:statusdate" id="invuseResourceResource_statusdate_spi_statusdate" name="statusdate"/>
-				<attribute describedByProperty="spi:invuseline" describedByResource="invuselineResource" id="invuseResourceResource_invuseline_spi_invuseline" name="invuseline"/>	
+				<attribute describedByProperty="spi:status" id="invuseResourceResource_status_spi_status" name="status"/>
+				<attribute describedByProperty="spi:fromstoreloc" id="invuseResourceResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
+				<attribute describedByProperty="spi:changeby" id="invuseResourceResource_changeby_spi_changeby" name="changeby"/>
+				<attribute describedByProperty="spi:changedate" id="invuseResourceResource_changedate_spi_changedate" name="changedate"/>
+				<attribute describedByProperty="spi:orgid" id="invuseResourceResource_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="invuseResourceResource_siteid_spi_siteid" name="siteid"/>
+				<attribute describedByProperty="spi:statusdate" id="invuseResourceResource_statusdate_spi_statusdate" name="statusdate"/>
+				<attribute describedByProperty="spi:invuseline" describedByResource="invuselineResource" id="invuseResourceResource_invuseline_spi_invuseline" name="invuseline"/>
 				<attribute describedByProperty="spi:invuselinesplit" describedByResource="invuselineSplitResource" id="invuse_aw_npinvuselinesplit" name="npinvuselinesplit"/>
 				<attribute describedByProperty="spi:statusdate" id="invuseResourceResource_changestatusdate_spi_statusdate" name="changestatusdate"/>
 				<attribute describedByProperty="spi:np_statusmemo" id="invuseResourceResource_memo_spi_np_statusmemo" name="memo"/>
@@ -1418,83 +1444,83 @@
 				<!-- Local Attributes -->
 				<localAttribute dataType="dateTime" id="invuseResource_statusDate_dateTime" name="statusDate"/>
 			</attributes>
-	        <creationFactories id="invuseResource_creationFactories">
-		        <creationFactory creationUri="/oslc/os/oslcinvuse" id="invuseResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
-	        </creationFactories>							  		
+			<creationFactories id="invuseResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvuse" id="invuseResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
+			</creationFactories>
 			<queryBases id="invuse_queryBases">
- 	 			<queryBase id="invuse_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
-	 		</queryBases>			
-			<whereClause id="invuse_whereClause"/>			 
+				<queryBase id="invuse_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
+			</queryBases>
+			<whereClause id="invuse_whereClause"/>
 		</resource>
-		
+
 		<!-- Invuseline Resource -->
 		<resource id="invuselineResource" name="invuselineResource">
 			<attributes id="invuselineResource_attributes">
-			    <!-- attribute describedByProperty="spi:invusenum" id="invuselineResource_invusenum_spi_invusenum" name="invusenum"/-->
-				<!-- attribute describedByProperty="spi:siteid" id="invuselineResource_siteid_spi_siteid" name="sited"/-->			    
-			    <attribute describedByProperty="spi:invuselinenum" id="invuselineResource_invuselinenum_spi_invuselinenum" key="1" name="invuselinenum"/>
-			    <attribute describedByProperty="spi:description" id="invuselineResource_description_spi_description" name="description"/>
+				<!-- attribute describedByProperty="spi:invusenum" id="invuselineResource_invusenum_spi_invusenum" name="invusenum"/-->
+				<!-- attribute describedByProperty="spi:siteid" id="invuselineResource_siteid_spi_siteid" name="sited"/-->
+				<attribute describedByProperty="spi:invuselinenum" id="invuselineResource_invuselinenum_spi_invuselinenum" key="1" name="invuselinenum"/>
+				<attribute describedByProperty="spi:description" id="invuselineResource_description_spi_description" name="description"/>
 				<attribute describedByProperty="spi:usetype" id="invuselineResource_usetype_spi_usetype" name="usetype"/>
-			    <attribute describedByProperty="spi:item{oslc:shortTitle}" id="invuselineResource_itemnum_spi_itemnum" name="itemnum"/>	
+				<attribute describedByProperty="spi:item{oslc:shortTitle}" id="invuselineResource_itemnum_spi_itemnum" name="itemnum"/>
 				<attribute describedByProperty="spi:itemsetid" id="invuselineResource_itemsetid_spi_itemsetid" name="itemsetid"/>
-				<attribute describedByProperty="spi:tostoreloc" id="invuselineResource_tostoreloc_spi_tostoreloc" name="tostoreloc"/>	
+				<attribute describedByProperty="spi:tostoreloc" id="invuselineResource_tostoreloc_spi_tostoreloc" name="tostoreloc"/>
 				<attribute describedByProperty="spi:tositeid" id="invuselineResource_tositeid_spi_tositeid" name="tositeid"/>
 				<attribute describedByProperty="spi:quantity" id="invuselineResource_quantity_spi_quantity" name="quantity"/>
 				<attribute describedByProperty="spi:orgid" id="invuselineResource_orgid_spi_orgid" name="orgid"/>
-				<attribute describedByProperty="spi:linetype" id="invuselineResource_linetype_spi_linetype" name="linetype"/>								    
-			    <attribute describedByProperty="spi:tobin" id="invuselineResource_tobin_spi_tobin" name="tobin"/>
-			    <attribute describedByProperty="spi:tolot" id="invuselineResource_tolot_spi_tolot" name="tolot"/> 
-			    <attribute describedByProperty="spi:fromstoreloc" id="invuselineResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>  
-			    <attribute describedByProperty="spi:assetnum" id="invuselineResource_assetnum_spi_assetnum" name="assetnum"/>
-			    <attribute describedByProperty="spi:location" id="invuselineResource_location_spi_location" name="location"/>
-			    <attribute describedByProperty="spi:gldebitacct" id="invuselineResource_gldebitacct_spi_gldebitacct" name="gldebitacct"/>
-			    <attribute describedByProperty="spi:glcreditacct" id="invuselineResource_glcreditacct_spi_glcreditacct" name="glcreditacct"/>  
-			    <attribute describedByProperty="spi:actualdate" id="invuselineResource_actualdate_spi_actualdate" name="actualdate"/>
-			    <attribute describedByProperty="spi:rotassetnum" id="invuselineResource_rotassetnum_spi_rotassetnum" name="rotassetnum"/>
-			    <attribute describedByProperty="spi:fromlot" id="invuselineResource_fromlot_spi_fromlot" name="fromlot"/> 
-			    <attribute describedByProperty="spi:frombin" id="invuselineResource_frombin_spi_frombin" name="frombin"/> 
-			    <attribute describedByProperty="spi:split" id="invuselineResource_split_spi_split" name="split"/> 
-			    <attribute describedByProperty="spi:toorgid" id="invuselineResource_toorgid_spi_toorgid" name="toorgid"/> 
-			    <attribute describedByProperty="spi:receivedqty" id="invuselineResource_receivedqty_spi_receivedqty" name="receivedqty"/> 
-			    <attribute describedByProperty="spi:returnedqty" id="invuselineResource_returnedqty_spi_returnedqty" name="returnedqty"/>
-			    <attribute describedByProperty="spi:issueto" id="invuselineResource_issueto_spi_issueto" name="issueto"/>
-			    <attribute describedByProperty="spi:refwo" id="invuselineResource_refwo_spi_refwo" name="refwo"/>
-			    <attribute describedByProperty="spi:wonum" id="invuselineResource_wonum_spi_wonum" name="wonum"/>
-			    <attribute describedByProperty="spi:taskid" id="invuselineResource_taskid_spi_taskid" name="taskid"/>
-			    <attribute describedByProperty="spi:mrnum" id="invuselineResource_mrnum_spi_mrnum" name="mrnum"/>
-			    <attribute describedByProperty="spi:mrlinenum" id="invuselineResource_mrlinenum_spi_mrlinenum" name="mrlinenum"/>
-			    <attribute describedByProperty="spi:ponum" id="invuselineResource_ponum_spi_ponum" name="ponum"/>
-			    <attribute describedByProperty="spi:polinenum" id="invuselineResource_polinenum_spi_polinenum" name="polinenum"/>
-   			    <attribute describedByProperty="spi:remark" id="invuselineResource_remark_spi_remark" name="remark"/>
-  			    <attribute describedByProperty="spi:unitcost" id="invuselineResource_unitcost_spi_unitcost" name="unitcost"/>
-			    <attribute describedByProperty="spi:issueid" id="invuselineResource_issueid_spi_issueid" name="issueid"/>
-			    <attribute describedByProperty="spi:enteredastask" id="invuselineResource_enteredastask_spi_enteredastask" name="enteredastask"/>  
-			    <attribute describedByProperty="spi:fromconditioncode" id="invuselineResource_fromconditioncode_spi_fromconditioncode" name="fromconditioncode"/>
-			    <attribute describedByProperty="spi:requestnum" id="invuselineResource_requestnum_spi_requestnum" name="requestnum"/>
-			    <attribute describedByProperty="spi:returnagainstissue" id="invuselineResource_returnagainstissue_spi_returnagainstissue" name="returnagainstissue"/>
-			 	<attribute describedByProperty="spi:anywhererefid" id="invuselineResource_anywhereRefId_spi_anywhererefid" name="anywhereRefId"/>
+				<attribute describedByProperty="spi:linetype" id="invuselineResource_linetype_spi_linetype" name="linetype"/>
+				<attribute describedByProperty="spi:tobin" id="invuselineResource_tobin_spi_tobin" name="tobin"/>
+				<attribute describedByProperty="spi:tolot" id="invuselineResource_tolot_spi_tolot" name="tolot"/>
+				<attribute describedByProperty="spi:fromstoreloc" id="invuselineResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
+				<attribute describedByProperty="spi:assetnum" id="invuselineResource_assetnum_spi_assetnum" name="assetnum"/>
+				<attribute describedByProperty="spi:location" id="invuselineResource_location_spi_location" name="location"/>
+				<attribute describedByProperty="spi:gldebitacct" id="invuselineResource_gldebitacct_spi_gldebitacct" name="gldebitacct"/>
+				<attribute describedByProperty="spi:glcreditacct" id="invuselineResource_glcreditacct_spi_glcreditacct" name="glcreditacct"/>
+				<attribute describedByProperty="spi:actualdate" id="invuselineResource_actualdate_spi_actualdate" name="actualdate"/>
+				<attribute describedByProperty="spi:rotassetnum" id="invuselineResource_rotassetnum_spi_rotassetnum" name="rotassetnum"/>
+				<attribute describedByProperty="spi:fromlot" id="invuselineResource_fromlot_spi_fromlot" name="fromlot"/>
+				<attribute describedByProperty="spi:frombin" id="invuselineResource_frombin_spi_frombin" name="frombin"/>
+				<attribute describedByProperty="spi:split" id="invuselineResource_split_spi_split" name="split"/>
+				<attribute describedByProperty="spi:toorgid" id="invuselineResource_toorgid_spi_toorgid" name="toorgid"/>
+				<attribute describedByProperty="spi:receivedqty" id="invuselineResource_receivedqty_spi_receivedqty" name="receivedqty"/>
+				<attribute describedByProperty="spi:returnedqty" id="invuselineResource_returnedqty_spi_returnedqty" name="returnedqty"/>
+				<attribute describedByProperty="spi:issueto" id="invuselineResource_issueto_spi_issueto" name="issueto"/>
+				<attribute describedByProperty="spi:refwo" id="invuselineResource_refwo_spi_refwo" name="refwo"/>
+				<attribute describedByProperty="spi:wonum" id="invuselineResource_wonum_spi_wonum" name="wonum"/>
+				<attribute describedByProperty="spi:taskid" id="invuselineResource_taskid_spi_taskid" name="taskid"/>
+				<attribute describedByProperty="spi:mrnum" id="invuselineResource_mrnum_spi_mrnum" name="mrnum"/>
+				<attribute describedByProperty="spi:mrlinenum" id="invuselineResource_mrlinenum_spi_mrlinenum" name="mrlinenum"/>
+				<attribute describedByProperty="spi:ponum" id="invuselineResource_ponum_spi_ponum" name="ponum"/>
+				<attribute describedByProperty="spi:polinenum" id="invuselineResource_polinenum_spi_polinenum" name="polinenum"/>
+				<attribute describedByProperty="spi:remark" id="invuselineResource_remark_spi_remark" name="remark"/>
+				<attribute describedByProperty="spi:unitcost" id="invuselineResource_unitcost_spi_unitcost" name="unitcost"/>
+				<attribute describedByProperty="spi:issueid" id="invuselineResource_issueid_spi_issueid" name="issueid"/>
+				<attribute describedByProperty="spi:enteredastask" id="invuselineResource_enteredastask_spi_enteredastask" name="enteredastask"/>
+				<attribute describedByProperty="spi:fromconditioncode" id="invuselineResource_fromconditioncode_spi_fromconditioncode" name="fromconditioncode"/>
+				<attribute describedByProperty="spi:requestnum" id="invuselineResource_requestnum_spi_requestnum" name="requestnum"/>
+				<attribute describedByProperty="spi:returnagainstissue" id="invuselineResource_returnagainstissue_spi_returnagainstissue" name="returnagainstissue"/>
+				<attribute describedByProperty="spi:anywhererefid" id="invuselineResource_anywhereRefId_spi_anywhererefid" name="anywhereRefId"/>
 			</attributes>
 		</resource>
 
 		<!-- InvuselineSplit Resource -->
 		<resource id="invuselineSplitResource" name="invuselineSplitResource">
 			<attributes id="invuselineSplitResource_attributes">
-			    <attribute describedByProperty="spi:quantity" id="invuselineSplitResource_quantity_spi_quantity" name="quantity"/> 	    
-			    <attribute describedByProperty="spi:fromlot" id="invuselineSplitResource_fromlot_spi_fromlot" name="fromlot"/> 
-			    <attribute describedByProperty="spi:frombin" id="invuselineSplitResource_frombin_spi_frombin" name="frombin"/> 
-			    <attribute describedByProperty="spi:rotassetnum" id="invuselineSplitResource_rotassetnum_spi_rotassetnum" name="rotassetnum"/> 
-			    <attribute describedByProperty="spi:itemnum" id="invuselineSplitResource_itemnum_spi_itemnum" name="itemnum"/> 
-			    <attribute describedByProperty="spi:itemsetid" id="invuselineSplitResource_itemsetid_spi_itemsetid" name="itemsetid"/> 
-			    <attribute describedByProperty="spi:fromstoreloc" id="invuselineSplitResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
-			    <attribute describedByProperty="spi:newassetnum" id="invuselineSplitResource_newassetnum_spi_newassetnum" name="newassetnum"/>
-			    <attribute describedByProperty="spi:invuselinelinkid" id="invuselineSplitResource_invuselinelinkid_spi_invuselinelinkid" name="invuselinelinkid"/>
+				<attribute describedByProperty="spi:quantity" id="invuselineSplitResource_quantity_spi_quantity" name="quantity"/>
+				<attribute describedByProperty="spi:fromlot" id="invuselineSplitResource_fromlot_spi_fromlot" name="fromlot"/>
+				<attribute describedByProperty="spi:frombin" id="invuselineSplitResource_frombin_spi_frombin" name="frombin"/>
+				<attribute describedByProperty="spi:rotassetnum" id="invuselineSplitResource_rotassetnum_spi_rotassetnum" name="rotassetnum"/>
+				<attribute describedByProperty="spi:itemnum" id="invuselineSplitResource_itemnum_spi_itemnum" name="itemnum"/>
+				<attribute describedByProperty="spi:itemsetid" id="invuselineSplitResource_itemsetid_spi_itemsetid" name="itemsetid"/>
+				<attribute describedByProperty="spi:fromstoreloc" id="invuselineSplitResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
+				<attribute describedByProperty="spi:newassetnum" id="invuselineSplitResource_newassetnum_spi_newassetnum" name="newassetnum"/>
+				<attribute describedByProperty="spi:invuselinelinkid" id="invuselineSplitResource_invuselinelinkid_spi_invuselinelinkid" name="invuselinelinkid"/>
 			</attributes>
 		</resource>
-				
+
 		<!-- InvBalance resource -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" id="invbalance" name="invbalance" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invbalance_attributes">
-				<attribute describedByProperty="dcterms:identifier" id="invbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>			    
+				<attribute describedByProperty="dcterms:identifier" id="invbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>
 				<attribute describedByProperty="spi:binnum" id="invbalance_binnum_spibinnum" index="true" name="binnum"/>
 				<attribute describedByProperty="spi:physcnt" id="invbalance_physcnt_spiphyscnt" name="physcnt"/>
 				<attribute describedByProperty="spi:curbal" id="invbalance_curbal_spicurbal" name="curbal"/>
@@ -1516,32 +1542,32 @@
 				<!-- Loc-Out: Add attributes -->
 				<localAttribute dataType="boolean" formula="${currentbalance} &gt; 0" id="invbalance_hasbalance_boolean" index="true" name="hasbalance"/>
 				<localAttribute dataType="boolean" formula="${adjustedphyscnt} == 0" id="invbalance_show_boolean" index="true" name="show" persistent="true"/>
-				<localAttribute dataType="double" id="invbalance_count_double" maxSize="15" name="count"/>						
+				<localAttribute dataType="double" id="invbalance_count_double" maxSize="15" name="count"/>
 			</attributes>
-			<queryBases id="invbalance_queryBases">		
-			    <queryBase id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
-	 		</queryBases>									
+			<queryBases id="invbalance_queryBases">
+				<queryBase id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
+			</queryBases>
 			<whereClause clause="spi:curbal>0" id="invbalance_whereClause"/>
-		</resource>		
+		</resource>
 
 		<!-- inmemory rotating asset data -->
 		<resource id="rotatingAssets" inMemory="true" name="rotatingAssets" singleton="true">
-			<attributes id="rotatingAssets_map">			
+			<attributes id="rotatingAssets_map">
 				<localAttribute dataType="string" id="rotatingAssets_string" name="rotatingAssetMap"/>
 			</attributes>
-		</resource>	
-		
+		</resource>
+
 		<!-- inmemory original data -->
 		<resource id="originalData" inMemory="true" name="originalData" singleton="true">
-			<attributes id="originalDataQty_attributes">			
+			<attributes id="originalDataQty_attributes">
 				<localAttribute dataType="string" id="originalDataQty_quantity_string" name="String"/>
 			</attributes>
-		</resource>		
-		
-		
-		<!-- invbalance In Memory Split QTY tracker. -->	
+		</resource>
+
+
+		<!-- invbalance In Memory Split QTY tracker. -->
 		<resource id="originalDataSplitBinQty" inMemory="true" name="originalDataSplitBinQty">
-			<attributes id="originalDataSplitBinQty_attributes">			
+			<attributes id="originalDataSplitBinQty_attributes">
 				<localAttribute dataType="double" id="originalDataSplitBinQty_quantity_string" name="quantity"/>
 				<localAttribute dataType="string" id="originalDataSplitBinQty_lotnum_string" key="6" name="lotnum"/>
 				<localAttribute dataType="string" id="originalDataSplitBinQty_rotassetnum_string" name="rotassetnum"/>
@@ -1552,11 +1578,11 @@
 				<localAttribute dataType="string" id="originalDataSplitBinQty_siteid_string" index="true" key="4" name="siteid"/>
 				<localAttribute dataType="string" id="originalDataSplitBinQty_stagingbin_string" index="true" name="stagingbin"/>
 			</attributes>
-		</resource>		
-		
-		<!-- invbalance In Memory Split QTY tracker. -->	
+		</resource>
+
+		<!-- invbalance In Memory Split QTY tracker. -->
 		<resource id="calculatedDataSplitBinQty" inMemory="true" name="calculatedDataSplitBinQty">
-			<attributes id="calculatedDataSplitBinQty_attributes">			
+			<attributes id="calculatedDataSplitBinQty_attributes">
 				<localAttribute dataType="double" id="calculatedDataSplitBinQty_quantity_string" name="quantity"/>
 				<localAttribute dataType="string" id="calculatedDataSplitBinQty_lotnum_string" key="6" name="lotnum"/>
 				<localAttribute dataType="string" id="calculatedDataSplitBinQty_rotassetnum_string" name="rotassetnum"/>
@@ -1567,9 +1593,9 @@
 				<localAttribute dataType="string" id="calculatedDataSplitBinQty_siteid_string" index="true" key="4" name="siteid"/>
 				<localAttribute dataType="string" id="calculatedDataSplitBinQty_stagingbin_string" index="true" name="stagingbin"/>
 			</attributes>
-		</resource>		
-		
-				
+		</resource>
+
+
 		<!-- Invuse Status domain -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domaininvusestatus" isSystem="true" name="domaininvusestatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="domaininvusestatus_attributes">
@@ -1583,15 +1609,15 @@
 				<attribute describedByProperty="dcterms:identifier" id="domaininvusestatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domaininvusestatus_queryBases">
- 	 			<queryBase id="domaininvusestatus_queryBase_getwostatus" name="getinvusestatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domaininvusestatus_queryBase_getwostatus" name="getinvusestatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='INVUSESTATUS'" id="domaininvusestatus_whereClause"/>
 		</resource>
-												
+
 		<!-- SplitRotateResource -->
 		<resource id="splitrotateresource" inMemory="true" name="splitrotateresource">
-			<attributes id="splitrotateresource_attributes">		
-			    <localAttribute dataType="string" id="splitrotateresource_description_string" name="description"/>	
+			<attributes id="splitrotateresource_attributes">
+				<localAttribute dataType="string" id="splitrotateresource_description_string" name="description"/>
 				<localAttribute dataType="double" id="splitrotateresource_quantity_string" key="4" name="quantity"/>
 				<localAttribute dataType="string" id="splitrotateresource_lotnum_string" key="6" name="lotnum"/>
 				<localAttribute dataType="string" id="splitrotateresource_rotassetnum_string" name="rotassetnum"/>
@@ -1600,20 +1626,20 @@
 				<localAttribute dataType="string" id="splitrotateresource_itemnum_string" key="1" name="itemnum"/>
 				<localAttribute dataType="string" id="splitrotateresource_itemsetid_string" key="2" name="itemsetid"/>
 				<localAttribute dataType="string" id="splitrotateresource_location_string" key="5" name="location"/>
-				<localAttribute dataType="string" id="splitrotateresource_newassetnum_string" name="newassetnum"/> 	
-				<localAttribute dataType="boolean" id="splitrotateresource_isSplit_string" name="isSplit"/> 		    
+				<localAttribute dataType="string" id="splitrotateresource_newassetnum_string" name="newassetnum"/>
+				<localAttribute dataType="boolean" id="splitrotateresource_isSplit_string" name="isSplit"/>
 				<localAttribute dataType="boolean" id="splitrotateresource_processed_string" name="processed"/>
 				<localAttribute dataType="string" id="splitrotateresource_issueunit_string" name="issueunit"/>
 				<localAttribute dataType="string" id="splitrotateresource_siteid_string" key="3" name="siteid"/>
-				<localAttribute dataType="boolean" id="splitrotateresource_isrotating_boolean" name="rotating"/> 
+				<localAttribute dataType="boolean" id="splitrotateresource_isrotating_boolean" name="rotating"/>
 				<localAttribute dataType="string" id="splitrotateresource_isrotating_asset" name="asset"/>
 			</attributes>
-		</resource>	
-		
-		<!-- splitqtyacrossbins -->	
+		</resource>
+
+		<!-- splitqtyacrossbins -->
 		<resource id="splitqtyacrossbins" inMemory="true" name="splitqtyacrossbins">
-			<attributes id="splitqtyacrossbins_attributes">		
-			    <localAttribute dataType="string" id="splitqtyacrossbins_description_string" name="description"/>	
+			<attributes id="splitqtyacrossbins_attributes">
+				<localAttribute dataType="string" id="splitqtyacrossbins_description_string" name="description"/>
 				<localAttribute dataType="double" id="splitqtyacrossbins_quantity_string" name="quantity"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_lotnum_string" key="4" name="lotnum"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_rotassetnum_string" key="6" name="rotassetnum"/>
@@ -1622,12 +1648,12 @@
 				<localAttribute dataType="string" id="splitqtyacrossbins_itemnum_string" key="1" name="itemnum"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_itemsetid_string" key="2" name="itemsetid"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_storeloc_string" key="3" name="storeloc"/>
-				<localAttribute dataType="string" id="splitqtyacrossbins_newassetnum_string" name="newassetnum"/> 	
+				<localAttribute dataType="string" id="splitqtyacrossbins_newassetnum_string" name="newassetnum"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_issueunit_string" name="issueunit"/>
 				<localAttribute dataType="string" id="splitqtyacrossbins_rotating_string" name="rotating"/>
 			</attributes>
-		</resource>			
-	
+		</resource>
+
 		<!-- *********************** -->
 		<!-- ADDITIONAL DATA SECTION -->
 		<!-- *********************** -->
@@ -1648,36 +1674,36 @@
 				<attribute describedByProperty="spi:itemtype" id="additionalasset_itemtype_spiitemtype" index="true" name="itemtype"/>
 				<attribute describedByProperty="spi:itemsetid" id="additionalasset_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
 				<attribute describedByProperty="spi:failureCode{oslc:shortTitle}" id="additionalasset_failurecode_spifailureCodeoslcshortTitle" name="failurecode"/>
-				<attribute describedByProperty="spi:failureCode{dcterms:title}" id="additionalasset_failurecodedesc_spifailureCodedctermstitle" name="failurecodedesc"/>				 
+				<attribute describedByProperty="spi:failureCode{dcterms:title}" id="additionalasset_failurecodedesc_spifailureCodedctermstitle" name="failurecodedesc"/>
 
 				<attribute describedByProperty="spi:parent" id="additionalasset_parent_spiparent" index="true" name="parent"/>
 				<attribute describedByProperty="spi:description_longdescription" id="additionalasset_assetlongdesc_spidescription_longdescription" name="assetlongdesc"/>
 				<localAttribute dataType="boolean" formula="${itemnum} ? true : false" id="additionalasset_itemnumnotnull_boolean" index="true" name="itemnumnotnull"/>
 			</attributes>
 			<queryBases id="additionalasset_queryBases">
- 	 			<queryBase id="additionalasset_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
-	 		</queryBases>			
+				<queryBase id="additionalasset_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
+			</queryBases>
 			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionalasset_whereClause"/>
 		</resource>
 
 		<!-- Location resource -->
-		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> 
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionallocations_attributes">
 				<attribute describedByProperty="dcterms:identifier" id="additionallocations_locationsid_dctermsidentifier" name="locationsid"/>
 				<attribute describedByProperty="spi:siteid" id="additionallocations_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
 				<attribute describedByProperty="oslc:shortTitle" id="additionallocations_location_oslcshortTitle" index="true" name="location"/>
 				<attribute describedByProperty="dcterms:title" id="additionallocations_description_dctermstitle" index="true" name="description"/>
 
-				<attribute describedByProperty="spi:locoper{spi:failureCode{oslc:shortTitle}}" id="additionallocations_failurecode_spilocoperspifailureCodeoslcshortTitle" name="failurecode"/>	
-				<attribute describedByProperty="spi:locoper{spi:failureCode{dcterms:title}}" id="additionallocations_failurecodedesc_spilocoperspifailureCodedctermstitle" name="failurecodedesc"/>					
+				<attribute describedByProperty="spi:locoper{spi:failureCode{oslc:shortTitle}}" id="additionallocations_failurecode_spilocoperspifailureCodeoslcshortTitle" name="failurecode"/>
+				<attribute describedByProperty="spi:locoper{spi:failureCode{dcterms:title}}" id="additionallocations_failurecodedesc_spilocoperspifailureCodedctermstitle" name="failurecodedesc"/>
 				<attribute describedByProperty="spi:status" id="additionallocations_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
 				<!-- Loc-In: add attributes -->
 				<attribute describedByProperty="spi:glaccount" id="additionallocations_glaccount_spiglaccount" index="true" name="glaccount"/>
 				<!-- Loc-Out: add attributes -->
 			</attributes>
 			<queryBases id="additionallocations_queryBases">
- 	 			<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
-	 		</queryBases>									
+				<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
+			</queryBases>
 			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionallocations_whereClause"/>
 		</resource>
 
@@ -1692,28 +1718,21 @@
 					but also support wildcard search within these fields this based on user input -->
 				<localAttribute dataType="string" formula="${location}" id="additionalstoreroom_locationForSearch_string" index="true" name="locationForSearch"/>
 				<attribute describedByProperty="dcterms:title" id="additionalstoreroom_description_dctermstitle" index="true" name="description"/>
-				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" 
-					/> -->
+				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" /> -->
 				<!-- <attribute name="changeby" describedByProperty="spi:changeby" /> -->
-				<!-- <attribute name="changedate" describedByProperty="spi:changedate" 
-					/> -->
+				<!-- <attribute name="changedate" describedByProperty="spi:changedate" /> -->
 				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
-				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" 
-					/> -->
-				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" 
-					/> -->
-				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
-					/> -->
+				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" /> -->
+				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" /> -->
+				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" /> -->
 				<attribute describedByProperty="spi:status" id="additionalstoreroom_status_spistatus" name="status"/>
-				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
-					/> -->
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" /> -->
 				<attribute describedByProperty="spi:type" id="additionalstoreroom_type_spitype" name="type"/>
-				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" 
-					/> -->
+				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" /> -->
 			</attributes>
 			<queryBases id="additionalstoreroom_queryBases">
- 	 			<queryBase id="additionalstoreroom_queryBase_getlocationstoreroom" name="getlocationstoreroom" queryUri="/oslc/os/oslcopersroom"/>
-	 		</queryBases>									
+				<queryBase id="additionalstoreroom_queryBase_getlocationstoreroom" name="getlocationstoreroom" queryUri="/oslc/os/oslcopersroom"/>
+			</queryBases>
 			<whereClause clause="spi:type in [${additionalloctype[maxvalue=STOREROOM].value}]" id="additionalstoreroom_whereClause"/>
 		</resource>
 
@@ -1723,15 +1742,14 @@
 				<attribute describedByProperty="oslc:shortTitle" id="additionalitem_itemnum_oslcshortTitle" index="true" name="itemnum"/>
 				<attribute describedByProperty="dcterms:identifier" id="additionalitem_itemid_dctermsidentifier" name="itemid"/>
 				<attribute describedByProperty="dcterms:title" id="additionalitem_description_dctermstitle" name="description"/>
-				<!-- <attribute name="longdescription" describedByProperty="dcterms:description" 
-					/> -->
+				<!-- <attribute name="longdescription" describedByProperty="dcterms:description" /> -->
 				<attribute describedByProperty="spi:itemtype" id="additionalitem_itemtype_spiitemtype" name="itemtype"/>
 				<attribute describedByProperty="spi:rotating" id="additionalitem_rotating_spirotating" name="rotating"/>
 				<attribute describedByProperty="spi:itemsetid" id="additionalitem_itemsetid_spiitemsetid" name="itemsetid"/>
 			</attributes>
 			<queryBases id="additionalitem_queryBases">
- 	 			<queryBase id="additionalitem_queryBase_getitem" name="getitem" queryUri="/oslc/os/oslcitem"/>
-	 		</queryBases>									
+				<queryBase id="additionalitem_queryBase_getitem" name="getitem" queryUri="/oslc/os/oslcitem"/>
+			</queryBases>
 			<whereClause id="additionalitem_whereClause"/>
 		</resource>
 
@@ -1749,18 +1767,18 @@
 				<localAttribute dataType="boolean" formula="${currentbalance} &gt; 0" id="additionalbin_hasbalance_boolean" index="true" name="hasbalance"/>
 			</attributes>
 			<queryBases id="additionalbin_queryBases">
- 	 			<queryBase id="additionalbin_queryBase_getinvbalances" name="getinvbalances" queryUri="/oslc/os/oslcinvbalances"/>
-	 		</queryBases>									
+				<queryBase id="additionalbin_queryBase_getinvbalances" name="getinvbalances" queryUri="/oslc/os/oslcinvbalances"/>
+			</queryBases>
 			<whereClause id="additionalbin_whereClause"/>
 		</resource>
 
 		<!-- Work Order Resource -->
 		<resource describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder" id="workOrder" name="workOrder" pageSize="20" providedBy="/oslc/sp/WorkManagement">
-		    <attributes id="workOrder_attributes">
-		    	<attribute describedByProperty="oslc:shortTitle" id="workOrder_wonum_oslcshortTitle" name="wonum"/>
-		    	<attribute describedByProperty="spi_wm:task" describedByResource="taskResource" id="workOrder_tasklist_spi_wmtask" name="tasklist"/>
-		    	<attribute describedByProperty="dcterms:title" id="workOrder_description_dctermstitle" index="true" name="description"/>
-				<attribute describedByProperty="spi_wm:siteid" id="workOrder_siteid_spi_wmsiteid" name="siteid"/>				
+			<attributes id="workOrder_attributes">
+				<attribute describedByProperty="oslc:shortTitle" id="workOrder_wonum_oslcshortTitle" name="wonum"/>
+				<attribute describedByProperty="spi_wm:task" describedByResource="taskResource" id="workOrder_tasklist_spi_wmtask" name="tasklist"/>
+				<attribute describedByProperty="dcterms:title" id="workOrder_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi_wm:siteid" id="workOrder_siteid_spi_wmsiteid" name="siteid"/>
 				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="workOrder_location_spilocationoslcshortTitle" index="true" name="location" referenceResource="additionallocations"/>
 				<attribute describedByProperty="spi:status" id="workOrder_status_spistatus" index="true" name="status"/>
 				<attribute describedByProperty="spi_wm:glaccount" id="workOrder_glaccount" name="glaccount"/>
@@ -1770,9 +1788,9 @@
 			</attributes>
 			<queryBases id="workOrder_queryBases">
 				<queryBase id="additionalbin_queryBase_getworkorders" name="getworkorders" queryUri="/oslc/os/oslcwodetail"/>
-			</queryBases>		
+			</queryBases>
 		</resource>
-		
+
 		<!-- Task Resource -->
 		<resource id="taskResource" name="taskResource">
 			<attributes id="taskResource_attributes">
@@ -1789,7 +1807,7 @@
 		<!--****************************-->
 		<!-- DOMAINS Resources -->
 		<!--****************************-->
-		
+
 		<!-- Work Order Status domain -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainwostatus" isSystem="true" name="domainwostatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="domainwostatus_attributes">
@@ -1803,8 +1821,8 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainwostatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainwostatus_queryBases">
- 	 			<queryBase id="domainwostatus_queryBase_getwostatus" name="getwostatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainwostatus_queryBase_getwostatus" name="getwostatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='WOSTATUS'" id="domainwostatus_whereClause"/>
 		</resource>
 
@@ -1821,11 +1839,12 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainissuetype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainissuetype_queryBases">
- 	 			<queryBase id="domainissuetype_queryBase_getissuetype" name="getissuetype" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
-			<whereClause clause="oslc:shortTitle='ISSUETYP'" id="domainissuetype_whereClause"/><!-- and spi:maxvalue='ISSUE' -->
+				<queryBase id="domainissuetype_queryBase_getissuetype" name="getissuetype" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
+			<whereClause clause="oslc:shortTitle='ISSUETYP'" id="domainissuetype_whereClause"/>
+			<!-- and spi:maxvalue='ISSUE' -->
 		</resource>
-		
+
 		<!-- Location Type domain -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="additionalloctype" isSystem="true" name="additionalloctype" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalloctype_attributes">
@@ -1833,16 +1852,15 @@
 				<!-- <attribute name="siteid" describedByProperty="spi:siteid" /> -->
 				<attribute describedByProperty="spi:maxvalue" id="additionalloctype_maxvalue_spimaxvalue" name="maxvalue"/>
 				<attribute describedByProperty="spi:value" id="additionalloctype_value_spivalue" name="value"/>
-				<!-- <attribute name="description" describedByProperty="dcterms:title" 
-					/> -->
+				<!-- <attribute name="description" describedByProperty="dcterms:title" /> -->
 				<!-- <attribute name="defaults" describedByProperty="spi:defaults" /> -->
 				<attribute describedByProperty="oslc:shortTitle" id="additionalloctype_domainid_oslcshortTitle" name="domainid"/>
 				<attribute describedByProperty="dcterms:identifier" id="additionalloctype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
- 			<queryBases id="additionalloctype_queryBases">
- 	 			<queryBase id="additionalloctype_queryBase_getloctype" name="getloctype" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
- 			<whereClause clause="oslc:shortTitle='LOCTYPE' and spi:maxvalue='STOREROOM'" id="additionalloctype_whereClause"/>
+			<queryBases id="additionalloctype_queryBases">
+				<queryBase id="additionalloctype_queryBase_getloctype" name="getloctype" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
+			<whereClause clause="oslc:shortTitle='LOCTYPE' and spi:maxvalue='STOREROOM'" id="additionalloctype_whereClause"/>
 		</resource>
 
 		<!-- Asset Status domain -->
@@ -1858,11 +1876,11 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainAssetstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainAssetstatus_queryBases">
- 	 			<queryBase id="domainAssetstatus_queryBase_getlocassetstatus" name="getlocassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainAssetstatus_queryBase_getlocassetstatus" name="getlocassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainAssetstatus_whereClause"/>
 		</resource>
-		
+
 		<!-- Asset attr types domain -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="assetattrtypes" isSystem="true" name="assetattrtypes" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="assetattrtypes_attributes">
@@ -1876,11 +1894,11 @@
 				<attribute describedByProperty="dcterms:identifier" id="assetattrtypes_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="assetattrtypes_queryBases">
- 	 			<queryBase id="assetattrtypes_queryBase_getassetattrtypes" name="getassetattrtypes" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="assetattrtypes_queryBase_getassetattrtypes" name="getassetattrtypes" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='DATATYPE'" id="assetattrtypes_whereClause"/>
 		</resource>
-		
+
 		<!-- Domain types -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domaintypes" isSystem="true" name="domaintypes" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="domaintypes_attributes">
@@ -1894,8 +1912,8 @@
 				<attribute describedByProperty="dcterms:identifier" id="domaintypes_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domaintypes_queryBases">
- 	 			<queryBase id="domaintypes_queryBase_getdomaintypes" name="getdomaintypes" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domaintypes_queryBase_getdomaintypes" name="getdomaintypes" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='DOMTYPE'" id="domaintypes_whereClause"/>
 		</resource>
 
@@ -1912,11 +1930,11 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainitemstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainitemstatus_queryBases">
- 	 			<queryBase id="domainitemstatus_queryBase_getitemstatus" name="getitemstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainitemstatus_queryBase_getitemstatus" name="getitemstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='ITEMSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainitemstatus_whereClause"/>
 		</resource>
-		
+
 		<!-- Invuse Type domain -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domaininvusetype" isSystem="true" name="domaininvusetype" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="domaininvusetype_attributes">
@@ -1930,27 +1948,27 @@
 				<attribute describedByProperty="dcterms:identifier" id="domaininvusetype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domaininvusetype_queryBases">
- 	 			<queryBase id="domaininvusetype_queryBase_getinvusetype" name="getinvusetype" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domaininvusetype_queryBase_getinvusetype" name="getinvusetype" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='INVUSETYPE'" id="domaininvusetype_whereClause"/>
 		</resource>
 
 		<!--Item Type domain -->
-		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainitemtype" name="domainitemtype" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> 
-		    <attributes id="domainitemtype_attributes"> 
-				<attribute describedByProperty="spi:orgid" id="domainitemtype_orgid_spiorgid" name="orgid"/> 
-				<attribute describedByProperty="spi:siteid" id="domainitemtype_siteid_spisiteid" name="siteid"/> 
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainitemtype" name="domainitemtype" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainitemtype_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainitemtype_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainitemtype_siteid_spisiteid" name="siteid"/>
 				<attribute describedByProperty="spi:maxvalue" id="domainitemtype_maxvalue_spimaxvalue" name="maxvalue"/>
 				<attribute describedByProperty="spi:value" id="domainitemtype_value_spivaljue" name="value"/>
-				<attribute describedByProperty="dcterms:title" id="domainitemtype_title_spidescription" name="description"/> 
-				<attribute describedByProperty="spi:defaults" id="domainitemtype_defaults_spidefaults" name="defaults"/> 
-				<attribute describedByProperty="oslc:shortTitle" id="domainitemtype_shorttitle_spidomainid" name="domainid"/> 
-				<attribute describedByProperty="dcterms:identifier" id="domainitemtype_orgid_spisynonymdomainid" name="synonymdomainid"/> 
+				<attribute describedByProperty="dcterms:title" id="domainitemtype_title_spidescription" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainitemtype_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainitemtype_shorttitle_spidomainid" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainitemtype_orgid_spisynonymdomainid" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainitemtype_queryBases">
- 	 			<queryBase id="domainitemtype_queryBase" name="getItemType" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			 
-			<whereClause clause="oslc:shortTitle='ITEMTYPE'" id="domainitemtype_whereClause"/> 
+				<queryBase id="domainitemtype_queryBase" name="getItemType" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
+			<whereClause clause="oslc:shortTitle='ITEMTYPE'" id="domainitemtype_whereClause"/>
 		</resource>
 
 		<!-- Resource for storing a status change. -->
@@ -1972,11 +1990,11 @@
 				<attribute describedByProperty="dcterms:identifier" id="oslcmaxvars_identifier_dctermsidentifier" name="identifier"/>
 			</attributes>
 			<queryBases id="oslcmaxvars_queryBases">
- 	 			<queryBase id="oslcmaxvars_queryBase_getmaxvarsinprglabtrans" name="getmaxvarsinprglabtrans" queryUri="/oslc/os/oslcmaxvars"/>
-	 		</queryBases>			
+				<queryBase id="oslcmaxvars_queryBase_getmaxvarsinprglabtrans" name="getmaxvarsinprglabtrans" queryUri="/oslc/os/oslcmaxvars"/>
+			</queryBases>
 			<whereClause clause="spi:varname in ['NEGATIVEAVAIL']" id="oslcmaxvars_whereClause"/>
 		</resource>
-		
+
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Inventory" id="additionalInventory" name="additionalInventory" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalInventory_attributes">
 				<!-- limits the scope of attributes used from full Work Order RDF -->
@@ -1993,14 +2011,14 @@
 				<attribute describedByProperty="spi:invitem{dcterms:title}" id="additionalInventory_description_spiinvitemdctermstitle" index="true" name="description"/>
 				<attribute describedByProperty="spi:invitem{spi:itemtype}" id="additionalInventory_itemtype_spiinvitemspiitemtype" index="true" name="itemtype"/>
 				<attribute describedByProperty="spi:invitem{spi:rotating}" id="additionalInventory_rotating_spiinvitemspirotating" name="rotating"/>
-				
+
 				<localAttribute dataType="string" formula="${location}" id="additionalInventory_locationForSearch_string" index="true" name="locationForSearch"/>
 				<localAttribute dataType="string" formula="${itemnum}" id="additionalInventory_itemnumForSearch_string" index="true" name="itemnumForSearch"/>
-								
+
 			</attributes>
 			<queryBases id="additionalInventory_queryBases">
- 	 			<queryBase id="additionalInventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
-	 		</queryBases>			
+				<queryBase id="additionalInventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
+			</queryBases>
 		</resource>
 
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Inventory" id="inventory" name="inventory" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
@@ -2016,17 +2034,17 @@
 				<attribute describedByProperty="spi:status" id="inventory_status_spistatus" index="true" name="status"/>
 				<attribute describedByProperty="spi:storeloc" id="inventory_storeloc_spistoreloc" name="storeloc"/>
 				<attribute describedByProperty="spi:invbalances{spi:curbal}" id="inventory_curbal_spiinvbalancesspicurbal" name="curbal"/>
-				<attribute describedByProperty="spi:avblbalance" id="inventory_avblbalance_spiavblbalance" name="avblbalance"/>				
-				<attribute describedByProperty="spi:issueunit" id="inventory_issueunit_spiissueunit" name="issueunit"/>	
-				<attribute describedByProperty="spi:curbaltotal" id="inventory_issueunit_curbaltotal" name="curbaltotal"/>	
+				<attribute describedByProperty="spi:avblbalance" id="inventory_avblbalance_spiavblbalance" name="avblbalance"/>
+				<attribute describedByProperty="spi:issueunit" id="inventory_issueunit_spiissueunit" name="issueunit"/>
+				<attribute describedByProperty="spi:curbaltotal" id="inventory_issueunit_curbaltotal" name="curbaltotal"/>
 				<!-- fields pulled in from additionalitem resource -->
 				<attribute describedByProperty="spi:invitem{dcterms:title}" id="inventory_description_spiinvitemdctermstitle" index="true" name="description"/>
 				<attribute describedByProperty="spi:invitem{spi:itemtype}" id="inventory_itemtype_spiinvitemspiitemtype" index="true" name="itemtype"/>
 				<attribute describedByProperty="spi:invitem{spi:rotating}" id="inventory_rotating_spiinvitemspirotating" name="rotating"/>
-				
+
 				<localAttribute dataType="string" formula="${location}" id="inventory_locationForSearch_string" index="true" name="locationForSearch"/>
 				<localAttribute dataType="string" formula="${itemnum}" id="inventory_itemnumForSearch_string" index="true" name="itemnumForSearch"/>
-				
+
 				<localAttribute dataType="double" id="fakeField" maxSize="15" name="fake"/>
 				<!-- Loc-In: Add attributes -->
 				<attribute describedByProperty="spi:modelnum" id="inventory_modelnum_spimodelnum" index="true" name="modelnum"/>
@@ -2034,10 +2052,10 @@
 				<!-- Loc-Out: Add attributes -->
 			</attributes>
 			<queryBases id="inventory_queryBases">
- 	 			<queryBase id="inventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
-	 		</queryBases>			
+				<queryBase id="inventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
+			</queryBases>
 		</resource>
-	
+
 		<resource id="searchWorkOrder" name="searchWorkOrder">
 			<attributes id="searchWorkOrder_attributes">
 				<localAttribute dataType="string" id="searchWorkOrder_wonum_string" index="true" name="wonum"/>
@@ -2053,60 +2071,60 @@
 		</resource>
 
 		<!-- UserInfo attribute list -->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
-	        <attributes id="userInfo_attributes">
-		        <attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
-		        <attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
-		        <attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
-		        <attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
-		        <attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
-		        <attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
-		        <attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
-		        <attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
-		        <attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
-		        <attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
-		        <attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
-		        <attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
-		        <attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
-		        <attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
-		        <attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
-		        <attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
-		     </attributes>
-		     <queryBases id="userInfo_queryBases">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="userInfo_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
+				<attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
+				<attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
+				<attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
+				<attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
+				<attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
+				<attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
+				<attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
+				<attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
+				<attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
+				<attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
+				<attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
+				<attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
+				<attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
+				<attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
+				<attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
+			</attributes>
+			<queryBases id="userInfo_queryBases">
 				<queryBase id="userInfo_queryBase_currentUser" name="currentUser" queryUri="/oslc/os/oslcmaxuser?savedQuery=currentUser"/>
 			</queryBases>
-	    </resource>
-	    					
-		<!-- Roles attribute list -->				
-	    <resource id="userRoles" name="userRoles">
+		</resource>
+
+		<!-- Roles attribute list -->
+		<resource id="userRoles" name="userRoles">
 			<attributes id="userRoles_attributes">
-				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>			
+				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>
 			</attributes>
 		</resource>
-		
+
 		<!-- Person resource -->
-		<resource additionalData="true" describedBy="http://xmlns.com/foaf/0.1/Person" id="additionalperson_personuid_resource" name="additionalperson" pageSize="1000" providedBy="/oslc/sp/FriendOfAFriend"> 
-		    <attributes id="additionalperson_attributes"> 
-				<attribute describedByProperty="dcterms:identifier" id="additionalperson_personuid" name="personuid"/> 
-				<attribute describedByProperty="foaf:name" id="additionalperson_displayname" name="displayname"/> 
-				<attribute describedByProperty="foaf:givenName" id="additionalperson_firstname" name="firstname"/> 
-				<attribute describedByProperty="foaf:familyName" id="additionalperson_lastname" name="lastname"/> 
-				<attribute describedByProperty="oslc:shortTitle" id="additionalperson_personid" name="personid"/> 
-			</attributes> 
+		<resource additionalData="true" describedBy="http://xmlns.com/foaf/0.1/Person" id="additionalperson_personuid_resource" name="additionalperson" pageSize="1000" providedBy="/oslc/sp/FriendOfAFriend">
+			<attributes id="additionalperson_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalperson_personuid" name="personuid"/>
+				<attribute describedByProperty="foaf:name" id="additionalperson_displayname" name="displayname"/>
+				<attribute describedByProperty="foaf:givenName" id="additionalperson_firstname" name="firstname"/>
+				<attribute describedByProperty="foaf:familyName" id="additionalperson_lastname" name="lastname"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalperson_personid" name="personid"/>
+			</attributes>
 			<queryBases id="person_queryBases">
- 	 			<queryBase id="person_queryBase_getperson" name="getperson" queryUri="/oslc/os/oslcperson"/>
-	 		</queryBases>				
-			<whereClause id="additionalperson_whereclause"/> 
+				<queryBase id="person_queryBase_getperson" name="getperson" queryUri="/oslc/os/oslcperson"/>
+			</queryBases>
+			<whereClause id="additionalperson_whereclause"/>
 		</resource>
-		
+
 		<!-- Rotating Asset Resource -->
 		<resource id="rotatingAssetUsage" inMemory="true" name="rotatingAssetUsage" singleton="true">
-			<attributes id="rotatingAssetUsage_attributes">			
-				<localAttribute dataType="string" id="rotatingAssetUsage_siteid_string" name="rotatingObject"/>			
+			<attributes id="rotatingAssetUsage_attributes">
+				<localAttribute dataType="string" id="rotatingAssetUsage_siteid_string" name="rotatingObject"/>
 			</attributes>
-			<whereClause id="rotatingAssetUsage_whereClause"/>			
-		</resource>	 
-		
+			<whereClause id="rotatingAssetUsage_whereClause"/>
+		</resource>
+
 		<!-- Asset transactional resource -->
 		<resource describedBy="http://open-services.net/ns/asset#Asset" id="asset" name="asset" pageSize="200" providedBy="/oslc/sp/AssetManagement">
 			<attributes id="asset_attributes">
@@ -2127,10 +2145,10 @@
 				<localAttribute dataType="boolean" formula="${itemnum} ? true : false" id="asset_itemnumnotnull_boolean" index="true" name="itemnumnotnull"/>
 			</attributes>
 			<queryBases id="asset_queryBases">
- 	 			<queryBase id="asset_queryBase_getasset" name="getTransactionalAsset" queryUri="/oslc/os/oslcasset"/>
-	 		</queryBases>			
+				<queryBase id="asset_queryBase_getasset" name="getTransactionalAsset" queryUri="/oslc/os/oslcasset"/>
+			</queryBases>
 			<whereClause id="asset_whereClause"/>
-		</resource>		
+		</resource>
 	</data>
 	<messages id="messages">
 		<message defaultMessage="The work order was not found." id="noworkorderfound"/>
@@ -2163,12 +2181,12 @@
 		<message defaultMessage="The specified tool was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidTool"/>
 		<message defaultMessage="The specified crew was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidCrew"/>
 		<message defaultMessage="" id="changePasswordInfo"/>
-		<message defaultMessage="The value for hours for the tool cannot be greater than value for hours for the crew." id="invalidToolHours"/> 
+		<message defaultMessage="The value for hours for the tool cannot be greater than value for hours for the crew." id="invalidToolHours"/>
 		<message defaultMessage="To report by crew, go to Settings &gt; Refresh Lookup Data, and try again." id="additionaDataAssetDownload"/>
-		<message defaultMessage="Specify a start time." id="starttimeisrequired"/>		
+		<message defaultMessage="Specify a start time." id="starttimeisrequired"/>
 		<message defaultMessage="Specify an end time." id="endtimeisrequired"/>
 		<message defaultMessage="Specify an end date or remove the end time." id="cannotspecifyendtimewithoutenddate"/>
-		<message defaultMessage="Specify a date that is later than the date of the last status change on {0}." id="statusDateinFuture"/>	
+		<message defaultMessage="Specify a date that is later than the date of the last status change on {0}." id="statusDateinFuture"/>
 		<message defaultMessage="The value {0} is not a valid number" id="newReadingNaN"/>
 		<message defaultMessage="Enter a new reading." id="invalidNewReading"/>
 		<message defaultMessage="Enter a reading that is greater than the last reading or select Rollover." id="newReadingLowerThan"/>
@@ -2180,32 +2198,32 @@
 		<message defaultMessage="Attachment could not be downloaded. Try again later." id="downloadGenericError"/>
 		<message defaultMessage="Attachment could not be downloaded. {0}" id="downloadGenericNestedError"/>
 		<message defaultMessage="KB" id="measure"/>
-		<message defaultMessage="Attachment file is too large." id="uploadLimit"/>		
+		<message defaultMessage="Attachment file is too large." id="uploadLimit"/>
 		<message defaultMessage="Lookup data is not stored on the device. Go to Settings \u003E Refresh Lookup Data when you are online." id="nolookupdata"/>
 		<message defaultMessage="Tap to enter" id="tapToEnter"/>
-		<message defaultMessage="Select from list" id="selectFromList"/>				
-		<message defaultMessage="Tap to select" id="tapToSelect"/>	
+		<message defaultMessage="Select from list" id="selectFromList"/>
+		<message defaultMessage="Tap to select" id="tapToSelect"/>
 		<message defaultMessage="The rotating asset {0} associated with the crew is not available on the device. Check your lookup data." id="rotatingAssetNotThere"/>
-		<message defaultMessage="Fill in at least one search field." id="emptySearchFields"/>	
+		<message defaultMessage="Fill in at least one search field." id="emptySearchFields"/>
 		<message defaultMessage="No result was found for this search." id="emptySearchResult"/>
 		<message defaultMessage="Cannot connect to the server" id="connectionFailure"/>
 		<message defaultMessage="An error exists. Click here to view the error." id="errorExists"/>
 		<message defaultMessage="Errors Exist. Review the errors." id="reviewErrors"/>
 		<message defaultMessage="Specify a positive quantity." id="quantityPositive"/>
-        <message defaultMessage="Select at least one item." id="atLeastOneItem"/>
-        <message defaultMessage="Enter a value that is not greater than the number of issued items." id="notGreaterThanIssueItems"/>
-        <message defaultMessage="Created by Maximo Anywhere - Issues and Returns for WO - {0}." id="invuseDescriptionWO"/>
-        <message defaultMessage="Created by Maximo Anywhere - Issues and Returns" id="invuseDescription"/>
-        <message defaultMessage="The current requested quantity causes a negative balance in the bin or bins selected for item {0}." id="negativeAvailabilityCheck"/>
-        <message defaultMessage="The rotating asset specified is referenced on another record. Specify a different rotating asset. " id="dupRotatingAsset"/>
-        <message defaultMessage="The storeroom or bin that you have selected does not contain item {0}. " id="noItemFoundInStoreroom"/>
-        <message defaultMessage="The requested quantity cannot be higher than the balance of the rotating item." id="splitLineQtyRot"/>
-        <message defaultMessage="The Issue To field must be filled for the {0} tool." id="issueToRequired"/>
-        <message defaultMessage="Split Quantity Across Bins" id="splitAcrossBinsLabel"/>
-        <message defaultMessage="Assign Asset Number" id="assignAssetLabel"/>
-        <message defaultMessage="The status of Work order {0} in not valid" id="wostatusvalid"/>
+		<message defaultMessage="Select at least one item." id="atLeastOneItem"/>
+		<message defaultMessage="Enter a value that is not greater than the number of issued items." id="notGreaterThanIssueItems"/>
+		<message defaultMessage="Created by Maximo Anywhere - Issues and Returns for WO - {0}." id="invuseDescriptionWO"/>
+		<message defaultMessage="Created by Maximo Anywhere - Issues and Returns" id="invuseDescription"/>
+		<message defaultMessage="The current requested quantity causes a negative balance in the bin or bins selected for item {0}." id="negativeAvailabilityCheck"/>
+		<message defaultMessage="The rotating asset specified is referenced on another record. Specify a different rotating asset. " id="dupRotatingAsset"/>
+		<message defaultMessage="The storeroom or bin that you have selected does not contain item {0}. " id="noItemFoundInStoreroom"/>
+		<message defaultMessage="The requested quantity cannot be higher than the balance of the rotating item." id="splitLineQtyRot"/>
+		<message defaultMessage="The Issue To field must be filled for the {0} tool." id="issueToRequired"/>
+		<message defaultMessage="Split Quantity Across Bins" id="splitAcrossBinsLabel"/>
+		<message defaultMessage="Assign Asset Number" id="assignAssetLabel"/>
+		<message defaultMessage="The status of Work order {0} in not valid" id="wostatusvalid"/>
 		<!-- Loc-In: Add messages -->
-        <message defaultMessage="This Form Number is already exist. Please enter a different Form Number" id="existFormNumber"/>
+		<message defaultMessage="This Form Number is already exist. Please enter a different Form Number" id="existFormNumber"/>
 		<message defaultMessage="The location was not found." id="noLocationfound"/>
 		<message defaultMessage="Please enter the actual date." id="emptyActualDate"/>
 		<!-- Loc-Out: Add messages -->
