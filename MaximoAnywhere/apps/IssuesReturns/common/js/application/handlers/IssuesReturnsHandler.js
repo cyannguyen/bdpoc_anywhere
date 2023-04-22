@@ -1774,7 +1774,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		validateActualDateIssueReturnItems: function(eventContext) {
 			var self = this;
 			var currentRecord = eventContext.getResource().getCurrentRecord();
-			if(!currentRecord.actualdate){
+			if (currentRecord && !currentRecord.actualdate) {
 				var msg = MessageService.createStaticMessage("emptyActualDate").getMessage();
 				if (self.ui.getCurrentDialog().id == 'Platform.DateTimeLookup') {
 					setTimeout(function(){
