@@ -763,9 +763,9 @@
 					</groupitem> -->
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_account_groupitem_5">
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount">
-							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers">
+							<!-- <eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers_1" method="handleGLaccountDataChanged"/>
-							</eventHandlers>
+							</eventHandlers> -->
 						</text>
 					</groupitem>
 					<!-- Loc-In: enable GL Account -->

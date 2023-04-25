@@ -256,7 +256,9 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         invuseline.set("itemnum", itemnum);
                         invuseline.set("itemsetid", itemsetid);
                         invuseline.set("frombin", fromBin);
-                        invuseline.set("fromlot", lotnum);
+                        invuseline.set("fromlot", fromlot);
+
+                        invuseline.set("gldebitacct", glaccount);
 
                         invuseline.set("wonum", wonum);
                         invuseline.set("assetnum", asset);
@@ -1432,12 +1434,13 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                 issueAdditionItemRecord.set("taskid", null);
                 issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
                 issueAdditionItemRecord.setNullValue("glaccount");
-            } else if (glaccount) {
-                issueAdditionItemRecord.setNullValue("wonum");
-                issueAdditionItemRecord.set("taskid", null);
-                issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
-                issueAdditionItemRecord.setNullValue("location");
             }
+            // else if (glaccount) {
+            //     issueAdditionItemRecord.setNullValue("wonum");
+            //     issueAdditionItemRecord.set("taskid", null);
+            //     issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
+            //     issueAdditionItemRecord.setNullValue("location");
+            // }
         },
 
         handleLocationDataChanged: function (eventContext) {
