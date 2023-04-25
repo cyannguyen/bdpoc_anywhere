@@ -1125,11 +1125,13 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                                         wonum,
                                     ]);
                                     self.ui.showMessage(msg);
+                                    issueAdditionItemRecord.setNullValue("wonum");
                                     return;
                             }
                         } else {
                             msg = MessageService.createResolvedMessage("wostatusvalid", [wonum]);
                             self.ui.showMessage(msg);
+                            issueAdditionItemRecord.setNullValue("wonum");
                             return;
                         }
 
@@ -1150,6 +1152,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         //#endregion Loc-Out: restore handleLocationDataChanged event
                         Logger.trace(self._className + ": " + error);
                         self.ui.showMessage(msg);
+                        issueAdditionItemRecord.setNullValue("wonum");
                         return;
                     });
             } else {
@@ -1470,6 +1473,8 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         issueAdditionItemRecord.set("glaccount", location.glaccount);
                     } else {
                         self.ui.showMessage(msg);
+                        isLocationDataChanged = false;
+                        issueAdditionItemRecord.setNullValue("location");
                         return;
                     }
                     //#region  Loc-In: restore handleGLaccountDataChanged event
@@ -1482,6 +1487,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                     //#endregion Loc-Out: restore handleGLaccountDataChanged event
                     Logger.trace(self._className + ": " + error);
                     self.ui.showMessage(msg);
+                    issueAdditionItemRecord.setNullValue("location");
                     return;
                 });
             eventContext.application.hideBusy();
