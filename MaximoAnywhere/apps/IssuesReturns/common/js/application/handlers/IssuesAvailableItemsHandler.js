@@ -90,6 +90,16 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             return true;
         },
 
+        filterBinForLookup: function (eventContext) {
+            console.log("filter called");
+            var records = CommonHandler._getAdditionalResource(eventContext, "invbalTemp");
+            console.log("check records");
+            if (records) {
+                console.log("check records: ", records.data);
+            }
+            CommonHandler._clearFilterForResource(eventContext, records);
+        },
+
         completeAvailableItems: function (eventContext) {
             var additionalInventoryItemResource = eventContext.application.getResource("inventory");
             var additionalInventoryItem = additionalInventoryItemResource.getCurrentRecord();
@@ -126,20 +136,12 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             var description = issueAdditionalUsage.get("description");
             var documentRef = issueAdditionalUsage.get("documentref");
             var createDate = issueAdditionalUsage.get("createdate");
-
             //var actualDate = this.application.getCurrentDateTime();
             var actualDate = additionalItemData.get("actualdate");
 
             var fromBin = additionalItemData.get("frombin");
             //var invbalTemp = CommonHandler._getAdditionalResource(eventContext,'invbalTemp').getCurrentRecord();
             var fromLot = additionalItemData.get("fromlot");
-
-            console.log("Check ", formNumber);
-            console.log("Check 2", description);
-            console.log("Check 3", createDate);
-            console.log("Check 4", actualDate);
-            console.log("Check 5", fromlot);
-            console.log("Check 6", wnum, location, glaccount);
 
             if (
                 !formNumber ||
@@ -253,7 +255,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         invuseline.set("invuselinenum", 1);
                         invuseline.set("itemnum", itemnum);
                         invuseline.set("itemsetid", itemsetid);
-                        //invuseline.set('frombin',binnum);
+                        invuseline.set("frombin", fromBin);
                         invuseline.set("fromlot", lotnum);
 
                         invuseline.set("wonum", wonum);
@@ -761,10 +763,14 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             var issueAdditionItemRecord = eventContext.application
                 .getResource("issueAdditionalItems")
                 .getCurrentRecord();
-            issueAdditionItemRecord.taskid = "";
-            issueAdditionItemRecord.glaccount = "";
-            issueAdditionItemRecord.location = "";
-            issueAdditionItemRecord.asset = "";
+            // issueAdditionItemRecord.taskid = "";
+            // issueAdditionItemRecord.glaccount = "";
+            // issueAdditionItemRecord.location = "";
+            // issueAdditionItemRecord.asset = "";
+            issueAdditionItemRecord.setNullValue("glaccount");
+            issueAdditionItemRecord.setNullValue("location");
+            issueAdditionItemRecord.setNullValue("asset");
+            issueAdditionItemRecord.set("taskid", "");
         },
 
         /**
@@ -1064,16 +1070,17 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             var filter = [];
             var oslcQueryParameters = {};
             var self = this;
-
-            this.clearBaseFieldsFromWO(eventContext);
             var issueAdditionItemRecord = eventContext.application
                 .getResource("issueAdditionalItems")
                 .getCurrentRecord();
             var wonum = issueAdditionItemRecord.get("wonum");
             var siteid = UserManager.getInfo("defsite");
             var msg = MessageService.createStaticMessage("noworkorderfound").getMessage();
-            issueAdditionItemRecord.set("taskid", null);
 
+            if (isLocationDataChanged && !wonum) return;
+            this.clearBaseFieldsFromWO(eventContext);
+
+            issueAdditionItemRecord.set("taskid", null);
             filter.push({ siteid: siteid });
             filter.push({ wonum: wonum });
             if (wonum) {
@@ -1221,7 +1228,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             filter.push({ itemnum: itemnum });
             //filter.push({stagingbin: 0});
 
-            var deferred = new Deferred();
+            // var deferred = new Deferred();
             var invbalPromise = ModelService.filtered(
                 "invbalance",
                 PlatformConstants.SEARCH_RESULT_QUERYBASE,
@@ -1233,13 +1240,16 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                 false
             );
             invbalPromise.then(function (invbalSet) {
+                if (invbalSet) {
+                    console.log("check invbalSet:", invbalSet.data);
+                }
                 ModelService.clearSearchResult(invbalSet);
                 invbalSet.resourceID = "invbalTemp";
                 eventContext.application.addResource(invbalSet);
-                deferred.resolve(invbalSet);
+                // deferred.resolve(invbalSet);
             });
 
-            return deferred.promise;
+            // return deferred.promise;
         },
 
         hideLotnum: function (eventontext) {
@@ -1325,7 +1335,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                 eventContext,
                 "issueAdditionalItems"
             ).getCurrentRecord();
-            if (!issueResource.frombin) return;
+            if (!issueResource || !issueResource.frombin) return;
 
             var invbalTempResource = eventContext.application.getResource("invbalTemp");
             if (invbalTempResource) {
@@ -1340,8 +1350,12 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                             invbalTempRecord = invbalTempSet[0];
                         }
                     }
+
                     issueResource.set("frombincurbal", invbalTempRecord.curbal);
                     issueResource.set("fromlot", invbalTempRecord.lotnum);
+                    // issueResource.set("frombin", invbalTempRecord.binnum);
+                    console.log("set bin check: ", issueResource, issueResource.frombin);
+                    console.log("data set bin check: ", invbalTempRecord, invbalTempRecord.binnum);
                 } else {
                     issueResource.setNullValue("frombin");
                     issueResource.setNullValue("frombincurbal");
@@ -1409,6 +1423,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             if (wo) {
                 issueAdditionItemRecord.setNullValue("location");
                 issueAdditionItemRecord.setNullValue("glaccount");
+                issueAdditionItemRecord.set("taskid", null);
             } else if (location) {
                 issueAdditionItemRecord.setNullValue("wonum");
                 issueAdditionItemRecord.set("taskid", null);

@@ -285,6 +285,7 @@
 
 		<!-- Issue Reserved List View -->
 		<view id="IssuesReturns.InvreserveListView" label="Issue Reserved Items" resource="invreserve">
+			<!-- <view id="IssuesReturns.InvreserveListView" label="Issue" resource="invreserve"> -->
 			<requiredResources id="IssuesReturns.InvreserveListView_requiredResources">
 				<requiredResource id="IssuesReturns.InvreserveListView_requiredResource_oslcmaxvars" name="oslcmaxvars"/>
 				<requiredResource id="IssuesReturns.InvreserveListView_statusChangeResource" name="statusChangeResource"/>
@@ -438,6 +439,7 @@
 			</footer>
 			<eventHandlers id="IssuesReturns.InvreserveListView_eventHandlers">
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.InvreserveListView_eventHandlers_back" method="transitsBackToIssuePlannedSearchView"/>
+				<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="initialize" id="IssuesReturns.InvreserveListView_eventHandlers_render" method="clearSelectedFilter" /> -->
 			</eventHandlers>
 		</view>
 
@@ -909,7 +911,7 @@
 			</eventHandlers>
 		</view>
 
-		<lookup id="IssuesReturns.FromBinLookup" label="Select Bin" resource="invbalTemp">
+		<lookup id="IssuesReturns.FromBinLookup" filterClass="application.handlers.IssuesAvailableItemsHandler" filterMethod="filterBinForLookup" label="Select Bin" resource="invbalTemp">
 			<requiredResources id="IssuesReturns.FromBinLookup_requiredResources">
 				<requiredResource id="IssuesReturns.FromBinLookup_invbalTemp" name="invbalTemp" reload="false"/>
 			</requiredResources>
@@ -1228,6 +1230,7 @@
 				<localAttribute dataType="string" id="issueReservedHeader_description_string" name="description"/>
 				<localAttribute dataType="string" id="issueReservedHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueReservedHeader_createdate_datetime" name="createdate"/>
+				<localAttribute dataType="boolean" formula="true" id="invreserve_item_selectall" name="selectall"/>
 			</attributes>
 			<whereClause id="issueReservedHeader_whereClause"/>
 		</resource>
@@ -1244,7 +1247,7 @@
 		<!-- inmemory original data -->
 		<resource id="invbalTemp" inMemory="true" name="invbalTemp" singleton="true">
 			<attributes id="invbalTemp_attributes">
-				<localAttribute dataType="string" id="invbalTemp_binnum_string" name="binnum"/>
+				<localAttribute dataType="string" id="invbalTemp_binnum_string" index="true" name="binnum"/>
 				<localAttribute dataType="string" id="invbalTemp_lotnum_string" name="lotnum"/>
 				<localAttribute dataType="string" id="invbalTemp_curbal_string" name="curbal"/>
 			</attributes>
