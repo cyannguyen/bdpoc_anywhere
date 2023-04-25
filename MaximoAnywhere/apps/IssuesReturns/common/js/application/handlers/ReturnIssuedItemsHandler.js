@@ -536,6 +536,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
             matusetransSet.filter("returnindicator == true");
 
             if (matusetransSet && matusetransSet.count() == 0) {
+                CommonHandler._clearFilterForResource(eventContext, matusetransSet);
                 throw new PlatformRuntimeException("atLeastOneItem");
             }
         },

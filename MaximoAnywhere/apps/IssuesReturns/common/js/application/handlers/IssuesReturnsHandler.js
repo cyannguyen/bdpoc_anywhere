@@ -2235,6 +2235,7 @@ define("application/handlers/IssuesReturnsHandler", [
             invreserveSet.filter("reservedIndicator == true");
 
             if (invreserveSet && invreserveSet.count() == 0) {
+                CommonHandler._clearFilterForResource(eventContext, invreserveSet);
                 throw new PlatformRuntimeException("atLeastOneItem");
             }
         },
