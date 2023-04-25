@@ -1208,12 +1208,6 @@ define("application/handlers/IssuesAvailableItemsHandler", [
         getInvbalTemList: function (eventContext) {
             var filter = [];
 
-            var issueResource = CommonHandler._getAdditionalResource(
-                eventContext,
-                "issueAdditionalItems"
-            ).getCurrentRecord();
-            issueResource.frombin = "";
-
             var inventory = CommonHandler._getAdditionalResource(
                 eventContext,
                 "inventory"

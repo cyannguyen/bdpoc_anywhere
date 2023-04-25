@@ -838,7 +838,7 @@
 			<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers">
 				<eventHandler class="application.handlers.TaskHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers_validate_validateTask" method="validateTask"/>
 				<!-- Loc-In: add initialize Addtional View -->
-				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_initialize" method="initializeAdditionalDetailView"/>
+				<!-- <eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_initialize" method="initializeAdditionalDetailView"/> -->
 				<!-- Loc-Out: add initialize Addtional View -->
 				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="back" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_back" method="transitsBackToIssueAdditionalSearchView"/>
 			</eventHandlers>
