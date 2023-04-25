@@ -1170,7 +1170,8 @@ define("platform/ui/control/View", [
 								        transitionTo: action.transitionTo,
 								        transition: action.transition,
 								        eventHandlers: action.eventHandlers,
-								        action: action
+								        action: action,
+										cssClass: action.label.textMsg == "Select All" ? "headerActionButtons" : "",
 								    });
 								    //Need to build before we can call render on the toolbar button
 								    button.build();
@@ -1231,17 +1232,21 @@ define("platform/ui/control/View", [
 
 							//Put into the hiddenButton list for those less than the buttons to	 hide
 							array.forEach(this.potentialToolbarButtons, function(button, index) {
-							    if (!button.overFlow) { // don't hide the overflow button
-						            if (hiddenButtonCount < wrappedButtonCount) {
-						                hiddenButtonCount++;
-						                if (button.action) {
-						                    this.hiddenButtons.push(button.action);
-						                }
-						            }
-					                //If the button shouldn't be hidden, then add it.
-						            else {
-						                this.addToolbarButton(button);
-						            }
+								if (!button.overFlow) {
+									// don't hide the overflow button
+									if (button.alt == "Select All") {
+										wrappedButtonCount--;
+										this.addToolbarButton(button);
+									} else if (hiddenButtonCount < wrappedButtonCount) {
+										hiddenButtonCount++;
+										if (button.action) {
+											this.hiddenButtons.push(button.action);
+										}
+									}
+									//If the button shouldn't be hidden, then add it.
+									else {
+										this.addToolbarButton(button);
+									}
 								}
 							}, this);
 							if(this.overFlowButton){

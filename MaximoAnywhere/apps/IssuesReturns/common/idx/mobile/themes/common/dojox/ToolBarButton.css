@@ -102,6 +102,10 @@
 	border-bottom-right-radius:0;
 }
 
+.mblHeading .mblToolBarButton.headerActionButtons {
+	position: absolute;
+}
+
 .mblToolBarButtonText .mblToolBarButtonIcon {
 	padding-left:10px;
 }

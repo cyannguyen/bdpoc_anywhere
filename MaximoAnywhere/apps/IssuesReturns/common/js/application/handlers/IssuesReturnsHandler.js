@@ -954,6 +954,21 @@ define("application/handlers/IssuesReturnsHandler", [
             }
         },
 
+        handleClickAllFilterItem: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
+            var header = CommonHandler._getAdditionalResource(
+                eventContext,
+                "issueReservedHeader"
+            ).getCurrentRecord();
+            if (!header) return;
+            var isSelectAll = header.selectall;
+            if (isSelectAll == null) isSelectAll = true;
+            arrayUtil.forEach(records.data, function (item) {
+                item.set("reservedIndicator", !isSelectAll);
+            });
+            header.set("selectall", !isSelectAll);
+        },
+
         /**
          * Check if any records need to be split when completing the issue.
          */

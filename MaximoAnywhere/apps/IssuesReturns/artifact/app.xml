@@ -299,6 +299,14 @@
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
 
 			</requiredResources>
+			<actions id="IssuesReturns.InvreserveActions">
+				<action id="IssuesReturns.InvreserveActions_selectall_action" image="/images/download-ok.png" label="Select All" overflow="false">
+					<!-- <action id="IssuesReturns.InvreserveActions_selectall_action" image="/images/select_all.png" label="Select All" overflow="false"> -->
+					<eventHandlers id="IssuesReturns.InvreserveActions_events">
+						<eventHandler id="IssuesReturns.InvreserveActions_click_event" event="click" class="application.handlers.IssuesReturnsHandler" method="handleClickAllFilterItem"/>
+					</eventHandlers>
+				</action>
+			</actions>
 			<!-- Loc-In: add View for Reserved Header -->
 			<container id="IssuesReturns.InvreserveListView_container_1" resource="issueReservedHeader">
 				<group id="IssuesReturns.InvreserveListView_group_1">
