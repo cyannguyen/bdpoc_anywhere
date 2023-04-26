@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="ReturnExternalItemList" version="201508201624" width="100">
+	<!-- <row id="row_0">
+	    <column colspan="1" columnid="r1item1" id="item1_column"/>
+		<column colspan="1" columnid="r1item2" id="item2_column"/>
+		<column colspan="1" rowspan="3" columnid="checkbox1" halign="right" id="item3_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="1" columnid="r2item1" id="item3_column"/>
+		<column colspan="1" columnid="r2item2" id="item4_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="2" columnid="r3item1" id="item5_column"/>
+	</row> -->
+	<!-- Loc-In: Add layout items -->
+	<row id="row_0">
+	    <column colspan="1" columnid="r1item1" id="item1_column"/>
+		<column colspan="1" columnid="r1item2" id="item2_column"/>
+		<column colspan="1" rowspan="3" columnid="checkbox1" halign="right" id="item3_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="1" columnid="r2item1" id="item3_column"/>
+		<column colspan="1" columnid="r2item2" id="item4_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="2" columnid="r3item1" id="item5_column"/>
+	</row>
+	<!-- Loc-Out: Add layout items -->
+</layout>

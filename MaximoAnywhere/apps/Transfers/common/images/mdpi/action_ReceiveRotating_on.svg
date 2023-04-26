@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>action_ReceiveRotating_on</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="action_ReceiveRotating_on" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(3.000000, 3.000000)" fill="#5AAAFA">
+            <circle id="Oval" cx="2" cy="13" r="2"></circle>
+            <path d="M5.19610218,7 L10,7 L10,9 L4,9 L2,9 L2,1 L4,1 L4,5.28021397 C6.20367051,2.60265628 9.52175252,0.96931676 13.1325647,0.96931676 C18.105803,0.96931676 22.4955245,4.06800465 24.2103379,8.64945564 L22.3372456,9.35054436 C20.9125321,5.54415027 17.264923,2.96931676 13.1325647,2.96931676 C9.9353076,2.96931676 7.01492465,4.50991548 5.19610218,7 Z" id="Combined-Shape" fill-rule="nonzero"></path>
+            <circle id="Oval-Copy-2" transform="translate(25.000000, 13.000000) rotate(-180.000000) translate(-25.000000, -13.000000) " cx="25" cy="13" r="2"></circle>
+            <path d="M5.9857643,22.6801389 L10.7896621,22.6801389 L10.7896621,24.6801389 L4.78966211,24.6801389 L2.78966211,24.6801389 L2.78966211,16.6801389 L4.78966211,16.6801389 L4.78966211,20.9603529 C6.99333262,18.2827952 10.3114146,16.6494556 13.9222268,16.6494556 C18.8954651,16.6494556 23.2851867,19.7481435 25,24.3295945 L23.1269077,25.0306832 C21.7021942,21.2242892 18.0545851,18.6494556 13.9222268,18.6494556 C10.7249697,18.6494556 7.80458676,20.1900544 5.9857643,22.6801389 Z" id="Combined-Shape-Copy" fill-rule="nonzero" transform="translate(13.894831, 20.840069) rotate(-180.000000) translate(-13.894831, -20.840069) "></path>
+        </g>
+    </g>
+</svg>

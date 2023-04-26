@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>acBtn_transfer_additional</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="acBtn_transfer_additional" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(1.000000, 6.000000)" fill="#5AAAFA">
+            <path d="M22,11 L15,11 L15,8 L22,8 L22,4 L28,9.5 L22,15 L22,11 Z M11.3094385,16.9976263 C11.3727672,16.9992056 11.4362908,17 11.5,17 C13.9897411,17 16.1961303,15.7868266 17.5602737,13.9193738 C18.6360786,14.709927 19.1304319,15.1619964 19.0433337,15.2755819 C17.3069686,17.5399894 14.5739862,19 11.5,19 C11.4469819,19 11.3834614,18.3325421 11.3094385,16.9976263 Z M4.02807433,10.1534725 L2.05121022,10.3386541 C2.01707007,9.92964865 2,9.6500973 2,9.5 C2,4.25329488 6.25329488,0 11.5,0 C14.6792296,0 17.493706,1.5616941 19.2181455,3.95979855 C19.3071454,4.08356688 18.8024465,4.52512045 17.7040488,5.28445925 C16.3543403,3.30193236 14.0792115,2 11.5,2 C7.35786438,2 4,5.35786438 4,9.5 C4,9.72016879 4.00948694,9.93812179 4.02807433,10.1534725 Z" id="button_move_asset" fill-rule="nonzero"></path>
+            <path d="M6,15.5 L9.5,15.5 L9.5,17.5 L6,17.5 L6,21 L4,21 L4,17.5 L0.5,17.5 L0.5,15.5 L4,15.5 L4,12 L6,12 L6,15.5 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>

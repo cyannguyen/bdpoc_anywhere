@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>action_rotatingAsset_on</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="action_rotatingAsset_on" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M17.6568542,17.9497475 L15.5355339,20.0710678 L14.1213203,18.6568542 L16.2426407,16.5355339 L14.1213203,14.4142136 L15.5355339,13 L19.0710678,16.5355339 L17.6568542,17.9497475 Z M20,27 L20,5 L20,3 L24,3 L24,5 L22,5 L22,26 L24,26 L24,28 L20,28 L20,27 Z M24,6 L29,6 L29,11 L24,11 L24,6 Z M24,13 L29,13 L29,18 L24,18 L24,13 Z M24,20 L29,20 L29,25 L24,25 L24,20 Z M3,11 L13,11 L13,21 L3,21 L3,11 Z" fill="#5AAAFA"></path>
+    </g>
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="32px" viewBox="0 0 43 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_app_Transfers_back_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="header_app_Transfers_back_OFF" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M34,13.6363636 L26,13.6363636 L26,10.3636364 L34,10.3636364 L34,6 L40,12 L34,18 L34,13.6363636 Z M22,17 L32,17 L32,21 L22,21 L22,27 L14,19 L22,11 L22,17 Z" id="header_app_noBack" fill="#FFFFFF"></path>
+        <g id="nany-icon-/-back-arrow" fill="#FFFFFF">
+            <polygon id="header_back_OFF" points="4.09980033 16 7.53567422 22.5 4.18511389 22.5 1 16 4.64943967 9.5 8 9.5"></polygon>
+        </g>
+    </g>
+</svg>

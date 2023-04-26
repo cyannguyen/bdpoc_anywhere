@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="VoidShippedItemList" version="201508201624" width="100">
+	<!-- <row id="row_0">
+	    <column colspan="3" columnid="r1item1" id="item1_column"/>
+		<column colspan="7" columnid="r1item2" id="item2_column"/>
+		<column colspan="2" rowspan="2" columnid="checkbox1" id="item3_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="3" columnid="r2item1" id="item4_column"/>
+		<column colspan="7" columnid="r2item2" id="item5_column"/>
+		<column colspan="2" columnid="r2item3" id="item6_column"/>
+	</row>
+	<row id="row_2">
+	    <column colspan="12" columnid="r3item1" id="item7_column"/>
+	</row> -->
+	<!-- Loc-In: Add layout items -->
+	<row id="row_0">
+	    <column colspan="5" columnid="r1item1" id="item1_column"/>
+		<column colspan="5" columnid="r1item2" id="item2_column"/>
+		<column colspan="2" rowspan="2" columnid="checkbox1" id="item3_column"/>
+	</row>
+	<row id="row_1">
+	    <column colspan="5" columnid="r2item1" id="item4_column"/>
+		<column colspan="5" columnid="r2item2" id="item5_column"/>
+	</row>
+	<row id="row_2">
+	    <column colspan="12" columnid="r3item1" id="item6_column"/>
+	</row>
+	<!-- Loc-Out: Add layout items -->
+</layout>

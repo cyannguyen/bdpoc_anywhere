@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="Qtlayout" version="201508201624">
+  <row id="row_0">
+    <column colspan="6" columnid="item1" id="item1_column"/>
+    <column colspan="6" columnid="item2" halign="left" id="count2_column"/>
+  </row>
+  <row id="row_1">
+    <column colspan="6" columnid="item3" id="item3_column"/>
+    <column colspan="6" columnid="item4" halign="left" id="count4_column"/>
+  </row>
+  <row id="row_2">
+    <column colspan="12" columnid="item5" id="item5_column"/>
+  </row>
+  <row id="row_4">
+    <column colspan="6" columnid="item6" halign="left" id="count6_column"/>
+    <column colspan="6" columnid="button1" id="item8_column"/>
+  </row>
+</layout>

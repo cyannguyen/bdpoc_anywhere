@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="InvreserveListItem" version="201509090907" width="100">
+   <row id="row_0">
+      <column colspan="3" columnid="item1" halign="left" id="item1_column"/>
+      <column colspan="3" columnid="item2" halign="left" id="item2_column"/>
+      <column colspan="3" columnid="item3" halign="left" id="item3_column"/>
+      <column colspan="3" columnid="item4" halign="left" id="item4_column"/>
+      <column colspan="3" columnid="item5" halign="left" id="item5_column"/>
+   </row>
+</layout>
