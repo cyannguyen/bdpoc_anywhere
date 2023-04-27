@@ -850,6 +850,15 @@
 				<requiredResource id="Transfers.InvreserveListView_transferReservedHeader" name="transfersReservedHeader"/>
 				<!-- Loc-Out: add required Resource -->
 			</requiredResources>
+			<!-- Tuan-in: add selectall checkbox to reserved Items List  -->
+			<actions id="Transfers.InvreserveActions">
+				<action id="Transfers.InvreserveActions_selectall_action" image="/images/download-ok.png" label="Select All" overflow="false">
+					<eventHandlers id="Transfers.InvreserveActions_events">
+						<eventHandler id="Transfers.InvreserveActions_click_event" event="click" class="application.handlers.TransfersHandler" method="handleClickAllFilterItem"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<!-- Tuan-out: add selectall checkbox to reserved Items List  -->
 			<!-- Loc-In: add View for Reserved Header -->
  			<container id="Transfers.InvreserveListView_container_1" resource="transfersReservedHeader">
  			    <group id="Transfers.InvreserveListView_group_1">
@@ -2579,6 +2588,10 @@
 				<localAttribute dataType="string" id="transfersReservedHeader_description_string" name="description"/>
 				<localAttribute dataType="string" id="transfersReservedHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="transfersReservedHeader_createdate_datetime" name="createdate"/>
+
+				<!-- Tuan-in: add selectall checkbox to reserved Items List -->
+				<localAttribute dataType="boolean" formula="true" id="invreserve_item_selectall" name="selectall"/>
+				<!-- Tuan-out: add selectall checkbox to reserved Items List -->
 			</attributes>
 			<whereClause id="transfersReservedHeader_whereClause"/>			
 		</resource>

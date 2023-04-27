@@ -2746,6 +2746,23 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 		//#endregion Loc-Out: Research Attachment	
 		
+        /* #region Tuan-in: add selectall checkbox to reserved Items List   */
+        handleClickAllFilterItem: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
+            var header = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfersReservedHeader"
+            ).getCurrentRecord();
+            if (!header) return;
+            var isSelectAll = header.selectall;
+            if (isSelectAll == null) isSelectAll = true;
+            arrayUtil.forEach(records.data, function (item) {
+                item.set("reservedIndicator", !isSelectAll);
+            });
+            header.set("selectall", !isSelectAll);
+        },
+        /* #endregion Tuan-out: add selectall checkbox to reserved Items List  */
+
 		/* #region Tuan-in: add checkbox to reserved Items List */
 		checkBoxValidation: function (eventContext, invreserveSet) {
 			invreserveSet.filter("reservedIndicator == true");

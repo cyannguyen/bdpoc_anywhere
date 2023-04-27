@@ -30,6 +30,13 @@
 	float:left;
 }
 
+/* Tuan-in: add selectall checkbox to reserved Items List */
+.mblHeading .mblToolBarButton.headerActionButtons {
+	position: absolute;
+}
+
+/* Tuan-out: add selectall checkbox to reserved Items List */
+
 .mblHeading span.mblToolBarButtonLightIcon {
 	padding:0;
 }
