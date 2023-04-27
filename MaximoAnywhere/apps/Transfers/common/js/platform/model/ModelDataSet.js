@@ -404,6 +404,8 @@ define("platform/model/ModelDataSet",
 			var deferred = new Deferred();
 			
 			if(self.recordsCount)
+				//#region Loc-In: Fix count error
+				/* 
 				deferred.resolve(self.recordsCount);
 				//IJ21206 - Fix count error
 				//if(self.recordsCount == self.data.length){
@@ -411,6 +413,15 @@ define("platform/model/ModelDataSet",
 				//}else{
 				//	deferred.resolve(self.data.length);
 				//}
+				 */
+				{
+					if(self.recordsCount == self.data.length){
+						deferred.resolve(self.recordsCount);
+					}else{
+						deferred.resolve(self.data.length);
+					}
+				}
+				//#endregion Loc-Out Fix count error
 			else {
 				CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
 					if (!hasConnectivity)

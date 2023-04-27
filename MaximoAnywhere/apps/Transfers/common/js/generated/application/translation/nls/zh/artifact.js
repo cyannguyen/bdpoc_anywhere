@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2023-04-25 12:01:09
+// Build: 2023-04-26 15:55:42
 //----------------------------------------------------------------//
 define({
    
@@ -55,7 +55,6 @@ define({
          "Search Additional Items" : "[中国的~Search Additional Items]",
          "Item" : "[中国的~Item]",
          "Item Description" : "[中国的~Item Description]",
-         "Bin" : "[中国的~Bin]",
          "Part #" : "[中国的~Part #]",
          "Search Shipments" : "[中国的~Search Shipments]",
          "Shipment" : "[中国的~Shipment]",
@@ -79,6 +78,7 @@ define({
          "Description" : "[中国的~Description]",
          "Create Date" : "[中国的~Create Date]",
          "Records" : "[中国的~Records]",
+         "Bin" : "[中国的~Bin]",
          "from bin" : "[中国的~from bin]",
          "Ship" : "[中国的~Ship]",
          "Quantity Available" : "[中国的~Quantity Available]",

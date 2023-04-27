@@ -184,10 +184,12 @@
 					<groupitem id="Transfers.SearchUnreserved_itemnum_groupitem_1">
 						<text codeScannable="true" editable="true" id="Transfers.SearchUnreserved_itemnum" label="Item" lookup="Transfers.ItemLookup" lookupAttribute="itemnum" placeHolder="Tap to enter" resourceAttribute="itemnum"/>
 						<text editable="true" id="Transfers.SearchUnreserved_itemdesc" label="Item Description" placeHolder="Tap to enter" resourceAttribute="itemdesc"/>
-						<text codeScannable="true" editable="true" id="Transfers.SearchUnreserved_bin" label="Bin" placeHolder="Tap to enter" resourceAttribute="bin"/>
+						<!-- Loc-In: hide Searching Bin -->
+						<!-- <text codeScannable="true" editable="true" id="Transfers.SearchUnreserved_bin" label="Bin" placeHolder="Tap to enter" resourceAttribute="bin"/> -->
+						<!-- Loc-Out: hide Searching Bin -->
 						<!-- Loc-In: Add Searching PartNo -->
 						<text codeScannable="true" editable="true" id="Transfers.SearchUnreserved_partno" label="Part #" placeHolder="Tap to enter" resourceAttribute="modelnumref"/>
-					<!-- Loc-Out: Add Searching PartNo -->							
+						<!-- Loc-Out: Add Searching PartNo -->							
 					</groupitem>
 				</group>
 			</container>
@@ -433,6 +435,9 @@
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domaininvusereceipts" name="domaininvusereceipts"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainpostatus" name="domainpostatus"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domaincosttype" name="domaincosttype"/>
+				<!-- Loc-In: Add required Resource --> 
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
+				<!-- Loc-Out: Add required Resource -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/> -->
@@ -3109,6 +3114,8 @@
 				<attribute describedByProperty="spi:anywhere_documentref" id="receivedMatrectrans_spianywheredocumentref" index="true" name="documentref"/>
 				<attribute describedByProperty="spi:externalrefid" id="receivedMatrectrans_spiexternalrefid" name="externalrefid"/>
 				<attribute describedByProperty="spi:formno" id="receivedMatrectrans_spiformno" name="formno"/>
+			    <attribute describedByProperty="spi:tobin" id="receivedMatrectrans_spi_tobin" name="tobin"/>
+				<attribute describedByProperty="spi:tolot" id="receivedMatrectrans_spi_tolot" name="tolot"/>
 				<!-- Loc-Out: -->
 			</attributes>
 	        <creationFactories id="receivedMatrectrans_creationFactories">
@@ -3273,7 +3280,9 @@
 				<attribute describedByProperty="spi:anywhere_documentref" id="poListComplexMatrectrans_spianywheredocumentref" index="true" name="documentref"/>
 				<attribute describedByProperty="spi:externalrefid" id="poListComplexMatrectrans_spiexternalrefid" name="externalrefid"/>
 				<attribute describedByProperty="spi:formno" id="poListComplexMatrectrans_spiformno" index="true" name="formno"/>
-					    
+				<attribute describedByProperty="spi:receiptref" id="poListComplexMatrectrans_spi_receiptref" index="true" name="receiptref"/>
+				<attribute describedByProperty="spi:tobin" id="poListComplexMatrectrans_spi_tobin" name="tobin"/>
+				<attribute describedByProperty="spi:tolot" id="poListComplexMatrectrans_spi_tolot" name="tolot"/>
 				<!-- Loc-Out: Add attributes -->
 			    <localAttribute dataType="string" id="poListComplexMatrectrans_newassetnumber" name="newassetnumber"/>			    			    
 			    <localAttribute dataType="double" formula="${0}" id="poListComplexMatrectrans_rejectqty" name="localrejectqty"/>

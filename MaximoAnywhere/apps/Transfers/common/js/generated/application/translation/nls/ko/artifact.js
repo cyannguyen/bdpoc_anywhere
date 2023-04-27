@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2023-04-25 12:01:10
+// Build: 2023-04-26 15:55:45
 //----------------------------------------------------------------//
 define({
    
@@ -55,7 +55,6 @@ define({
          "Search Additional Items" : "[대학에~Search Additional Items]",
          "Item" : "[대학에~Item]",
          "Item Description" : "[대학에~Item Description]",
-         "Bin" : "[대학에~Bin]",
          "Part #" : "[대학에~Part #]",
          "Search Shipments" : "[대학에~Search Shipments]",
          "Shipment" : "[대학에~Shipment]",
@@ -79,6 +78,7 @@ define({
          "Description" : "[대학에~Description]",
          "Create Date" : "[대학에~Create Date]",
          "Records" : "[대학에~Records]",
+         "Bin" : "[대학에~Bin]",
          "from bin" : "[대학에~from bin]",
          "Ship" : "[대학에~Ship]",
          "Quantity Available" : "[대학에~Quantity Available]",

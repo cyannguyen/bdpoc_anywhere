@@ -295,6 +295,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 						//#region Loc-In: set Actual Date, tobin
 						matrectrans.set('actualdate', currentRecord.actualdate);
 						matrectrans.set('tobin', currentRecord.tobin);
+						matrectrans.set('tolot', currentRecord.tolot);
 						matrectrans.set('externalrefid', 'FROMMOBILE');
 						//#endregion Loc-Out: set Actual Date, tobin
 						
@@ -821,7 +822,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 							matrectransSet.sort('itemnum');
 							eventContext.application.addResource(matrectransSet);
 							eventContext.ui.show("Transfers.ReceivedItemsListView"); */
-							
+
 							else {
 								filter = [];
 
@@ -843,9 +844,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 										}
 									}
 
-									arrayUtil.forEach(deleteIndexs, function(index){
+									for (let index = deleteIndexs.length - 1 ; index >= 0; index--) {
 										matrectransSet.getRecordAt(index).deleteLocal();
-									});
+									}
 
 									ModelService.clearSearchResult(matrectransSet);
 									matrectransSet.resourceID = 'receivedMatrectrans';
@@ -1096,13 +1097,20 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
 			var siteid = UserManager.getInfo("defsite");
 			var shipmentNum = transfersLocalResource.shipment;
+			//#region Loc-In: Add FromNo, DocumentRef
+			var formno = transfersLocalResource.formno;
+			var documentref = transfersLocalResource.documentref;
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 			var self = this;
 			var filter = [];
 			var oslcQueryParameters = {};
 			var transfersHand = new TransfersHandler();
 			
 			//verify if we have at least one field filled
-			if(!shipmentNum){
+			//#region Loc-In: Add FromNo, DocumentRef
+			//if(!shipmentNum){
+			if(!shipmentNum && !formno && !documentref){
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 				var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
 				self.ui.showMessage(msg);
 				return;
@@ -1121,7 +1129,18 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					var flushPromise = PushingCoordinatorService.flush();
 					flushPromise.then(function(){
 
-						oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						//#region Loc-In: Add FormNo, DocumentRef
+						//oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						if(shipmentNum){
+							oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						}
+						if(formno){
+							filter.push({formnumber : formno});
+						}
+						if(documentref){
+							filter.push({documentref : documentref});
+						}
+						//#endregion Loc-Out: Add FormNo, DocumentRef
 						oslcQueryParameters['sqp:siteid'] =  siteid;
 						
 						var matrectransPromise =  ModelService.filtered('matrectrans', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, oslcQueryParameters, false);
@@ -1172,13 +1191,20 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
 			var siteid = UserManager.getInfo("defsite");
 			var shipmentNum = transfersLocalResource.shipment;
+			//#region Loc-In: Add FromNo, DocumentRef
+			var formno = transfersLocalResource.formno;
+			var documentref = transfersLocalResource.documentref;
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 			var transfersHand = new TransfersHandler();
 			var self = this;
 			var filter = [];
 			var oslcQueryParameters = {};
 			
 			//verify if we have at least one field filled
-			if(!shipmentNum){
+			//#region Loc-In: Add FromNo, DocumentRef
+			//if(!shipmentNum){
+			if(!shipmentNum && !formno && !documentref){
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 				var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
 				self.ui.showMessage(msg);
 				return;
@@ -1197,7 +1223,18 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					var flushPromise = PushingCoordinatorService.flush();
 					flushPromise.then(function(){
 
-						oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						//#region Loc-In: Add FormNo, DocumentRef
+						//oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						if(shipmentNum){
+							oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
+						}
+						if(formno){
+							filter.push({formnumber : formno});
+						}
+						if(documentref){
+							filter.push({documentref : documentref});
+						}
+						//#endregion Loc-Out: Add FormNo, DocumentRef
 						oslcQueryParameters['sqp:siteid'] =  siteid;
 						
 						var matrectransPromise =  ModelService.filtered('matrectrans', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, oslcQueryParameters, false);
