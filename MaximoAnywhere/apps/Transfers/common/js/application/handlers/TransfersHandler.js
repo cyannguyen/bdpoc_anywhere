@@ -2658,7 +2658,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		validateActualDateIssueReturnItems: function(eventContext) {
 			var self = this;
 			var currentRecord = eventContext.getResource().getCurrentRecord();
-			if(!currentRecord.actualdate){
+            /* #region Tuan-in: fix currentRecord null*/
+            if (currentRecord && !currentRecord.actualdate) {
+                /* #endregion Tuan-in: fix currentRecord null*/
 				var msg = MessageService.createStaticMessage("emptyActualDate").getMessage();
 				if (self.ui.getCurrentDialog().id == 'Platform.DateTimeLookup') {
 					setTimeout(function(){
