@@ -35,4 +35,11 @@
 		<column colspan="2" columnid="item9" halign="left" id="item9_column"/>
 	</row>
 	<!-- Loc-Out: Add layout items --> 
+
+	<!-- Change: add lotnum -->
+	<row id="row_5">
+		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
+		<column colspan="2" columnid="item11" halign="left" id="item11_column"/>
+	</row>
+	<!-- Change: add lotnum -->
 </layout>

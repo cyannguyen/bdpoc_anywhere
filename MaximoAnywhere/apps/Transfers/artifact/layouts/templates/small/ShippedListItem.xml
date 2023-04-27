@@ -33,6 +33,12 @@
 		<column colspan="1" columnid="item5" halign="left" id="item5_column"/>
 		<column colspan="2" columnid="item6" halign="left" id="item6_column"/>
 	</row>
+	<!-- Change: add lotnum -->
+	<row id="row_5">
+		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
+		<column colspan="2" columnid="item11" halign="left" id="item11_column"/>
+	</row>
+	<!-- Change: add lotnum -->
 	<row id="row_3">
 		<column colspan="1" columnid="item7" halign="left" id="item7_column"/>
 		<column colspan="2" columnid="item8" halign="left" id="item8_column"/>

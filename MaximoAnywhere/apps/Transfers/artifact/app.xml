@@ -595,6 +595,9 @@
 						</button>
 					</text>
 					<!-- label="To Bin" -->
+					<!-- Change: add lotnum -->
+					<text editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/>
+					<!-- Change: add lotnum -->
 					<!-- <text codeScannable="false" editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="Tap to enter" resourceAttribute="tobin" /> -->
 					<text cssClass="copyPlanActual" editable="true" id="Transfers.ShipmentItemsListView_quantityDue" layoutInsertAt="item7" resourceAttribute="quantitydue">
 						<eventHandlers id="Transfers.ShipmentItemsListView_quantityDue_eventHandlers">
@@ -916,8 +919,10 @@
 							</eventHandlers> 
 						</button>
 					</text>
-					
 					<!-- Loc-In: arrange all fields AND Add partNo, lot, actualDate -->
+					<!-- Change: add lotnum -->
+					<text editable="false" id="Transfers.InvreserveListView_lotnum" required="false" layoutInsertAt="item11" resourceAttribute="fromlot"/>
+					<!-- Change: add lotnum -->
 				</listItemTemplate>
 			</list>
 			<footer id="Transfers.InvreserveListView_footer">
@@ -1549,6 +1554,10 @@
 							</eventHandlers> 
 						</text>
 						<!-- Loc-Out: add initialize Additional Items -->
+
+						<!-- Change: add lotnum -->
+						<text editable="false" id="Transfers.AdditionalItemsDetailsView_lot" label="From Lot" required="false" resourceAttribute="fromlot"/>
+						<!-- Change: add lotnum -->
 						
 					</groupitem>
  				</group>
@@ -1578,7 +1587,11 @@
 									<eventHandler class="application.handlers.TransfersHandler" event="click" id="Transfers.AdditionalItemsDetailsView_eventhandler_click" method="toBinLotLookup"/> 
 								</eventHandlers> 
 							</button>
-						</text>  							
+						</text>
+
+						<!-- Change: add lotnum -->
+						<text editable="false" id="Transfers.AdditionalItemsDetailsView_tolot" label="To Lot" required="false" resourceAttribute="tolot"/>
+						<!-- Change: add lotnum -->							
 					</groupitem>	
 			    </group>		
  			 </container>    
