@@ -404,13 +404,15 @@ define("platform/model/ModelDataSet",
 			var deferred = new Deferred();
 			
 			if(self.recordsCount)
-				deferred.resolve(self.recordsCount);
+			/* #region Tuan-in: Fix count error */
+				// deferred.resolve(self.recordsCount);
 				//IJ21206 - Fix count error
-				//if(self.recordsCount == self.data.length){
-				//	deferred.resolve(self.recordsCount);
-				//}else{
-				//	deferred.resolve(self.data.length);
-				//}
+				if(self.recordsCount == self.data.length){
+					deferred.resolve(self.recordsCount);
+				}else{
+					deferred.resolve(self.data.length);
+				}
+			/* #endregion Tuan-out: Fix count error */
 			else {
 				CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
 					if (!hasConnectivity)
