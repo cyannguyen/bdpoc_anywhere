@@ -928,6 +928,9 @@
 						</button>
 					</text>
 					<!-- Loc-In: arrange all fields AND Add partNo, lot, actualDate -->
+					<!-- Tuan-in: add checkbox to reserved Items List -->
+					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
+					<!-- Tuan-out: add checkbox to reserved Items List -->
 					<!-- Change: add lotnum -->
 					<text editable="false" id="Transfers.InvreserveListView_lotnum" required="false" layoutInsertAt="item11" resourceAttribute="fromlot"/>
 					<!-- Change: add lotnum -->
@@ -2644,6 +2647,11 @@
 				<attribute describedByProperty="spi:porevisionnum" id="invreserveResource_polinenum_spi_porevisionnum" index="true" name="porevisionnum"/>
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" formula="new Date()" id="invreserveResource_actualdate" name="actualdate"/>
+
+				<!-- Tuan-in: add checkbox to reserved Items List -->
+				<localAttribute dataType="boolean" formula="true" id="invreserveResource_reservedindicator" name="reservedIndicator"/>
+				<!-- Tuan-out: add checkbox to reserved Items List -->
+
 				<!-- <attribute describedByProperty="spi:inventory{spi:invitem{spi:modelnumref}}" index="true" id="invreserveResource_inventory_spi_modelnum" name="modelnumref"/> -->
 				<!-- <localAttribute dataType="string" id="invreserveResource_modelnum" name="modelnum"/> -->
 				<attribute describedByProperty="spi:item{spi:modelnumref}" id="invreserveResource_item_spimodelnumref" name="modelnumref"/>

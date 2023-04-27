@@ -559,6 +559,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 
 		shipReservation : function(eventContext){
+			/* #region Tuan-in: add checkbox to reserved Items List  */
+			var invreserveSet = eventContext.getResource();
+			this.checkBoxValidation(eventContext, invreserveSet);
+			/* #endregion Tuan-out: add checkbox to reserved Items List  */
 			if(this.iterateAllRecordsToCheckQuantity(eventContext)){
 			this.initiateTransfer(eventContext,"SHIPPED");
 			}
@@ -2740,6 +2744,17 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			//eventContext.application['application.handlers.TransfersHandler'].clearSearchFields(eventContext)
 			eventContext.ui.show("Transfers.InvreserveListView");
 		},
-		//#endregion Loc-Out: Research Attachment		
+		//#endregion Loc-Out: Research Attachment	
+		
+		/* #region Tuan-in: add checkbox to reserved Items List */
+		checkBoxValidation: function (eventContext, invreserveSet) {
+			invreserveSet.filter("reservedIndicator == true");
+
+			if (invreserveSet && invreserveSet.count() == 0) {
+				CommonHandler._clearFilterForResource(eventContext, invreserveSet);
+				throw new PlatformRuntimeException("atLeastOneItem");
+			}
+		},
+		/* #endregion Tuan-out: add checkbox to reserved Items List */
 	});
 });
