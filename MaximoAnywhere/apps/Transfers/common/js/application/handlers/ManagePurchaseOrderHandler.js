@@ -137,6 +137,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var siteid = UserManager.getInfo("defsite");
 			var ponum = externalPoLocalResource.ponum;
 			//#region Loc-In: add formNo
+			var domainIssueTypes = CommonHandler._getAdditionalResource(eventContext,'domainissuetype');
 			var formno = externalPoLocalResource.formno;
 			//#endregion Loc-Out: add formNo
 			//var vendor = externalPoLocalResource.vendor;
@@ -177,6 +178,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 						if (formno) {
 							filter.push({formno: formno});
 						}
+
+						var issuetype = SynonymDomain.resolveToDefaultExternal(domainIssueTypes, 'RECEIPT');
+						filter.push({issuetype: issuetype});
+						
 						//#endregion Loc-Out: add formNo
 						oslcQueryParameters['sqp:siteid'] =  siteid;
 						
@@ -189,12 +194,49 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 								self.ui.showMessage(msg);
 								return;
 							}
-							
-							ModelService.clearSearchResult(matrectransSet);
+							//#region Loc-In: filter list by condition [issuetype='RECEIPT' and not exists (select 1 from matrectrans matsub where receiptref=matrectrans.matrectransid) ]
+							/* ModelService.clearSearchResult(matrectransSet);
 							matrectransSet.resourceID = 'poListComplexMatrectrans';
 							matrectransSet.sort('itemnum');
 							eventContext.application.addResource(matrectransSet);
-							eventContext.ui.show("Transfers.POMaterialReceiptsListView");
+							eventContext.ui.show("Transfers.POMaterialReceiptsListView"); */
+							
+							else {
+								filter = [];
+
+								arrayUtil.forEach(matrectransSet.data, function(matrectrans){
+									filter.push({receiptref : matrectrans.matrectransid});
+								});
+								
+								ModelService.filtered('poListComplexMatrectrans', null, filter, 1000, true, true, oslcQueryParameters, false).then(function(refSet) {
+									var deleteIndexs = [];
+									if (refSet.data.length > 0) {
+										for (let index = 0; index < matrectransSet.count(); index++) {
+											arrayUtil.forEach(refSet.data, function(set){
+												var currentRecord = matrectransSet.getRecordAt(index);
+													if (currentRecord.matrectransid == set.receiptref) {
+														deleteIndexs.push(index);
+														return;
+													}
+											});
+										}
+									}
+
+									for (let index = deleteIndexs.length - 1 ; index >= 0; index--) {
+										matrectransSet.getRecordAt(index).deleteLocal();
+									}
+
+									ModelService.clearSearchResult(matrectransSet);
+									matrectransSet.resourceID = 'poListComplexMatrectrans';
+									matrectransSet.sort('itemnum');
+									eventContext.application.addResource(matrectransSet);
+									eventContext.ui.show("Transfers.POMaterialReceiptsListView");
+									
+								}).otherwise(function(error){
+									Logger.trace(self._className + ": " + error);
+								});	
+							}
+							//#endregion Loc-Out: filter list by condition [issuetype='RECEIPT' and not exists (select 1 from matrectrans matsub where receiptref=matrectrans.matrectransid) ]
 							
 						}).otherwise(function(error){
 							Logger.trace(self._className + ": " + error);
@@ -1136,6 +1178,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'poExternalResource').getCurrentRecord();
 			var siteid = UserManager.getInfo("defsite");
 			var poNum = transfersLocalResource.ponum;
+			//#region Loc-In: add formNo
+			var formno = externalPoLocalResource.formno;
+			//#endregion Loc-Out: add formNo
 			var self = this;
 			var filter = [];
 			var oslcQueryParameters = {};
@@ -1143,7 +1188,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var deferredsArray = [];
 			
 			//verify if we have at least one field filled
-			if(!poNum){
+			//#region Loc-In: add formNo
+			//if(!poNum){
+			if (!poNum && !formno) {
+			//#endregion Loc-Out: add formNo
 				var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
 				self.ui.showMessage(msg);
 				return;
@@ -1172,7 +1220,16 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					flushPromise.then(function(){
 						
 						//All set to get data from server
-						oslcQueryParameters['sqp:poNum'] =  poNum;
+						
+						//#region Loc-In: Add FormNo
+						// oslcQueryParameters['sqp:poNum'] =  poNum;
+						if(poNum){
+							oslcQueryParameters['sqp:poNum'] =  poNum;
+						}
+						if(formno){
+							filter.push({formno : formno});
+						}
+						//#endregion Loc-Out: Add FormNo
 						oslcQueryParameters['sqp:siteid'] =  siteid;
 						
 						var matrectransPromise =  ModelService.filtered('poComplexMatrectrans', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, oslcQueryParameters, false);
@@ -1443,13 +1500,19 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'poExternalResource').getCurrentRecord();
 			var siteid = UserManager.getInfo("defsite");
 			var poNum = transfersLocalResource.ponum;
+			//#region Loc-In: add formNo
+			var formno = externalPoLocalResource.formno;
+			//#endregion Loc-Out: add formNo
 			var self = this;
 			var filter = [];
 			var oslcQueryParameters = {};
 			var transfersHand = new TransfersHandler();
 			
 			//verify if we have at least one field filled
-			if(!poNum){
+			//#region Loc-In: add formNo
+			//if(!poNum){
+			if (!poNum && !formno) {
+			//#endregion Loc-Out: add formNo
 				var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
 				self.ui.showMessage(msg);
 				return;
@@ -1477,7 +1540,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					flushPromise.then(function(){
 						
 						//All set to get data from server
-						oslcQueryParameters['sqp:poNum'] =  poNum;
+						//#region Loc-In: Add FormNo
+						// oslcQueryParameters['sqp:poNum'] =  poNum;
+						if(poNum){
+							oslcQueryParameters['sqp:poNum'] =  poNum;
+						}
+						if(formno){
+							filter.push({formno : formno});
+						}
+						//#endregion Loc-Out: Add FormNo
 						oslcQueryParameters['sqp:siteid'] =  siteid;
 						
 						var matrectransPromise =  ModelService.filtered('poComplexMatrectrans', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, oslcQueryParameters, false);

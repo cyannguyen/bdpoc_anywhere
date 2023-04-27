@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2023-04-25 12:01:12
+// Build: 2023-04-26 15:55:47
 //----------------------------------------------------------------//
 define({
    
@@ -55,7 +55,6 @@ define({
          "Search Additional Items" : "[pohjoispäässä~Search Additional Items]",
          "Item" : "[pohjoispäässä~Item]",
          "Item Description" : "[pohjoispäässä~Item Description]",
-         "Bin" : "[pohjoispäässä~Bin]",
          "Part #" : "[pohjoispäässä~Part #]",
          "Search Shipments" : "[pohjoispäässä~Search Shipments]",
          "Shipment" : "[pohjoispäässä~Shipment]",
@@ -79,6 +78,7 @@ define({
          "Description" : "[pohjoispäässä~Description]",
          "Create Date" : "[pohjoispäässä~Create Date]",
          "Records" : "[pohjoispäässä~Records]",
+         "Bin" : "[pohjoispäässä~Bin]",
          "from bin" : "[pohjoispäässä~from bin]",
          "Ship" : "[pohjoispäässä~Ship]",
          "Quantity Available" : "[pohjoispäässä~Quantity Available]",

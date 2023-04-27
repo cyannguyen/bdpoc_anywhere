@@ -14,7 +14,7 @@
 //----------------------------------------------------------------//
 // This is auto generated code. Do not modify it manually.
 // Product and Version: IBM Maximo Anywhere Version 7.5
-// Build: 2023-04-25 12:01:00
+// Build: 2023-04-26 15:55:34
 //----------------------------------------------------------------//
 define(   "generated/application/data/ApplicationStoresBuilder", 
       [
@@ -3964,7 +3964,7 @@ function(declare, all, StoresBuilderBase, ResourceMetadata, PersistenceManager, 
                   'maxFetchDataLimit' : 0,
                }).
                setLocal( false ).
-               setSimpleFieldsSelectExpression('dcterms:identifier,spi:location,spi:issueto,spi:rotassetnum,spi:packingslipnum,spi:itemsetid,spi:orgid,spi:invuselineid,spi:shipmentlinenum,spi:conversion,spi:invuselinesplitid,spi:commoditygroup,spi:requestedby,spi:positeid,spi:receivedunit,spi:currencylinecost,spi:status,spi:oldavgcost,spi:curbal,spi:statuschangeby,spi:proratecost,spi:loadedcost,spi:fromstoreloc,spi:linecost2,spi:linetype,spi:tax5,spi:consignment,spi:linecost,spi:receiptref,spi:tax1,spi:ponum,spi:tax2,spi:polinenum,spi:tax3,spi:prorated,spi:tax4,spi:shipmentnum,spi:exchangerate2,spi:fromsiteid,spi:langcode,spi:issuetype,spi:unitcost,spi:glcreditacct,spi:hasld,spi:statusdate,spi:currencycode,spi:enterby,spi:currencyunitcost,spi:invuselinenum,spi:frombin,spi:exchangerate,spi:actualdate,spi:siteid,spi:inspectedqty,spi:invuseid,spi:transdate,spi:outside,spi:qtyrequested,spi:gldebitacct,spi:financialperiod,spi:enteredastask,spi:rejectqty,spi:acceptedqty,spi:totalcurbal,spi:tostoreloc,spi:quantity,spi:actualcost,spi:issue,spi:costinfo,spi:inspected,spi:receiptquantity,spi:modelnum,spi:grnnumber,spi:anywhere_formnumber,spi:anywhere_documentref,spi:externalrefid,spi:formno,spi:item{spi:modelnumref,spi:rotating,spi:issueunit,dcterms:title,oslc:shortTitle}').
+               setSimpleFieldsSelectExpression('dcterms:identifier,spi:location,spi:issueto,spi:rotassetnum,spi:packingslipnum,spi:itemsetid,spi:orgid,spi:invuselineid,spi:shipmentlinenum,spi:conversion,spi:invuselinesplitid,spi:commoditygroup,spi:requestedby,spi:positeid,spi:receivedunit,spi:currencylinecost,spi:status,spi:oldavgcost,spi:curbal,spi:statuschangeby,spi:proratecost,spi:loadedcost,spi:fromstoreloc,spi:linecost2,spi:linetype,spi:tax5,spi:consignment,spi:linecost,spi:receiptref,spi:tax1,spi:ponum,spi:tax2,spi:polinenum,spi:tax3,spi:prorated,spi:tax4,spi:shipmentnum,spi:exchangerate2,spi:fromsiteid,spi:langcode,spi:issuetype,spi:unitcost,spi:glcreditacct,spi:hasld,spi:statusdate,spi:currencycode,spi:enterby,spi:currencyunitcost,spi:invuselinenum,spi:frombin,spi:exchangerate,spi:actualdate,spi:siteid,spi:inspectedqty,spi:invuseid,spi:transdate,spi:outside,spi:qtyrequested,spi:gldebitacct,spi:financialperiod,spi:enteredastask,spi:rejectqty,spi:acceptedqty,spi:totalcurbal,spi:tostoreloc,spi:quantity,spi:actualcost,spi:issue,spi:costinfo,spi:inspected,spi:receiptquantity,spi:modelnum,spi:grnnumber,spi:anywhere_formnumber,spi:anywhere_documentref,spi:externalrefid,spi:formno,spi:tobin,spi:tolot,spi:item{spi:modelnumref,spi:rotating,spi:issueunit,dcterms:title,oslc:shortTitle}').
                setSupportiveFieldsSelectExpression('spi:awreceiverotasset{spi:assetnum,spi:description,spi:itemnum,spi:matrectransid,spi:orgid,spi:siteid,spi:tositeid,spi:autonumber,spi:anywhererefid}').
                addField({
                   'multiplicity' : 'zero-or-one',
@@ -4965,6 +4965,29 @@ function(declare, all, StoresBuilderBase, ResourceMetadata, PersistenceManager, 
                   'id' : 'awf431a429',
                   'local' : false,
                   'remoteName' : 'spi:formno',
+               }).
+               addField({
+                  'multiplicity' : 'zero-or-one',
+                  'dataType' : 'string',
+                  'name' : 'tobin',
+                  'index' : false,
+                  'artifactId' : 'receivedMatrectrans_spi_tobin',
+                  'maxSize' : 50,
+                  'id' : 'aw511d3af1',
+                  'local' : false,
+                  'remoteName' : 'spi:tobin',
+               }).
+               addField({
+                  'multiplicity' : 'zero-or-one',
+                  'dataType' : 'string',
+                  'usage' : 'upper',
+                  'name' : 'tolot',
+                  'index' : false,
+                  'artifactId' : 'receivedMatrectrans_spi_tolot',
+                  'maxSize' : 9,
+                  'id' : 'awf0bb4907',
+                  'local' : false,
+                  'remoteName' : 'spi:tolot',
                }).
                setCreationFactories([
                      {name:'receivedMatrectransCF', creationString:'\/oslc\/os\/oslcmatrectrans' }
@@ -6014,7 +6037,7 @@ function(declare, all, StoresBuilderBase, ResourceMetadata, PersistenceManager, 
                   'maxFetchDataLimit' : 0,
                }).
                setLocal( false ).
-               setSimpleFieldsSelectExpression('dcterms:identifier,spi:location,spi:rotassetnum,spi:packingslipnum,spi:itemsetid,spi:status,spi:receiptquantity,spi:issuetype,spi:receivedunit,spi:fromstoreloc,spi:polinenum,spi:ponum,spi:siteid,spi:positeid,spi:porevisionnum,spi:tostoreloc,spi:quantity,spi:inspectedqty,spi:statusdate,spi:inspected,spi:conversion,spi:rejectqty,spi:acceptedqty,spi:modelnum,spi:grnnumber,spi:anywhere_formnumber,spi:anywhere_documentref,spi:externalrefid,spi:formno,spi:item{spi:modelnumref,dcterms:title,oslc:shortTitle}').
+               setSimpleFieldsSelectExpression('dcterms:identifier,spi:location,spi:rotassetnum,spi:packingslipnum,spi:itemsetid,spi:status,spi:receiptquantity,spi:issuetype,spi:receivedunit,spi:fromstoreloc,spi:polinenum,spi:ponum,spi:siteid,spi:positeid,spi:porevisionnum,spi:tostoreloc,spi:quantity,spi:inspectedqty,spi:statusdate,spi:inspected,spi:conversion,spi:rejectqty,spi:acceptedqty,spi:modelnum,spi:grnnumber,spi:anywhere_formnumber,spi:anywhere_documentref,spi:externalrefid,spi:formno,spi:receiptref,spi:tobin,spi:tolot,spi:item{spi:modelnumref,dcterms:title,oslc:shortTitle}').
                setSupportiveFieldsSelectExpression('spi:awreceiverotasset{spi:assetnum,spi:description,spi:itemnum,spi:matrectransid,spi:orgid,spi:siteid,spi:tositeid,spi:autonumber,spi:anywhererefid}').
                addField({
                   'multiplicity' : 'zero-or-one',
@@ -6397,6 +6420,40 @@ function(declare, all, StoresBuilderBase, ResourceMetadata, PersistenceManager, 
                   'id' : 'awf5b3004a',
                   'local' : false,
                   'remoteName' : 'spi:formno',
+               }).
+               addField({
+                  'multiplicity' : 'zero-or-one',
+                  'dataType' : 'integer',
+                  'usage' : 'bigint',
+                  'name' : 'receiptref',
+                  'index' : true,
+                  'artifactId' : 'poListComplexMatrectrans_spi_receiptref',
+                  'id' : 'aw411275d',
+                  'local' : false,
+                  'remoteName' : 'spi:receiptref',
+               }).
+               addField({
+                  'multiplicity' : 'zero-or-one',
+                  'dataType' : 'string',
+                  'name' : 'tobin',
+                  'index' : false,
+                  'artifactId' : 'poListComplexMatrectrans_spi_tobin',
+                  'maxSize' : 50,
+                  'id' : 'aw509f9e92',
+                  'local' : false,
+                  'remoteName' : 'spi:tobin',
+               }).
+               addField({
+                  'multiplicity' : 'zero-or-one',
+                  'dataType' : 'string',
+                  'usage' : 'upper',
+                  'name' : 'tolot',
+                  'index' : false,
+                  'artifactId' : 'poListComplexMatrectrans_spi_tolot',
+                  'maxSize' : 9,
+                  'id' : 'awf139ed64',
+                  'local' : false,
+                  'remoteName' : 'spi:tolot',
                }).
                addField({
                   'dataType' : 'string',

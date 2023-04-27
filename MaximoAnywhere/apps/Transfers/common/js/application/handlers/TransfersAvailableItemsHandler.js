@@ -870,11 +870,14 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var itemNum = currentRecord.itemnum;
 			var itemDesc = currentRecord.itemdesc;
 			var bin = currentRecord.bin;
-			//#region Loc-In: Add partNo
-			var partno = currentRecord.modelnumref;
-			//#endregion Loc-Out: Add partNo
 			var transfers = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
 			var storeroom = transfers.storeroom;
+			//#region Loc-In: Add partNo
+			var partno = currentRecord.modelnumref;
+			var tostoreroom = transfers.tostoreroom;
+			var tositeid = 	transfers.tositeid;
+			var siteid = UserManager.getInfo("defsite");
+			//#endregion Loc-Out: Add partNo
 			
 			var self = this;			
 			
@@ -889,6 +892,28 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				self.ui.showMessage(msg);
 				return;
 			}
+
+			//#region Loc-In: verify if we have at least one field filled
+			if(!storeroom && !tostoreroom && !tositeid){
+				var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
+				self.ui.showMessage(msg);
+				return;
+			}
+			
+			//from storeroom is required
+			if(!storeroom){
+				var msg = MessageService.createStaticMessage("reqFromStoreroom").getMessage();
+				self.ui.showMessage(msg);
+				return;
+			}
+			
+			//verify if fromstoreroom is different of tostoreroom
+			if(storeroom == tostoreroom && siteid == tositeid){
+				var msg = MessageService.createStaticMessage("fromStoreroomEqualsToStoreroom").getMessage();
+				self.ui.showMessage(msg);
+				return;
+			}
+			//#endregion Loc-Out: verify if we have at least one field filled
 			
 			//check for errors
 			if (this.getError(eventContext)){
@@ -917,14 +942,12 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 						if (bin){
 							filter.push({binnum: '%'+bin+'%'});
 						}
-						//#region Loc-In: Add partNo
+						//#region Loc-In: Add partNo and change logic partno searching on inventory, partno is modelnumref of invitem
 						if (partno){
 							filter.push({modelnumref: '"%'+partno+'%"'});
 						}
-						//#endregion Loc-Out: Add partNo
 						
-						eventContext.application.showBusy();
-						
+						/* eventContext.application.showBusy();
 						ModelService.all('inventory',PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(searchResultSet){
 							ModelService.clearSearchResult(searchResultSet);
 							
@@ -955,12 +978,6 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 									filter.push(result);
 								});
 
-								//#region Loc-In: Add partNo
-								if(partno){
-									filter.push({modelnumref: partno});
-								}
-								//#endregion Loc-Out: Add partNo
-								
 								ModelService.filtered('inventory',null,filter,1000,false,false).then(function(set){
 
 									set.resourceID = 'inventory';
@@ -984,7 +1001,90 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 							});
 						}).otherwise(function(error){
 							Logger.trace(self._className + ": " + error);
-						});								
+						}); */
+
+						eventContext.application.showBusy();
+
+						var onlyPartNoSearching = false;
+						if (partno && !itemNum && !itemDesc && !bin) {
+							onlyPartNoSearching = true;
+						}
+						if (onlyPartNoSearching) {
+							
+							ModelService.filtered('inventory', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, false, oslcQueryParameters, false).then(function(set){
+								
+								set.resourceID = 'inventory';
+								eventContext.application.addResource(set);
+								
+								if(set.data.length == 1) {
+									eventContext.ui.show("Transfers.AdditionalItemsDetailsView");
+								} else if (set.data.length > 1){ 
+									eventContext.ui.show("Transfers.AdditionalItemsListView");
+								} else {
+									var msg = MessageService.createStaticMessage("emptySearchResult").getMessage();
+									self.ui.showMessage(msg);
+								}
+								
+								//clear model data service
+								ModelService.clearSearchResult(set);
+							});
+						} else {
+							eventContext.application.showBusy();
+							var invbalancePromise =  ModelService.filtered('invbalance', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, oslcQueryParameters, false);
+							invbalancePromise.then(function(invbalanceSet){
+								
+								//verify if search result data is empty
+								if(invbalanceSet.data.length == 0){
+									var msg = MessageService.createStaticMessage("emptySearchResult").getMessage();
+									self.ui.showMessage(msg);
+									return;
+								}
+								
+								//This is a workaround to solve a limitation on platform to search by description on inventory resource
+								filter = [];
+								invbalanceSet.foreach(function(elem,pos,array){
+									if(bin){
+										//#region Loc-In: no search bin on inventory resource
+										//filter.push({siteid: siteid, location: storeroom, itemnum: elem.itemnum, binnum: elem.binnum});
+										filter.push({siteid: siteid, location: storeroom, itemnum: elem.itemnum});
+										//#endregion Loc-Out: no search bin on inventory resource
+									}
+									else{
+										filter.push({siteid: siteid, location: storeroom, itemnum: elem.itemnum});
+									}
+								});
+
+								//#region Loc-In: Add partNo
+								if (partno){
+									filter.push({modelnumref: '"%'+partno+'%"'});
+								}
+								//#endregion Loc-Out: Add partNo
+								
+								ModelService.filtered('inventory',null,filter,1000,false,false).then(function(set){
+									
+									set.resourceID = 'inventory';
+									eventContext.application.addResource(set);
+									if(set.data.length == 1) {
+										eventContext.ui.show("Transfers.AdditionalItemsDetailsView");
+									} else if (set.data.length > 1){ 
+										eventContext.ui.show("Transfers.AdditionalItemsListView");
+									} else {
+										var msg = MessageService.createStaticMessage("emptySearchResult").getMessage();
+										self.ui.showMessage(msg);
+									}
+									
+									//clear model data service
+									ModelService.clearSearchResult(set);
+								});
+								
+								//clear model data service
+								ModelService.clearSearchResult(invbalanceSet);
+								
+							}).otherwise(function(error){
+								Logger.trace(self._className + ": " + error);
+							});
+						}								
+						//#endregion Loc-Out: Add partNo and change logic partno searching on inventory, partno is modelnumref of invitem
 					});
 				}else{
 					self.ui.showMessage(MessageService.createStaticMessage('connectionFailure').getMessage());
