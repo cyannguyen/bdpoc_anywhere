@@ -914,7 +914,10 @@
 							<eventHandler class="application.handlers.TransfersHandler" event="validate" id="Transfers.InvreserveListView_label_eventHandlers_localreservedqty" method="validateQty"/>
 						</eventHandlers>
 					</text>
-					<text editable="true" id="Transfers.InvreserveListView_frombin" placeHolder="from bin" required="false" layoutInsertAt="item9" resourceAttribute="frombin">
+					<!-- Tuan-in: show lookup button for ios -->
+					<!-- <text editable="true" id="Transfers.InvreserveListView_frombin" placeHolder="from bin" required="false" layoutInsertAt="item9" resourceAttribute="frombin"> -->
+					<text cssClass="fromBinText" editable="true" id="Transfers.InvreserveListView_frombin" placeHolder="from bin" required="false" layoutInsertAt="item9" resourceAttribute="frombin">
+						<!-- Tuan-out: Show lookup button for ios -->
 						<eventHandlers id="Transfers.InvreserveListView_frombin_text_eventHandlers">
 							<eventHandler class="application.handlers.TransfersHandler" event="click" id="Transfers.InvreserveListView_eventhandler_text_click" method="fromBinLotLookup"/> 
 						</eventHandlers>
@@ -1585,9 +1588,12 @@
 								<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="validate" id="Transfers.ToStoreroomSelectionView_groupitem_4_tostoreroom_eventHandlers_validate_tostoreroom" method="validateToStoreroom"/>
 							</eventHandlers>
 						</text>
-					
-						<text editable="true" id="Transfers.AdditionalItemsDetailsView_tobin" label="To Bin" placeHolder="Tap to enter" resourceAttribute="tobin">
-						    <button cssClass="lookupIcon" id="Transfers.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+						<!-- Tuan-in: show lookup button for ios -->
+						<!-- <text editable="true" id="Transfers.AdditionalItemsDetailsView_tobin" label="To Bin" placeHolder="Tap to enter" resourceAttribute="tobin"> -->
+						<text cssClass="fromBinText" editable="true" id="Transfers.AdditionalItemsDetailsView_tobin" label="To Bin" placeHolder="Tap to enter" resourceAttribute="tobin">
+
+							<!-- Tuan-out: show lookup button for ios -->
+							<button cssClass="lookupIcon" id="Transfers.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 								<eventHandlers id="Transfers.AdditionalItemsDetailsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 									<eventHandler class="application.handlers.TransfersHandler" event="click" id="Transfers.AdditionalItemsDetailsView_eventhandler_click" method="toBinLotLookup"/> 
 								</eventHandlers> 

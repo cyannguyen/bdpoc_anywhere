@@ -34,6 +34,13 @@ body, form {
     overflow: hidden;
 }
 
+/* Tuan-in: show lookup button for ios */
+.fromBinText {
+	width: 60% !important;
+}
+
+/* Tuan-out: show lookup button for ios */
+
 
 .mblTextArea {
 	width: 80%;
