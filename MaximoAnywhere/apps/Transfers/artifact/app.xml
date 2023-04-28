@@ -1874,12 +1874,14 @@
 							<eventHandlers id="Transfers.ShipmentDetailView_button_eventHandlers_1">
 								<eventHandler class="application.handlers.TransfersHandler" event="validate" id="Transfers.ShipmentDetailView_eventhandler_click_attentionof" method="validateAttentionOf"/> 
 							</eventHandlers> 	
-						</text>						
-						<text editable="true" id="Transfers.ShipmentDetailView_groupitem_1_shipto" label="Ship To" lookup="Transfers.BilltoShiptoLookup" lookupAttribute="addresscode" placeHolder="Tap to Enter" resourceAttribute="shipto">
+						</text>		
+						<!-- Tuan-in: hide ship to  -->				
+						<!-- <text editable="true" id="Transfers.ShipmentDetailView_groupitem_1_shipto" label="Ship To" lookup="Transfers.BilltoShiptoLookup" lookupAttribute="addresscode" placeHolder="Tap to Enter" resourceAttribute="shipto">
 							<eventHandlers id="Transfers.ShipmentDetailView_button_eventHandlers_2">
 								<eventHandler class="application.handlers.TransfersHandler" event="validate" id="Transfers.ShipmentDetailView_eventhandler_click_shipto" method="validateShipto"/> 
 							</eventHandlers> 						
-						</text>
+						</text> -->
+						<!-- Tuan-out: hide ship to  -->
 					</groupitem>
 				</group>
 			</container>					
