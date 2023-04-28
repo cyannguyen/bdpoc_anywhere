@@ -592,7 +592,10 @@
 					<listtext id="Transfers.ShipmentItemsListView_quantity" layoutInsertAt="item4" resourceAttribute="qtyrequested"/>
 					<!-- Either Location or Work order will populated item3 layout location, depending if charged to work order. -->
 					<listtext id="Transfers.ShipmentItemsListView_location" layoutInsertAt="item5" resourceAttribute="location"/>
-					<text editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin">
+					<!-- Tuan-in: show lookup button for ios -->
+					<!-- <text editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin"> -->
+					<text cssClass="fromBinText" editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin">
+					<!-- Tuan-in: show lookup button for ios -->
 						<button cssClass="lookupIcon" id="Transfers.ShipmentItemsListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="Transfers.ShipmentItemsListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ShipmentItemsListView_tobin_eventhandler_click" method="toBinLotLookup"/> 
