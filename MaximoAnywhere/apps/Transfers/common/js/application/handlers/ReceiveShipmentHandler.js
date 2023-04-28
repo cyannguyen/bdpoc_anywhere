@@ -752,6 +752,30 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			//bypassing list of shipped items for test
 			//eventContext.ui.show("Transfers.RecordsToVoidListView");
 		},
+
+		/* #region Tuan-in: add formnumber lookup Search Shipments*/
+		updateFormnumLookupData: function (eventContext) {
+			var filter = [{ issuetype: "SHIPTRANSFER" }];
+			var formnumPromise = ModelService.filtered(
+				"additionalReceivedMatrectrans",
+				PlatformConstants.SEARCH_RESULT_QUERYBASE,
+				filter,
+				1000,
+				true,
+				true,
+				null,
+				false
+			);
+
+			formnumPromise.then(function (data) {
+				ModelService.clearSearchResult(data);
+				data.resourceID = "formnumberTemp";
+				eventContext.application.addResource(data);
+			});
+		},
+
+		filterFornumnumberForLookup: function (eventContext) {},
+		/* #endregion Tuan-out: add formnumber lookup Search Shipment*/
 		
 		
 		/**

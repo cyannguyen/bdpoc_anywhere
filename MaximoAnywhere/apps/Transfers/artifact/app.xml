@@ -217,6 +217,7 @@
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_transfers" name="transfers"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
+
 			</requiredResources>			
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
 				<link id="Transfers.ReceiveShippedItemsSeachView_link" label="">
@@ -237,9 +238,15 @@
 								<!-- Loc-Out: Add event datachange -->
 							</eventHandlers>
 							<button id="Transfers.ReceiveShippedItemsSeachView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
-								<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_imagesaction_lookup_OFF.svg_button_eventHandlers">
-									<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ReceiveShippedItemsSeachView_shipment_button_click" method="shipmentLookup"/> 
-								</eventHandlers> 
+								<!-- Tuan-in: add formnumber lookup Search Shipments -->
+								<!-- <text codeScannable="true" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">	 -->
+								<text codeScannable="true" lookup="Transfers.FormnumberLookup" lookupAttribute="formnumber" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">
+									<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandlers">
+										<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_datachange" method="setFieldsReadonly"/>
+										<eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_render" method="updateFormnumLookupData"/>
+									</eventHandlers>
+								</text>
+								<!-- Tuan-in: add formnumber lookup Search Shipments -->
 							</button>
 	                    </text>
 					</groupitem>
@@ -2268,6 +2275,27 @@
 			</returnAttributes>
 		</lookup>
 
+		<!-- Tuan-in: add formnumber lookup Search Shipments -->
+		<!-- Formnumber lookup -->
+		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterFornumnumberForLookup" id="Transfers.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
+			<requiredResources id="Transfers.FormnumberLookup_requiredResources">
+				<requiredResource id="Transfers.FormnumberLookup_workOrder" name="formnumberTemp" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.FormnumberLookup_list" resource="formnumberTemp">
+				<searchAttributes id="Transfers.FormnumberLookup_additionallocations_searchAttributes">
+					<searchAttribute id="Transfers.FormnumberLookup_additionallocations_searchAttribute_formnumber" name="formnumber"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.FormnumberLookup_listItemTemplate_Item1" layout="Item1">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.FormnumberLookup_Item1Desc1_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="IssuesReturns.FormnumberLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.FormnumberLookup_formno" sourceAttribute="formnumber" targetAttribute="formnumber"/>
+			</returnAttributes>
+		</lookup>
+		<!-- Tuan-out: add formnumber lookup Search Shipments -->
+
 		<!-- To Storeroom lookup -->
 		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterStoreroomForLookup" id="Transfers.StoreroomLookup" label="Select Storeroom" resource="additionalstoreroom">
 			<requiredResources id="Transfers.StoreroomLookup_requiredResources">
@@ -2514,6 +2542,28 @@
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">	
+
+		<!-- Tuan-in: add formnumber lookup Search Shipments -->
+		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">
+			<attributes id="formnumberTemp_attributes">
+				<localAttribute dataType="string" id="formnumberTemp_formnumber_string" name="formnumber"/>
+			</attributes>
+		</resource>
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" id="additionalReceivedMatrectrans" name="additionalReceivedMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalReceivedMatrectrans_attributes">
+				<attribute describedByProperty="spi:anywhere_formnumber" id="additionalReceivedMatrectransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:issuetype" id="additionalReceivedMatrectransResource_issuetype_spi_issuetype" index="true" name="issuetype"/>
+			</attributes>
+			<creationFactories id="additionalReceivedMatrectrans_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalReceivedMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
+			</creationFactories>
+			<queryBases id="additionalReceivedMatrectrans_queryBases">
+				<queryBase defaultForSearch="true" id="additionalReceivedMatrectrans_queryBase_getAllReceivedMatUseTrans" name="getAllReceivedMatRecTrans" queryUri="/oslc/os/oslcmatrectrans"/>
+			</queryBases>
+			<whereClause clause="spi:issuetype='SHIPTRANSFER' and spi:anywhere_formnumber!='null'" id="additionalReceivedMatrectrans_whereClause"/>
+		</resource>
+		<!-- Tuan-out: add formnumber lookup Search Shipments -->
 		
   		<resource id="transfersResource" inMemory="true" name="transfers" singleton="true">
 			<attributes id="transfers_attributes">			
