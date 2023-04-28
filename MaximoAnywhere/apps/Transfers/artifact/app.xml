@@ -603,9 +603,9 @@
 						</button>
 					</text>
 					<!-- label="To Bin" -->
-					<!-- Change: add lotnum -->
+					<!-- Tuan-In: add lotnum -->
 					<text editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/>
-					<!-- Change: add lotnum -->
+					<!-- Tuan-Out: add lotnum -->
 					<!-- <text codeScannable="false" editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="Tap to enter" resourceAttribute="tobin" /> -->
 					<text cssClass="copyPlanActual" editable="true" id="Transfers.ShipmentItemsListView_quantityDue" layoutInsertAt="item7" resourceAttribute="quantitydue">
 						<eventHandlers id="Transfers.ShipmentItemsListView_quantityDue_eventHandlers">
@@ -943,9 +943,9 @@
 					<!-- Tuan-in: add checkbox to reserved Items List -->
 					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
 					<!-- Tuan-out: add checkbox to reserved Items List -->
-					<!-- Change: add lotnum -->
+					<!-- Tuan-In: add lotnum -->
 					<text editable="false" id="Transfers.InvreserveListView_lotnum" required="false" layoutInsertAt="item11" resourceAttribute="fromlot"/>
-					<!-- Change: add lotnum -->
+					<!-- Tuan-Out: add lotnum -->
 				</listItemTemplate>
 			</list>
 			<footer id="Transfers.InvreserveListView_footer">
@@ -1578,9 +1578,9 @@
 						</text>
 						<!-- Loc-Out: add initialize Additional Items -->
 
-						<!-- Change: add lotnum -->
+						<!-- Tuan-In: add lotnum -->
 						<text editable="false" id="Transfers.AdditionalItemsDetailsView_lot" label="From Lot" required="false" resourceAttribute="fromlot"/>
-						<!-- Change: add lotnum -->
+						<!-- Tuan-Out: add lotnum -->
 						
 					</groupitem>
  				</group>
@@ -1615,9 +1615,9 @@
 							</button>
 						</text>
 
-						<!-- Change: add lotnum -->
+						<!-- Tuan-In: add lotnum -->
 						<text editable="false" id="Transfers.AdditionalItemsDetailsView_tolot" label="To Lot" required="false" resourceAttribute="tolot"/>
-						<!-- Change: add lotnum -->							
+						<!-- Tuan-Out: add lotnum -->							
 					</groupitem>	
 			    </group>		
  			 </container>    

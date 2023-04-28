@@ -36,10 +36,10 @@
 	</row>
 	<!-- Loc-Out: Add layout items -->
 
-	<!-- Change: add lotnum -->
+	<!-- Tuan-In: add lotnum -->
 	<row id="row_5">
 		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
 		<column colspan="3" columnid="item11" halign="left" id="item11_column"/>
 	</row>
-	<!-- Change: add lotnum -->
+	<!-- Tuan-Out: add lotnum -->
 </layout>
