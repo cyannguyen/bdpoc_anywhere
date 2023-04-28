@@ -842,10 +842,12 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		 * Transits Back to Search view of Additional Item
 		 * transits to Issue Additional Item Search view
 		 */
-		transitsBackToTransferAdditionalSearchView : function (eventContext) {
+		//#region Loc-In: disable because duplicate function
+		/* transitsBackToTransferAdditionalSearchView : function (eventContext) {
 			eventContext.application['application.handlers.TransfersAvailableItemsHandler'].clearUnreservedSearchFields(eventContext);
 			eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-		},
+		}, */
+		//#endregion Loc-Out: disable because duplicate function
 		
 		/**
 		 * Clears search fields for Unreserved Items

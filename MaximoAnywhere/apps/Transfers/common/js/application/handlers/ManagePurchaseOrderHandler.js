@@ -1778,6 +1778,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'poExternalResource').getCurrentRecord();
 			var poNum = transfersLocalResource.ponum;
+			//#region Loc-In: add formNo
+			var formno = externalPoLocalResource.formno;
+			//#endregion Loc-Out: add formNo
 			var matrectransSet = eventContext.getResource('poComplexMatrectrans');
 			var self = this;
 			var filter = [];
@@ -1794,7 +1797,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			CommonHandler._clearFilterForResource(eventContext, matrectransSet);
 			this.checkBoxValidation(eventContext, matrectransSet, 'voidindicator');
 
-			filter.push({ponum: poNum});
+			//#region Loc-In: Add FormNo
+			//filter.push({ponum: poNum});
+			if(poNum){
+				filter.push({ponum: poNum});
+			}
+			if(formno){
+				filter.push({formno : formno});
+			}
+			//#endregion Loc-Out: Add FormNo
 			
 			var poPromise =  ModelService.filtered('poResource', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, {}, false);
 			poPromise.then( function ( poSet ) {
@@ -1885,6 +1896,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'poExternalResource').getCurrentRecord();
 			var poNum = transfersLocalResource.ponum;
+			//#region Loc-In: add formNo
+			var formno = externalPoLocalResource.formno;
+			//#endregion Loc-Out: add formNo
 			var matrectransSet = eventContext.getResource('poComplexMatrectrans');
 			var self = this;
 			var filter = [];
@@ -1906,7 +1920,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				}
 			}
 			
-			filter.push({ponum: poNum});
+			//#region Loc-In: Add FormNo
+			//filter.push({ponum: poNum});
+			if(poNum){
+				filter.push({ponum: poNum});
+			}
+			if(formno){
+				filter.push({formno : formno});
+			}
+			//#endregion Loc-Out: Add FormNo
 			
 			var poPromise =  ModelService.filtered('poResource', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, {}, false);
 			poPromise.then( function ( poSet ) {
