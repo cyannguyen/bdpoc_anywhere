@@ -1,0 +1,302 @@
+<project name="anywhere-rdfs-puller" default="all">
+    
+    <import file="util.xml" />
+    
+	<dirname property="rdfs.basedir" file="${ant.file.anywhere-rdfs-puller}" />
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />			
+		</classpath>
+	</taskdef>
+	<property name="src.basedir" value="${rdfs.basedir}" />
+	<property name="src.res.rdf" value="${src.basedir}/oslc-docs/resources/rdf" />
+ 	
+	<loadproperties srcfile="${rdfs.basedir}/build.properties" />
+	
+	<condition property="adapter.connection.port.set" else="false">
+	   <and>
+	       	<not>
+	       		<equals arg1="${adapter.connection.port}" arg2=""/>
+	       	</not>
+      		<isset property="adapter.connection.port"/>
+      </and>
+    </condition>
+	<if>
+ 		<equals arg1="${adapter.connection.port.set}" arg2="false" />
+	 	<then>
+	 	    <if>
+ 				<equals arg1="${adapter.connection.protocol}" arg2="http" />
+	 			<then>
+   					<property name="rdfadapter.connection.port" value="80"/>
+ 				</then>
+ 				<else>
+   					<property name="rdfadapter.connection.port" value="443"/>
+ 				</else>
+		</if>		
+ 		</then>
+ 		<else>
+ 		    <property name="rdfadapter.connection.port" value="${adapter.connection.port}"/>
+ 		</else>
+	</if>
+	<property name="servercontext"
+		value="${adapter.connection.protocol}://${adapter.connection.domain}:${rdfadapter.connection.port}/${adapter.connection.context}" />
+	<property name="serverauth"
+		value="?&amp;_lid=${adapter.connection.user}&amp;_lpwd=${adapter.connection.password}" />
+	 
+	<!-- Required Properties -->
+	<property name="adapter.connection.user" value="" />
+	<property name="adapter.connection.password" value="" />
+	<!-- Required Properties -->
+	<fail
+		message="To pull rdfs docs from backend server, it is required to provide &#10;the connecting credentials of both username and password, suggestion:&#10;
+		Use command line script, example:&#10;
+		&#09;ant -f anywhere-rdfs-puller.xml -Dadapter.connection.user=wilson -Dadapter.connection.password=wilson&#10;
+		Your current backend server uri is defined as ${servercontext}">
+		<condition>
+			<or>
+				<equals arg1="${adapter.connection.user}" arg2="" />
+				<equals arg1="${adapter.connection.password}" arg2="" />
+			</or>
+		</condition>
+	</fail>
+ 
+	<echotimestamp>Pulling RDF's from server: ${servercontext}</echotimestamp>
+		
+	<target name="all" description="downloads all rdfs">
+		<downloadOneRdf context="/oslc/sp" />
+		<downloadOneRdf context="/oslc/sp/WorkManagement" />
+		<downloadOneRdf context="/oslc/sp/AssetManagement" />
+		<downloadOneRdf context="/oslc/sp/SmarterPhysicalInfrastructure" />
+		<downloadOneRdf context="/oslc/sp/FriendOfAFriend" />
+		
+		<downloadOneRdf context="/oslc/shapes/oslcasset" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/assetmeter" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/downtimereport" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/assetstatus" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/assetaudit" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/assetspec" />			 
+		<downloadOneRdf context="/oslc/shapes/oslcasset/classspec" />		 
+		<downloadOneRdf context="/oslc/shapes/oslcshift" /> 
+		<downloadOneRdf context="/oslc/shapes/oslccalendar" />
+		<downloadOneRdf context="/oslc/shapes/oslclocations" />
+		<downloadOneRdf context="/oslc/shapes/oslcmeter" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/multiassetlocci" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/wplabor" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/wptool" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/worklog" />
+		<downloadOneRdf context="/oslc/shapes/oslcperson" />
+		<downloadOneRdf context="/oslc/shapes/oslcoperloc" />
+		<downloadOneRdf context="/oslc/shapes/oslcopersroom" />
+		<downloadOneRdf context="/oslc/shapes/oslcoperloc/locoper" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/assignment" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/wpmaterial" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/invreserve" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/woserviceaddress" />
+		<downloadOneRdf context="/oslc/shapes/oslccraft" />
+		<downloadOneRdf context="/oslc/shapes/oslcvendor" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/matusetrans" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/wpservice" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/tooltrans" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/labtrans" />
+		<downloadOneRdf context="/oslc/shapes/oslclabtrans" />
+		<downloadOneRdf context="/oslc/shapes/oslcamcrew" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory/invbalances" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory/invlifofifocost" />
+		<downloadOneRdf context="/oslc/shapes/oslctooltrans" />
+		<downloadOneRdf context="/oslc/shapes/oslccraftskill" />
+		<downloadOneRdf context="/oslc/shapes/oslcitem" />
+		<downloadOneRdf context="/oslc/shapes/oslclaborcraftrate" />
+		<downloadOneRdf context="/oslc/shapes/oslcworktype" />
+		<downloadOneRdf context="/oslc/shapes/oslcwoticketrel" />
+		<downloadOneRdf context="/oslc/shapes/oslcmatusetrans" />
+		<downloadOneRdf context="/oslc/shapes/oslcwoactivity" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxvars" />
+		<downloadOneRdf context="/oslc/shapes/oslclabor" />
+		<downloadOneRdf context="/oslc/shapes/oslclabor/laborqual" />
+		<downloadOneRdf context="/oslc/shapes/oslcassignment" />
+		<downloadOneRdf context="/oslc/shapes/oslcwostatus" />
+		<downloadOneRdf context="/oslc/shapes/oslcticket" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxuser" />
+		<downloadOneRdf context="/oslc/shapes/oslcsynonymdomain" />
+		<downloadOneRdf context="/oslc/shapes/oslctoolitem" />
+		<downloadOneRdf context="/oslc/shapes/oslctoolitem/toolqual" />
+		<downloadOneRdf context="/oslc/shapes/oslcmultiassetlocci" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/woactivity" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/woactivity/wochangestatus" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassification" />
+		<downloadOneRdf context="/oslc/shapes/oslccontract" />
+		<downloadOneRdf context="/oslc/shapes/oslcwoticketrel" />
+		<downloadOneRdf context="/oslc/shapes/oslcwpeditsetting" />
+		<downloadOneRdf context="/oslc/shapes/oslcamcrewlabor" />
+		<downloadOneRdf context="/oslc/shapes/oslcserviceaddress" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvbalances" />
+		<downloadOneRdf context="/oslc/shapes/oslcfailurecode" />
+		<downloadOneRdf context="/oslc/shapes/oslcmeter" />
+		<downloadOneRdf context="/oslc/shapes/oslcpremiumpay" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxuser/groupuser" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/wostatus" />
+		<downloadOneRdf context="/oslc/shapes/oslcppcraftrate" />
+		<downloadOneRdf context="/oslc/shapes/oslcamcrew/amcrewlabor" />
+		<downloadOneRdf context="/oslc/shapes/oslcamcrew/amcrewtool" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory/toolitem" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory/item" />
+		<downloadOneRdf context="/oslc/shapes/oslcinventory/toolitem/itemorginfo" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/assetancestor" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/locancestor" />
+		<downloadOneRdf context="/oslc/shapes/oslctoolitem/itemorginfo" />
+		<downloadOneRdf context="/oslc/shapes/oslcappdoctype" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/doclinks" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/doclinks/attachment" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/doclinks/attachment/meta" /> 
+		<downloadOneRdf context="/oslc/shapes/oslcfailurereport" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/failurereport" />
+		<downloadOneRdf context="/oslc/shapes/oslcfailurecode" />
+		<downloadOneRdf context="/oslc/shapes/oslcfailurelist" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail" />
+		<downloadOneRdf context="/oslc/shapes/oslcassetmeter" />
+		<downloadOneRdf context="/oslc/shapes/oslclocationmeter" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/assetlocmeter" />						
+		<downloadOneRdf context="/oslc/shapes/oslcalndomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcsite" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvlot" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvbalview" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassification" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassstructure" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassstructure/classspec" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassstructure/classusewith" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassspec" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassspec/classspecusewith" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassspec/assetattribute" />
+		<downloadOneRdf context="/oslc/shapes/oslcclassspecusewith" />	
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/workorderspec" />
+		<downloadOneRdf context="/oslc/shapes/oslcassetattr" /> 
+		<downloadOneRdf context="/oslc/shapes/oslcmaxdomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxdomain/numericdomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxdomain/alndomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcmaxdomain/numrangedomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcanywherepropval" />
+		<downloadOneRdf context="/oslc/shapes/oslcanywhereresrc" />
+		<downloadOneRdf context="/oslc/shapes/oslcanywhereresrval" />
+		<downloadOneRdf context="/oslc/shapes/oslcanywhereresrval/anywhereresource" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvreserve" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuse" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuse/invuseline" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuse/awinvuselinesplit" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuse/awshipment" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuse/awshipmentline" />				
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/downtimereport" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/tkstatus" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/worklog" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/relatedrecord" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/tkserviceaddress" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/doclinks" />
+		<downloadOneRdf context="/oslc/shapes/oslcsrdetail/workorder" />
+		<downloadOneRdf context="/oslc/shapes/oslcsigoption" />
+		<downloadOneRdf context="/oslc/shapes/oslcesigattribute" />
+		<downloadOneRdf context="/oslc/shapes/oslclogintracking" />
+		<downloadOneRdf context="/oslc/shapes/oslcshipment" />
+		<downloadOneRdf context="/oslc/shapes/oslcshipment/shipmentline" />
+		<downloadOneRdf context="/oslc/shapes/oslcnumericdomain" />
+		<downloadOneRdf context="/oslc/shapes/oslcasset/doclinks" />
+		<downloadOneRdf context="/oslc/shapes/oslcasset/doclinks/attachment" />
+		<downloadOneRdf context="/oslc/shapes/oslcasset/doclinks/attachment/meta" />
+		<downloadOneRdf context="/oslc/shapes/oslcasset/assetmovedflt" />
+		<downloadOneRdf context="/oslc/shapes/oslcbilltoshipto" />
+		<downloadOneRdf context="/oslc/shapes/oslcaddress" />
+		<downloadOneRdf context="/oslc/shapes/oslcmatrectrans" />
+		<downloadOneRdf context="/oslc/shapes/oslcmatrectrans/awreceiverotasset" />
+		<downloadOneRdf context="/oslc/shapes/oslcmatrectrans/invoice" />
+		<downloadOneRdf context="/oslc/shapes/oslcinvuseline" />
+		<downloadOneRdf context="/oslc/shapes/oslcpluscdsconfig" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodatasheet" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodatasheet/pluscwodsinstr" />
+		<downloadOneRdf context="/oslc/shapes/oslcwodatasheet/pluscwodspoint" />
+		<downloadOneRdf context="/oslc/shapes/oslcpo"/>
+		<downloadOneRdf context="/oslc/shapes/oslcpo/poline"/>
+		<downloadOneRdf context="/oslc/shapes/oslccompanies"/>
+		<downloadOneRdf context="/oslc/shapes/oslcinvoicematch"/>
+		<downloadOneRdf context="/oslc/shapes/oslcassettrans"/>
+		<downloadOneRdf context="/oslc/shapes/oslcmeasureunit" />
+		
+		<!-- Calibration Related shape references -->
+		<downloadOneRdf context="/oslc/shapes/oslcpluscdsassetlink"/>
+		<downloadOneRdf context="/oslc/shapes/oslcpluscwodsanywnp"/>
+		<downloadOneRdf context="/oslc/shapes/oslcpluscwodsanywnp/pluscwodsinstranywherenp"/>
+		<downloadOneRdf context="/oslc/shapes/oslcpluscwodsanywnp/pluscwodspointanywherenp"/>
+		<downloadOneRdf context="/oslc/shapes/oslcplusdsplan"/>
+		<downloadOneRdf context="/oslc/shapes/oslcplusdsplan/pluscdsinstr"/>
+		<downloadOneRdf context="/oslc/shapes/oslcplusdsplan/pluscdspoint"/>
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/pluscwods"/>
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/pluscwodsinstr_np"/>
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/pluscwodspoint_np"/>
+		
+		<!-- geolocation Related shape references -->
+		<downloadOneRdf context="/oslc/shapes/oslclbslocation"/>
+		
+		<!-- Work order map sketch details -->
+		<downloadOneRdf context="/oslc/shapes/oslcwodetail/mapsketch" />
+		
+		<!-- Loc-In: Add Attachmnet for PO -->
+		<downloadOneRdf context="/oslc/shapes/oslcpo/doclinks" />
+		<downloadOneRdf context="/oslc/shapes/oslcpo/doclinks/attachment" />
+		<downloadOneRdf context="/oslc/shapes/oslcpo/doclinks/attachment/meta" />
+		<!-- Loc-Out: Add Attachmnet for PO -->
+		<!-- Loc-In: Add new downloads -->
+		<downloadOneRdf context="/oslc/shapes/oslcinvreserve/po" />
+		<downloadOneRdf context="/oslc/shapes/oslcshipment/invuse" />
+		<downloadOneRdf context="/oslc/shapes/oslcmatrectrans/invuse" />
+		<!-- Loc-Out: Add new downloads -->
+		
+		<!-- Spatial -->
+		<trycatch>
+			<try>
+				<!-- Map Manager shape references -->
+				<echotimestamp>Trying to download oslc objects of MapManager from Maximo.</echotimestamp>
+				<downloadOneRdf context="/oslc/shapes/oslcmapmanager"/>
+				<downloadOneRdf context="/oslc/shapes/oslcmapmanager/mapsites"/>
+				
+			    <echotimestamp>Trying to download oslc objects of Spatial from Maximo.</echotimestamp>
+			    <downloadOneRdf context="/oslc/sp/Spatial"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplussmapmanager"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplussmapmanager/mapsites"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplussmapmanager/plussmapservice"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplussmapservice"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplussmapservice/plussmapservicelayer"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplusstoken"/>
+				<downloadOneRdf context="/oslc/shapes/oslcplusslinkedmbo"/>
+				
+				<echotimestamp>Oslc objects from Spatial on Maximo downloaded.</echotimestamp>
+				<echotimestamp>Download oslc objects from Spatial from Maximo succeeded. Restoring spatial configuration</echotimestamp>
+				<ant antfile="anywhere-update-spatial-reference.xml" target="restore-spatial-reference"/>
+			</try>
+			<catch>
+			    <echotimestamp>Unable to download Spatial oslc objects from Maximo. If you do not have Spatial configured on Maximo, Anywhere Spatial will be removed. However, if you have Maximo Spatial configured this is a problem and you need contact support.</echotimestamp>
+			    <ant antfile="anywhere-update-spatial-reference.xml" target="remove-spatial-reference"/>
+			</catch>
+		</trycatch>
+	</target>
+
+	<typedef
+	      name="getOneRdf"
+	      classname="com.ibm.tivoli.si.build.ant.GetOneRdf">
+			<classpath>
+				<pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar" />
+				<pathelement location="${basedir}/libs/build/commons-codec-1.9.jar" />
+			</classpath>
+	</typedef>
+	
+	<macrodef name="downloadOneRdf">
+		<attribute name="context" />
+		<sequential>
+			<local name="enduri" />
+			<local name="localuri" />
+			<property name="enduri" value="${servercontext}@{context}${serverauth}" />
+			<property name="localuri" value="${src.res.rdf}@{context}" />
+			<mkdir dir="${localuri}" />
+			<getOneRdf src="${enduri}" dest="${localuri}" adapterUsername="${adapter.connection.user}" adapterPassword="${adapter.connection.password}"/>
+		</sequential>
+	</macrodef>
+</project>
+ 
