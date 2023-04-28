@@ -250,13 +250,15 @@
 							</eventHandlers>
 						</text>
 					</groupitem>
-					<groupitem id="IssuesReturns.SearchReturnView_groupitem_5">
+					<!-- Tuan-in: hide glaccount in search items for return -->
+					<!-- <groupitem id="IssuesReturns.SearchReturnView_groupitem_5">
 						<text codeScannable="false" editable="true" id="IssuesReturns.SearchReturnView_glaccount" label="GL Debit Account" placeHolder="Tap to enter" resourceAttribute="glaccount">
 							<eventHandlers id="IssuesReturns.SearchReturn_glaccount_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_glaccount_eventHandlers_datachange" method="setFieldsReadonly"/>
 							</eventHandlers>
 						</text>
-					</groupitem>
+					</groupitem> -->
+					<!-- Tuan-in: hide glaccount in search items for return -->
 					<!-- Loc-Out: Add Searching items -->
 				</group>
 			</container>
@@ -761,13 +763,6 @@
 					<!-- <groupitem id="IssuesReturns.AdditionalItemsDetailsView_account_groupitem_5">
 						<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount"/>
 					</groupitem> -->
-					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_account_groupitem_5">
-						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount">
-							<!-- <eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers">
-								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers_1" method="handleGLaccountDataChanged"/>
-							</eventHandlers> -->
-						</text>
-					</groupitem>
 					<!-- Loc-In: enable GL Account -->
 					<!-- Loc-In: add lookup for location, asset -->
 					<!-- <groupitem id="IssuesReturns.AdditionalItemsDetailsView_location_groupitem_6">
@@ -780,6 +775,14 @@
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_location" label="Location/Tag Number" lookup="IssuesReturns.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_location_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_location_eventHandlers_1" method="handleLocationDataChanged"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+
+					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_account_groupitem_5">
+						<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount">
+							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers">
+								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers_1" method="handleGLaccountDataChanged"/>
 							</eventHandlers>
 						</text>
 					</groupitem>
@@ -839,9 +842,11 @@
 
 			<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers">
 				<eventHandler class="application.handlers.TaskHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers_validate_validateTask" method="validateTask"/>
-				<!-- Loc-In: add initialize Addtional View -->
+				<!-- Loc-In: remove initialize Addtional View -->
+				<!-- Tuan-In: remove initialize Addtional View -->
 				<!-- <eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="initialize" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_initialize" method="initializeAdditionalDetailView"/> -->
-				<!-- Loc-Out: add initialize Addtional View -->
+				<!-- Tuan-Out: remove initialize Addtional View -->
+				<!-- Loc-Out: remove initialize Addtional View -->
 				<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="back" id="IssuesReturns.AdditionalItemsDetailsView_groupitem_0_eventHandlers_back" method="transitsBackToIssueAdditionalSearchView"/>
 			</eventHandlers>
 		</view>

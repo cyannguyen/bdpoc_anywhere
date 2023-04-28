@@ -91,12 +91,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
         },
 
         filterBinForLookup: function (eventContext) {
-            console.log("filter called");
             var records = CommonHandler._getAdditionalResource(eventContext, "invbalTemp");
-            console.log("check records");
-            if (records) {
-                console.log("check records: ", records.data);
-            }
             CommonHandler._clearFilterForResource(eventContext, records);
         },
 
@@ -228,6 +223,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                     invuse.set("description", description);
                     invuse.set("documentref", documentRef);
                     invuse.set("createdate", createDate);
+
                     /* invuse.set('formnumber', formNumber);
 						invuse.set('documentref', documentRef);
 						if (creatDate == null) {
@@ -266,6 +262,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
 
                         //#region Loc-In: A value required for the ActualDate field on the INVUSELINE object
                         invuseline.set("actualdate", actualDate);
+
                         /* if (actualDate == null) {
 								actualDate = this.application.getCurrentDateTime();
 								invuseline.setDateValue("actualdate", actualDate);
@@ -1245,9 +1242,6 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                 false
             );
             invbalPromise.then(function (invbalSet) {
-                if (invbalSet) {
-                    console.log("check invbalSet:", invbalSet.data);
-                }
                 ModelService.clearSearchResult(invbalSet);
                 invbalSet.resourceID = "invbalTemp";
                 eventContext.application.addResource(invbalSet);
@@ -1311,7 +1305,6 @@ define("application/handlers/IssuesAvailableItemsHandler", [
         },
 
         filterDataSetFromLotCurbal: function (eventContext) {
-            console.log("Clear bin called");
             var record = CommonHandler._getAdditionalResource(
                 eventContext,
                 "issueAdditionalItems"
@@ -1359,8 +1352,6 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                     issueResource.set("frombincurbal", invbalTempRecord.curbal);
                     issueResource.set("fromlot", invbalTempRecord.lotnum);
                     // issueResource.set("frombin", invbalTempRecord.binnum);
-                    console.log("set bin check: ", issueResource, issueResource.frombin);
-                    console.log("data set bin check: ", invbalTempRecord, invbalTempRecord.binnum);
                 } else {
                     issueResource.setNullValue("frombin");
                     issueResource.setNullValue("frombincurbal");
@@ -1434,13 +1425,12 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                 issueAdditionItemRecord.set("taskid", null);
                 issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
                 issueAdditionItemRecord.setNullValue("glaccount");
+            } else if (glaccount) {
+                issueAdditionItemRecord.setNullValue("wonum");
+                issueAdditionItemRecord.set("taskid", null);
+                issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
+                issueAdditionItemRecord.setNullValue("location");
             }
-            // else if (glaccount) {
-            //     issueAdditionItemRecord.setNullValue("wonum");
-            //     issueAdditionItemRecord.set("taskid", null);
-            //     issueAdditionItemRecord.getRuntimeFieldMetadata("taskid").set("readonly", true);
-            //     issueAdditionItemRecord.setNullValue("location");
-            // }
         },
 
         handleLocationDataChanged: function (eventContext) {
