@@ -1295,6 +1295,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
 			var shipmentNum = transfersLocalResource.shipment;
+			//#region Loc-In: Add FromNo, DocumentRef
+			var formno = transfersLocalResource.formno;
+			var documentref = transfersLocalResource.documentref;
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 			var matrectransSet = eventContext.getResource('matrectrans');
 			var self = this;
 			var filter = [];
@@ -1303,7 +1307,18 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			this.checkBoxValidation(eventContext, matrectransSet, 'voidindicator');
 
 			
-			filter.push({shipmentnum: shipmentNum});
+			//#region Loc-In: Add FormNo, DocumentRef
+			//filter.push({shipmentnum: shipmentNum});
+			if(shipmentNum){
+				filter.push({shipmentnum: shipmentNum});
+			}
+			if(formno){
+				filter.push({formnumber : formno});
+			}
+			if(documentref){
+				filter.push({documentref : documentref});
+			}
+			//#endregion Loc-Out: Add FormNo, DocumentRef
 			var shipmentPromise =  ModelService.filtered('shipment', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, {}, false);
 			shipmentPromise.then(function(shipmentSet){
 				
@@ -1360,6 +1375,10 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			var transfersLocalResource = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
 			var shipmentNum = transfersLocalResource.shipment;
+			//#region Loc-In: Add FromNo, DocumentRef
+			var formno = transfersLocalResource.formno;
+			var documentref = transfersLocalResource.documentref;
+			//#endregion Loc-Out: Add FromNo, DocumentRef
 			var matrectransSet = eventContext.getResource('matrectrans');
 			var self = this;
 			var filter = [];
@@ -1377,7 +1396,18 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				}
 			}
 			
-			filter.push({shipmentnum: shipmentNum});
+			//#region Loc-In: Add FormNo, DocumentRef
+			//filter.push({shipmentnum: shipmentNum});
+			if(shipmentNum){
+				filter.push({shipmentnum: shipmentNum});
+			}
+			if(formno){
+				filter.push({formnumber : formno});
+			}
+			if(documentref){
+				filter.push({documentref : documentref});
+			}
+			//#endregion Loc-Out: Add FormNo, DocumentRef
 			var shipmentPromise =  ModelService.filtered('shipment', PlatformConstants.SEARCH_RESULT_QUERYBASE, filter, 1000, true, true, {}, false);
 			shipmentPromise.then(function(shipmentSet){
 				
