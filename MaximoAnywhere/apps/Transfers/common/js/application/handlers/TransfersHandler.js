@@ -1231,7 +1231,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			//#region Loc-Out: remove this line
 			var invbalancesPromise =  ModelService.filtered('invbalance', PlatformConstants.SEARCH_RESULT_QUERYBASE, invbalanceFilter, 1000, true, true, null, false);
 			return invbalancesPromise.then(function(invbalanceSet){
-				
+				/* #region Tuan-in: fix invbalance null, currentBalance null  */
+				invbalanceSet.filter('curbal > 0');
+				/* #region Tuan-out: fix invbalance null, currentBalance null  */
 				if(invbalanceSet && invbalanceSet.count()>0){
 					
 					//#region Loc-In:
@@ -1255,7 +1257,11 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					// Else if default binnum exists in invbalance => set frombin = DEFAULT binnum
 					// ELse set frombin = FIRST binnum exists in invbalance
 
-					invbalanceSet.filter('curbal > 0');
+                    /* #region Tuan-in: fix invbalance null, currentBalance null  */
+                    // invbalanceSet.filter('curbal > 0');
+					var invbalance = invbalanceSet.data[0];
+					var currentBalance = invbalance.curbal;
+                    /* #endregion Tuan-out: fix invbalance null, currentBalance null  */
 					var dynamicBin;
 					var dynamicLot;
 					if(fromlot){
@@ -2667,7 +2673,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			var currentRecord = eventContext.getResource().getCurrentRecord();
             /* #region Tuan-in: fix currentRecord null*/
             if (currentRecord && !currentRecord.actualdate) {
-                /* #endregion Tuan-in: fix currentRecord null*/
+                /* #endregion Tuan-out: fix currentRecord null*/
 				var msg = MessageService.createStaticMessage("emptyActualDate").getMessage();
 				if (self.ui.getCurrentDialog().id == 'Platform.DateTimeLookup') {
 					setTimeout(function(){
