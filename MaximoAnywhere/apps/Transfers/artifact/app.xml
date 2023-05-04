@@ -238,25 +238,23 @@
 								<!-- Loc-Out: Add event datachange -->
 							</eventHandlers>
 							<button id="Transfers.ReceiveShippedItemsSeachView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
-								<!-- Tuan-in: add formnumber lookup Search Shipments -->
-								<!-- <text codeScannable="true" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">	 -->
-								<text codeScannable="true" lookup="Transfers.FormnumberLookup" lookupAttribute="formnumber" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">
-									<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandlers">
-										<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_datachange" method="setFieldsReadonly"/>
-										<eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_render" method="updateFormnumLookupData"/>
-									</eventHandlers>
-								</text>
-								<!-- Tuan-in: add formnumber lookup Search Shipments -->
+								<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_imagesaction_lookup_OFF.svg_button_eventHandlers">
+									<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ReceiveShippedItemsSeachView_shipment_button_click" method="shipmentLookup"/> 
+								</eventHandlers> 
 							</button>
 	                    </text>
 					</groupitem>
 					<!-- Loc-In: Add FormNo -->
 					<groupitem id="Transfers.ReceiveShippedItemsSeachView_formno_groupitem_2">
-						<text codeScannable="true" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">					    
+						<!-- Tuan-in: add formnumber lookup Search Shipments -->
+						<!-- <text codeScannable="true" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">	 -->
+						<text codeScannable="true" lookup="Transfers.FormnumberLookup" lookupAttribute="formnumber" editable="true" id="Transfers.ReceiveShippedItemsSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">
 							<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandlers">
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_datachange" method="setFieldsReadonly"/>
-							</eventHandlers>		
+								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.ReceiveShippedItemsSeachView_formno_eventHandler_render" method="updateFormnumLookupData"/>
+							</eventHandlers>
 						</text>
+						<!-- Tuan-in: add formnumber lookup Search Shipments -->
 					</groupitem>
 
 					<groupitem id="Transfers.ReceiveShippedItemsSeachView_documentref_groupitem_3">
