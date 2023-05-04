@@ -2279,7 +2279,8 @@
 		<!-- Formnumber lookup -->
 		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterFornumnumberForLookup" id="Transfers.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
 			<requiredResources id="Transfers.FormnumberLookup_requiredResources">
-				<requiredResource id="Transfers.FormnumberLookup_workOrder" name="formnumberTemp" reload="false"/>
+				<requiredResource id="Transfers.FormnumberLookup_fornumberTemp" name="formnumberTemp" reload="false"/>
+				<requiredResource id="Transfers.FormnumberLookup_transfers" name="transfers" reload="false"/>
 			</requiredResources>
 			<list id="Transfers.FormnumberLookup_list" resource="formnumberTemp">
 				<searchAttributes id="Transfers.FormnumberLookup_additionallocations_searchAttributes">
@@ -2292,6 +2293,7 @@
 
 			<returnAttributes id="IssuesReturns.FormnumberLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.FormnumberLookup_formno" sourceAttribute="formnumber" targetAttribute="formnumber"/>
+				<returnAttribute id="IssuesReturns.FormnumberLookup_formno" sourceAttribute="formnumber" targetAttribute="formno"/>
 			</returnAttributes>
 		</lookup>
 		<!-- Tuan-out: add formnumber lookup Search Shipments -->
