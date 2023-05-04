@@ -1290,7 +1290,14 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		
 		clearAdditionalUsage : function(eventContext){
 			//var transfersAdditionUsageRecord = eventContext.application.getResource('transfersAdditionalUsage').getCurrentRecord();
-			var transfersAdditionUsageRecord = CommonHandler._getAdditionalResource(eventContext,'transfersAdditionalUsage').getCurrentRecord();
+			/* #region Tuan-in: fix clear null resource  */
+			var transfersAdditionUsageRecords = CommonHandler._getAdditionalResource(
+				eventContext,
+				"transfersAdditionalUsage"
+			);
+			if (!transfersAdditionUsageRecords) return;
+			var transfersAdditionUsageRecord = transfersAdditionUsageRecord.getCurrentRecord();
+			/* #endregion Tuan-out: fix clear null resource  */
 			transfersAdditionUsageRecord.formnumber = "";
 			transfersAdditionUsageRecord.description = "";			
 			transfersAdditionUsageRecord.documentref = "";
