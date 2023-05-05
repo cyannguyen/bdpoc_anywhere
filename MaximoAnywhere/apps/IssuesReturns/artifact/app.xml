@@ -393,15 +393,15 @@
 						</eventHandlers>
 					</text>
 					<!-- customize bin -->
-					<text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
+					<text editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_eventhandler_click" method="fromBinLookup"/>
 							</eventHandlers>
 						</button> -->
-						<eventHandlers id="IssuesReturns.InvreserveListView_frombin_eventHandlers">
+						<!-- <eventHandlers id="IssuesReturns.InvreserveListView_frombin_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.InvreserveListView_frombin_eventhandler_datachange" method="setFromLotCurbalReserved"/>
-						</eventHandlers>
+						</eventHandlers> -->
 					</text>
 
 					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
@@ -801,14 +801,14 @@
 					<!-- Loc-In: add ActualDate, FromBin -->
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_frombin_groupitem_10">
 						<!-- <text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="lotnum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin"> -->
-						<text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="binmum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin">
+						<text labelCss="requiredLabel" editable="false" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="binmum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin">
 							<!-- <button cssClass="lookupIcon" id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 								<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 									<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.AdditionalItemsDetailsView_eventhandler_click" method="fromBinLookup"/> 
 								</eventHandlers> 
 							</button> -->
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventHandlers">
-								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/>
+								<!-- <eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/> -->
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_render" method="getInvbalTemList"/>
 							</eventHandlers>
 						</text>
@@ -1001,10 +1001,13 @@
 					<searchAttribute id="IssuesReturns.LocationLookup_additionallocations_searchAttribute_location" name="location"/>
 					<searchAttribute id="IssuesReturns.LocationLookup_additionallocations_searchAttribute_description" name="description"/>
 				</searchAttributes>
-				<listItemTemplate id="IssuesReturns.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+				<!-- Tuan-in: add glaccount to lookup location -->
+				<listItemTemplate id="IssuesReturns.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="BinLotLookupItem">
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.LocationLookup_additionallocations_Item1Desc1_location" layoutInsertAt="item1" resourceAttribute="location"/>
-					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="item2" resourceAttribute="description"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.LocationLookup_additionallocations_Item1Desc1_glaccount" layoutInsertAt="item3" resourceAttribute="glaccount"/>
 				</listItemTemplate>
+				<!-- Tuan-in: add glaccount to lookup location -->
 			</list>
 			<returnAttributes id="IssuesReturns.LocationLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.LocationLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
