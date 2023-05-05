@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layout id="InvreserveListItem" version="201509090907" width="100">
-   <!-- <row id="row_0">
+<layout id="ShippedListItem" version="201509090907" width="100">
+	<!-- <row id="row_0">
       <column colspan="3" columnid="item1" halign="left" id="item1_column"/>
       <column colspan="6" columnid="item2" halign="left" id="item2_column"/>
       <column colspan="3" columnid="item25" halign="left" id="item25_column"/>
@@ -22,23 +22,18 @@
 	</row> -->
 	<!-- Loc-In: Add layout items -->
 	<row id="row_0">
-      <column colspan="1" columnid="item1" halign="left" id="item1_column"/>
-      <column colspan="2" columnid="item2" halign="left" id="item2_column"/>
-   	</row>
+		<column colspan="1" columnid="item1" halign="left" id="item1_column"/>
+		<column colspan="2" columnid="item2" halign="left" id="item2_column"/>
+	</row>
 	<row id="row_1">
 		<column colspan="1" columnid="item3" halign="left" id="item3_column"/>
 		<column colspan="2" columnid="item4" halign="left" id="item4_column"/>
+		<column colspan="1" columnid="flag_cel" halign="left" id="item6_column" rowspan="3"/>
 	</row>
-	<row id="row_2">
+	<!-- <row id="row_2">
 		<column colspan="1" columnid="item5" halign="left" id="item5_column"/>
 		<column colspan="2" columnid="item6" halign="left" id="item6_column"/>
-	</row>
-	<!-- Tuan-In: add lotnum -->
-	<row id="row_5">
-		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
-		<column colspan="2" columnid="item11" halign="left" id="item11_column"/>
-	</row>
-	<!-- Tuan-Out: add lotnum -->
+	</row> -->
 	<row id="row_3">
 		<column colspan="1" columnid="item7" halign="left" id="item7_column"/>
 		<column colspan="2" columnid="item8" halign="left" id="item8_column"/>
@@ -46,5 +41,15 @@
 	<row id="row_4">
 		<column colspan="3" columnid="item9" halign="left" id="item9_column"/>
 	</row>
-	<!-- Loc-Out: Add layout items -->	    
+	<!-- Tuan-In: add lotnum -->
+	<row id="row_2">
+		<column colspan="1" columnid="item5" halign="left" id="item5_column"/>
+		<column colspan="3" columnid="item6" halign="left" id="item6_column"/>
+	</row>
+	<row id="row_5">
+		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
+		<column colspan="3" columnid="item11" halign="left" id="item11_column"/>
+	</row>
+	<!-- Tuan-Out: add lotnum -->
+	<!-- Loc-Out: Add layout items -->
 </layout>
