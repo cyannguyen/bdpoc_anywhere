@@ -298,6 +298,10 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_domainpostatus" name="domainpostatus"/>
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalvendor" name="additionalvendor"/>
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionallinetype" name="additionalLineType"/>
+				<!-- Tuan-in: add contact number lookup -->
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add contact number lookup -->
 			</requiredResources>			
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
 				<link id="Transfers.ReceivePurchaseOrderItemsSeachView_link" label="">
@@ -333,11 +337,15 @@
 					</groupitem>
 					<!-- Loc-In: Add FormNo Searching -->
 					<groupitem id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_groupitem_3">
-						<text codeScannable="true" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+						<!-- Tuan-in: add contact number lookup -->
+						<!-- <text codeScannable="true" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno"> -->
+						<text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
 							<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandlers">
-								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandler" method="setFieldsReadonly"/>							
+								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ReceivePurchaseOrderItemsSeachView_render_eventHandler" method="updatePOLookupData"/>
 							</eventHandlers>
 						</text>
+						<!-- Tuan-out: add contact number lookup -->
 					</groupitem>					
 					<!-- Loc-Out: Add FormNo Searching -->
 				</group>			    
@@ -453,6 +461,10 @@
 				<!-- Loc-In: Add required Resource --> 
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<!-- Loc-Out: Add required Resource -->
+				<!-- Tuan-in: add contact number lookup -->
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_contactnoTemp" name="contactnoTemp"/>
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add contact number lookup -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/> -->
@@ -2262,6 +2274,74 @@
 				<returnAttribute id="Transfers.BilltoShiptoLookup_addresscode_addresscode" sourceAttribute="addresscode" targetAttribute="shipto"/>
 			</returnAttributes>
 		</lookup>		
+
+				<!-- Tuan-in: add bin lookup  -->
+		<!-- tobin lookup -->
+		<lookup filterClass="application.handlers.ReceiveShipmentHandler" filterMethod="filterTobinReceiveShipmentForLookup" id="Transfers.TobinReseiveShipmentLookup" label="Select Bin" resource="invbalForBinLookup">
+			<requiredResources id="Transfers.ToBinLookup_requiredResources">
+				<requiredResource id="Transfers.ToBinLookup_invbalForBinLookup" name="invbalForBinLookup" reload="false"/>
+				<requiredResource id="Transfers.ToBinLookup_receiptInput" name="receiptInput" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.ToBinLookup_list" resource="invbalForBinLookup">
+				<searchAttributes id="Transfers.ToBinLookup_searchAttributes">
+					<searchAttribute id="Transfers.ToBinLookup_searchAttribute_binnum" name="binnum"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.ToBinLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.ToBinLookup_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.ToBinLookup_lotnum" layoutInsertAt="item2" resourceAttribute="lotnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.ToBinLookup_curbal" layoutInsertAt="item3" resourceAttribute="curbal"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.ToBinLookup_returnAttributes">
+				<returnAttribute id="Transfers.ToBinLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="tobin"/>
+				<returnAttribute id="Transfers.ToBinLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="tolot"/>
+				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="quantitydue"/> -->
+			</returnAttributes>
+		</lookup>
+		<!-- tobin additional lookup -->
+		<lookup id="Transfers.TobinAdditonalLookup" label="Select Bin" resource="invbalForBinLookup">
+			<requiredResources id="Transfers.TobinAdditonalLookup_requiredResources">
+				<requiredResource id="Transfers.TobinAdditonalLookup_invbalForBinLookup" name="invbalForBinLookup" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.TobinAdditonalLookup_list" resource="invbalForBinLookup">
+				<searchAttributes id="Transfers.TobinAdditonalLookup_searchAttributes">
+					<searchAttribute id="Transfers.TobinAdditonalLookup_searchAttribute_binnum" name="binnum"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.TobinAdditonalLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.TobinAdditonalLookup_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.TobinAdditonalLookup_lotnum" layoutInsertAt="item2" resourceAttribute="lotnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.TobinAdditonalLookup_curbal" layoutInsertAt="item3" resourceAttribute="curbal"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.TobinAdditonalLookup_returnAttributes">
+				<returnAttribute id="Transfers.TobinAdditonalLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="tobin"/>
+				<returnAttribute id="Transfers.TobinAdditonalLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="tolot"/>
+				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="quantitydue"/> -->
+			</returnAttributes>
+		</lookup>
+		<!-- frombin lookup -->
+		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterFrombinReservedLookup" id="Transfers.FrombinReservedLookup" label="Select Bin" resource="invbalForBinLookup">
+			<requiredResources id="Transfers.FrombinReservedLookup_requiredResources">
+				<requiredResource id="Transfers.FrombinReservedLookup_invbalForBinLookup" name="invbalForBinLookup" reload="false"/>
+				<requiredResource id="Transfers.FrombinReservedLookup_invreserve" name="invreserve" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.FrombinReservedLookup_list" resource="invbalForBinLookup">
+				<searchAttributes id="Transfers.FrombinReservedLookup_searchAttributes">
+					<searchAttribute id="Transfers.FrombinReservedLookup_searchAttribute_binnum" name="binnum"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.FrombinReservedLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.FrombinReservedLookup_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.FrombinReservedLookup_lotnum" layoutInsertAt="item2" resourceAttribute="lotnum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.FrombinReservedLookup_curbal" layoutInsertAt="item3" resourceAttribute="curbal"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.FrombinReservedLookup_returnAttributes">
+				<returnAttribute id="Transfers.FrombinReservedLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="frombin"/>
+				<returnAttribute id="Transfers.FrombinReservedLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="fromlot"/>
+				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/> -->
+			</returnAttributes>
+		</lookup>
+		<!-- Tuan-out: add bin lookup  -->
 		
 		<!-- Location lookup -->
 		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterLocationForLookup" id="Transfers.LocationLookup" label="Select Location" resource="additionallocations">
@@ -2562,10 +2642,17 @@
 			</attributes>
 		</resource>
 
+		<resource id="contactnoTemp" inMemory="true" name="contactnoTemp" singleton="true">
+			<attributes id="contactnoTemp_attributes">
+				<localAttribute dataType="string" id="contactnoTemp_formno_string" name="formno"/>
+			</attributes>
+		</resource>
+
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" id="additionalReceivedMatrectrans" name="additionalReceivedMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalReceivedMatrectrans_attributes">
 				<attribute describedByProperty="spi:anywhere_formnumber" id="additionalReceivedMatrectransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:issuetype" id="additionalReceivedMatrectransResource_issuetype_spi_issuetype" index="true" name="issuetype"/>
+				<attribute describedByProperty="spi:formno" id="additionalReceivedMatrectransResource_formno_spi_formno" name="formno"/>
 			</attributes>
 			<creationFactories id="additionalReceivedMatrectrans_creationFactories">
 				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalReceivedMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
@@ -2573,7 +2660,7 @@
 			<queryBases id="additionalReceivedMatrectrans_queryBases">
 				<queryBase defaultForSearch="true" id="additionalReceivedMatrectrans_queryBase_getAllReceivedMatUseTrans" name="getAllReceivedMatRecTrans" queryUri="/oslc/os/oslcmatrectrans"/>
 			</queryBases>
-			<whereClause clause="spi:issuetype='SHIPTRANSFER' and spi:anywhere_formnumber!='null'" id="additionalReceivedMatrectrans_whereClause"/>
+			<whereClause clause="spi:anywhere_formnumber!='null'" id="additionalReceivedMatrectrans_whereClause"/>
 		</resource>
 		<!-- Tuan-out: add formnumber lookup Search Shipments -->
 		
