@@ -754,8 +754,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 
 		/* #region Tuan-in: add formnumber lookup Search Shipments*/
-		updateFormnumLookupData: function (eventContext) {
-			var filter = [{ issuetype: "SHIPTRANSFER" }];
+		updateFormnumberLookupBase: function (eventContext, filter) {
 			var formnumPromise = ModelService.filtered(
 				"additionalReceivedMatrectrans",
 				PlatformConstants.SEARCH_RESULT_QUERYBASE,
@@ -774,9 +773,19 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			});
 		},
 
+		updateManageFormnumLookupData: function (eventContext) {
+			var filter = [{ issuetype: "SHIPRECEIPT" }];
+			this.updateFormnumberLookupBase(eventContext, filter);
+		},
+
+		updateFormnumLookupData: function (eventContext) {
+			var filter = [{ issuetype: "SHIPTRANSFER" }];
+			this.updateFormnumberLookupBase(eventContext, filter);
+		},
+
 		filterFornumnumberForLookup: function (eventContext) {},
-		/* #endregion Tuan-out: add formnumber lookup Search Shipment*/
-		
+		/* #endregion Tuan-out: add formnumber lookup Search Shipment*/		
+
 		
 		/**
 		 * Search items already received

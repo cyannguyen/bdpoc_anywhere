@@ -217,7 +217,10 @@
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_transfers" name="transfers"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
-
+				<!-- Tuan-in: add formno lookup -->
+				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_formnumberTemp" name="formnumberTemp"/>
+				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>			
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
 				<link id="Transfers.ReceiveShippedItemsSeachView_link" label="">
@@ -363,6 +366,10 @@
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domaininvusereceipts" name="domaininvusereceipts"/>
+				<!-- Tuan-in: add formno lookup -->
+				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_formnumberTemp" name="formnumberTemp"/>
+				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>			
 			<container cssClass="errorheader" id="Transfers.ManageReceivedShipmentSeachView_container_0">
 				<link id="Transfers.ManageReceivedShipmentSeachView_link" label="">
@@ -399,11 +406,14 @@
 					</groupitem>
 					<!-- Loc-In: Add FormNo -->
 					<groupitem id="Transfers.ManageReceivedShipmentSeachView_formno_groupitem_2">
-						<text codeScannable="true" editable="true" id="Transfers.ManageReceivedShipmentSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">
+						<!-- Tuan-in: add formno lookup -->
+						<text codeScannable="true" editable="true" lookup="Transfers.FormnumberLookup" lookupAttribute="formnumber" id="Transfers.ManageReceivedShipmentSeachView_formno" label="Form No" placeHolder="Tap to enter" resourceAttribute="formno">
 							<eventHandlers id="Transfers.ManageReceivedShipmentSeachView_formno_eventHandlers">
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ManageReceivedShipmentSeachView_formno_eventHandler_datachange" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.anageReceivedShipmentSeachView_formno_eventHandler_render" method="updateManageFormnumLookupData"/>
 							</eventHandlers>
-						</text>					    
+						</text>
+						<!-- Tuan-in: add formno lookup -->			    
 					</groupitem>
 
 					<groupitem id="Transfers.ManageReceivedShipmentSeachView_documentref_groupitem_3">
