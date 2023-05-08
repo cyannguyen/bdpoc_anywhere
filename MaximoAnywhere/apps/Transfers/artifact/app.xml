@@ -301,7 +301,7 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionallinetype" name="additionalLineType"/>
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/>
 				<!-- Tuan-out: add contact number lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
@@ -464,7 +464,7 @@
 				<!-- Loc-Out: Add required Resource -->
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalManagePOMatrectrans" name="additionalManagePOMatrectrans"/>
 				<!-- Tuan-out: add contact number lookup -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
@@ -536,7 +536,7 @@
 						<text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
 							<eventHandlers id="Transfers.ManageReceivedPurchaseOrderSeachView_formno_eventHandlers">
 								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno_eventHandler" method="setFieldsReadonly"/>
-								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ManageReceivedPurchaseOrderSeachView_render_eventHandler" method="updatePOLookupData"/>
+								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ManageReceivedPurchaseOrderSeachView_render_eventHandler" method="updateManagePOLookupData"/>
 							</eventHandlers>
 						</text>
 						<!-- Tuan-out: add contact number lookup  -->
@@ -593,10 +593,10 @@
 					</eventHandlers>
 				</action>
 				<action id="Transfers.ShipmentItemsListView_selectall_action" image="/images/download-ok.png" label="Select All" overflow="false">
-                    <eventHandlers id="Transfers.ShipmentItemsListView_events">
-                        <eventHandler id="Transfers.ShipmentItemsListView_click_event" event="click" class="application.handlers.ReceiveShipmentHandler" method="handleClickAllFilterItem"/>
-                    </eventHandlers>
-                </action>
+					<eventHandlers id="Transfers.ShipmentItemsListView_events">
+						<eventHandler id="Transfers.ShipmentItemsListView_click_event" event="click" class="application.handlers.ReceiveShipmentHandler" method="handleClickAllFilterItem"/>
+					</eventHandlers>
+				</action>
 			</actions>
 			<!-- Loc-Out: Add action for PO's attachment -->
 			<list displayPageSize="20" hideEmpty="true" id="Transfers.ShipmentItemsListView_list" label="Items" resource="receiptInput" showHeader="true">
@@ -2725,6 +2725,34 @@
 				<queryBase defaultForSearch="true" id="additionalReceivedMatrectrans_queryBase_getAllReceivedMatUseTrans" name="getAllReceivedMatRecTrans" queryUri="/oslc/os/oslcmatrectrans"/>
 			</queryBases>
 			<whereClause clause="spi:anywhere_formnumber!='null'" id="additionalReceivedMatrectrans_whereClause"/>
+		</resource>
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" id="additionalManagePOMatrectrans" name="additionalManagePOMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalManagePOMatrectrans_attributes">
+				<attribute describedByProperty="spi:issuetype" id="additionalManagePOMatrectransResource_issuetype_spi_issuetype" index="true" name="issuetype"/>
+				<attribute describedByProperty="spi:formno" id="additionalManagePOMatrectransResource_formno_spi_formno" name="formno"/>
+			</attributes>
+			<creationFactories id="additionalManagePOMatrectrans_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalManagePOMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
+			</creationFactories>
+			<queryBases id="additionalManagePOMatrectrans_queryBases">
+				<queryBase defaultForSearch="true" id="additionalManagePOMatrectrans_queryBase_getAllReceivedMatUseTrans" name="getAllReceivedMatRecTrans" queryUri="/oslc/os/oslcmatrectrans"/>
+			</queryBases>
+			<whereClause clause="spi:formno!='null'" id="additionalManagePOMatrectrans_whereClause"/>
+		</resource>
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#PO" id="additionalPOMatrectrans" name="additionalPOMatrectrans" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalPOMatrectrans_attributes">
+				<attribute describedByProperty="spi:formno" id="additionalPOMatrectrans_formno_spi_formno" name="formno"/>
+				<attribute describedByProperty="spi:status" id="additionalPOMatrectrans_status_spistatus" index="true" name="status"/>
+			</attributes>
+			<creationFactories id="additionalPOMatrectrans_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalPOMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
+			</creationFactories>
+			<queryBases id="additionalPOMatrectrans_queryBases">
+				<queryBase id="additionalPOMatrectrans_queryBase_getPO" name="getPO" queryUri="/oslc/os/oslcpo"/>
+			</queryBases>
+			<whereClause clause="spi:formno!='null'" id="additionalPOMatrectrans_whereClause"/>
 		</resource>
 		<!-- Tuan-out: add formnumber lookup Search Shipments -->
 

@@ -1043,13 +1043,33 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 
 		/* #region  Tuan-in: update data for contact number lookup */
-		updatePOLookupData: function (eventContext) {
+		updateManagePOLookupData: function (eventContext) {
 			var filter = [{ issuetype: "RECEIPT" }];
 			var formnumPromise = ModelService.filtered(
-				"additionalReceivedMatrectrans",
+				"additionalManagePOMatrectrans",
 				PlatformConstants.SEARCH_RESULT_QUERYBASE,
 				filter,
-				1000,
+				100,
+				true,
+				true,
+				null,
+				false
+			);
+
+			formnumPromise.then(function (data) {
+				ModelService.clearSearchResult(data);
+				data.resourceID = "contactnoTemp";
+				eventContext.application.addResource(data);
+			});
+		},
+
+		updatePOLookupData: function (eventContext) {
+			var filter = [{ status: "APPR" }];
+			var formnumPromise = ModelService.filtered(
+				"additionalPOMatrectrans",
+				PlatformConstants.SEARCH_RESULT_QUERYBASE,
+				filter,
+				100,
 				true,
 				true,
 				null,
