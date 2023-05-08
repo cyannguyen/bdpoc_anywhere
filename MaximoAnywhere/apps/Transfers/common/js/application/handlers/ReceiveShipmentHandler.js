@@ -1214,7 +1214,6 @@ define("application/handlers/ReceiveShipmentHandler", [
                 this.updateFormnumberLookupBase(eventContext, filter);
             },
 
-            filterFornumnumberForLookup: function (eventContext) {},
             /* #endregion Tuan-out: add formnumber lookup Search Shipment*/
 
             /**

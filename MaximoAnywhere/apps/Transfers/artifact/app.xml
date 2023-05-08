@@ -2401,7 +2401,7 @@
 
 		<!-- Tuan-in: add formnumber lookup Search Shipments -->
 		<!-- Formnumber lookup -->
-		<lookup filterClass="application.handlers.TransfersHandler" filterMethod="filterFornumnumberForLookup" id="Transfers.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
+		<lookup id="Transfers.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
 			<requiredResources id="Transfers.FormnumberLookup_requiredResources">
 				<requiredResource id="Transfers.FormnumberLookup_fornumberTemp" name="formnumberTemp" reload="false"/>
 			</requiredResources>
