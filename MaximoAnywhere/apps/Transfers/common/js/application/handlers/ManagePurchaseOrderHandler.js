@@ -1041,6 +1041,28 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				}
 			});
 		},
+
+		/* #region  Tuan-in: update data for contact number lookup */
+		updatePOLookupData: function (eventContext) {
+			var filter = [{ issuetype: "RECEIPT" }];
+			var formnumPromise = ModelService.filtered(
+				"additionalReceivedMatrectrans",
+				PlatformConstants.SEARCH_RESULT_QUERYBASE,
+				filter,
+				1000,
+				true,
+				true,
+				null,
+				false
+			);
+
+			formnumPromise.then(function (data) {
+				ModelService.clearSearchResult(data);
+				data.resourceID = "contactnoTemp";
+				eventContext.application.addResource(data);
+			});
+		},
+		/* #endregion Tuan-in: update data for contact number lookup */
 		
 		/**
 		 * Set fields readonly exclusive of each other on Search View.
