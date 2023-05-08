@@ -2581,103 +2581,6 @@ define("application/handlers/TransfersHandler", [
                 });
         },
         /* #region Tuan-in: handle tolot in case user input a new lot number  */
-        // handleFromBinReservedItem: function (eventContext) {
-        //     var self = this;
-        //     var transferResources = CommonHandler._getAdditionalResource(
-        //         eventContext,
-        //         "invreserve"
-        //     );
-        //     var currentChangeRecord = transferResources.getCurrentRecord();
-        //     if (!currentChangeRecord.get("frombin")) return;
-        //     var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
-        //     CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
-        //     console.log("check data", invbalTempResource.data);
-        //     arrayUtil.forEach(transferResources.data, function (transferResource) {
-        //         if (invbalTempResource) {
-        //             var frombin = transferResource.get("frombin");
-        //             if (!frombin) return;
-        //             var invbalTempSet = invbalTempResource.find(
-        //                 "binnum == $1 && itemnum == $2",
-        //                 transferResource.frombin,
-        //                 transferResource.item
-        //             );
-        //             if (invbalTempSet.length > 0) {
-        //                 var invbalTempRecord = invbalTempSet[0];
-        //                 var lotnum = transferResource.fromlot;
-        //                 // handle user choose a binnum from lookup which has multiple lotnums
-        //                 if (invbalTempSet.length > 1 && lotnum) {
-        //                     invbalTempSet = invbalTempResource.find("lotnum == $1", lotnum);
-        //                     if (invbalTempSet.length > 0) {
-        //                         invbalTempRecord = invbalTempSet[0];
-        //                     }
-        //                 }
-        //                 transferResource.set("fromlot", invbalTempRecord.lotnum);
-        //                 console.log("check fromlot change", invbalTempRecord.lotnum);
-        //             } else {
-        //                 if (frombin) {
-        //                     console.log("loop", frombin);
-        //                     transferResource.setNullValue("frombin");
-        //                     self.ui.showMessage(
-        //                         MessageService.createStaticMessage("invalidBin").getMessage()
-        //                     );
-        //                 }
-        //                 transferResource.setNullValue("fromlot");
-        //                 console.log("set lot to 0 1");
-        //             }
-        //         } else {
-        //             if (frombin) transferResource.setNullValue("frombin");
-        //             transferResource.setNullValue("fromlot");
-        //             console.log("set lot to 0 2");
-        //         }
-        //     });
-        // },
-
-        // handleFromBinReservedItem: function (eventContext) {
-        //     var self = this;
-        //     var transferResource = CommonHandler._getAdditionalResource(
-        //         eventContext,
-        //         "invreserve"
-        //     ).getCurrentRecord();
-        //     var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
-        //     CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
-        //     console.log("check data", invbalTempResource.data);
-        //     if (invbalTempResource) {
-        //         console.log("frombin", transferResource.frombin);
-        //         if (!transferResource.frombin) return;
-        //         var invbalTempSet = invbalTempResource.find(
-        //             "binnum == $1 && itemnum == $2",
-        //             transferResource.frombin,
-        //             transferResource.item
-        //         );
-        //         if (invbalTempSet.length > 0) {
-        //             var invbalTempRecord = invbalTempSet[0];
-        //             var lotnum = transferResource.fromlot;
-        //             // handle user choose a binnum from lookup which has multiple lotnums
-        //             if (invbalTempSet.length > 1 && lotnum) {
-        //                 invbalTempSet = invbalTempResource.find("lotnum == $1", lotnum);
-        //                 if (invbalTempSet.length > 0) {
-        //                     invbalTempRecord = invbalTempSet[0];
-        //                 }
-        //             }
-        //             transferResource.set("fromlot", invbalTempRecord.lotnum);
-        //             console.log("check fromlot change", invbalTempRecord.lotnum);
-        //         } else {
-        //             if (transferResource.frombin) {
-        //                 console.log("loop", transferResource.frombin);
-        //                 transferResource.setNullValue("frombin");
-        //                 self.ui.showMessage(
-        //                     MessageService.createStaticMessage("invalidBin").getMessage()
-        //                 );
-        //             }
-        //             transferResource.setNullValue("fromlot");
-        //             console.log("set lot to 0 1");
-        //         }
-        //     } else {
-        //         if (transferResource.frombin) transferResource.setNullValue("frombin");
-        //         transferResource.setNullValue("fromlot");
-        //         console.log("set lot to 0 2");
-        //     }
-        // },
 
         updateBinReservedItem: function (eventContext) {
             var filter = [];
@@ -2715,6 +2618,7 @@ define("application/handlers/TransfersHandler", [
 
             invbalPromise.then(function (invbalSet) {
                 ModelService.clearSearchResult(invbalSet);
+                invbalSet.filter("curbal > 0");
                 invbalSet.resourceID = "invbalForBinLookup";
                 eventContext.application.addResource(invbalSet);
             });

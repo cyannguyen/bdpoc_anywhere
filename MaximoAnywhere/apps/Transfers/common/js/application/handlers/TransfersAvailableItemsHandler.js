@@ -1759,7 +1759,6 @@ define("application/handlers/TransfersAvailableItemsHandler", [
             var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
             CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
 
-            console.log("check data", invbalTempResource.data);
 
             if (invbalTempResource) {
                 var invbalTempSet = invbalTempResource.find("binnum == $1", transferResource.tobin);
@@ -1774,14 +1773,11 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                         }
                     }
                     transferResource.set("tolot", invbalTempRecord.lotnum);
-                    console.log("check tolot change", invbalTempRecord.lotnum);
                 } else {
                     transferResource.set("tolot", "0");
-                    console.log("set lot to 0 1");
                 }
             } else {
                 transferResource.set("tolot", "0");
-                console.log("set lot to 0 2");
             }
         },
 

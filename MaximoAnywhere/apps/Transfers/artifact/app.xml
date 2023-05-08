@@ -3114,9 +3114,7 @@
 			<queryBases id="invbalance_queryBases">
 				<queryBase id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
 			</queryBases>
-			<!-- Tuan-in: check curbal bigger than 0 -->
-			<whereClause clause="spi:curbal>0" id="invbalance_whereClause"/>
-			<!-- Tuan-out: check curbal bigger than 0 -->
+			<whereClause id="invbalance_whereClause"/>
 		</resource>
 
 		<!-- inmemory rotating asset data -->
