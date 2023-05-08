@@ -1065,6 +1065,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 
 		updatePOLookupData: function (eventContext) {
 			var filter = [{ status: "APPR" }];
+			filter.push({ receipts: "NONE" });
+			filter.push({ receipts: "PARTIAL" });
 			var formnumPromise = ModelService.filtered(
 				"additionalPOMatrectrans",
 				PlatformConstants.SEARCH_RESULT_QUERYBASE,

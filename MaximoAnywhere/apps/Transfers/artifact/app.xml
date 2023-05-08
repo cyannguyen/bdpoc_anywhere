@@ -218,10 +218,6 @@
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_transfers" name="transfers"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
-				<!-- Tuan-in: add formno lookup -->
-				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_formnumberTemp" name="formnumberTemp"/>
-				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
-				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
 				<link id="Transfers.ReceiveShippedItemsSeachView_link" label="">
@@ -301,7 +297,6 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionallinetype" name="additionalLineType"/>
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/>
 				<!-- Tuan-out: add contact number lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
@@ -375,10 +370,6 @@
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domaininvusereceipts" name="domaininvusereceipts"/>
-				<!-- Tuan-in: add formno lookup -->
-				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_formnumberTemp" name="formnumberTemp"/>
-				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
-				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ManageReceivedShipmentSeachView_container_0">
 				<link id="Transfers.ManageReceivedShipmentSeachView_link" label="">
@@ -462,10 +453,6 @@
 				<!-- Loc-In: Add required Resource -->
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<!-- Loc-Out: Add required Resource -->
-				<!-- Tuan-in: add contact number lookup -->
-				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalManagePOMatrectrans" name="additionalManagePOMatrectrans"/>
-				<!-- Tuan-out: add contact number lookup -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/> -->
@@ -2745,6 +2732,7 @@
 			<attributes id="additionalPOMatrectrans_attributes">
 				<attribute describedByProperty="spi:formno" id="additionalPOMatrectrans_formno_spi_formno" name="formno"/>
 				<attribute describedByProperty="spi:status" id="additionalPOMatrectrans_status_spistatus" index="true" name="status"/>
+				<attribute describedByProperty="spi:receipts" id="additionalPOMatrectrans_receipts_spireceipts" index="true" name="receipts"/>
 			</attributes>
 			<creationFactories id="additionalPOMatrectrans_creationFactories">
 				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalPOMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
