@@ -218,6 +218,10 @@
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_transfers" name="transfers"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
+				<!-- Tuan-in: add formno lookup -->
+				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_formnumberTemp" name="formnumberTemp"/>
+				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
 				<link id="Transfers.ReceiveShippedItemsSeachView_link" label="">
@@ -297,6 +301,7 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionallinetype" name="additionalLineType"/>
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/>
 				<!-- Tuan-out: add contact number lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
@@ -370,6 +375,10 @@
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/>
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domaininvusereceipts" name="domaininvusereceipts"/>
+				<!-- Tuan-in: add formno lookup -->
+				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_formnumberTemp" name="formnumberTemp"/>
+				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ManageReceivedShipmentSeachView_container_0">
 				<link id="Transfers.ManageReceivedShipmentSeachView_link" label="">
@@ -453,6 +462,10 @@
 				<!-- Loc-In: Add required Resource -->
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<!-- Loc-Out: Add required Resource -->
+				<!-- Tuan-in: add contact number lookup -->
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_contactnoTemp" name="contactnoTemp"/>
+				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalManagePOMatrectrans" name="additionalManagePOMatrectrans"/>
+				<!-- Tuan-out: add contact number lookup -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainreceiptstatus" name="domainreceiptstatus"/> -->
@@ -562,6 +575,11 @@
 				<!-- Tuan-in: handle tolot in case user input a new lot number -->
 				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_invbalForBinLookup" name="invbalForBinLookup" reload="false"/>
 				<!-- Tuan-in: handle tolot in case user input a new lot number -->
+
+				<!-- Tuan-in: add grn resource -->
+				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/>
+				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnTemp" name="grnTemp" reload="false"/>
+				<!-- Tuan-in: add grn resource -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ShipmentItemsListView_container_0">
 				<link id="Transfers.ShipmentItemsListView_link" label="">
@@ -636,6 +654,13 @@
 					<!-- Tuan-In: add lotnum -->
 					<text editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/>
 					<!-- Tuan-Out: add lotnum -->
+					<!-- Tuan-In: add formnumber -->
+					<text editable="false" id="Transfers.ShipmentItemsListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookup" lookupAttribute="formno" layoutInsertAt="item10" resourceAttribute="formno">
+						<eventHandlers id="Transfers.ShipmentItemsListView_formnumber_eventhandlers">
+							<eventHandler id="Transfers.ShipmentItemsListView_formnumber_eventhandlers_render" event="render" class="application.handlers.ManagePurchaseOrderHandler" method="handleRenderFormnumber"/>
+						</eventHandlers>
+					</text>
+					<!-- Tuan-In: add formnumber -->
 					<!-- Tuan-in: add checkbox-->
 					<checkbox cssClass="rightCheckBox" id="Transfers.ShipmentItemsListView_receiveflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="receiveIndicator"/>
 					<!-- Tuan-out: add checkbox -->
@@ -663,7 +688,9 @@
 					</text>	 -->
 
 					<!-- Loc-In: Add FormNo for Manage PO -->
-					<listtext id="Transfers.ShipmentItemsListView_formno" layoutInsertAt="item10" resourceAttribute="formno"/>
+					<!-- Tuan-In: formno does not use anymore -->
+					<!-- <listtext id="Transfers.ShipmentItemsListView_formno" layoutInsertAt="item10" resourceAttribute="formno"/> -->
+					<!-- Tuan-Out: formno does not use anymore -->
 					<!-- Loc-Out: Add FormNo for Manage PO -->
 					<!-- Loc-Out: arrange all fields AND add PartNo, ActualDate, ToBin -->
 				</listItemTemplate>
@@ -2309,6 +2336,27 @@
 			</returnAttributes>
 		</lookup>
 
+		<!-- Tuan-in: add grn lookup -->
+		<lookup filterClass="application.handlers.ManagePurchaseOrderHandler" filterMethod="filterFormnumberForLookup" id="Transfers.GrnLookup" label="Select Form Number" resource="grnTemp">
+			<requiredResources id="Transfers.GrnLookup_requiredResources">
+				<requiredResource id="Transfers.GrnLookup_grnTemp" name="grnTemp" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.GrnLookup_list" resource="grnTemp">
+				<searchAttributes id="Transfers.GrnLookup_searchAttributes">
+					<searchAttribute id="Transfers.GrnLookup_searchAttribute_formnumber" name="formnumber"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.GrnLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_grnnumber" layoutInsertAt="item2" resourceAttribute="grnid"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_description" layoutInsertAt="item3" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.GrnLookup_returnAttributes">
+				<returnAttribute id="Transfers.GrnLookup_returnAttributes_formnumber" sourceAttribute="formnumber" targetAttribute="formno"/>
+			</returnAttributes>
+		</lookup>
+		<!-- Tuan-in: add grn lookup -->
+
 		<!-- Tuan-in: add bin lookup  -->
 		<!-- tobin lookup -->
 		<lookup filterClass="application.handlers.ReceiveShipmentHandler" filterMethod="filterTobinReceiveShipmentForLookup" id="Transfers.TobinReseiveShipmentLookup" label="Select Bin" resource="invbalForBinLookup">
@@ -2685,6 +2733,29 @@
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
+
+		<!-- Tuan-in: add form number PO List-->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" id="grnResource" name="grnResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="grnResource_attributes">
+				<attribute describedByProperty="spi:formnumber" id="grnResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:grnid" id="grnResource_issuetype_spi_issuetype" index="true" name="grnid"/>
+				<attribute describedByProperty="spi:description" id="grnResource_description_spi_description" name="description"/>
+			</attributes>
+			<queryBases id="grnResource_queryBases">
+				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/ANYWHERE_GRN"/>
+			</queryBases>
+			<whereClause id="grnResource_whereClause"/>
+		</resource>
+
+		<resource id="grnTemp" inMemory="true" name="grnTemp" singleton="true">
+			<attributes id="grnTemp_attributes">
+				<localAttribute dataType="string" id="grnTemp_formnumber_string" name="formnumber"/>
+				<localAttribute dataType="string" id="grnTemp_grnid_string" name="grnid"/>
+				<localAttribute dataType="string" id="grnTemp_description_string" name="description"/>
+			</attributes>
+		</resource>
+
+		<!-- Tuan-out: add form number PO -->
 
 		<!-- Tuan-in: add formnumber lookup Search Shipments -->
 		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">
