@@ -987,9 +987,6 @@ define("application/handlers/TransfersHandler", [
 
                                 //Display shipment view after shipment lines have been created and populated
                                 // eventContext.ui.show("Transfers.ShipmentDetailView");
-                                /* #region Tuan-In: Show search in reserve View after shipment complete */
-                                eventContext.ui.returnToView("Transfers.SearchInvreserveView");
-                                /* #endregion Tuan-In: Show search in reserve View after shipment complete*/
                             });
                     });
                 });

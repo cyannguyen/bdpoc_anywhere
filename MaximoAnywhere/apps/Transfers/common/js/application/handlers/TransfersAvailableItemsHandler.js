@@ -1555,7 +1555,7 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                 "transfersAdditionalUsage"
             );
             if (!transfersAdditionUsageRecords) return;
-            var transfersAdditionUsageRecord = transfersAdditionUsageRecord.getCurrentRecord();
+            var transfersAdditionUsageRecord = transfersAdditionUsageRecords.getCurrentRecord();
             /* #endregion Tuan-out: fix clear null resource  */
             transfersAdditionUsageRecord.formnumber = "";
             transfersAdditionUsageRecord.description = "";
