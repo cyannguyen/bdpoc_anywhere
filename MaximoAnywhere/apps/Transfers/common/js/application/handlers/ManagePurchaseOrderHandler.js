@@ -1425,20 +1425,28 @@ define("application/handlers/ManagePurchaseOrderHandler", [
             },
             /* #region  Tuan-in: add formnumber lookup handler for PO */
             handleRenderFormnumber: function (eventContext) {
-				console.log("render called");
-				this.displayAttachmentAction(eventContext);
-				console.log(eventContext);
-				var filter = [];
+                this.displayAttachmentAction(eventContext);
+            },
 
+            updateFormnumberPO: function (eventContext) {
+                var filter = [];
                 var receiptInput = CommonHandler._getAdditionalResource(
                     eventContext,
                     "receiptInput"
                 );
-
+                if (receiptInput != null) {
+                    console.log(receiptInput.data);
+                } else {
+                    console.log("receiptInput null");
+                    return;
+                }
                 arrayUtil.forEach(receiptInput.data, function (record) {
-					filter.push({ ponum: record.ponum });
+                    console.log("Record: ", record);
+                    if (record.ponum != null) {
+                        filter.push({ ponum: record.ponum });
+                    }
                 });
-
+                console.log("Filter: ", filter);
                 var grnPromise = ModelService.filtered(
                     "grnResource",
                     PlatformConstants.SEARCH_RESULT_QUERYBASE,
@@ -1449,29 +1457,29 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     null,
                     false
                 );
-
                 grnPromise.then(function (grnSet) {
+                    if (grnSet.data.length > 0) {
+                        var formno = grnSet.data[0].formnumber;
+                        console.log("formno: ", formno);
+                        arrayUtil.forEach(receiptInput.data, function (record) {
+                            if (record.formno == null) {
+                                record.set("formno", formno);
+                            }
+                        });
+                    }
+                    console.log("receiptInput.data", receiptInput.data);
                     ModelService.clearSearchResult(grnSet);
                     grnSet.resourceID = "grnTemp";
                     eventContext.application.addResource(grnSet);
                 });
-			},
+            },
 
-			filterFormnumberForLookup: function(eventContext) {
-				var currentRecord = CommonHandler._getAdditionalResource(
-					eventContext,
-					"receiptInput"
-				).getCurrentRecord();
-				var dataLookup = CommonHandler._getAdditionalResource(
-					eventContext,
-					"grnTemp"
-				);
-				CommonHandler._clearFilterForResource(eventContext, dataLookup);
-				var filter = [];
-	
-				filter.push({ ponum: currentRecord.ponum});
-				dataLookup.lookupFilter = filter;
-			},
+            handleRenderListItems: function (eventContext) {
+                this.updateFormnumberPO(eventContext);
+                var handler =
+                    eventContext.application["application.handlers.ReceiveShipmentHandler"];
+                handler.updateBinReceiveItem(eventContext);
+            },
 
             /* #endregion Tuan-in: add formnumber lookup handler for PO */
 

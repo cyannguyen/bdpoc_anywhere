@@ -577,7 +577,7 @@
 				<!-- Tuan-in: handle tolot in case user input a new lot number -->
 
 				<!-- Tuan-in: add grn resource -->
-				<!-- <requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/> -->
+				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/>
 				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnTemp" name="grnTemp" reload="false"/>
 				<!-- Tuan-in: add grn resource -->
 			</requiredResources>
@@ -696,7 +696,7 @@
 				</listItemTemplate>
 				<!-- Tuan-in: update tobin incoming items -->
 				<eventHandlers id="Transfers.ShipmentItemsListView_list_eventHandlers">
-					<eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.ShipmentItemsListView_list_eventHandlers_render" method="updateBinReceiveItem"/>
+					<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ShipmentItemsListView_list_eventHandlers_render" method="handleRenderListItems"/>
 				</eventHandlers>
 				<!-- Tuan-out: update tobin incoming items -->
 			</list>
@@ -2337,18 +2337,18 @@
 		</lookup>
 
 		<!-- Tuan-in: add grn lookup -->
-		<lookup filterClass="application.handlers.ManagePurchaseOrderHandler" filterMethod="filterFormnumberForLookup" id="Transfers.GrnLookup" label="Select Form Number" resource="grnTemp">
+		<lookup id="Transfers.GrnLookup" label="Select Form Number" resource="grnTemp">
 			<requiredResources id="Transfers.GrnLookup_requiredResources">
 				<requiredResource id="Transfers.GrnLookup_grnTemp" name="grnTemp" reload="false"/>
+				<requiredResource id="Transfers.GrnLookup_grnResource" name="grnResource" reload="false"/>
 			</requiredResources>
 			<list id="Transfers.GrnLookup_list" resource="grnTemp">
 				<searchAttributes id="Transfers.GrnLookup_searchAttributes">
 					<searchAttribute id="Transfers.GrnLookup_searchAttribute_formnumber" name="formnumber"/>
 				</searchAttributes>
-				<listItemTemplate id="Transfers.GrnLookup_listItemTemplate_BinLotLookupItem" layout="BinLotLookupItem">
+				<listItemTemplate id="Transfers.GrnLookup_listItemTemplate_BinLotLookupItem" layout="Item1Desc1">
 					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_grnnumber" layoutInsertAt="item2" resourceAttribute="grnid"/>
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_description" layoutInsertAt="item3" resourceAttribute="description"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_description" layoutInsertAt="desc1" resourceAttribute="description"/>
 				</listItemTemplate>
 			</list>
 			<returnAttributes id="Transfers.GrnLookup_returnAttributes">
@@ -2738,8 +2738,8 @@
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" id="grnResource" name="grnResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="grnResource_attributes">
 				<attribute describedByProperty="spi:formnumber" id="grnResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
-				<attribute describedByProperty="spi:grnid" id="grnResource_issuetype_spi_issuetype" index="true" name="grnid"/>
 				<attribute describedByProperty="spi:description" id="grnResource_description_spi_description" name="description"/>
+				<attribute describedByProperty="spi:ponum" id="grnResource_ponum_spi_ponum" name="ponum"/>
 			</attributes>
 			<queryBases id="grnResource_queryBases">
 				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/anywhere_grn"/>
@@ -2750,7 +2750,6 @@
 		<resource id="grnTemp" inMemory="true" name="grnTemp" singleton="true">
 			<attributes id="grnTemp_attributes">
 				<localAttribute dataType="string" id="grnTemp_formnumber_string" name="formnumber"/>
-				<localAttribute dataType="string" id="grnTemp_grnid_string" name="grnid"/>
 				<localAttribute dataType="string" id="grnTemp_description_string" name="description"/>
 			</attributes>
 		</resource>
@@ -4703,6 +4702,7 @@
 				<!-- Tuan-in: add checkbox -->
 				<localAttribute dataType="boolean" formula="true" id="receiptInput_receiveindicator" name="receiveIndicator"/>
 				<!-- Tuan-out: add checkbox -->
+
 			</attributes>
 		</resource>
 
