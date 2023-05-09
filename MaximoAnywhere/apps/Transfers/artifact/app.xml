@@ -220,7 +220,7 @@
 				<requiredResource id="Transfers.ReceiveShippedItemsSeachView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
 				<!-- Tuan-in: add formno lookup -->
 				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_formnumberTemp" name="formnumberTemp"/>
-				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- <requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/> -->
 				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
@@ -301,7 +301,7 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionallinetype" name="additionalLineType"/>
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/>
+				<!-- <requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/> -->
 				<!-- Tuan-out: add contact number lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
@@ -377,7 +377,7 @@
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_domaininvusereceipts" name="domaininvusereceipts"/>
 				<!-- Tuan-in: add formno lookup -->
 				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_formnumberTemp" name="formnumberTemp"/>
-				<requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/>
+				<!-- <requiredResource id="Transfers.ManageReceivedShipmentSeachView_requiredResources_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/> -->
 				<!-- Tuan-out: add formno lookup -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ManageReceivedShipmentSeachView_container_0">
@@ -464,7 +464,7 @@
 				<!-- Loc-Out: Add required Resource -->
 				<!-- Tuan-in: add contact number lookup -->
 				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_contactnoTemp" name="contactnoTemp"/>
-				<requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalManagePOMatrectrans" name="additionalManagePOMatrectrans"/>
+				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_additionalManagePOMatrectrans" name="additionalManagePOMatrectrans"/> -->
 				<!-- Tuan-out: add contact number lookup -->
 				<!-- Not used so far -->
 				<!-- <requiredResource id="Transfers.ManageReceivedPurchaseOrderSeachView_requiredResources_domainissuetype" name="domainissuetype"/>
@@ -577,7 +577,7 @@
 				<!-- Tuan-in: handle tolot in case user input a new lot number -->
 
 				<!-- Tuan-in: add grn resource -->
-				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/>
+				<!-- <requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/> -->
 				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnTemp" name="grnTemp" reload="false"/>
 				<!-- Tuan-in: add grn resource -->
 			</requiredResources>
@@ -2742,7 +2742,7 @@
 				<attribute describedByProperty="spi:description" id="grnResource_description_spi_description" name="description"/>
 			</attributes>
 			<queryBases id="grnResource_queryBases">
-				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/ANYWHERE_GRN"/>
+				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/anywhere_grn"/>
 			</queryBases>
 			<whereClause id="grnResource_whereClause"/>
 		</resource>
@@ -2799,7 +2799,7 @@
 			<whereClause clause="spi:formno!='null'" id="additionalManagePOMatrectrans_whereClause"/>
 		</resource>
 
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#PO" id="additionalPOMatrectrans" name="additionalPOMatrectrans" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#PO" id="additionalPOMatrectrans" name="additionalPOMatrectrans" pageSize="100" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalPOMatrectrans_attributes">
 				<attribute describedByProperty="spi:formno" id="additionalPOMatrectrans_formno_spi_formno" name="formno"/>
 				<attribute describedByProperty="spi:status" id="additionalPOMatrectrans_status_spistatus" index="true" name="status"/>
