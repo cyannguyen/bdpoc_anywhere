@@ -273,16 +273,20 @@ define("application/handlers/ReturnIssuedItemsHandler", [
 
                             // validate itemnum and wonum has value to search correctly
 
-                            if (itemnum) {
+                            /* #region  Tuan-in: Fix can't search by wonum and formno*/
+                            if (itemnum || wonum) {
                                 oslcQueryParameters["sqp:itemnum"] = itemnum;
                             }
+                            /* #endregion Tuan-in: Fix can't search by wonum */
 
                             oslcQueryParameters["sqp:storeloc"] = storeroom;
                             oslcQueryParameters["sqp:siteid"] = siteid;
 
-                            if (wonum) {
+                            /* #region  Tuan-in: Fix can't search by itemnum */
+                            if (wonum || itemnum) {
                                 oslcQueryParameters["sqp:wonum"] = wonum;
                             }
+                            /* #region  Tuan-out: Fix can't search by itemnum*/
 
                             //#region Loc-In: Add new fields
                             /* oslcQueryParameters['sqp:formnumber'] =  formnumber;
@@ -566,7 +570,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
                     flushPromise.then(function () {
                         //self.ui.hideCurrentView();
                         self.clearSearchFields(eventContext);
-                        //#region Loc-In: clear Return Header
+                        //#region Loc-In: clear Return Headera
                         self.clearReturnHeader(eventContext);
                         //#endregion Loc-Out: clear Return Header
                         eventContext.ui.returnToView("IssuesReturns.SearchReturnView");
