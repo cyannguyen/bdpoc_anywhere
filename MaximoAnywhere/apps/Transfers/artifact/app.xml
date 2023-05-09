@@ -2420,7 +2420,7 @@
 			<returnAttributes id="Transfers.FrombinReservedLookup_returnAttributes">
 				<returnAttribute id="Transfers.FrombinReservedLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="frombin"/>
 				<returnAttribute id="Transfers.FrombinReservedLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="fromlot"/>
-				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/> -->
+				<returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="frombincurbal"/>
 			</returnAttributes>
 		</lookup>
 		<!-- Tuan-out: add bin lookup  -->
