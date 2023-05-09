@@ -1114,9 +1114,12 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                             if (itemNum) {
                                 filter.push({ itemnum: itemNum });
                             }
+                            /* #region  Tuan-in: fix cannot search by itemDesc */
                             if (itemDesc) {
-                                filter.push({ description: '"%' + itemDesc + '%"' });
+                                // filter.push({ description: '"%' + itemDesc + '%"' });
+                                filter.push({ description: "%" + itemDesc + "%" });
                             }
+                            /* #endregion Tuan-out: fix cannot search by itemDesc */
                             if (bin) {
                                 filter.push({ binnum: "%" + bin + "%" });
                             }
@@ -1758,7 +1761,6 @@ define("application/handlers/TransfersAvailableItemsHandler", [
 
             var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
             CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
-
 
             if (invbalTempResource) {
                 var invbalTempSet = invbalTempResource.find("binnum == $1", transferResource.tobin);
