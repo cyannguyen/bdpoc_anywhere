@@ -797,6 +797,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                 eventContext.application.addResource(
                                                     receiptInputSet
                                                 );
+
                                                 eventContext.ui.show(
                                                     "Transfers.ShipmentItemsListView"
                                                 );
@@ -1487,6 +1488,15 @@ define("application/handlers/ManagePurchaseOrderHandler", [
             },
 
             /* #endregion Tuan-in: add formnumber lookup handler for PO */
+
+            /* #region  Tuan-in: update default checkbox   */
+            initListFields: function (eventContext) {
+                var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
+                arrayUtil.forEach(records.data, function (item) {
+                    item.set("receiveIndicator", true);
+                });
+            },
+            /* #endregion Tuan-in: update default checkbox  */
 
             /* #region  Tuan-in: update data for contact number lookup */
             updateManagePOLookupData: function (eventContext) {
@@ -4076,6 +4086,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 eventContext.application.showBusy();
                 eventContext.ui.show("Transfers.AttachmentsView");
             },
+
             /* #region Tuan-in: check all history view to display correctly   */
             checkToDisplay: function (eventContext) {
                 console.log("check view history: ", WL.application.ui.viewHistory);

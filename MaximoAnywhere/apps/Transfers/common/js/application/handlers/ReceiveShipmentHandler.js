@@ -106,9 +106,6 @@ define("application/handlers/ReceiveShipmentHandler", [
     NumberUtil,
     TransfersHandler
 ) {
-    /* #region Tuan-in: add selectall */
-    var isSelectAllForActionBar = false;
-    /* #endregion Tuan-out: add selectall */
     return declare(
         [ApplicationHandlerBase, AsyncAwareMixin],
         /**
@@ -177,12 +174,13 @@ define("application/handlers/ReceiveShipmentHandler", [
             /* #region Tuan-in: add selectall */
             handleClickAllFilterItem: function (eventContext) {
                 var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
-                var isSelectAll = isSelectAllForActionBar;
-                if (isSelectAll == null) isSelectAll = true;
+                var isSelectAll = true;
+                arrayUtil.forEach(records.data, function (item) {
+                    isSelectAll = item.receiveIndicator;
+                });
                 arrayUtil.forEach(records.data, function (item) {
                     item.set("receiveIndicator", !isSelectAll);
                 });
-                isSelectAllForActionBar = !isSelectAll;
             },
             /* #endregion Tuan-out: add selectall */
 
@@ -1011,6 +1009,8 @@ define("application/handlers/ReceiveShipmentHandler", [
                 var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
                 CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
 
+                console.log("check data", invbalTempResource.data);
+
                 arrayUtil.forEach(transferResources.data, function (transferResource) {
                     if (invbalTempResource) {
                         var invbalTempSet = invbalTempResource.find(
@@ -1221,7 +1221,6 @@ define("application/handlers/ReceiveShipmentHandler", [
                 var filter = [{ issuetype: "SHIPTRANSFER" }];
                 this.updateFormnumberLookupBase(eventContext, filter);
             },
-
             /* #endregion Tuan-out: add formnumber lookup Search Shipment*/
 
             /**

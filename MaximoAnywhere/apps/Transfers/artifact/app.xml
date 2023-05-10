@@ -712,6 +712,12 @@
 					</eventHandlers>
 				</button>
 			</footer>
+
+			<!-- Tuan-in: update default checkbox -->
+			<eventHandlers id="Transfers.ShipmentItemsListView_eventHandlers">
+				<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="initialize" id="Transfers.ShipmentItemsListView_eventHandlers_init" method="initListFields"/>
+			</eventHandlers>
+			<!-- Tuan-out: update default checkbox -->
 		</view>
 
 		<!-- RECEIVED Items List View -->
