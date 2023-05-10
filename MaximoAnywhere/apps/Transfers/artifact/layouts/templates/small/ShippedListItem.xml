@@ -47,8 +47,8 @@
 		<column colspan="3" columnid="item6" halign="left" id="item6_column"/>
 	</row>
 	<row id="row_5">
-		<column colspan="1" columnid="item10" halign="left" id="item10_column"/>
-		<column colspan="3" columnid="item11" halign="left" id="item11_column"/>
+		<column colspan="3" columnid="item10" halign="left" id="item10_column"/>
+		<column colspan="1" columnid="item11" halign="left" id="item11_column"/>
 	</row>
 	<!-- Tuan-Out: add lotnum -->
 	<!-- Loc-Out: Add layout items -->

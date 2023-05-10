@@ -639,7 +639,7 @@
 					<listtext id="Transfers.ShipmentItemsListView_location" layoutInsertAt="item5" resourceAttribute="location"/>
 					<!-- Tuan-in: update tobin incoming items -->
 					<!-- <text editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin"> -->
-					<text editable="true" id="Transfers.ShipmentItemsListView_tobin" lookup="Transfers.TobinReseiveShipmentLookup" lookupAttribute="binmum" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin">
+					<text editable="true" id="Transfers.ShipmentItemsListView_tobin" lookup="Transfers.TobinReseiveShipmentLookup" lookupAttribute="binmum" layoutInsertAt="item10" placeHolder="to bin" resourceAttribute="tobin">
 						<!-- <button cssClass="lookupIcon" id="Transfers.ShipmentItemsListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="Transfers.ShipmentItemsListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ShipmentItemsListView_tobin_eventhandler_click" method="toBinLotLookup"/>
@@ -655,7 +655,7 @@
 					<text editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/>
 					<!-- Tuan-Out: add lotnum -->
 					<!-- Tuan-In: add formnumber -->
-					<text editable="false" id="Transfers.ShipmentItemsListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookup" lookupAttribute="formno" layoutInsertAt="item10" resourceAttribute="formno">
+					<text editable="false" id="Transfers.ShipmentItemsListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookup" lookupAttribute="formno" layoutInsertAt="item6" resourceAttribute="formno">
 						<eventHandlers id="Transfers.ShipmentItemsListView_formnumber_eventhandlers">
 							<eventHandler id="Transfers.ShipmentItemsListView_formnumber_eventhandlers_render" event="render" class="application.handlers.ManagePurchaseOrderHandler" method="handleRenderFormnumber"/>
 						</eventHandlers>
@@ -2343,7 +2343,7 @@
 		</lookup>
 
 		<!-- Tuan-in: add grn lookup -->
-		<lookup id="Transfers.GrnLookup" label="Select Form Number" resource="grnTemp">
+		<lookup id="Transfers.GrnLookup" label="Select Good Receipt Note" resource="grnTemp">
 			<requiredResources id="Transfers.GrnLookup_requiredResources">
 				<requiredResource id="Transfers.GrnLookup_grnTemp" name="grnTemp" reload="false"/>
 				<requiredResource id="Transfers.GrnLookup_grnResource" name="grnResource" reload="false"/>
