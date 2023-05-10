@@ -1686,7 +1686,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 var siteid = UserManager.getInfo("defsite");
                 var poNum = transfersLocalResource.ponum;
                 //#region Loc-In: add formNo
-                var formno = externalPoLocalResource.formno;
+                var formno = transfersLocalResource.formno;
                 //#endregion Loc-Out: add formNo
                 var self = this;
                 var filter = [];
