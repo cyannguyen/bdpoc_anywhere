@@ -251,6 +251,15 @@ define("application/handlers/ReceiveShipmentHandler", [
                 for (var index in eventContext.getResource("receiptInput").data) {
                     var elem = eventContext.getResource("receiptInput").data[index];
 
+                    /* #region Tuan-in: check formno null for PO */
+                    if (receiveExtPo && elem.formno == null) {
+                        var requiredMsg =
+                            MessageService.createStaticMessage("requiredField").getMessage();
+                        eventContext.ui.showMessage(requiredMsg);
+                        return;
+                    }
+                    /* #endregion Tuan-in: check formno null for PO */
+
                     if (!elem.itemnum && elem.quantitydue > 0) {
                         //IJ08694
                         // record must have an itemnum otherwise it can't be received
@@ -1001,7 +1010,6 @@ define("application/handlers/ReceiveShipmentHandler", [
 
                 var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
                 CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
-
 
                 arrayUtil.forEach(transferResources.data, function (transferResource) {
                     if (invbalTempResource) {
