@@ -1390,11 +1390,13 @@ define("application/handlers/TransfersAvailableItemsHandler", [
             transferAdditionItemRecord.set("conversion", 1.0);
 
             //set default bin
-            var inventory = CommonHandler._getAdditionalResource(
-                eventContext,
-                "inventory"
-            ).getCurrentRecord();
-            if (inventory) transferAdditionItemRecord.set("frombin", inventory.binnum);
+            /* #region  Tuan-in: remove set default bin */
+            // var inventory = CommonHandler._getAdditionalResource(
+            //     eventContext,
+            //     "inventory"
+            // ).getCurrentRecord();
+            // if (inventory) transferAdditionItemRecord.set("frombin", inventory.binnum);
+            /* #endregion Tuan-out: remove set default bin */
 
             if (transfers) {
                 var tostoreloc = transfers.tostoreroom;
