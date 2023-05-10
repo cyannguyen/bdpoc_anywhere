@@ -2189,7 +2189,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 var siteid = UserManager.getInfo("defsite");
                 var poNum = transfersLocalResource.ponum;
                 //#region Loc-In: add formNo
-                var formno = externalPoLocalResource.formno;
+                var formno = transfersLocalResource.formno;
                 //#endregion Loc-Out: add formNo
                 var self = this;
                 var filter = [];
@@ -2573,7 +2573,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 ).getCurrentRecord();
                 var poNum = transfersLocalResource.ponum;
                 //#region Loc-In: add formNo
-                var formno = externalPoLocalResource.formno;
+                var formno = transfersLocalResource.formno;
                 //#endregion Loc-Out: add formNo
                 var matrectransSet = eventContext.getResource("poComplexMatrectrans");
                 var self = this;
@@ -2731,7 +2731,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 ).getCurrentRecord();
                 var poNum = transfersLocalResource.ponum;
                 //#region Loc-In: add formNo
-                var formno = externalPoLocalResource.formno;
+                var formno = transfersLocalResource.formno;
                 //#endregion Loc-Out: add formNo
                 var matrectransSet = eventContext.getResource("poComplexMatrectrans");
                 var self = this;
