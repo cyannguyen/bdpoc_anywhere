@@ -2769,6 +2769,23 @@
 			</attributes>
 		</resource>
 
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" id="invbalanceFormBinlookup" name="invbalanceFormBinlookup" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="invbalanceFormBinlookup_attributes">
+				<attribute describedByProperty="spi:binnum" id="invbalanceFormBinlookup_binnum_spibinnum" index="true" name="binnum"/>
+				<attribute describedByProperty="spi:curbal" id="invbalanceFormBinlookup_curbal_spicurbal" name="curbal"/>
+				<attribute describedByProperty="spi:itemnum" id="invbalanceFormBinlookup_itemnum_spiitemoslcshortTitle" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:description" id="invbalanceFormBinlookup_itemnumdesc_spiitemdctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:location" id="invbalanceFormBinlookup_location_spilocation" index="true" name="location"/>
+				<attribute describedByProperty="spi:siteid" id="invbalanceFormBinlookup_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="spi:lotnum" id="invbalanceFormBinlookup_lotnum_spilotnum" name="lotnum"/>
+				<attribute describedByProperty="spi:stagingbin" id="invbalanceFormBinlookup_stagingbin_spistagingbin" index="true" name="stagingbin"/>
+			</attributes>
+			<queryBases id="invbalanceFormBinlookup_queryBases">
+				<queryBase id="invbalanceFormBinlookup_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
+			</queryBases>
+			<whereClause clause="spi:curbal>0" id="invbalanceFormBinlookup_whereClause"/>
+		</resource>
+
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" id="additionalReceivedMatrectrans" name="additionalReceivedMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalReceivedMatrectrans_attributes">
 				<attribute describedByProperty="spi:anywhere_formnumber" id="additionalReceivedMatrectransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>

@@ -2603,7 +2603,7 @@ define("application/handlers/TransfersHandler", [
             });
 
             var invbalPromise = ModelService.filtered(
-                "invbalance",
+                "invbalanceFormBinlookup",
                 PlatformConstants.SEARCH_RESULT_QUERYBASE,
                 filter,
                 1000,
