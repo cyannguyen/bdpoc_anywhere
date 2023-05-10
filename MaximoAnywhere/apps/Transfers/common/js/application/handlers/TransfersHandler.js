@@ -997,6 +997,7 @@ define("application/handlers/TransfersHandler", [
         clearFilterShipmentData: function (eventContext) {
             var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
             CommonHandler._clearFilterForResource(eventContext, records);
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
         },
         /* #endregion Tuan-out: clear fillter for checkbox */
 
