@@ -1425,7 +1425,12 @@ define("application/handlers/ManagePurchaseOrderHandler", [
             },
             /* #region  Tuan-in: add formnumber lookup handler for PO */
             handleRenderFormnumber: function (eventContext) {
-                this.displayAttachmentAction(eventContext);
+                var isDisplay = this.checkToDisplay(eventContext);
+                if (!isDisplay) {
+                    eventContext.setDisplay(false);
+                    return;
+                }
+                eventContext.setDisplay(true);
             },
 
             updateFormnumberPO: function (eventContext) {
@@ -4071,19 +4076,34 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 eventContext.application.showBusy();
                 eventContext.ui.show("Transfers.AttachmentsView");
             },
+            /* #region Tuan-in: check all history view to display correctly   */
+            checkToDisplay: function (eventContext) {
+                console.log("check view history: ", WL.application.ui.viewHistory);
+                for (var i = 0; i < WL.application.ui.viewHistory.length; ++i) {
+                    var historyView = WL.application.ui.viewHistory[i].id;
+                    if (historyView == "Transfers.ReceivePurchaseOrderItemsSeachView") {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            /* #endregion Tuan-out: check all history view to display correctly */
 
             displayAttachmentAction: function (eventContext) {
-                var historyView =
-                    WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id;
+                /* #region  Tuan-in: use checkToDisplay to check previous views */
+                // var historyView =
+                //     WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id;
 
-                if (
-                    historyView == "Transfers.ReceivePurchaseOrderItemsSeachView" ||
-                    historyView == "Transfers.ShipmentItemsListView"
-                ) {
-                    eventContext.setDisplay(true);
-                } else {
-                    eventContext.setDisplay(false);
-                }
+                // if (
+                //     historyView == "Transfers.ReceivePurchaseOrderItemsSeachView" ||
+                //     historyView == "Transfers.ShipmentItemsListView"
+                // ) {
+                //     eventContext.setDisplay(true);
+                // } else {
+                //     eventContext.setDisplay(false);
+                // }
+                eventContext.setDisplay(this.checkToDisplay(eventContext));
+                /* #endregion Tuan-in: use checkToDisplay to check previous views */
             },
             //#endregion Loc-Out: Customize methods
         }
