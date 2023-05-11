@@ -114,11 +114,14 @@
 							</eventHandlers>
 						</text>
 						<!-- Loc-In: Add FormNo Searching -->
-						<text codeScannable="true" editable="true" id="Transfers.SearchInvreserveView_formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+						<!-- Tuan-in: add contactno lookup reserved -->
+						<text codeScannable="true" editable="true" id="Transfers.SearchInvreserveView_formno" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
 							<eventHandlers id="Transfers.SearchInvreserveView_formno_eventHandlers">
 								<eventHandler class="application.handlers.TransfersHandler" event="datachange" id="Transfers.SearchInvreserveView_formno_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.TransfersHandler" event="render" id="Transfers.SearchInvreserveView_formno_eventHandler_render" method="updateContactnoReserved"/>
 							</eventHandlers>
 						</text>
+						<!-- Tuan-out: add contactno lookup reserved -->
 						<!-- Loc-Out: Add FormNo Searching -->
 					</groupitem>
 				</group>
@@ -2759,8 +2762,29 @@
 				<localAttribute dataType="string" id="grnTemp_description_string" name="description"/>
 			</attributes>
 		</resource>
-
 		<!-- Tuan-out: add form number PO -->
+		<!-- Tuan-in: add contactno lookup reserved item -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreserveForLookup" name="invreserveForLookup" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="invreserveForLookup_attributes">
+				<attribute describedByProperty="spi:location" id="invreserveForLookup_quantity_spi_wmlocation" index="true" name="location"/>
+				<attribute describedByProperty="spi:storelocsiteid" id="invreserveForLookup_storelocsite_string" index="true" name="siteid"/>
+				<attribute describedByProperty="spi:siteid" id="invreserveForLookup_tositeid_spi_storelocsiteid" index="true" name="tositeid"/>
+				<attribute describedByProperty="spi:tostoreloc" id="invreserveForLookup_tostoreloc_spi_tostoreloc" index="true" name="tostoreloc"/>
+				<attribute describedByProperty="spi:ponum" id="invreserveForLookup_ponum_spi_ponum" index="true" name="ponum"/>
+				<attribute describedByProperty="spi:item{spi:modelnumref}" id="invreserveForLookup_item_spimodelnumref" name="modelnumref"/>
+				<attribute describedByProperty="spi:inventory{spi:avblbalance}" id="invreserveForLookup_inventory_spi_avblbalance" name="avblbalance"/>
+				<attribute describedByProperty="spi:anywhere_formno" index="true" id="invreserveForLookup_spi_anywhere_formno" name="formno"/>
+			</attributes>
+			<creationFactories id="invreserveForLookup_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvreserve" id="invreserveForLookup_creationFactory_invreserveResourceCF" name="invreserveResourceCF"/>
+			</creationFactories>
+			<queryBases id="invreserveForLookup_queryBases">
+				<queryBase defaultForSearch="true" id="invreserveForLookup_queryBase_searchAllInvreserve" name="searchAllInvreserve" queryUri="/oslc/os/oslcinvreserve"/>
+			</queryBases>
+			<whereClause clause="spi:tostoreloc='*' and spi:anywhere_formno!='null'" id="invreserveForLookup_whereClause"/>
+		</resource>
+
+		<!-- Tuan-out: add contactno lookup reserved item -->
 
 		<!-- Tuan-in: add formnumber lookup Search Shipments -->
 		<resource id="formnumberTemp" inMemory="true" name="formnumberTemp" singleton="true">

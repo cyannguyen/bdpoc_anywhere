@@ -2578,6 +2578,29 @@ define("application/handlers/TransfersHandler", [
                     inventoryMetadata.setWhereClause(originalinventoryMetadataWhereClause);
                 });
         },
+        /* #region  Tuan-in: add contactno lookup reserved */
+
+        updateContactnoReserved: function (eventContext) {
+            var filter = [{ tostoreloc: "*" }];
+            var formnumPromise = ModelService.filtered(
+                "invreserveForLookup",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                100,
+                true,
+                true,
+                null,
+                false
+            );
+
+            formnumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.resourceID = "contactnoTemp";
+                eventContext.application.addResource(data);
+            });
+        },
+
+        /* #endregion Tuan-out: add contactno lookup reserved */
         /* #region Tuan-in: handle tolot in case user input a new lot number  */
 
         updateBinReservedItem: function (eventContext) {
@@ -2616,7 +2639,6 @@ define("application/handlers/TransfersHandler", [
 
             invbalPromise.then(function (invbalSet) {
                 ModelService.clearSearchResult(invbalSet);
-                invbalSet.filter("curbal > 0");
                 invbalSet.resourceID = "invbalForBinLookup";
                 eventContext.application.addResource(invbalSet);
             });
@@ -2636,8 +2658,6 @@ define("application/handlers/TransfersHandler", [
 
             filter.push({ itemnum: currentRecord.item, location: currentRecord.location });
             dataLookup.lookupFilter = filter;
-            console.log("Check data:", dataLookup.data);
-            console.log("Check filter:", filter);
         },
 
         /* #endregion Tuan-out: handle tolot in case user input a new lot number */

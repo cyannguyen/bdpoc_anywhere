@@ -1440,19 +1440,14 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     eventContext,
                     "receiptInput"
                 );
-                if (receiptInput != null) {
-                    console.log(receiptInput.data);
-                } else {
-                    console.log("receiptInput null");
+                if (!receiptInput) {
                     return;
                 }
                 arrayUtil.forEach(receiptInput.data, function (record) {
-                    console.log("Record: ", record);
                     if (record.ponum != null) {
                         filter.push({ ponum: record.ponum });
                     }
                 });
-                console.log("Filter: ", filter);
                 var grnPromise = ModelService.filtered(
                     "grnResource",
                     PlatformConstants.SEARCH_RESULT_QUERYBASE,
@@ -1466,14 +1461,12 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 grnPromise.then(function (grnSet) {
                     if (grnSet.data.length > 0) {
                         var formno = grnSet.data[0].formnumber;
-                        console.log("formno: ", formno);
                         arrayUtil.forEach(receiptInput.data, function (record) {
                             if (record.formno == null) {
                                 record.set("formno", formno);
                             }
                         });
                     }
-                    console.log("receiptInput.data", receiptInput.data);
                     ModelService.clearSearchResult(grnSet);
                     grnSet.resourceID = "grnTemp";
                     eventContext.application.addResource(grnSet);
@@ -4089,7 +4082,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
             /* #region Tuan-in: check all history view to display correctly   */
             checkToDisplay: function (eventContext) {
-                console.log("check view history: ", WL.application.ui.viewHistory);
                 for (var i = 0; i < WL.application.ui.viewHistory.length; ++i) {
                     var historyView = WL.application.ui.viewHistory[i].id;
                     if (historyView == "Transfers.ReceivePurchaseOrderItemsSeachView") {
