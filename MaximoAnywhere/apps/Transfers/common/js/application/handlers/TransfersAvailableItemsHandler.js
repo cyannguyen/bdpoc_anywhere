@@ -602,6 +602,7 @@ define("application/handlers/TransfersAvailableItemsHandler", [
 					var currentBalance = invbalance.curbal; */
 
                         var currentBalance = invbalance.curbal;
+                        console.log("currentBalance: ", currentBalance);
 
                         //If exist frombin that user inputted => set frombin = INPUTTED frombin
                         // Else if default binnum exists in invbalance => set frombin = DEFAULT binnum
@@ -612,6 +613,7 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                             dynamicBin = frombin;
                             dynamicLot = fromlot;
                             currentBalance = frombinCurbal;
+                            console.log("currentBalance: ", currentBalance);
                         } else {
                             //check if default binnum exists in invbalance
                             var invbalBinSet = invbalanceSet.find("binnum == $1", binnum);
@@ -622,12 +624,15 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                                 dynamicBin = binnum;
                                 dynamicLot = lotnum;
                                 currentBalance = invbalBinSet[0].curbal;
+                                console.log("currentBalance: ", currentBalance);
                             }
                         }
                         invuseline.set("frombin", dynamicBin);
                         invuseline.set("fromlot", dynamicLot);
                         //#endregion Loc-Out: Add fields
 
+                        console.log("currentBalance: ", currentBalance);
+                        console.log("issueQty: ", issueQty);
                         if (rotating && rotating == true && issueQty >= 1) {
                             self.autoSplit(eventContext, inventory, itemdata, invuse, invuseline);
                         } else if (issueQty > currentBalance) {
@@ -1127,6 +1132,8 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                             if (partno) {
                                 filter.push({ modelnumref: '"%' + partno + '%"' });
                             }
+
+                            console.log("filter =", filter);
 
                             /* eventContext.application.showBusy();
 						ModelService.all('inventory',PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(searchResultSet){
@@ -1851,13 +1858,32 @@ define("application/handlers/TransfersAvailableItemsHandler", [
                 eventContext,
                 "transfers"
             ).getCurrentRecord();
+            /* #region  Tuan-in: handle display complete button */
+            var formRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+
+            // var storeroomOffs = transfers.storeroomoffs;
+            // var tostoreroomOffs = transfers.tostoreroomoffs;
+            // if (storeroomOffs == tostoreroomOffs) {
+            //     eventContext.setDisplay(true);
+            // } else {
+            //     eventContext.setDisplay(false);
+            // }
+
             var storeroomOffs = transfers.storeroomoffs;
-            var tostoreroomOffs = transfers.tostoreroomoffs;
+            var tostoreroomOffs = formRecord.tostoreroomoffs;
+            if (!tostoreroomOffs) {
+                tostoreroomOffs = transfers.tostoreroomoffs;
+            }
             if (storeroomOffs == tostoreroomOffs) {
                 eventContext.setDisplay(true);
             } else {
                 eventContext.setDisplay(false);
             }
+
+            /* #endregion Tuan-out: handle display complete button */
         },
 
         //#endregion Loc-In: init Additional Usage

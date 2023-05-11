@@ -1778,14 +1778,18 @@
 					</eventHandlers>
 				</button>
 				 -->
-				<button id="Transfers.AdditionalItemsDetailsView_Complete_button" label="Complete">
+				<!-- Tuan-in: handle display complete button -->
+				<!-- <button id="Transfers.AdditionalItemsDetailsView_Complete_button" label="Complete"> -->
+				<button id="Transfers.AdditionalItemsDetailsView_Complete_button" resource="tostoreroomoffs" label="Complete">
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Search_button_eventHandlers">
 						<!-- Loc-In: add event -->
-						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="render" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_render" method="setButtonReadonly"/>
+						<!-- <eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="render" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_render" method="setButtonReadonly"/> -->
 						<!-- Loc-Out: add event -->
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_click" method="completeAvailableItems"/>
+						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="datachange" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_datachange" method="setButtonReadonly"/>
 					</eventHandlers>
 				</button>
+				<!-- Tuan-out: handle display complete button  -->
 				<button id="Transfers.AdditionalItemsDetailsView_Ship_button" label="Ship">
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers">
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_click" method="shipAvailableItems"/>
@@ -2569,6 +2573,9 @@
 			<returnAttributes id="Transfers.TransferDetails_ToStoreroomLookup.returnAttributes">
 				<returnAttribute id="Transfers.TransferDetails_ToStoreroomLookup.returnAttributes.tosite" sourceAttribute="siteid" targetAttribute="tositeid"/>
 				<returnAttribute id="Transfers.TransferDetails_ToStoreroomLookup.returnAttributes.tostoreroom" sourceAttribute="location" targetAttribute="tostoreroom"/>
+				<!-- Tuan-in: handle display complete button -->
+				<returnAttribute id="Transfers.TransferDetails_ToStoreroomLookup.returnAttributes.tostoreroomoffs" sourceAttribute="anywhere_offs" targetAttribute="tostoreroomoffs"/>
+				<!-- Tuan-out: handle display complete button -->
 			</returnAttributes>
 
 		</lookup>
@@ -2915,6 +2922,10 @@
 				<localAttribute dataType="date" id="transferAdditionalItems_actualDate_datetime" name="actualdate"/>
 				<localAttribute dataType="string" id="transferAdditionalItems_frombincurbal_string" name="frombincurbal"/>
 				<!-- Loc-Out: add attributes -->
+
+				<!-- Tuan-in: handle display complete button -->
+				<localAttribute dataType="boolean" id="transferAdditionalItems_tostoreroom_offs_boolean" name="tostoreroomoffs"/>
+				<!-- Tuan-out: handle display complete button -->
 
 			</attributes>
 			<whereClause id="transferAdditionalItems_whereClause"/>
