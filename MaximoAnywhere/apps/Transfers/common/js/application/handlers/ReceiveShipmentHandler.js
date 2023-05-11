@@ -174,13 +174,13 @@ define("application/handlers/ReceiveShipmentHandler", [
             /* #region Tuan-in: add selectall */
             handleClickAllFilterItem: function (eventContext) {
                 var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
-                var isSelectAll = true;
-                arrayUtil.forEach(records.data, function (item) {
-                    isSelectAll = item.receiveIndicator;
-                });
-                arrayUtil.forEach(records.data, function (item) {
-                    item.set("receiveIndicator", !isSelectAll);
-                });
+                if (records && records.count() > 0) {
+                    var isSelectAll = records.data[records.data.length - 1].receiveIndicator;
+                    console.log("");
+                    arrayUtil.forEach(records.data, function (item) {
+                        item.set("receiveIndicator", !isSelectAll);
+                    });
+                }
             },
             /* #endregion Tuan-out: add selectall */
 
