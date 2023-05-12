@@ -159,7 +159,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
             //#endregion Loc-Out: Add fields
         },
 
-        // customize
+        /* #region  Tuan-in: add handle clear readonly when go back */
         clearReadOnlyReturn: function (eventContext) {
             var issuesReturns = CommonHandler._getAdditionalResource(
                 eventContext,
@@ -174,6 +174,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
 
             eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
         },
+        /* #endregion Tuan-out: add handle clear readonly when go back */
 
         /**
          * Search issued items for return

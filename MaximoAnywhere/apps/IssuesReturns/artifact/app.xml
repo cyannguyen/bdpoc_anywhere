@@ -276,9 +276,11 @@
 				</button>
 			</footer>
 
+			<!-- Tuan-in: add handle clear readonly when go back -->
 			<eventHandlers id="IssuesReturns.SearchReturnView_eventHandlers">
 				<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="back" id="IssuesReturns.SearchReturnView_eventHandlers_back" method="clearReadOnlyReturn"/>
 			</eventHandlers>
+			<!-- Tuan-in: add handle clear readonly when go back -->
 		</view>
 
 		<!-- End SEARCH VIEWS -->
@@ -401,7 +403,7 @@
 					<!-- Tuan-in: update formbin editable false -->
 					<!-- <text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin"> -->
 					<text editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
-					<!-- Tuan-in: update formbin editable false -->
+						<!-- Tuan-in: update formbin editable false -->
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_eventhandler_click" method="fromBinLookup"/>
@@ -816,18 +818,19 @@
 						<!-- Tuan-in: update frombin editable false -->
 						<!-- <text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="lotnum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin"> -->
 						<text labelCss="requiredLabel" editable="false" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="binmum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin">
-						<!-- Tuan-out: update frombin editable false -->
+							<!-- Tuan-out: update frombin editable false -->
 							<!-- <button cssClass="lookupIcon" id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 								<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 									<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.AdditionalItemsDetailsView_eventhandler_click" method="fromBinLookup"/> 
 								</eventHandlers> 
 							</button> -->
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventHandlers">
+								<!-- Tuan-in: add event to update data frombin -->
 								<!-- <eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_datachange" method="setFromLotCurbal"/> -->
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_frombin_eventhandler_render" method="getInvbalTemList"/>
+								<!-- Tuan-out: add event to update data frombin -->
 							</eventHandlers>
 						</text>
-						<!-- customize -->
 						<text id="IssuesReturns.AdditionalItemsDetailsView_lotnum" editable="false" label="Lotnum" resourceAttribute="fromlot"/>
 					</groupitem>
 
