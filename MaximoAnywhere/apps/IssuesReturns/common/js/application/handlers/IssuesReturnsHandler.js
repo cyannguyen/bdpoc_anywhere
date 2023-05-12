@@ -111,8 +111,7 @@ define("application/handlers/IssuesReturnsHandler", [
             additionalasset.lookupFilter = filter;
         },
 
-        // customize
-
+        /* #region  Tuan-in: add update bin for lookup */
         updateBinnumLookupReserved: function (eventContext) {
             var invreserveRecords = CommonHandler._getAdditionalResource(
                 eventContext,
@@ -141,7 +140,9 @@ define("application/handlers/IssuesReturnsHandler", [
                 eventContext.application.addResource(data);
             });
         },
+        /* #endregion */
 
+        /* #region  Tuan-in: add handle update fromlot */
         setFromLotCurbalReserved: function (eventContext) {
             var self = this;
             var issueResource = CommonHandler._getAdditionalResource(
@@ -179,7 +180,9 @@ define("application/handlers/IssuesReturnsHandler", [
                 issueResource.setNullValue("fromlot");
             }
         },
+        /* #endregion Tuan-out: add handle update fromlot */
 
+        /* #region  Tuan-in: add filter for bin lookup*/
         filterBinReservedForLookup: function (eventContext) {
             console.log("filter reserved bin");
             var invreserveRecord = CommonHandler._getAdditionalResource(
@@ -197,7 +200,9 @@ define("application/handlers/IssuesReturnsHandler", [
             records.lookupFilter = filter;
             console.log("filter reserved bin record: ", records);
         },
+        /* #endregion Tuan-out: add filter for bin lookup*/
 
+        /* #region  Tuan-in: add filter for formnumber lookup */
         filterFornumnumberForLookup: function (eventContext) {
             console.log("filter called");
             var records = CommonHandler._getAdditionalResource(
@@ -206,6 +211,7 @@ define("application/handlers/IssuesReturnsHandler", [
             );
             CommonHandler._clearFilterForResource(eventContext, records);
         },
+        /* #endregion Tuan-out: add filter for formnumber lookup */
 
         /**
          * Item Lookup Data Filter

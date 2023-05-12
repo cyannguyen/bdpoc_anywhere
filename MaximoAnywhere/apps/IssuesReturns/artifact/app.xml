@@ -298,7 +298,9 @@
 					<requiredAttribute id="IssuesReturns.InvreserveListView_requiredResource_invuseline" name="invuseline"/>
 				</requiredResource>
 				<requiredResource id="IssuesReturns.InvreserveListView_invbalance" name="invbalance"/>
+				<!-- Tuan-in: add require resource -->
 				<requiredResource id="IssuesReturns.InvreserveListView_invbalTempReserved" name="invbalTempReserved" reload="false"/>
+				<!-- Tuan-in: add require resource -->
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
 
 			</requiredResources>
@@ -393,6 +395,7 @@
 						</eventHandlers>
 					</text>
 					<!-- customize bin -->
+					<!-- Tuan-in: change select bin from button to lookup  -->
 					<text editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
@@ -403,10 +406,15 @@
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.InvreserveListView_frombin_eventhandler_datachange" method="setFromLotCurbalReserved"/>
 						</eventHandlers> -->
 					</text>
+					<!-- Tuan-in: change select bin from button to lookup  -->
 
+					<!-- Tuan-in: add fromlot  -->
 					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
-
+					<!-- Tuan-in: add fromlot  -->
+					<!-- Tuan-in: add reserved checkbox -->
 					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
+					<!-- Tuan-out: add reserved checkbox -->
+
 					<!-- <text id="IssuesReturns.InvreserveListView_tasklabel" label="Task:" layoutInsertAt="item5">
 						<eventHandlers id="IssuesReturns.InvreserveListView_TaskLabel_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_label_eventHandlers_render_Task" method="hideTaskLabel"/>
@@ -1155,7 +1163,7 @@
 			</returnAttributes>
 		</lookup>
 
-		<!-- Form number lookup -->
+		<!-- Tuan-in: add formnumber lookup -->
 		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterFornumnumberForLookup" id="IssuesReturns.FormnumberLookup" label="Select Form number" resource="formnumberTemp">
 			<requiredResources id="IssuesReturns.FormnumberLookup_requiredResources">
 				<requiredResource id="IssuesReturns.FormnumberLookup_workOrder" name="formnumberTemp" reload="false"/>
@@ -1173,6 +1181,7 @@
 				<returnAttribute id="IssuesReturns.FormnumberLookup_formno" sourceAttribute="formnumber" targetAttribute="formnumber"/>
 			</returnAttributes>
 		</lookup>
+		<!-- Tuan-out: add formnumber lookup -->
 	</ui>
 
 	<!--DATA DEFINITION SECTION-->
@@ -1288,7 +1297,7 @@
 			</attributes>
 		</resource>
 
-		<!-- Resource for lookup form number -->
+		<!-- Tuan-in: add resource for lookup form number -->
 		<resource defaultOrderBy="formnumber desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" id="additionalMatusetrans" name="additionalMatusetrans" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalMatusetransResource_attributes">
 				<attribute describedByProperty="spi:formnumber" id="additionalMatusetransResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
@@ -1301,8 +1310,9 @@
 			</queryBases>
 			<whereClause clause="spi:formnumber!='null' and spi:issuetype!='RETURN'" id="additionalMatusetrans_whereClause"/>
 		</resource>
+		<!-- Tuan-out: add resource for lookup form number -->
 
-		<!-- Resource for lookup bin number -->
+		<!-- Tuan-in: add resource for lookup bin number -->
 		<resource defaultOrderBy="binnum desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" additionalData="true" id="additionalInvbalance" name="additionalInvbalance" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalInvbalanceResource_attributes">
 				<attribute describedByProperty="spi:binnum" id="additionalInvbalanceResource_formnumber_spi_formnumber" index="true" name="binnum"/>
@@ -1316,6 +1326,7 @@
 			</queryBases>
 			<whereClause id="additionalInvbalance_whereClause"/>
 		</resource>
+		<!-- Tuan-out: add resource for lookup bin number -->
 
 		<!-- Resource for lookup work order number -->
 		<!-- <resource defaultOrderBy="wonum desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" additionalData="true" id="additionalMatusetrans" name="additionalMatusetrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
@@ -1417,7 +1428,9 @@
 				<!-- Loc-In: add attributes -->
 				<localAttribute dataType="date" formula="new Date()" id="invreserveResource_actualDate" name="actualdate"/>
 
+				<!-- Tuan-in: add reserved checkbox -->
 				<localAttribute dataType="boolean" formula="true" id="invreserve_item_reservedindicator" name="reservedIndicator"/>
+				<!-- Tuan-out: add reserved checkbox -->
 
 				<!-- <localAttribute dataType="string" id="invreserveResource_partno" name="modelnum"/> -->
 				<attribute describedByProperty="spi:item{spi:modelnumref}" id="invreserveResource_item_spimodelnumref" name="modelnumref"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout id="InvreserveListItem" version="201507162226" width="100">
-<!-- <row id="row_0">
+	<!-- <row id="row_0">
       <column colspan="3" columnid="item1" id="item3_column"/>
       <column colspan="6" columnid="item2" halign="left" id="button1_column"/>
       <column colspan="3" columnid="item6" id="item5_column" rowspan="4"/>
@@ -22,13 +22,13 @@
 		<column colspan="3" columnid="item10" id="item10_column" halign="left"/>
 		<column colspan="3" columnid="item11" id="item11_column" halign="left"/>
 		<column colspan="6" columnid="item12" id="item12_column" halign="left"/>
-	</row>	 -->    
+	</row>	 -->
 	<!-- Loc-Out: Add layout items-->
 	<!-- Loc-In: Add layout items -->
 	<row id="row_0">
-      <column colspan="1" columnid="item1" halign="left" id="item1_column"/>
-      <column colspan="2" columnid="item2" halign="left" id="item2_column"/>
-   	</row>
+		<column colspan="1" columnid="item1" halign="left" id="item1_column"/>
+		<column colspan="2" columnid="item2" halign="left" id="item2_column"/>
+	</row>
 	<row id="row_1">
 		<column colspan="1" columnid="item3" halign="left" id="item3_column"/>
 		<column colspan="2" columnid="item4" halign="left" id="item4_column"/>
@@ -42,14 +42,16 @@
 	</row>
 	<row id="row_3">
 		<column colspan="3" columnid="item8" id="item8_column"/>
-	</row>  
+	</row>
 	<row id="row_4">
 		<column colspan="1" columnid="item9" halign="left" id="item9_column"/>
-		<column colspan="2" columnid="item10" halign="left" id="item10_column"/>
+		<column colspan="3" columnid="item10" halign="left" id="item10_column"/>
 	</row>
+	<!-- Tuan-in: add row5 to show lot -->
 	<row id="row_5">
 		<column colspan="1" columnid="item11" halign="left" id="item11_column"/>
 		<column colspan="2" columnid="item12" halign="left" id="item12_column"/>
-	</row> 
+	</row>
+	<!-- Tuan-in: add row5 to show lot -->
 	<!-- Loc-Out: Add layout items-->
 </layout>

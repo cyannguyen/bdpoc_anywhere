@@ -337,7 +337,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
             });
         },
 
-        // customize
+        /* #region Tuan-in: update data formnumber for lookup */
         updateFormnumLookupData: function (eventContext) {
             var record = CommonHandler._getAdditionalResource(
                 eventContext,
@@ -364,6 +364,7 @@ define("application/handlers/ReturnIssuedItemsHandler", [
                 eventContext.application.addResource(data);
             });
         },
+        /* #endregion Tuan-out: update data formnumber for lookup */
 
         /**
          * Cancel process of returning issued items
