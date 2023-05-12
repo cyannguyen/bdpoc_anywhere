@@ -1778,25 +1778,31 @@
 					</eventHandlers>
 				</button>
 				 -->
-				<!-- Tuan-in: handle display complete button -->
+				<!-- Tuan-in: add resource to handle complete button -->
 				<!-- <button id="Transfers.AdditionalItemsDetailsView_Complete_button" label="Complete"> -->
 				<button id="Transfers.AdditionalItemsDetailsView_Complete_button" resource="tostoreroomoffs" label="Complete">
+				<!-- Tuan-out: add resource to handle complete button -->
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Search_button_eventHandlers">
+						<!-- Tuan-in: use event datachange instead of render to update the button when the value tostoreroom change  -->
 						<!-- Loc-In: add event -->
 						<!-- <eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="render" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_render" method="setButtonReadonly"/> -->
 						<!-- Loc-Out: add event -->
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_click" method="completeAvailableItems"/>
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="datachange" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_datachange" method="setButtonReadonly"/>
+						<!-- Tuan-out: use event datachange instead of render to update the button when the value tostoreroom change -->
 					</eventHandlers>
 				</button>
+				<!-- Tuan-in: add resource to handle ship button -->
 				<!-- <button id="Transfers.AdditionalItemsDetailsView_Ship_button" label="Ship"> -->
 				<button id="Transfers.AdditionalItemsDetailsView_Ship_button" resource="tostoreroomoffs" label="Ship">
+				<!-- Tuan-out: add resource to handle ship button -->
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers">
+						<!-- Tuan-in: use event datachange to update the button when the value tostoreroom change  -->
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_click" method="shipAvailableItems"/>
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="datachange" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_datachange" method="setButtonShipReadonly"/>
+						<!-- Tuan-out: use event datachange to update the button when the value tostoreroom change  -->
 					</eventHandlers>
 				</button>
-				<!-- Tuan-out: handle display complete button  -->
 			</footer>
 
 			<eventHandlers id="Transfers.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers">
