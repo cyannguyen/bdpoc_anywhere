@@ -1874,7 +1874,7 @@ define("application/handlers/TransfersAvailableItemsHandler", [
 
             var storeroomOffs = transfers.storeroomoffs;
             var tostoreroomOffs = formRecord.tostoreroomoffs;
-            if (!tostoreroomOffs) {
+            if (tostoreroomOffs == null) {
                 tostoreroomOffs = transfers.tostoreroomoffs;
             }
             if (storeroomOffs == tostoreroomOffs) {
