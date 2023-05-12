@@ -1853,6 +1853,30 @@ define("application/handlers/TransfersAvailableItemsHandler", [
             eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
         },
 
+        /* #region  Tuan-in: display ship button */
+        setButtonShipReadonly: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var formRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+
+            var storeroomOffs = transfers.storeroomoffs;
+            var tostoreroomOffs = formRecord.tostoreroomoffs;
+            if (tostoreroomOffs == null) {
+                tostoreroomOffs = transfers.tostoreroomoffs;
+            }
+            if (storeroomOffs == tostoreroomOffs) {
+                eventContext.setDisplay(false);
+            } else {
+                eventContext.setDisplay(true);
+            }
+        },
+        /* #endregion Tuan-in: display ship button */
+
         setButtonReadonly: function (eventContext) {
             var transfers = CommonHandler._getAdditionalResource(
                 eventContext,

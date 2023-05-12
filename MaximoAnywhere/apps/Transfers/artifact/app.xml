@@ -1789,12 +1789,14 @@
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="datachange" id="Transfers.AdditionalItemsDetailsView_Complete_button_eventHandlers_datachange" method="setButtonReadonly"/>
 					</eventHandlers>
 				</button>
-				<!-- Tuan-out: handle display complete button  -->
-				<button id="Transfers.AdditionalItemsDetailsView_Ship_button" label="Ship">
+				<!-- <button id="Transfers.AdditionalItemsDetailsView_Ship_button" label="Ship"> -->
+				<button id="Transfers.AdditionalItemsDetailsView_Ship_button" resource="tostoreroomoffs" label="Ship">
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers">
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_click" method="shipAvailableItems"/>
+						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="datachange" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_datachange" method="setButtonShipReadonly"/>
 					</eventHandlers>
 				</button>
+				<!-- Tuan-out: handle display complete button  -->
 			</footer>
 
 			<eventHandlers id="Transfers.AdditionalItemsDetailsView_groupitem_0_actualstaskid_Task_eventHandlers">
