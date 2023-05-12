@@ -102,9 +102,11 @@
 	border-bottom-right-radius:0;
 }
 
+/* #region Tuan-in: add css for selectall button */
 .mblHeading .mblToolBarButton.headerActionButtons {
 	position: absolute;
 }
+/* #endregion Tuan-out: add css for selectall button */
 
 .mblToolBarButtonText .mblToolBarButtonIcon {
 	padding-left:10px;

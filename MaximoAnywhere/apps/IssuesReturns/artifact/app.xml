@@ -304,6 +304,7 @@
 				<requiredResource id="IssuesReturns.InvreserveListView_domaininvusetype" name="domaininvusetype"/>
 
 			</requiredResources>
+			<!-- Tuan-in: add action selectall button -->
 			<actions id="IssuesReturns.InvreserveActions">
 				<action id="IssuesReturns.InvreserveActions_selectall_action" image="/images/download-ok.png" label="Select All" overflow="false">
 					<!-- <action id="IssuesReturns.InvreserveActions_selectall_action" image="/images/select_all.png" label="Select All" overflow="false"> -->
@@ -312,6 +313,7 @@
 					</eventHandlers>
 				</action>
 			</actions>
+			<!-- Tuan-out: add action selectall button -->
 			<!-- Loc-In: add View for Reserved Header -->
 			<container id="IssuesReturns.InvreserveListView_container_1" resource="issueReservedHeader">
 				<group id="IssuesReturns.InvreserveListView_group_1">
@@ -396,7 +398,10 @@
 					</text>
 					<!-- customize bin -->
 					<!-- Tuan-in: change select bin from button to lookup  -->
+					<!-- Tuan-in: update formbin editable false -->
+					<!-- <text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin"> -->
 					<text editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
+					<!-- Tuan-in: update formbin editable false -->
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.InvreserveListView_eventhandler_click" method="fromBinLookup"/>
@@ -808,8 +813,10 @@
 
 					<!-- Loc-In: add ActualDate, FromBin -->
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_frombin_groupitem_10">
+						<!-- Tuan-in: update frombin editable false -->
 						<!-- <text labelCss="requiredLabel" editable="true" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="lotnum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin"> -->
 						<text labelCss="requiredLabel" editable="false" id="IssuesReturns.AdditionalItemsDetailsView_frombin" label="From Bin" lookup="IssuesReturns.FromBinLookup" lookupAttribute="binmum" placeHolder="Tap to enter" required="false" resourceAttribute="frombin">
+						<!-- Tuan-out: update frombin editable false -->
 							<!-- <button cssClass="lookupIcon" id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 								<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 									<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="click" id="IssuesReturns.AdditionalItemsDetailsView_eventhandler_click" method="fromBinLookup"/> 
@@ -1247,7 +1254,9 @@
 				<localAttribute dataType="string" id="issueReservedHeader_description_string" name="description"/>
 				<localAttribute dataType="string" id="issueReservedHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueReservedHeader_createdate_datetime" name="createdate"/>
+				<!-- Tuan-in: add selectall attribute to track selectall for the list -->
 				<localAttribute dataType="boolean" formula="true" id="invreserve_item_selectall" name="selectall"/>
+				<!-- Tuan-out: add selectall attribute to track selectall for the list -->
 			</attributes>
 			<whereClause id="issueReservedHeader_whereClause"/>
 		</resource>

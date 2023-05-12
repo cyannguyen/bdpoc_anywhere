@@ -70,8 +70,10 @@ define("application/handlers/IssuesAvailableItemsHandler", [
 ) {
     //#region Loc-In: declare global variables
     var isWODataChanged = false;
-    var isLocationDataChanged = false;
     //#endregion Loc-Out:declare global variables
+    /* #region  Tuan-in: add flag to track location change */
+    var isLocationDataChanged = false;
+    /* #endregion Tuan-out: add flag to track location change */
     return declare([ApplicationHandlerBase, AsyncAwareMixin], {
         //isWODataChanged: false,
         //isLocationDataChanged: false,
@@ -252,7 +254,7 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         invuseline.set("itemnum", itemnum);
                         invuseline.set("itemsetid", itemsetid);
                         invuseline.set("frombin", fromBin);
-                        invuseline.set("fromlot", fromlot);
+                        invuseline.set("fromlot", fromLot);
 
                         invuseline.set("gldebitacct", glaccount);
 
@@ -1124,13 +1126,17 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                                         wonum,
                                     ]);
                                     self.ui.showMessage(msg);
+                                    /* #region  Tuan-in: clear wonum */
                                     issueAdditionItemRecord.setNullValue("wonum");
+                                    /* #endregion Tuan-out: clear wonum */
                                     return;
                             }
                         } else {
                             msg = MessageService.createResolvedMessage("wostatusvalid", [wonum]);
                             self.ui.showMessage(msg);
+                            /* #region  Tuan-in: clear wonum */
                             issueAdditionItemRecord.setNullValue("wonum");
+                            /* #endregion Tuan-out: clear wonum */
                             return;
                         }
 
@@ -1151,7 +1157,9 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         //#endregion Loc-Out: restore handleLocationDataChanged event
                         Logger.trace(self._className + ": " + error);
                         self.ui.showMessage(msg);
+                        /* #region  Tuan-in: clear wonum */
                         issueAdditionItemRecord.setNullValue("wonum");
+                        /* #endregion Tuan-out: clear wonum */
                         return;
                     });
             } else {
@@ -1466,8 +1474,10 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                         issueAdditionItemRecord.set("glaccount", location.glaccount);
                     } else {
                         self.ui.showMessage(msg);
+                        /* #region  Tuan-in: clear location and turn off flag location change */
                         isLocationDataChanged = false;
                         issueAdditionItemRecord.setNullValue("location");
+                        /* #endregion Tuan-out: clear location and turn off flag location change */
                         return;
                     }
                     //#region  Loc-In: restore handleGLaccountDataChanged event
@@ -1480,7 +1490,9 @@ define("application/handlers/IssuesAvailableItemsHandler", [
                     //#endregion Loc-Out: restore handleGLaccountDataChanged event
                     Logger.trace(self._className + ": " + error);
                     self.ui.showMessage(msg);
+                    /* #region  Tuan-in: clear location */
                     issueAdditionItemRecord.setNullValue("location");
+                    /* #endregion Tuan-out: clear location*/
                     return;
                 });
             eventContext.application.hideBusy();

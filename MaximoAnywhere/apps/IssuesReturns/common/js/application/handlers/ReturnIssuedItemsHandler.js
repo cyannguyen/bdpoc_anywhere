@@ -541,7 +541,9 @@ define("application/handlers/ReturnIssuedItemsHandler", [
             matusetransSet.filter("returnindicator == true");
 
             if (matusetransSet && matusetransSet.count() == 0) {
+                /* #region  Tuan-in: clear filter to prevent empty data */
                 CommonHandler._clearFilterForResource(eventContext, matusetransSet);
+                /* #endregion  Tuan-out: clear filter to prevent empty data*/
                 throw new PlatformRuntimeException("atLeastOneItem");
             }
         },

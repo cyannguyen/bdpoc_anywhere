@@ -972,6 +972,7 @@ define("application/handlers/IssuesReturnsHandler", [
             }
         },
 
+        /* #region  Tuan-in: add click add filter handler */
         handleClickAllFilterItem: function (eventContext) {
             var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
             var header = CommonHandler._getAdditionalResource(
@@ -986,6 +987,7 @@ define("application/handlers/IssuesReturnsHandler", [
             });
             header.set("selectall", !isSelectAll);
         },
+        /* #endregion Tuan-out: add click add filter handler */
 
         /**
          * Check if any records need to be split when completing the issue.
@@ -2259,7 +2261,9 @@ define("application/handlers/IssuesReturnsHandler", [
             invreserveSet.filter("reservedIndicator == true");
 
             if (invreserveSet && invreserveSet.count() == 0) {
+                /* #region  Tuan-in: clear filter to prevent empty data*/
                 CommonHandler._clearFilterForResource(eventContext, invreserveSet);
+                /* #endregion Tuan-out: clear filter to prevent empty data */
                 throw new PlatformRuntimeException("atLeastOneItem");
             }
         },
