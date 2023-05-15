@@ -176,7 +176,6 @@ define("application/handlers/ReceiveShipmentHandler", [
                 var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
                 if (records && records.count() > 0) {
                     var isSelectAll = records.data[records.data.length - 1].receiveIndicator;
-                    console.log("");
                     arrayUtil.forEach(records.data, function (item) {
                         item.set("receiveIndicator", !isSelectAll);
                     });
@@ -460,7 +459,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                 //verify if we have at least one field filled
                 //#region Loc-In: Loc-In: Add FromNo, DocumentRef
                 //if(!shipmentnum){{
-                if (!shipmentnum && !formno && !documentref) {
+                /* #region  Tuan-in: not required documentref */
+                // if (!shipmentNum && !formno && !documentref) {
+                    if (!shipmentNum && !formno) {
+                        /* #endregion Tuan-out: not required documentref*/
                     //#endregion Loc-Out: Loc-In: Add FromNo, DocumentRef
                     self.ui.showMessage(emptySearchResultMsg);
                     return;
@@ -1251,7 +1253,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                 //verify if we have at least one field filled
                 //#region Loc-In: Add partNo
                 //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
+                /* #region  Tuan-in: not required documentref */
+                // if (!shipmentNum && !formno && !documentref) {
+                    if (!shipmentNum && !formno) {
+                        /* #endregion Tuan-out: not required documentref*/
                     //#endregion Loc-Out: Add partNo
                     var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
                     self.ui.showMessage(msg);
@@ -1726,7 +1731,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                 //verify if we have at least one field filled
                 //#region Loc-In: Add FromNo, DocumentRef
                 //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
+                /* #region  Tuan-in: not required documentref */
+                // if (!shipmentNum && !formno && !documentref) {
+                    if (!shipmentNum && !formno) {
+                        /* #endregion Tuan-out: not required documentref*/
                     //#endregion Loc-Out: Add FromNo, DocumentRef
                     var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
                     self.ui.showMessage(msg);
@@ -1842,7 +1850,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                 //verify if we have at least one field filled
                 //#region Loc-In: Add FromNo, DocumentRef
                 //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
+                /* #region  Tuan-in: not required documentref */
+                // if (!shipmentNum && !formno && !documentref) {
+                if (!shipmentNum && !formno) {
+                    /* #endregion Tuan-out: not required documentref*/
                     //#endregion Loc-Out: Add FromNo, DocumentRef
                     var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
                     self.ui.showMessage(msg);
