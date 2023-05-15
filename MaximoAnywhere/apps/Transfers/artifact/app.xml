@@ -46,6 +46,10 @@
 						<image cssClass="actionButton" id="transferReceivingicon4" image="acBtn_manage_shipments.svg" label="Manage Received Shipments" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext4" layoutInsertAt="item1" value="Manage Received Shipments"/>
 					</groupitem>
+					<groupitem id="Transfers.ModuleSelectionView_CreateGoodReceiptNode_Group7" layout="Button1Item1" transitionTo="Transfers.CreateGoodReceiptNoteView">
+						<image cssClass="actionButton" id="transferReceivingicon7" image="acBtn_transfer_grn.png" label="Create Good Receipt Note" layoutInsertAt="button1" platform="false"/>
+						<text id="createTransferReceivingtext7" layoutInsertAt="item1" value="Create Good Receipt Note"/>
+					</groupitem>
 					<groupitem id="Transfers.ModuleSelectionView_ReceivePurchaseOrder_Group6" layout="Button1Item1" transitionTo="Transfers.ReceivePurchaseOrderItemsSeachView">
 						<image cssClass="actionButton" id="transferReceivingicon6" image="acBtn_receive_po.svg" label="Receive External PO" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext6" layoutInsertAt="item1" value="Receive Purchase Orders"/>
@@ -290,6 +294,146 @@
 				<eventHandler class="application.handlers.TransfersHandler" event="initialize" id="Transfers.SearchInvreserveView_view_2_eventHandlers_init" method="resetSearchFields"/>
 			</eventHandlers>
 		</view>
+
+		<!-- Tuan-in: add GRN views -->
+
+		<!-- [Good Receipt Note] Good Receipt Note Search View -->
+		<!-- <view id="Transfers.GoodReceiptNoteSeachView" label="Search Good Receipt Note" resource="searchGRNForm">
+			<requiredResources id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResources">
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_errorResource" name="errorResource"/>
+			</requiredResources>
+			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
+				<link id="Transfers.ReceivePurchaseOrderItemsSeachView_link" label="">
+					<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers">
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers_click" method="showErrorPage"/>
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers_render_hideShowSelectLink" method="hideShowErrorLink"/>
+					</eventHandlers>
+				</link>
+			</container>
+			<container id="Transfers.GoodReceiptNoteSeachView_container_1" resource="searchGRNForm">
+				<group id="Transfers.GoodReceiptNoteSeachView_group_0">
+					<groupitem id="Transfers.GoodReceiptNoteSeachView_shipment_groupitem_1">
+						<text editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_shipment" label="GRN #" placeHolder="Tap to enter" resourceAttribute="formnumber">
+							<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_shipment_0_eventHandlers">
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.GoodReceiptNoteSeachView_ponum_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.GoodReceiptNoteSeachView_render_eventHandler_formnumber" method="updateGRNLookupData"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.GoodReceiptNoteSeachView_po_groupitem_2">
+						<text editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_po_1" label="GRN No." placeHolder="Tap to enter" resourceAttribute="grnnumber">
+							<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_vendor_eventHandlers">
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.GoodReceiptNoteSeachView_vendor_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.GoodReceiptNoteSeachView_render_eventHandler_grnnumber" method="updateGRNLookupData"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.GoodReceiptNoteSeachView_formno_groupitem_3">
+						<text editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="PO #" placeHolder="Tap to enter" resourceAttribute="ponum">
+							<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandlers">
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.GoodReceiptNoteSeachView_formno_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.GoodReceiptNoteSeachView_render_eventHandler_ponum" method="updateGRNLookupData"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="Transfers.GoodReceiptNoteSeachView_footer">
+				<button id="Transfers.GoodReceiptNoteSeachView_Clear_button" label="Clear">
+					<eventHandlers id="Transfers.GoodReceiptNoteSeachView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.GoodReceiptNoteSeachView_clear_button_eventHandlers_click_Clear" method="clearSearchFields"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="Transfers.ReceivePurchaseOrderItemsSeachView_Search_button" label="Search" primary="true">
+					<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_Search_button_eventHandlers">
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.GoodReceiptNoteSeachView_Search_button_eventHandlers_click_Search" method="searchGRN"/>
+					</eventHandlers>
+				</button>
+			</footer>
+		</view> -->
+
+		<!-- [Good Receipt Note] Good Receipt Note Search View -->
+		<view id="Transfers.CreateGoodReceiptNoteView" label="Create Good Receipt Note" resource="createGRNForm">
+			<requiredResources id="Transfers.CreateGoodReceiptNoteView_requiredResources">
+				<!-- <requiredResource id="Transfers.CreateGoodReceiptNoteView_requiredResource_errorResource" name="errorResource"/> -->
+				<requiredResource id="Transfers.CreateGoodReceiptNoteView_requiredResource_userInfo" name="userInfo"/>
+				<requiredResource id="Transfers.CreateGoodReceiptNoteView_requiredResource_domaininvusereceipts" name="domaininvusereceipts"/>
+				<requiredResource id="Transfers.CreateGoodReceiptNoteView_requiredResource_domainpostatus" name="domainpostatus"/>
+				<requiredResource id="Transfers.CreateGoodReceiptNoteView_requiredResource_grnResource" name="grnResource"/>
+			</requiredResources>
+			<!-- <container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
+                <link id="Transfers.ReceivePurchaseOrderItemsSeachView_link" label="">
+                    <eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers">
+                        <eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers_click" method="showErrorPage"/>
+                        <eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.ReceivePurchaseOrderItemsSeachView_link_eventHandlers_render_hideShowSelectLink" method="hideShowErrorLink"/>
+                    </eventHandlers>
+                </link>
+            </container> -->
+			<container id="Transfers.CreateGoodReceiptNoteView_container_1" resource="createGRNForm">
+				<group id="Transfers.CreateGoodReceiptNoteView_group_0">
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_grnnumber_groupitem_1">
+						<text editable="true" required="false" id="Transfers.CreateGoodReceiptNoteView_grnnumber" label="GRN No." placeHolder="Tap to enter" resourceAttribute="grnnumber">
+							<eventHandlers id="Transfers.CreateGoodReceiptNoteView_vendor_eventHandlers">
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.CreateGoodReceiptNoteView_render_eventHandler_grnnumber" method="updateGRNLookupData"/>
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.CreateGoodReceiptNoteView_datachange_eventHandler_grnnumber" method="checkExistGRN"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_formno_groupitem_2">
+						<text editable="false" required="false" id="Transfers.CreateGoodReceiptNoteView_formno_1" lookup="Transfers.GrnPoLookup" lookupAttribute="ponum" label="PO #" placeHolder="Tap to enter" resourceAttribute="ponum">
+							<eventHandlers id="Transfers.CreateGoodReceiptNoteView_formno_eventHandlers">
+								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.CreateGoodReceiptNoteView_render_eventHandler_ponum" method="updateGRNPoLookupData"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_description_groupitem_3">
+						<text editable="true" required="false" id="Transfers.CreateGoodReceiptNoteView_description" label="Description" placeHolder="Tap to enter" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_personid_groupitem_4">
+						<text editable="false" id="Transfers.CreateGoodReceiptNoteView_personid" label="Person in charge" placeHolder="Tap to enter" resourceAttribute="pic"/>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_type_groupitem_4">
+						<text editable="false" required="false" id="Transfers.CreateGoodReceiptNoteView_type" lookup="Transfers.GrnDomainTypeLookup" lookupAttribute="type" label="Type" placeHolder="Tap to enter" resourceAttribute="type">
+							<!-- <eventHandlers id="Transfers.CreateGoodReceiptNoteView_type_eventHandlers"> -->
+							<!-- <eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.CreateGoodReceiptNoteView_formno_eventHandler" method="checkType"/> -->
+							<!-- </eventHandlers> -->
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_supplierref_groupitem_5">
+						<text editable="true" id="Transfers.CreateGoodReceiptNoteView_supplierref" label="Supplier ref" placeHolder="Tap to enter" resourceAttribute="supplierref" />
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_status_groupitem_6">
+						<text editable="false" required="false" lookup="Transfers.GrnDomainLookup" lookupAttribute="status" id="Transfers.CreateGoodReceiptNoteView_status" label="Status" placeHolder="Tap to enter" resourceAttribute="status"/>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_actualdate_groupitem_7">
+						<text editable="true" required="false" id="Transfers.CreateGoodReceiptNoteView_actualdate" label="Actual date" placeHolder="Tap to enter" resourceAttribute="actualdate"/>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_createby_groupitem_8">
+						<text editable="false" id="Transfers.CreateGoodReceiptNoteView_createby" label="Created by" placeHolder="Tap to enter" resourceAttribute="createby"/>
+					</groupitem>
+					<groupitem id="Transfers.CreateGoodReceiptNoteView_createdate_groupitem_9">
+						<text editable="false" id="Transfers.CreateGoodReceiptNoteView_createdate" label="Created date" placeHolder="Tap to enter" resourceAttribute="createdate"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="Transfers.CreateGoodReceiptNoteView_footer">
+				<button id="Transfers.CreateGoodReceiptNoteView_Clear_button" label="Clear">
+					<eventHandlers id="Transfers.CreateGoodReceiptNoteView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.CreateGoodReceiptNoteView_clear_button_eventHandlers_click_Clear" method="clearForm"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="Transfers.CreateGoodReceiptNoteView_Search_button" label="Create" primary="true">
+					<eventHandlers id="Transfers.CreateGoodReceiptNoteView_Search_button_eventHandlers">
+						<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="click" id="Transfers.CreateGoodReceiptNoteView_Search_button_eventHandlers_click_Search" method="submitGRN"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="Transfers.CreateGoodReceiptNoteView_eventHandlers">
+				<eventHandler id="Transfers.CreateGoodReceiptNoteView_eventHandlers_initialize" event="initialize" class="application.handlers.GoodReceiptNoteHandler" method="initGRNform"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Tuan-out: add GRN views -->
 
 
 		<!-- [PURCHASE ORDER] Receive Items from Purchase Orders Search View -->
@@ -1781,7 +1925,7 @@
 				<!-- Tuan-in: add resource to handle complete button -->
 				<!-- <button id="Transfers.AdditionalItemsDetailsView_Complete_button" label="Complete"> -->
 				<button id="Transfers.AdditionalItemsDetailsView_Complete_button" resource="tostoreroomoffs" label="Complete">
-				<!-- Tuan-out: add resource to handle complete button -->
+					<!-- Tuan-out: add resource to handle complete button -->
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Search_button_eventHandlers">
 						<!-- Tuan-in: use event datachange instead of render to update the button when the value tostoreroom change  -->
 						<!-- Loc-In: add event -->
@@ -1795,7 +1939,7 @@
 				<!-- Tuan-in: add resource to handle ship button -->
 				<!-- <button id="Transfers.AdditionalItemsDetailsView_Ship_button" label="Ship"> -->
 				<button id="Transfers.AdditionalItemsDetailsView_Ship_button" resource="tostoreroomoffs" label="Ship">
-				<!-- Tuan-out: add resource to handle ship button -->
+					<!-- Tuan-out: add resource to handle ship button -->
 					<eventHandlers id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers">
 						<!-- Tuan-in: use event datachange to update the button when the value tostoreroom change  -->
 						<eventHandler class="application.handlers.TransfersAvailableItemsHandler" event="click" id="Transfers.AdditionalItemsDetailsView_Ship_button_eventHandlers_click" method="shipAvailableItems"/>
@@ -2376,7 +2520,7 @@
 				<returnAttribute id="Transfers.GrnLookup_returnAttributes_formnumber" sourceAttribute="formnumber" targetAttribute="formno"/>
 			</returnAttributes>
 		</lookup>
-		<!-- Tuan-in: add grn lookup -->
+		<!-- Tuan-out: add grn lookup -->
 
 		<!-- Tuan-in: add bin lookup  -->
 		<!-- tobin lookup -->
@@ -2753,21 +2897,171 @@
 		</lookup>
 		<!-- Loc-Out: Add Lookup -->
 
+		<!-- Tuan-in: grn lookups -->
+		<lookup id="Transfers.GrnPoLookup" label="Select Purchases Orders" resource="grnPonumTemp">
+			<requiredResources id="Transfers.GrnPoLookup_requiredResources">
+				<requiredResource id="Transfers.GrnPoLookup_grnTemp" name="grnPonumTemp" reload="false"/>
+			</requiredResources>
+			<list id="Transfers.GrnPoLookup_list" resource="grnPonumTemp">
+				<searchAttributes id="Transfers.GrnPoLookup_searchAttributes">
+					<searchAttribute id="Transfers.GrnPoLookup_searchAttribute_ponum" name="ponum"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.GrnPoLookup_listItemTemplate_BinLotLookupItem" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnPoLookup_formnumber" layoutInsertAt="item1" resourceAttribute="ponum"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnPoLookup_description" layoutInsertAt="desc1" resourceAttribute="formno"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.GrnPoLookup_returnAttributes">
+				<returnAttribute id="Transfers.GrnPoLookup_returnAttributes_ponum" sourceAttribute="ponum" targetAttribute="ponum"/>
+			</returnAttributes>
+		</lookup>
+
+		<lookup id="Transfers.GrnDomainLookup" label="Select Status" resource="grnDomainResource">
+			<requiredResources id="Transfers.GrnDomainLookup_requiredResources">
+				<requiredResource id="Transfers.GrnDomainLookup_grnTemp" name="grnDomainResource"/>
+			</requiredResources>
+			<list id="Transfers.GrnDomainLookup_list" resource="grnDomainResource">
+				<searchAttributes id="Transfers.GrnDomainLookup_searchAttributes">
+					<searchAttribute id="Transfers.GrnDomainLookup_searchAttribute_value" name="value"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.GrnDomainLookup_listItemTemplate_DomainLookup" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnDomainLookup_formnumber" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnDomainLookup_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.GrnDomainLookup_returnAttributes">
+				<returnAttribute id="Transfers.GrnDomainLookup_returnAttributes_value" sourceAttribute="value" targetAttribute="status"/>
+			</returnAttributes>
+		</lookup>
+
+		<lookup id="Transfers.GrnDomainTypeLookup" label="Select Type" resource="grnDomainTypeResource">
+			<requiredResources id="Transfers.GrnDomainTypeLookup_requiredResources">
+				<requiredResource id="Transfers.GrnDomainTypeLookup_grnTemp" name="grnDomainTypeResource"/>
+			</requiredResources>
+			<list id="Transfers.GrnDomainTypeLookup_list" resource="grnDomainTypeResource">
+				<searchAttributes id="Transfers.GrnDomainTypeLookup_searchAttributes">
+					<searchAttribute id="Transfers.GrnDomainTypeLookup_searchAttribute_value" name="value"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.GrnDomainTypeLookup_listItemTemplate_DomainLookup" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnDomainTypeLookup_formnumber" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnDomainTypeLookup_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="Transfers.GrnDomainTypeLookup_returnAttributes">
+				<returnAttribute id="Transfers.GrnDomainTypeLookup_returnAttributes_value" sourceAttribute="value" targetAttribute="type"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Tuan-out: grn lookups -->
 	</ui>
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
 
+		<!-- Tuan-in: grn resource -->
+		<!-- <resource id="grnSearchLookupData" inMemory="true" name="grnSearchLookupData" singleton="true">
+			<attributes id="grnSearchLookupData_attributes">
+				<localAttribute dataType="string" id="grnSearchLookupData_formnumber_string" name="formnumber"/>
+				<localAttribute dataType="string" id="grnSearchLookupData_grnnumber_string" name="grnnumber"/>
+				<localAttribute dataType="string" id="grnSearchLookupData_ponum_string" name="ponum"/>
+				<localAttribute dataType="string" id="grnSearchLookupData_description_string" name="description"/>
+			</attributes>
+		</resource> -->
+
+		<resource id="createGRNForm" inMemory="true" name="createGRNForm" singleton="true">
+			<attributes id="createGRNForm_attributes">
+				<localAttribute dataType="string" formula="ENTERED" id="createGRNForm_status_spi_status" name="status"/>
+				<localAttribute dataType="string" id="createGRNForm_grnnumber_spi_grnnumber" name="grnnumber"/>
+				<localAttribute dataType="string" id="createGRNForm_description_spi_description" name="description"/>
+				<localAttribute dataType="string" id="createGRNForm_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<localAttribute dataType="string" id="createGRNForm_supplierref_spi_supplierref" name="supplierref"/>
+				<localAttribute dataType="string" id="createGRNForm_pic_spi_pic" name="pic"/>
+				<localAttribute dataType="string" id="createGRNForm_type_description_spi_type_description" name="type_description"/>
+				<localAttribute dataType="dateTime" formula="new Date()" id="createGRNForm_createdate_spi_createdate" name="createdate"/>
+				<localAttribute dataType="string" id="createGRNForm_type_spi_type" name="type"/>
+				<localAttribute dataType="string" id="createGRNForm_createby_spi_createby" name="createby"/>
+				<localAttribute dataType="dateTime" formula="new Date()" id="createGRNForm_actualdate_spi_actualdate" name="actualdate"/>
+				<localAttribute dataType="string" id="createGRNForm_ponum_spi_ponum" name="ponum"/>
+			</attributes>
+		</resource>
+
+		<resource id="grnPonumTemp" inMemory="true" name="grnPonumTemp" singleton="true">
+			<attributes id="ggrnPonumTemp_attributes">
+				<localAttribute dataType="string" id="grnPonumTemp_ponum_string" name="ponum"/>
+				<localAttribute dataType="string" id="ggrnPonumTemp_poformno_string" name="formno"/>
+			</attributes>
+		</resource>
+
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#ALNDOMAIN" id="grnDomainResource" additionalData="true" name="grnDomainResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="grnDomainResource_attributes">
+				<attribute describedByProperty="spi:value" id="grnDomainResource_value_spi_value" name="value"/>
+				<attribute describedByProperty="spi:description" id="grnDomainResource_description_spi_description" name="description"/>
+				<attribute describedByProperty="spi:domainid" id="grnDomainResource_domainid_spi_domainid" name="domainid"/>
+			</attributes>
+			<queryBases id="grnDomainResource_queryBases">
+				<queryBase defaultForSearch="true" id="grnDomainResource_queryBase_getAllDomainResource" name="getAllDomain" queryUri="/oslc/os/oslcalndomain"/>
+			</queryBases>
+			<whereClause clause="spi:domainid='MRNSTATUS'" id="grnDomainResource_whereClause"/>
+		</resource>
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#ALNDOMAIN" id="grnDomainTypeResource" additionalData="true" name="grnDomainTypeResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="grnDomainTypeResource_attributes">
+				<attribute describedByProperty="spi:value" id="grnDomainTypeResource_value_spi_value" name="value"/>
+				<attribute describedByProperty="spi:description" id="grnDomainTypeResource_description_spi_description" name="description"/>
+				<attribute describedByProperty="spi:domainid" id="grnDomainTypeResource_domainid_spi_domainid" name="domainid"/>
+			</attributes>
+			<queryBases id="grnDomainTypeResource_queryBases">
+				<queryBase defaultForSearch="true" id="grnDomainTypeResource_queryBase_getAllDomainResource" name="getAllDomain" queryUri="/oslc/os/oslcalndomain"/>
+			</queryBases>
+			<whereClause clause="spi:domainid='GRNTYPE'" id="grnDomainTypeResource_whereClause"/>
+		</resource>
+
+		<!-- 
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" id="grnLookupResource" name="grnLookupResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="grnLookupResource_attributes">
+				<attribute describedByProperty="spi:status" id="grnLookupResource_status_spi_status" name="status"/>
+				<attribute describedByProperty="spi:grnnumber" id="grnLookupResource_grnnumber_spi_grnnumber" name="grnnumber"/>
+				<attribute describedByProperty="spi:description" id="grnLookupResource_description_spi_description" name="description"/>
+				<attribute describedByProperty="spi:formnumber" id="grnLookupResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:supplierref" id="grnLookupResource_supplierref_spi_supplierref" name="supplierref"/>
+				<attribute describedByProperty="spi:pic" id="grnLookupResource_pic_spi_pic" name="pic"/>
+				<attribute describedByProperty="spi:createdate" id="grnLookupResource_createdate_spi_createdate" name="createdate"/>
+				<attribute describedByProperty="spi:type" id="grnLookupResource_type_spi_type" name="type"/>
+				<attribute describedByProperty="spi:createby" id="grnLookupResource_createby_spi_createby" name="createby"/>
+				<attribute describedByProperty="spi:actualdate" id="grnLookupResource_actualdate_spi_actualdate" name="actualdate"/>
+				<attribute describedByProperty="spi:ponum" id="grnLookupResource_ponum_spi_ponum" name="ponum"/>
+				<attribute describedByProperty="spi:po{spi:formno}" id="grnLookupResource_poformno_spi_poformno" name="poformno"/>
+			</attributes>
+			<queryBases id="grnLookupResource_queryBases">
+				<queryBase defaultForSearch="true" id="grnLookupResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/anywhere_grn"/>
+			</queryBases>
+			<whereClause id="grnLookupResource_whereClause"/>
+		</resource> -->
+
+		<!-- Tuan-out: grn resource -->
+
 		<!-- Tuan-in: add form number PO List-->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" id="grnResource" name="grnResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="grnResource_attributes">
-				<attribute describedByProperty="spi:formnumber" id="grnResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:status" id="grnResource_status_spi_status" name="status"/>
+				<attribute describedByProperty="spi:grnnumber" id="grnResource_grnnumber_spi_grnnumber" index="true" name="grnnumber"/>
 				<attribute describedByProperty="spi:description" id="grnResource_description_spi_description" name="description"/>
+				<attribute describedByProperty="spi:formnumber" id="grnResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:supplierref" id="grnResource_supplierref_spi_supplierref" name="supplierref"/>
+				<attribute describedByProperty="spi:pic" id="grnResource_pic_spi_pic" name="pic"/>
+				<attribute describedByProperty="spi:createdate" id="grnResource_createdate_spi_createdate" name="createdate"/>
+				<attribute describedByProperty="spi:type" id="grnResource_type_spi_type" name="type"/>
+				<attribute describedByProperty="spi:createby" id="grnResource_createby_spi_createby" name="createby"/>
+				<attribute describedByProperty="spi:actualdate" id="grnResource_actualdate_spi_actualdate" name="actualdate"/>
 				<attribute describedByProperty="spi:ponum" id="grnResource_ponum_spi_ponum" name="ponum"/>
 			</attributes>
 			<queryBases id="grnResource_queryBases">
 				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/anywhere_grn"/>
 			</queryBases>
+			<creationFactories id="grnResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/anywhere_grn" id="grnResource_creationFactory_grnResourceCF" name="grnResourceCF"/>
+			</creationFactories>
 			<whereClause id="grnResource_whereClause"/>
 		</resource>
 
