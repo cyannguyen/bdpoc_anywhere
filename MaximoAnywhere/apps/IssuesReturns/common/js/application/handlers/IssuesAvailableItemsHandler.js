@@ -74,6 +74,9 @@ define("application/handlers/IssuesAvailableItemsHandler", [
     /* #region  Tuan-in: add flag to track location change */
     var isLocationDataChanged = false;
     /* #endregion Tuan-out: add flag to track location change */
+    /* #region  Tuan-in: add flag to track GLDebitAccount change */
+    var isGLDebitAccountDataChanged = false;
+    /* #endregion Tuan-out: add flag to track GLDebitAccount change */
     return declare([ApplicationHandlerBase, AsyncAwareMixin], {
         //isWODataChanged: false,
         //isLocationDataChanged: false,
@@ -794,6 +797,30 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
         },
 
+        /* #region  Tuan-in: add filter glaccount for lookup */
+        updateGlaccountLookup: function (eventContext) {
+            var filter = [];
+
+            filter.push({ glaccount: "*" });
+
+            var binnumPromise = ModelService.filtered(
+                "glaccountForLookup",
+                null,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            binnumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.resourceID = "glaccountTemp";
+                eventContext.application.addResource(data);
+            });
+        },
+        /* #endregion */
+
         /**
          * Search for item (unreserved)
          */
@@ -1079,6 +1106,9 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             var msg = MessageService.createStaticMessage("noworkorderfound").getMessage();
 
             if (isLocationDataChanged && !wonum) return;
+            /* #region  Tuan-in: update gldebit account */
+            if (isGLDebitAccountDataChanged) return;
+            /* #endregion Tuan-in: update gldebit account */
             this.clearBaseFieldsFromWO(eventContext);
 
             issueAdditionItemRecord.set("taskid", null);
@@ -1505,7 +1535,11 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             if (isWODataChanged || isLocationDataChanged || !glaccount) {
                 return;
             }
+            /* #region Tuan-in: update gldebitaccount */
+            isGLDebitAccountDataChanged = true;
             this.clearReferFields(eventContext, false, false, true);
+            isGLDebitAccountDataChanged = false;
+            /* #endregion Tuan-out: update gldebitaccount*/
         },
         //#endregion Loc-In: init Additional Usage
     });

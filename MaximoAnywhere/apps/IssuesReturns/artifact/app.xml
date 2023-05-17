@@ -105,9 +105,12 @@
 						<text editable="false" id="IssuesReturns.SearchInvreserve_storeroom" label="Storeroom" resourceAttribute="storeroom"/>
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchInvreserve_workorder_groupitem_1">
-						<text codeScannable="true" editable="true" id="IssuesReturns.SearchInvreserve_wonum" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
+						<text codeScannable="true" editable="true" id="IssuesReturns.SearchInvreserve_wonum" lookup="IssuesReturns.WonumLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
 							<eventHandlers id="IssuesReturns.SearchInvreserve_wonum_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.SearchInvreserve_wonum_eventHandler" method="setFieldsReadonly"/>
+								<!-- Tuan-in: add wonum lookup -->
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SearchInvreserve_wonum_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
 					</groupitem>
@@ -228,9 +231,12 @@
 						</text>
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_2">
-						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_workorder" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
+						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_workorder" lookup="IssuesReturns.WonumLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
 							<eventHandlers id="IssuesReturns.SearchReturn_wonum_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_wonum_eventHandlers_datachange" method="setFieldsReadonly"/>
+								<!-- Tuan-in: add wonum lookup -->
+								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.SearchReturn_wonum_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
 					</groupitem>
@@ -710,6 +716,13 @@
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_rotatingAssets" name="rotatingAssets"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_additionalasset" name="additionalasset"/>
 				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_domainwostatus" name="domainwostatus"/>
+
+				<!-- Tuan-in: add wonum lookup -->
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_issuesReturns" name="issuesReturns"/>
+				<!-- Tuan-out: add wonum lookup -->
+				<!-- Tuan-in: add glaccount resource lookup -->
+				<requiredResource id="IssuesReturns.AdditionalItemsDetailsView_requiredResource_glaccountTemp" name="glaccountTemp"/>
+				<!-- Tuan-out: add glaccount resource lookup -->
 			</requiredResources>
 
 			<!-- Loc-In: arrange all fields -->
@@ -765,9 +778,12 @@
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_issue" label="Issue To" lookup="IssuesReturns.IssueToLookup" lookupAttribute="personid" placeHolder="Tap to enter" resourceAttribute="issueTo"/>
 					</groupitem>
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_wo_groupitem_3">
-						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_wo" label="Work Order" placeHolder="Tap to enter" required="false" resourceAttribute="wonum">
+						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_wo" lookup="IssuesReturns.WonumLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" required="false" resourceAttribute="wonum">
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_1" method="additionalItemWODataChanged"/>
+								<!-- Tuan-in: add wonum lookup -->
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
 					</groupitem>
@@ -795,11 +811,15 @@
 					</groupitem>
 
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_account_groupitem_5">
-						<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount">
+						<!-- Tuan-in: update glaccount-->
+						<!-- <text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_account" label="GL Account" resourceAttribute="glaccount"> -->
+						<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_account" lookup="IssuesReturns.GlaccountLookup" lookupAttribute="glaccount" placeHolder="Tap to enter" label="GL Account" resourceAttribute="glaccount">
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers_1" method="handleGLaccountDataChanged"/>
+								<!-- <eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_account_eventHandlers_render" method="updateGlaccountLookup"/> -->
 							</eventHandlers>
 						</text>
+						<!-- Tuan-out: update glaccount-->
 					</groupitem>
 					<!-- <groupitem id="IssuesReturns.AdditionalItemsDetailsView_asset_groupitem_7">
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_asset" label="Asset" lookup="IssuesReturns.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset"/>
@@ -1162,6 +1182,11 @@
 				<requiredResource id="IssuesReturns.IssueToLookup_workOrder" name="additionalperson" reload="true"/>
 			</requiredResources>
 			<list id="IssuesReturns.IssueToLookup_list" resource="additionalperson">
+				<!-- Tuan-in: add search person -->
+				<searchAttributes id="IssuesReturns.IssueToLookup_searchAttributes">
+					<searchAttribute id="IssuesReturns.IssueToLookup_searchAttribute_personid" name="personid"/>
+				</searchAttributes>
+				<!-- Tuan-out: add search person -->
 				<listItemTemplate id="IssuesReturns.IssueToLookup_listItemTemplate_Item1Desc1" layout="Item1Desc1">
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.IssueToLookup_Item1Desc1_personid" layoutInsertAt="item1" resourceAttribute="personid"/>
 					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.IssueToLookup_Item1Desc1_displayname" layoutInsertAt="desc1" resourceAttribute="displayname"/>
@@ -1192,10 +1217,80 @@
 			</returnAttributes>
 		</lookup>
 		<!-- Tuan-out: add formnumber lookup -->
+
+		<!-- Tuan-in: add wonum lookup -->
+		<lookup id="IssuesReturns.WonumLookup" label="Select Work order" resource="wonumTemp">
+			<requiredResources id="IssuesReturns.WonumLookup_requiredResources">
+				<requiredResource id="IssuesReturns.WonumLookup_workOrder" name="wonumTemp" reload="false"/>
+			</requiredResources>
+			<list id="IssuesReturns.WonumLookup_list" resource="wonumTemp">
+				<searchAttributes id="IssuesReturns.WonumLookup_additionallocations_searchAttributes">
+					<searchAttribute id="IssuesReturns.WonumLookup_additionallocations_searchAttribute_wonum" name="wonum"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.WonumLookup_listItemTemplate_Item1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item1Desc1_wonum" layoutInsertAt="item1" resourceAttribute="wonum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item1Desc1_wodesc" layoutInsertAt="desc1" resourceAttribute="wodesc"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="IssuesReturns.WonumLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.WonumLookup_wonum" sourceAttribute="wonum" targetAttribute="wonum"/>
+			</returnAttributes>
+		</lookup>
+		<!-- Tuan-out: add wonum lookup -->
+
+		<!-- Tuan-in: add GlaccountLookup -->
+		<lookup id="IssuesReturns.GlaccountLookup" label="Select Form number" resource="glaccountForLookup">
+			<requiredResources id="IssuesReturns.GlaccountLookup_requiredResources">
+				<requiredResource id="IssuesReturns.GlaccountLookup_glaccountTemp" name="glaccountForLookup" reload="false"/>
+			</requiredResources>
+			<list id="IssuesReturns.GlaccountLookup_list" resource="glaccountForLookup">
+				<searchAttributes id="IssuesReturns.GlaccountLookup_additionallocations_searchAttributes">
+					<searchAttribute id="IssuesReturns.GlaccountLookup_additionallocations_searchAttribute_glaccount" name="glaccount"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.GlaccountLookup_listItemTemplate_Item1" layout="Item1">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.GlaccountLookup_Item1Desc1_glaccount" layoutInsertAt="item1" resourceAttribute="glaccount"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="IssuesReturns.GlaccountLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.GlaccountLookup_formno" sourceAttribute="glaccount" targetAttribute="glaccount"/>
+			</returnAttributes>
+		</lookup>
+		<!-- Tuan-out: add GlaccountLookup -->
 	</ui>
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
+
+		<!-- Tuan-in: add glaccount temp data -->
+		<resource id="glaccountTemp" inMemory="true" name="glaccountTemp" singleton="true">
+			<attributes id="glaccountTemp_attributes">
+				<localAttribute dataType="string" id="glaccountTemp_wonum_string" index="true" name="glaccount"/>
+			</attributes>
+		</resource>
+
+
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GETDISTINCTGLACCT" additionalData="true" id="glaccountForLookup" name="glaccountForLookup" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="glaccountForLookup_attributes">
+				<!-- <attribute describedByProperty="dcterms:identifier" id="glaccountForLookup_identifier_dcterms_identifier" name="identifier"/> -->
+				<attribute describedByProperty="spi:gldebitacct" id="glaccountForLookup_gldebitacct_spi_gldebitacct" name="glaccount"/>
+			</attributes>
+			<queryBases id="glaccountForLookup_queryBases">
+				<queryBase id="glaccountForLookup_queryBase" name="searchAllGlaccount" queryUri="/oslc/os/GETDISTINCTGLACCT"/>
+			</queryBases>
+			<whereClause id="glaccountForLookup_whereClause"/>
+		</resource>
+
+		<!-- Tuan-out: add glaccount temp data -->
+
+		<!-- Tuan-in: add wonum temp data -->
+		<resource id="wonumTemp" inMemory="true" name="wonumTemp" singleton="true">
+			<attributes id="wonumTemp_attributes">
+				<localAttribute dataType="string" id="wonumTemp_wonum_string" index="true" name="wonum"/>
+				<localAttribute dataType="string" id="wonumTemp_desc_string" name="wodesc"/>
+			</attributes>
+		</resource>
+		<!-- Tuan-out: add wonum temp data -->
 
 		<resource id="issuesReturnsResource" inMemory="true" name="issuesReturns" singleton="true">
 			<attributes id="issuesReturns_attributes">

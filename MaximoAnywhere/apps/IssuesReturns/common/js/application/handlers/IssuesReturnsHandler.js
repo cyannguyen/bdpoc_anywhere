@@ -142,6 +142,39 @@ define("application/handlers/IssuesReturnsHandler", [
         },
         /* #endregion */
 
+        /* #region  Tuan-in: add update wonum for lookup */
+        updateWonnumLookup: function (eventContext) {
+            var record = CommonHandler._getAdditionalResource(
+                eventContext,
+                "issuesReturns"
+            ).getCurrentRecord();
+
+            var filter = [];
+            var oslcQueryParameters = {};
+
+            filter.push({ location: record.storeroom });
+            oslcQueryParameters["sqp:days"] = 7;
+
+            var wonumPromise = ModelService.filtered(
+                "invreserve",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                oslcQueryParameters,
+                false
+            );
+
+            wonumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.filter("wonum != null");
+                data.resourceID = "wonumTemp";
+                eventContext.application.addResource(data);
+            });
+        },
+        /* #endregion */
+
         /* #region  Tuan-in: add handle update fromlot */
         setFromLotCurbalReserved: function (eventContext) {
             var self = this;
