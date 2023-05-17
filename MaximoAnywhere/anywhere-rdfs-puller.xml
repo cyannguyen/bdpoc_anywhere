@@ -245,11 +245,12 @@
 		<downloadOneRdf context="/oslc/shapes/oslcshipment/invuse" />
 		<downloadOneRdf context="/oslc/shapes/oslcmatrectrans/invuse" />
 		<!-- Loc-Out: Add new downloads -->
-
 		<!-- Tuan-in: add grn resource -->
 		<downloadOneRdf context="/oslc/shapes/anywhere_grn"/>
-		<!-- Tuan-in: add grn resource -->
-
+		<!-- Tuan-out: add grn resource -->
+		<!-- Tuan-in: add gldebitaccount resource -->
+		<downloadOneRdf context="/oslc/shapes/GETDISTINCTGLACCT"/>
+		<!-- Tuan-out: add gldebitaccount resource -->
 		<!-- Spatial -->
 		<trycatch>
 			<try>
@@ -267,6 +268,7 @@
 				<downloadOneRdf context="/oslc/shapes/oslcplussmapservice/plussmapservicelayer"/>
 				<downloadOneRdf context="/oslc/shapes/oslcplusstoken"/>
 				<downloadOneRdf context="/oslc/shapes/oslcplusslinkedmbo"/>
+
 
 				<echotimestamp>Oslc objects from Spatial on Maximo downloaded.</echotimestamp>
 				<echotimestamp>Download oslc objects from Spatial from Maximo succeeded. Restoring spatial configuration</echotimestamp>
