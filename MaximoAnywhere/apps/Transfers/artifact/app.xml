@@ -30,6 +30,12 @@
 			</eventHandlers>
 			<container id="Transfers.ModuleSelectionView_Transfers_container_0">
 				<group id="action1">
+					<!-- Tuan-in: add list view -->
+					<groupitem id="Transfers.ModuleSelectionView_TransferReserved_Group0" layout="Button1Item1" transitionTo="Transfers.InventoryUsagesListView">
+						<image cssClass="actionButton" id="transferReceivingicon0" image="acBtn_viewList.svg" label="List of inventory usages" layoutInsertAt="button1" platform="false"/>
+						<text id="createTransferReceivingtext0" layoutInsertAt="item1" value="List of inventory usages"/>
+					</groupitem>
+					<!-- Tuan-out: add list view -->
 					<groupitem id="Transfers.ModuleSelectionView_TransferReserved_Group1" layout="Button1Item1" transitionTo="Transfers.SearchInvreserveView">
 						<image cssClass="actionButton" id="transferReceivingicon1" image="acBtn_transfer_reserved.svg" label="Transfer Reserved Items" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext1" layoutInsertAt="item1" value="Transfer Reserved Items"/>
@@ -147,6 +153,35 @@
 				<eventHandler class="application.handlers.TransfersHandler" event="initialize" id="Transfers.SearchInvreserveView_view_0_eventHandlers_init" method="resetSearchFields"/>
 			</eventHandlers>
 		</view>
+
+		<!-- Tuan-in: add list inventory usages view -->
+		<view id="Transfers.InventoryUsagesListView" label="Inventory Usages" resource="invuse">
+			<requiredResources id="Transfers.InventoryUsagesListView_requiredResources">
+				<requiredResource id="Transfers.InventoryUsagesListView_requiredResource_invuse" name="invuse" reload="true"/>
+			</requiredResources>
+
+			<list displayPageSize="20" hideEmpty="true" id="Transfers.InventoryUsagesListView_list" label="Records" resource="invuse" showHeader="true" transitionTo="Transfers.InventoryUsagesItemsDetailsView">
+				<searchAttributes id="InventoryUsagesListView__searchAttributes">
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_formnumber" name="formnumber"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_description" name="description"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_preparedby" name="preparedby"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_usetype" name="usetype"/>
+				</searchAttributes>
+
+				<listItemTemplate id="Transfers.InventoryUsagesListView_listItemTemplate" layout="InventoryUsageList">
+					<listtext id="Transfers.InventoryUsagesListView_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+					<listtext id="Transfers.InventoryUsagesListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
+					<listtext id="Transfers.InventoryUsagesListView_documentref" layoutInsertAt="item3" resourceAttribute="documentref"/>
+					<listtext id="Transfers.InventoryUsagesListView_createdate" layoutInsertAt="item4" resourceAttribute="createdate"/>
+					<listtext id="Transfers.InventoryUsagesListView_preparedby" layoutInsertAt="item5" resourceAttribute="preparedby"/>
+					<listtext id="Transfers.InventoryUsagesListView_usetype" layoutInsertAt="item6" resourceAttribute="usetype"/>
+				</listItemTemplate>
+			</list>
+			<eventHandlers id="Transfers.InventoryUsagesListView_view_1_eventHandlers">
+				<eventHandler class="application.handlers.TransfersHandler" event="initialize" id="Transfers.InventoryUsagesListView_view_1_eventHandlers_init" method="initSortInventoryUsage"/>
+			</eventHandlers>
+		</view>
+		<!-- Tuan-out: add list inventory usages view -->
 
 		<!-- Transfer Unreserved Search Item View -->
 		<view id="Transfers.SearchUnreservedView" label="Search Additional Items" resource="transfers">
@@ -2004,7 +2039,6 @@
 			</eventHandlers>
 		</view>
 
-
 		<!-- Error Detail View -->
 		<view id="Transfers.ErrorDetailPage" label="Error Handling" resource="invuse">
 			<container id="Transfers.ErrorDetailPage_container_2" resource="invuse">
@@ -2142,6 +2176,86 @@
 			</container>
 		</view>
 
+		<!-- Tuan-in: add inventory usages detail view -->
+		<view id="Transfers.InventoryUsagesItemsDetailsView" label="Inventory Usages Details" resource="invuse">
+			<requiredResources id="Transfers.InventoryUsagesItemsDetailsView_requiredResources">
+				<requiredResource id="Transfers.InventoryUsagesItemsDetailsView_requiredResource_invuse" name="invuse"/>
+				<requiredResource id="Transfers.InventoryUsagesItemsDetailsView_requiredResource_invuseline" name="invuselineTemp"/>
+			</requiredResources>
+
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_3" resource="invuse">
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_3">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_usage_groupitem_1">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_fromno" label="Form No" resourceAttribute="formnumber">
+						</text>
+					</groupitem>
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_usage_groupitem_2">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_description" label="Description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_usage_groupitem_3">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_documentref" label="Document Ref" resourceAttribute="documentref"/>
+					</groupitem>
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_usage_groupitem_4">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_createdate" label="Create Date" type="datetime" resourceAttribute="createdate"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_2" resource="invuselineTemp">
+				<text cssClass="bold textappearance-large" id="Transfers.InventoryUsagesItemsDetailsView_text_FromInventoryDetails" value="Inventory and Bin Details"/>
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_2">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_itemnum_groupitem_2">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_location" label="From storeroom" resourceAttribute="fromstoreloc"/>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_bin" label="From Bin" labelCss="editableLabel" resourceAttribute="frombin">
+						</text>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_lot" label="From Lot" resourceAttribute="fromlot"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_30" resource="invuselineTemp">
+				<text cssClass="bold textappearance-large" id="Transfers.InventoryUsagesItemsDetailsView_text_TransferDetails" value="Transfer Details"/>
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_30">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_transfer_groupitem_3">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_tostoreloc" label="To Storeroom" labelCss="editableLabel" resourceAttribute="tostoreloc">
+						</text>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_tobin" label="To Bin" resourceAttribute="tobin">
+						</text>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_tolot" label="To Lot" resourceAttribute="tolot"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_4" resource="invuselineTemp">
+				<text cssClass="bold textappearance-large" id="Transfers.InventoryUsagesItemsDetailsView_text_QuantityDetails" value="Quantity Details"/>
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_4">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_transfer_groupitem_4">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_isseQty" label="Quantity" resourceAttribute="quantity">
+						</text>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_Conversion" label="Conversion" labelCss="editableLabel" resourceAttribute="conversion">
+						</text>
+					</groupitem>
+				</group>
+			</container>
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_5" resource="invuselineTemp">
+				<text cssClass="bold textappearance-large" id="Transfers.InventoryUsagesItemsDetailsView_text_ChargeDetails" value="Charge Details"/>
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_5">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_transfer_groupitem_5">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_glcreditacct" label="GL Credit Account" resourceAttribute="glcreditacct"/>
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_gldebitacct" label="GL Debit Account" resourceAttribute="gldebitacct"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="Transfers.InventoryUsagesItemsDetailsView_container_6" resource="invuselineTemp">
+				<group id="Transfers.InventoryUsagesItemsDetailsView_group_6">
+					<groupitem id="Transfers.InventoryUsagesItemsDetailsView_transfer_groupitem_6">
+						<text editable="false" id="Transfers.InventoryUsagesItemsDetailsView_actualdate" label="Actual Date" type="date" resourceAttribute="actualdate"/>
+					</groupitem>
+				</group>
+			</container>
+			<eventHandlers id="InventoryUsagesItemsDetailsView_eventHandlers">
+				<eventHandler event="initialize" id="InventoryUsagesItemsDetailsView_eventHandlers_initialize" class="application.handlers.TransfersHandler" method="initInventoryUsageDetail" />
+			</eventHandlers>
+		</view>
+		<!-- Tuan-out: add inventory usages detail view -->
+
 		<!-- Shipment Detail View -->
 		<view id="Transfers.ShipmentDetailView" label="Create Shipment" resource="tempShipmentResource">
 			<requiredResources id="Transfers.ShipmentDetailView_requiredResources">
@@ -2156,8 +2270,10 @@
 			<container id="Transfers.ShipmentDetailView_container_1" resource="tempShipmentResource">
 				<group id="Transfers.ShipmentDetailView_group_0">
 					<groupitem id="Transfers.ShipmentDetailView_groupitem_0">
-						<text editable="false" id="Transfers.ShipmentDetailView_groupitem_1_siteid" label="To Site" resourceAttribute="siteid"/>
-						<text editable="false" id="Transfers.ShipmentDetailView_groupitem_1_rotassetnum" label="Rotating Asset" resourceAttribute="rotassetnum"/>
+						<!-- Tuan-in: remove text -->
+						<!-- <text editable="false" id="Transfers.ShipmentDetailView_groupitem_1_siteid" label="To Site" resourceAttribute="siteid"/>
+						<text editable="false" id="Transfers.ShipmentDetailView_groupitem_1_rotassetnum" label="Rotating Asset" resourceAttribute="rotassetnum"/> -->
+						<!-- Tuan-out: remove text -->
 						<text editable="true" id="Transfers.ShipmentDetailView_groupitem_0_shipdate" label="Shipment Date" placeHolder="Tap to Enter" resourceAttribute="shipdate"/>
 						<text editable="true" id="Transfers.ShipmentDetailView_groupitem_0_expreceiptdate" label="Expected Receipt Date" placeHolder="Tap to Enter" resourceAttribute="expreceiptdate"/>
 						<text editable="true" id="Transfers.ShipmentDetailView_groupitem_1_carrier" label="Carrier" placeHolder="Tap to Enter" resourceAttribute="carrier"/>
@@ -3019,6 +3135,28 @@
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
+
+		<!-- Tuan-in: add invuselineTemp -->
+		<resource id="invuselineTemp" inMemory="true" name="invuselineTemp">
+			<attributes id="invuselineTemp_attributes">
+				<localAttribute dataType="string" id="invuselineTemp_issueto_string" name="issueto"/>
+				<localAttribute dataType="string" id="invuselineTemp_wonum_string" name="wonum"/>
+				<localAttribute dataType="string" id="invuselineTemp_taskid_string" name="taskid"/>
+				<localAttribute dataType="string" id="invuselineTemp_location_string" name="location"/>
+				<localAttribute dataType="string" id="invuselineTemp_gldebitacct_string" name="gldebitacct"/>
+				<localAttribute dataType="string" id="invuselineTemp_glcreditacct_string" name="glcreditacct"/>
+				<localAttribute dataType="int" id="invuselineTemp_quantity_string" name="quantity"/>
+				<localAttribute dataType="int" id="invuselineTemp_conversion_string" name="conversion"/>
+				<localAttribute dataType="string" id="invuselineTemp_frombin_string" name="frombin"/>
+				<localAttribute dataType="string" id="invuselineTemp_fromlot_string" name="fromlot"/>
+				<localAttribute dataType="string" id="invuselineTemp_fromstoreloc_string" name="fromstoreloc"/>
+				<localAttribute dataType="string" id="invuselineTemp_tostoreloc_string" name="tostoreloc"/>
+				<localAttribute dataType="string" id="invuselineTemp_tobin_string" name="tobin"/>
+				<localAttribute dataType="string" id="invuselineTemp_tolot_string" name="tolot"/>
+				<localAttribute dataType="date" id="invuselineTemp_actualdate_string" name="actualdate"/>
+			</attributes>
+		</resource>
+		<!-- Tuan-in: add invuselineTemp -->
 
 		<!-- Tuan-in: add default bin for all item in search shipment - po -->
 		<resource id="defaultBinShipment" inMemory="true" name="defaultBinShipment" singleton="true">
