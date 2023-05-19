@@ -176,7 +176,6 @@ define("application/handlers/ReceiveShipmentHandler", [
                 var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
                 if (records && records.count() > 0) {
                     var isSelectAll = records.data[records.data.length - 1].receiveIndicator;
-                    console.log("");
                     arrayUtil.forEach(records.data, function (item) {
                         item.set("receiveIndicator", !isSelectAll);
                     });
@@ -372,6 +371,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                                 if (receiveExtPo) {
                                     matrectrans.set("issueto", currentRecord.issueTo);
                                     matrectrans.set("positeid", currentRecord.positeid);
+
+                                    /* #region  Tuan-in: add grn number */
+                                    matrectrans.set("formno", currentRecord.formno);
+                                    /* #endregion */
                                 }
                             }
                         });
@@ -460,7 +463,10 @@ define("application/handlers/ReceiveShipmentHandler", [
                 //verify if we have at least one field filled
                 //#region Loc-In: Loc-In: Add FromNo, DocumentRef
                 //if(!shipmentnum){{
+                //#region Tuan-In: fix syntax error
+                // if (!shipmentNum && !formno && !documentref) {
                 if (!shipmentnum && !formno && !documentref) {
+                    //#endregion Tuan-In: fix syntax error
                     //#endregion Loc-Out: Loc-In: Add FromNo, DocumentRef
                     self.ui.showMessage(emptySearchResultMsg);
                     return;
@@ -1973,12 +1979,14 @@ define("application/handlers/ReceiveShipmentHandler", [
                 if (shipmentNum) {
                     filter.push({ shipmentnum: shipmentNum });
                 }
+                /* #region  Tuan-in: fix cann't void */
                 if (formno) {
-                    filter.push({ formnumber: formno });
+                    filter.push({ formnumber: '"' + formno + '"' });
                 }
                 if (documentref) {
-                    filter.push({ documentref: documentref });
+                    filter.push({ documentref: '"' + documentref + '"' });
                 }
+                /* #endregion Tuan-out: fix cann't void */
                 //#endregion Loc-Out: Add FormNo, DocumentRef
                 var shipmentPromise = ModelService.filtered(
                     "shipment",
@@ -2078,12 +2086,16 @@ define("application/handlers/ReceiveShipmentHandler", [
                 if (shipmentNum) {
                     filter.push({ shipmentnum: shipmentNum });
                 }
+                /* #region  Tuan-in: fix can't return */
                 if (formno) {
-                    filter.push({ formnumber: formno });
+                    filter.push({ formnumber: '"' + formno + '"' });
+                    // filter.push({ formnumber: formno });
                 }
                 if (documentref) {
-                    filter.push({ documentref: documentref });
+                    // filter.push({ documentref: documentref });
+                    filter.push({ documentref: '"' + documentref + '"' });
                 }
+                /* #endregion  Tuan-out: fix can't return  */
                 //#endregion Loc-Out: Add FormNo, DocumentRef
                 var shipmentPromise = ModelService.filtered(
                     "shipment",

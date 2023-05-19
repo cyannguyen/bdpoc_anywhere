@@ -47,7 +47,7 @@
 						<text id="createTransferReceivingtext4" layoutInsertAt="item1" value="Manage Received Shipments"/>
 					</groupitem>
 					<groupitem id="Transfers.ModuleSelectionView_CreateGoodReceiptNode_Group7" layout="Button1Item1" transitionTo="Transfers.CreateGoodReceiptNoteView">
-						<image cssClass="actionButton" id="transferReceivingicon7" image="acBtn_transfer_grn.png" label="Create Good Receipt Note" layoutInsertAt="button1" platform="false"/>
+						<image cssClass="actionButton" id="transferReceivingicon7" image="acBtn_transfer_grn.svg" label="Create Good Receipt Note" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext7" layoutInsertAt="item1" value="Create Good Receipt Note"/>
 					</groupitem>
 					<groupitem id="Transfers.ModuleSelectionView_ReceivePurchaseOrder_Group6" layout="Button1Item1" transitionTo="Transfers.ReceivePurchaseOrderItemsSeachView">
@@ -111,10 +111,11 @@
 					<groupitem id="Transfers.SearchInvreserveView_po_groupitem_1">
 						<!-- Loc-In: Change label name to Call Out -->
 						<!-- <text codeScannable="true" editable="true" id="Transfers.SearchInvreserveView_ponum" label="Purchase Order" placeHolder="Tap to enter" resourceAttribute="ponum"> -->
-						<text codeScannable="true" editable="true" id="Transfers.SearchInvreserveView_ponum" label="Call Out" placeHolder="Tap to enter" resourceAttribute="ponum">
+						<text codeScannable="true" editable="true" id="Transfers.SearchInvreserveView_ponum" lookup="Transfers.GrnPoLookup" lookupAttribute="ponum" label="Call Out" placeHolder="Tap to enter" resourceAttribute="ponum">
 							<!-- Loc-Out: Change label name to Call Out -->
 							<eventHandlers id="Transfers.SearchInvreserveView_ponum_eventHandlers">
 								<eventHandler class="application.handlers.TransfersHandler" event="datachange" id="Transfers.SearchInvreserveView_ponum_eventHandler" method="setFieldsReadonly"/>
+								<eventHandler class="application.handlers.TransfersHandler" event="datachange" id="Transfers.SearchInvreserveView_ponum_eventHandler_render" method="updateCallOutLookupData"/>
 							</eventHandlers>
 						</text>
 						<!-- Loc-In: Add FormNo Searching -->
@@ -1265,6 +1266,19 @@
 				<requiredResource id="Transfers.ShipmentListView_requiredResource_transfers" name="transfers"/>
 			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="Transfers.ShipmentListView_list" label="Records" resource="shipment" showHeader="true">
+				<!-- Tuan-in: add search attribute  -->
+				<searchAttributes id="Transfers.ShipmentListView_searchAttributes">
+					<searchAttribute id="Transfers.ShipmentListView_searchAttribute_shipmentnum" name="shipmentnum"/>
+					<searchAttribute id="Transfers.ShipmentListView_searchAttribute_fromstoreloc" name="fromstoreloc"/>
+					<searchAttribute id="Transfers.ShipmentListView_searchAttribute_receipts" name="receipts"/>
+				</searchAttributes>
+
+				<sortOptions id="Transfers.ShipmentListView_list_sortOptions">
+					<sortOption id="Transfers.ShipmentListView_sortOption_shippedDate" label="Shipped Date">
+						<sortAttribute direction="desc" id="Transfers.ShipmentListView_sortOption_shippedDate_desc" name="shipdate"/>
+					</sortOption>
+				</sortOptions>
+				<!-- Tuan-out: add search attribute  -->
 				<listItemTemplate id="Transfers.ShipmentListView_listItemTemplate" layout="ShipmentLookupListItem">
 					<listtext id="Transfers.ShipmentListView_shipmentnum" layoutInsertAt="item1" resourceAttribute="shipmentnum"/>
 					<listtext id="Transfers.ShipmentListView_shipdate" layoutInsertAt="item2" resourceAttribute="shipdate"/>
@@ -2324,6 +2338,19 @@
 				<requiredResource id="Transfers.POListView_requiredResource_domainpostatus" name="domainpostatus"/>
 			</requiredResources>
 			<list displayPageSize="20" hideEmpty="true" id="Transfers.POListView_list" label="Records" resource="poResource" showHeader="true">
+				<!-- Tuan-in: add search attribute  -->
+				<searchAttributes id="Transfers.POListView_searchAttributes">
+					<searchAttribute id="Transfers.POListView_searchAttribute_ponum" name="ponum"/>
+					<searchAttribute id="Transfers.POListView_searchAttribute_description" name="description"/>
+					<searchAttribute id="Transfers.POListView_searchAttribute_receipts" name="receipts"/>
+				</searchAttributes>
+
+				<sortOptions id="Transfers.POListView_list_sortOptions">
+					<sortOption id="Transfers.POListView_sortOption_orderedDate" label="Ordered Date">
+						<sortAttribute direction="desc" id="Transfers.POListView_sortOption_orderedDate_desc" name="orderdate"/>
+					</sortOption>
+				</sortOptions>
+				<!-- Tuan-out: add search attribute  -->
 				<listItemTemplate id="Transfers.POListView_listItemTemplate" layout="POListItem">
 					<listtext cssClass="bold textappearance-medium" id="Transfers.POListView_ponum" layoutInsertAt="item1" resourceAttribute="ponum"/>
 					<listtext cssClass="bold textappearance-medium" id="Transfers.POListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
@@ -3054,7 +3081,7 @@
 				<attribute describedByProperty="spi:type" id="grnResource_type_spi_type" name="type"/>
 				<attribute describedByProperty="spi:createby" id="grnResource_createby_spi_createby" name="createby"/>
 				<attribute describedByProperty="spi:actualdate" id="grnResource_actualdate_spi_actualdate" name="actualdate"/>
-				<attribute describedByProperty="spi:ponum" id="grnResource_ponum_spi_ponum" name="ponum"/>
+				<attribute describedByProperty="spi:ponum" index="true" id="grnResource_ponum_spi_ponum" name="ponum"/>
 			</attributes>
 			<queryBases id="grnResource_queryBases">
 				<queryBase defaultForSearch="true" id="grnResource_queryBase_getAllReceivedMatUseTrans" name="getAllGRN" queryUri="/oslc/os/anywhere_grn"/>
@@ -3813,7 +3840,10 @@
 				<attribute describedByProperty="spi:anywhere_formnumber" id="receivedMatrectrans_spianywhereformnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:anywhere_documentref" id="receivedMatrectrans_spianywheredocumentref" index="true" name="documentref"/>
 				<attribute describedByProperty="spi:externalrefid" id="receivedMatrectrans_spiexternalrefid" name="externalrefid"/>
-				<attribute describedByProperty="spi:formno" id="receivedMatrectrans_spiformno" name="formno"/>
+				<!-- Tuan-in: fix resource mapping error -->
+				<attribute describedByProperty="spi:formnumber" id="receivedMatrectrans_spiformno" name="formno"/>
+				<!-- Tuan-in: fix resource mapping error -->
+
 				<attribute describedByProperty="spi:tobin" id="receivedMatrectrans_spi_tobin" name="tobin"/>
 				<attribute describedByProperty="spi:tolot" id="receivedMatrectrans_spi_tolot" name="tolot"/>
 				<!-- Loc-Out: -->
@@ -3923,8 +3953,9 @@
 				<attribute describedByProperty="spi:anywhere_formnumber" id="childMatrectrans_spianywhereformnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:anywhere_documentref" id="childMatrectrans_spianywheredocumentref" index="true" name="documentref"/>
 				<attribute describedByProperty="spi:externalrefid" id="childMatrectrans_spiexternalrefid" name="externalrefid"/>
-				<attribute describedByProperty="spi:formno" id="childMatrectrans_spiformno" name="formno"/>
-
+				<!-- Tuan-in: fix resource mapping error -->
+				<attribute describedByProperty="spi:formnumber" id="childMatrectrans_spiformno" name="formno"/>
+				<!-- Tuan-in: fix resource mapping error -->
 				<!-- Loc-Out: -->
 			</attributes>
 			<creationFactories id="childMatrectrans_creationFactories">

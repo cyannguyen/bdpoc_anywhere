@@ -367,6 +367,45 @@ define("application/handlers/TransfersHandler", [
             //#endregion Loc-Out: Add fields
         },
 
+        /* #region  Tuan-in: add update callout */
+        updateCallOutLookupData: function (eventContext) {
+            eventContext.application.showBusy();
+            var self = this;
+            var filter = [];
+            filter.push({ status: "APPR" });
+            filter.push({ internal: true });
+
+            var poPromise = ModelService.filtered(
+                "poResource",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                200,
+                true,
+                true,
+                null,
+                false
+            );
+            poPromise
+                .then(function (poSet) {
+                    poSet.sort("orderdate asc");
+                    poSet.resourceID = "grnPonumTemp";
+                    eventContext.application.addResource(poSet);
+
+                    eventContext.application.hideBusy();
+
+                    //verify if search result data is empty
+                    if (poSet.data.length == 0) {
+                        var msg =
+                            MessageService.createStaticMessage("emptySearchResult").getMessage();
+                        self.ui.showMessage(msg);
+                    }
+                })
+                .otherwise(function (error) {
+                    Logger.trace(self._className + ": " + error);
+                });
+        },
+        /* #endregion */
+
         /**
          * Search Reserved Items - Button action on search view
          */
@@ -1240,6 +1279,7 @@ define("application/handlers/TransfersHandler", [
                             //#endregion Loc-Out: adjust closePriorityChangeTransaction order
                             var splitrotateresource =
                                 eventContext.application.getResource("splitrotateresource");
+
                             if (splitrotateresource && splitrotateresource.count() > 0) {
                                 self.setStatus(eventContext, newStatus);
                                 self.setSearchView(eventContext, "Transfers.SearchInvreserveView");

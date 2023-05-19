@@ -975,6 +975,10 @@ define("application/handlers/TransfersAvailableItemsHandler", [
             transfers.setNullValue("tositeid");
             transfers.setNullValue("conversion");
             //#region Loc-Out: clear new fields
+
+            /* #region  Tuan-in: clear tostoreroomoffs */
+            transfers.setNullValue("tostoreroomoffs");
+            /* #endregion Tuan-out: clear tostoreroomoffs*/
         },
 
         /**
