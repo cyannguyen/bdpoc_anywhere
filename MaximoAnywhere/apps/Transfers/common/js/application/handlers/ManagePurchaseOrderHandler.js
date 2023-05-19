@@ -888,6 +888,13 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 //#region Loc-In: clear value field
                 poExternalResource.setNullValue("formno");
                 //#endregion Loc-Out: clear value field
+                /* #region  Tuan-in: clear  defaultBin text */
+                var transfers = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "defaultBinShipment"
+                ).getCurrentRecord();
+                transfers.setNullValue("defaultBin");
+                /* #endregion Tuan-in: clear  defaultBin text */
             },
 
             /**
@@ -1493,9 +1500,17 @@ define("application/handlers/ManagePurchaseOrderHandler", [
             /* #region  Tuan-in: update default checkbox   */
             initListFields: function (eventContext) {
                 var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
+                /* #region  Tuan-in: update default data bin, lot */
+                var defaultBinData = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "defaultBinShipment"
+                ).getCurrentRecord();
                 arrayUtil.forEach(records.data, function (item) {
                     item.set("receiveIndicator", true);
+                    item.set("tobin", defaultBinData.defaultBin);
+                    item.set("tolot", item.fromlot);
                 });
+                /* #endregion Tuan-in: update default data bin, lot  */
             },
             /* #endregion Tuan-in: update default checkbox  */
 
@@ -3336,7 +3351,17 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 ).getCurrentRecord();
                 var poNum = transfersLocalResource.ponum;
 
-                filter.push({ ponum: poNum });
+                //#region Loc-In: add formNo
+                //filter.push({ ponum: poNum });
+                var formno = transfersLocalResource.formno;
+
+                if (poNum) {
+                    filter.push({ ponum: poNum });
+                }
+                if (formno) {
+                    filter.push({ formno: formno });
+                }
+                //#endregion Loc-Out: add formNo
 
                 var poPromise = ModelService.filtered(
                     "poResource",

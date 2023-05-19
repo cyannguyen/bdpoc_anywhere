@@ -819,6 +819,13 @@ define("application/handlers/ReceiveShipmentHandler", [
                                                                                             ]
                                                                                     );
 
+                                                                                    /* #region  Tuan-in: set fromlot */
+                                                                                    newReceiptInputRecord.set(
+                                                                                        "fromlot",
+                                                                                        matrectransShipTransfer.fromlot
+                                                                                    );
+                                                                                    /* #endregion Tuan-out: set fromlot*/
+
                                                                                     if (
                                                                                         matrectransShipTransfer.rotassetnum
                                                                                     ) {

@@ -230,6 +230,10 @@
 				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_formnumberTemp" name="formnumberTemp"/>
 				<!-- <requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/> -->
 				<!-- Tuan-out: add formno lookup -->
+				<!-- Tuan-in: add defaultBinShipment -->
+				<requiredResource id="ReceiveShippedItemsSeachView_requiredResource_defaultBinShipment" name="defaultBinShipment"/>
+				<!-- Tuan-out: add defaultBinShipment -->
+				<!-- <requiredResource id="ReceiveShippedItemsSeachView_requiredResource_additionalReceivedMatrectrans" name="additionalReceivedMatrectrans"/> -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceiveShippedItemsSeachView_container_0">
 				<link id="Transfers.ReceiveShippedItemsSeachView_link" label="">
@@ -279,6 +283,17 @@
 					<!-- Loc-Out: Add FormNo -->
 				</group>
 			</container>
+			<!-- Tuan-in: add default data for binnum -->
+			<container id="Transfers.ReceiveShippedItemsSeachView_container_2" resource="defaultBinShipment">
+				<group id="Transfers.ReceiveShippedItemsSeachView_defaultBin_group_0">
+					<groupitem id="Transfers.ReceiveShippedItemsSeachView_defaultBin_groupitem_1">
+						<text editable="true" id="Transfers.ReceiveShippedItemsSeachView_defaultBin" label="Default data for Binnum" placeHolder="Tap to enter" resourceAttribute="defaultBin">
+						</text>
+					</groupitem>
+				</group>
+			</container>
+			<!-- Tuan-out: add default data for binnum -->
+
 			<footer id="Transfers.ReceiveShippedItemsSeachView_footer">
 				<button id="Transfers.ReceiveShippedItemsSeachView_Clear_button" label="Clear">
 					<eventHandlers id="Transfers.ReceiveShippedItemsSeachView_Clear_button_eventHandlers">
@@ -451,6 +466,9 @@
 				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_contactnoTemp" name="contactnoTemp"/>
 				<!-- <requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_additionalPOMatrectrans" name="additionalPOMatrectrans"/> -->
 				<!-- Tuan-out: add contact number lookup -->
+				<!-- Tuan-in: add defaultBinShipment -->
+				<requiredResource id="Transfers.ReceivePurchaseOrderItemsSeachView_requiredResource_defaultBinShipment" name="defaultBinShipment"/>
+				<!-- Tuan-out: add defaultBinShipment -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ReceivePurchaseOrderItemsSeachView_error_container_0">
 				<link id="Transfers.ReceivePurchaseOrderItemsSeachView_link" label="">
@@ -499,6 +517,17 @@
 					<!-- Loc-Out: Add FormNo Searching -->
 				</group>
 			</container>
+			<!-- Tuan-in: add default data for binnum -->
+			<container id="Transfers.ReceivePurchaseOrderItemsSeachView_container_2" resource="defaultBinShipment">
+				<group id="Transfers.ReceivePurchaseOrderItemsSeachView_defaultBin_group_0">
+					<groupitem id="Transfers.ReceivePurchaseOrderItemsSeachView_defaultBin_groupitem_1">
+						<text editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_defaultBin" label="Default data for Binnum" placeHolder="Tap to enter" resourceAttribute="defaultBin">
+						</text>
+					</groupitem>
+				</group>
+			</container>
+			<!-- Tuan-out: add default data for binnum -->
+
 			<footer id="Transfers.ReceivePurchaseOrderItemsSeachView_footer">
 				<button id="Transfers.ReceivePurchaseOrderItemsSeachView_Clear_button" label="Clear">
 					<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_Clear_button_eventHandlers">
@@ -728,6 +757,10 @@
 				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnResource" name="grnResource" reload="false"/>
 				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_grnTemp" name="grnTemp" reload="false"/>
 				<!-- Tuan-in: add grn resource -->
+
+				<!-- Tuan-in: add defaultBinShipment -->
+				<requiredResource id="Transfers.ShipmentItemsListView_requiredResource_defaultBinShipment" name="defaultBinShipment" reload="false"/>
+				<!-- Tuan-out: add defaultBinShipment -->
 			</requiredResources>
 			<container cssClass="errorheader" id="Transfers.ShipmentItemsListView_container_0">
 				<link id="Transfers.ShipmentItemsListView_link" label="">
@@ -793,9 +826,11 @@
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ShipmentItemsListView_tobin_eventhandler_click" method="toBinLotLookup"/>
 							</eventHandlers>
 						</button> -->
-						<eventHandlers id="Transfers.ShipmentItemsListView_frombin_eventHandlers">
+						<!-- Tuan-in: remove event, tolot always be fromlot -->
+						<!-- <eventHandlers id="Transfers.ShipmentItemsListView_frombin_eventHandlers">
 							<eventHandler id="Transfers.ShipmentItemsListView_frombin_eventHandlers_datachange" event="datachange" class="application.handlers.ReceiveShipmentHandler" method="handleTobinReceiveShipment" />
-						</eventHandlers>
+						</eventHandlers> -->
+						<!-- Tuan-out: remove event, tolot always be fromlot -->
 					</text>
 					<!-- Tuan-in: update tobin incoming items -->
 					<!-- label="To Bin" -->
@@ -2568,7 +2603,7 @@
 			</list>
 			<returnAttributes id="Transfers.ToBinLookup_returnAttributes">
 				<returnAttribute id="Transfers.ToBinLookup_returnAttributes_binnum" sourceAttribute="binnum" targetAttribute="tobin"/>
-				<returnAttribute id="Transfers.ToBinLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="tolot"/>
+				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_lotnum" sourceAttribute="lotnum" targetAttribute="tolot"/> -->
 				<!-- <returnAttribute id="Transfers.ToBinLookup_returnAttributes_curbal" sourceAttribute="curbal" targetAttribute="quantitydue"/> -->
 			</returnAttributes>
 		</lookup>
@@ -2984,6 +3019,14 @@
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
+
+		<!-- Tuan-in: add default bin for all item in search shipment - po -->
+		<resource id="defaultBinShipment" inMemory="true" name="defaultBinShipment" singleton="true">
+			<attributes id="defaultBinShipment_attributes">
+				<localAttribute dataType="string" id="defaultBinShipmenta_defaultBin_string" name="defaultBin"/>
+			</attributes>
+		</resource>
+		<!-- Tuan-in: add default bin for all item in search shipment - po -->
 
 		<!-- Tuan-in: grn resource -->
 		<!-- <resource id="grnSearchLookupData" inMemory="true" name="grnSearchLookupData" singleton="true">
@@ -3823,6 +3866,9 @@
 				<attribute describedByProperty="spi:item{spi:rotating}" id="receivedMatrectrans_spi_itemrotating" name="itemrotating"/>
 				<attribute describedByProperty="spi:item{spi:issueunit}" id="receivedMatrectrans_spi_issueunit" name="issueunit"/>
 				<attribute describedByProperty="spi:awreceiverotasset" describedByResource="awreceiverotassetResource" id="receivedMatrectrans_spi_awreceiverotasset" name="awreceiverotasset"/>
+				<!-- Tuan-in: add fromlot -->
+				<attribute describedByProperty="spi:fromlot" id="receivedMatrectrans_spi_fromlot" name="fromlot"/>
+				<!-- Tuan-out: add fromlot -->
 				<localAttribute dataType="double" formula="${0}" id="receivedMatrectrans_rejectqty" name="localrejectqty"/>
 				<localAttribute dataType="double" formula="(${quantity}/${conversion})-${inspectedqty}" id="receivedMatrectrans_acceptqty" name="localacceptqty"/>
 				<localAttribute dataType="string" id="receivedMatrectrans_quantityDue" index="true" name="quantityDue"/>
@@ -4014,6 +4060,9 @@
 				<attribute describedByProperty="spi:receiptref" id="poListComplexMatrectrans_spi_receiptref" index="true" name="receiptref"/>
 				<attribute describedByProperty="spi:tobin" id="poListComplexMatrectrans_spi_tobin" name="tobin"/>
 				<attribute describedByProperty="spi:tolot" id="poListComplexMatrectrans_spi_tolot" name="tolot"/>
+				<!-- Tuan-in: add fromlot -->
+				<attribute describedByProperty="spi:fromlot" id="poListComplexMatrectrans_spi_fromlot" name="fromlot"/>
+				<!-- Tuan-out: add fromlot -->
 				<!-- Loc-Out: Add attributes -->
 				<localAttribute dataType="string" id="poListComplexMatrectrans_newassetnumber" name="newassetnumber"/>
 				<localAttribute dataType="double" formula="${0}" id="poListComplexMatrectrans_rejectqty" name="localrejectqty"/>
@@ -5085,6 +5134,9 @@
 				<localAttribute dataType="string" id="receiptInput_issueTo_string" name="issueTo"/>
 				<localAttribute dataType="boolean" formula="false" id="receiptInput_returnindicator_boolean" name="returnindicator"/>
 				<localAttribute dataType="string" id="receiptInput_positeid_string" name="positeid"/>
+				<!-- Tuan-in: add fromlot -->
+				<localAttribute dataType="string" id="receiptInput_fromlot_string" name="fromlot"/>
+				<!-- Tuan-in: add fromlot -->
 				<!-- Loc-In: Add attributes -->
 				<localAttribute dataType="string" id="receiptInput_modelnum_string" name="modelnumref"/>
 				<localAttribute dataType="string" id="receiptInput_lotnum_string" name="lotnum"/>

@@ -604,6 +604,14 @@ define("application/handlers/TransfersHandler", [
             transfers.setNullValue("formno");
             transfers.setNullValue("documentref");
             //#endregion Loc-Out: clear formno value
+
+            /* #region  Tuan-in: clear  defaultBin text */
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "defaultBinShipment"
+            ).getCurrentRecord();
+            transfers.setNullValue("defaultBin");
+            /* #endregion Tuan-in: clear  defaultBin text */
         },
 
         resetAdditionalItemFields: function (eventContext) {
