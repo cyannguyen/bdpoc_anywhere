@@ -1795,11 +1795,13 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                 "return"
                                             )
                                         );
-                                        deferredsArray.push(
-                                            self.prepareExternalListRotatingItemsToReturn(
-                                                eventContext
-                                            )
-                                        );
+                                        /* #region Tuan-in: remove check rotating items to return  */
+                                        // deferredsArray.push(
+                                        //     self.prepareExternalListRotatingItemsToReturn(
+                                        //         eventContext
+                                        //     )
+                                        // );
+                                        /* #endregion Tuan-out: remove check rotating items to return */
 
                                         all(deferredsArray).then(function (results) {
                                             //ModelService.empty("receiptInput").then(function(receiptInputSet){
