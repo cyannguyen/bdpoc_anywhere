@@ -892,8 +892,11 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 var transfers = CommonHandler._getAdditionalResource(
                     eventContext,
                     "defaultBinShipment"
-                ).getCurrentRecord();
-                transfers.setNullValue("defaultBin");
+                );
+                if (transfers) {
+                    var record = transfers.getCurrentRecord();
+                    record.setNullValue("defaultBin");
+                }
                 /* #endregion Tuan-in: clear  defaultBin text */
             },
 
@@ -1447,12 +1450,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     eventContext,
                     "receiptInput"
                 );
-                if (receiptInput != null) {
-                    console.log(receiptInput.data);
-                } else {
-                    console.log("receiptInput null");
-                    return;
-                }
                 arrayUtil.forEach(receiptInput.data, function (record) {
                     console.log("Record: ", record);
                     if (record.ponum != null) {
@@ -1474,17 +1471,62 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 grnPromise.then(function (grnSet) {
                     if (grnSet.data.length > 0) {
                         var formno = grnSet.data[0].formnumber;
-                        console.log("formno: ", formno);
                         arrayUtil.forEach(receiptInput.data, function (record) {
-                            if (record.formno == null) {
+                            if (!record.formno) {
                                 record.set("formno", formno);
                             }
                         });
                     }
-                    console.log("receiptInput.data", receiptInput.data);
                     ModelService.clearSearchResult(grnSet);
                     grnSet.resourceID = "grnTemp";
                     eventContext.application.addResource(grnSet);
+                });
+            },
+
+            updateFormnumberManagePO: function (eventContext) {
+                var filter = [];
+                var receiptInput = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "poComplexMatrectrans"
+                );
+                arrayUtil.forEach(receiptInput.data, function (record) {
+                    if (record.ponum != null) {
+                        filter.push({ ponum: record.ponum });
+                    }
+                });
+                console.log("Filter: ", filter);
+                var grnPromise = ModelService.filtered(
+                    "grnResource",
+                    null,
+                    filter,
+                    1000,
+                    true,
+                    true,
+                    null,
+                    false
+                );
+                grnPromise.then(function (grnSet) {
+                    if (grnSet.data.length > 0) {
+                        var formno = grnSet.data[0].formnumber;
+                        arrayUtil.forEach(receiptInput.data, function (record) {
+                            if (!record.grn_formnumber) {
+                                record.set("grn_formnumber", formno);
+                            }
+                        });
+                    }
+                    ModelService.clearSearchResult(grnSet);
+                    grnSet.resourceID = "grnTemp";
+                    eventContext.application.addResource(grnSet);
+                });
+            },
+
+            initListManagePo: function (eventContext) {
+                var receiptInput = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "poComplexMatrectrans"
+                );
+                arrayUtil.forEach(receiptInput.data, function (record) {
+                    record.setDateValue("actualdate", new Date());
                 });
             },
 
@@ -1795,11 +1837,13 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                 "return"
                                             )
                                         );
-                                        deferredsArray.push(
-                                            self.prepareExternalListRotatingItemsToReturn(
-                                                eventContext
-                                            )
-                                        );
+                                        /* #region Tuan-in: remove check rotating items to return  */
+                                        // deferredsArray.push(
+                                        //     self.prepareExternalListRotatingItemsToReturn(
+                                        //         eventContext
+                                        //     )
+                                        // );
+                                        /* #endregion Tuan-out: remove check rotating items to return */
 
                                         all(deferredsArray).then(function (results) {
                                             //ModelService.empty("receiptInput").then(function(receiptInputSet){
@@ -1908,7 +1952,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                             flushPromise
                                 .then(function () {
                                     //All set to get data from server
-                                    oslcQueryParameters["sqp:poNum"] = poNum;
                                     oslcQueryParameters["sqp:siteid"] = siteid;
 
                                     //Using complex query to retrieve assettrans
@@ -1935,6 +1978,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                     issueTypeSet,
                                                     "RETURN"
                                                 );
+
                                             var filter = [{ issuetype: returnIssueType }];
 
                                             //get list of materectrans
@@ -3501,6 +3545,11 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 newReceipt.set("ponum", matrectransRef.ponum);
                 newReceipt.set("polinenum", matrectransRef.polinenum);
                 newReceipt.set("exchangerate", matrectransRef.exchangerate);
+
+                /* #region  Tuan-in: add grn */
+                newReceipt.set("grn_formnumber", matrectransRef.grn_formnumber);
+                newReceipt.set("actualdate", matrectransRef.actualdate);
+                /* #endregion  Tuan-in: add grn */
 
                 if (matrectransRef.packingslipnum && matrectransRef.packingslipnum.length > 0) {
                     newReceipt.set("packingslipnum", matrectransRef.packingslipnum);

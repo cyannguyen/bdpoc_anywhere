@@ -373,7 +373,7 @@ define("application/handlers/ReceiveShipmentHandler", [
                                     matrectrans.set("positeid", currentRecord.positeid);
 
                                     /* #region  Tuan-in: add grn number */
-                                    matrectrans.set("formno", currentRecord.formno);
+                                    matrectrans.set("grn_formnumber", currentRecord.formno);
                                     /* #endregion */
                                 }
                             }

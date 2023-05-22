@@ -12,8 +12,8 @@
  */
 
 /**
- * Module returning a class to create and handle receipt for Shipment & Transfers application.
- * @module application/handlers/ReceiveShipmentHandler
+ * Module returning a class to create and handle shipment of reserved items.
+ * @module application/handlers/TransfersHandler
  * @augments dojo._base.declare
  * @augments dojo._base.array
  * @augments dojo._base.lang
@@ -38,7 +38,6 @@
  * @augments application.business.InvuseObject
  * @augments application.handlers.CommonHandler
  * @augments application.business.FieldUtil
- * @augments application.handlers.TransfersHandler
  * @see {@link https://dojotoolkit.org/reference-guide/1.10/dojo/_base/declare.html|base Declare Documentation}
  * @see {@link http://dojotoolkit.org/reference-guide/1.10/dojo/_base/array.html|base Array Documentation}
  * @see {@link https://dojotoolkit.org/reference-guide/1.10/dojo/_base/lang.html|base Lang Documentation}
@@ -46,10 +45,9 @@
  * @see {@link http://dojotoolkit.org/reference-guide/1.10/dojo/promise/all.html|Promise all Documentation}
  * @see {@link https://dojotoolkit.org/reference-guide/1.10/dojo/topic.html|Topic Documentation}
  * @see {@link https://dojotoolkit.org/reference-guide/1.10/dojo/number.html|Number Documentation}
- * @see {@link module:application/handlers/TransfersHandler}
- *
  */
-define("application/handlers/ReceiveShipmentHandler", [
+
+define("application/handlers/TransfersHandler", [
     "dojo/_base/declare",
     "dojo/_base/array",
     "dojo/_base/lang",
@@ -76,7 +74,6 @@ define("application/handlers/ReceiveShipmentHandler", [
     "dojo/topic",
     "application/business/AppConfig",
     "dojo/number",
-    "application/handlers/TransfersHandler",
 ], function (
     declare,
     arrayUtil,
@@ -103,3109 +100,3383 @@ define("application/handlers/ReceiveShipmentHandler", [
     all,
     topic,
     AppConfig,
-    NumberUtil,
-    TransfersHandler
+    NumberUtil
 ) {
-    return declare(
-        [ApplicationHandlerBase, AsyncAwareMixin],
+    /* #region Tuan-in: handle tolot in case user input a new lot number  */
+    var isFromBinChanging = false;
+    /* #region Tuan-in: handle tolot in case user input a new lot number  */
+    return declare([ApplicationHandlerBase, AsyncAwareMixin], {
         /**
-         * @lends platform.handlers._ApplicationHandlerBase#
-         * @lends platform.util.AsyncAwareMixin#
+         * @memberof module:application/handlers/TransfersHandler#
+         * @property {String} _className Name of this module
+         * @private
          */
-        {
-            /**
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @property {String} _className Name of this module
-             * @private
-             */
-            _className: "[application.handlers.ReceiveShipmentHandler]",
-
-            /**
-             * Validation for quantity field on Shipment Receive Item.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - It brings context into function
-             * @param	{Object} currentRecord - Object record to be validated against
-             * @return	{Boolean} True if valid object, false otherwise.
-             * @public
-             */
-            /**@memberOf application.handlers.ReceiveShipmentHandler */
-            validateNumericFieldShippedItem: function (eventContext, currentRecord) {
-                if (!currentRecord) {
-                    currentRecord = eventContext.getCurrentRecord();
-                }
-                var item = currentRecord.get("itemnum");
-                var qty = currentRecord.get("quantitydue");
-                var rotassetnum = currentRecord.get("rotassetnum");
-                var qtyAvailable = currentRecord.get("quantityAvailableToReceive");
-
-                //verify if issue quantity is a positive number
-                if (NumberUtil.parse(qty, this.application.getUserLocale()) < 0) {
-                    var msg = MessageService.createResolvedMessage("quantityPositive");
-                    this.ui.showMessage(msg);
-                    return false;
-                }
-                //verify if issue quantity is a valid number
-                else if (qty == null || qty == undefined || isNaN(NumberUtil.parse(Number(qty)))) {
-                    var msg = MessageService.createResolvedMessage("newReadingNaN", [qty]);
-                    this.ui.showMessage(msg);
-                    return false;
-                }
-                //quantity entered must not be greater than quantity available to receive
-                else if (qtyAvailable < qty) {
-                    var msg = MessageService.createResolvedMessage("quantityItemValidation", [
-                        qtyAvailable,
-                        item,
-                    ]);
-                    this.ui.showMessage(msg);
-                    return false;
-                }
-                //the quantity for rotating item must be 1
-                else if (rotassetnum && qty > 1) {
-                    var msg = MessageService.createResolvedMessage("quantityForRotatingAsset", [
-                        item,
-                    ]);
-                    this.ui.showMessage(msg);
-                    return false;
-                }
-                return true;
-            },
-
-            /* #region Tuan-in: add selectall */
-            handleClickAllFilterItem: function (eventContext) {
-                var records = CommonHandler._getAdditionalResource(eventContext, "receiptInput");
-                if (records && records.count() > 0) {
-                    var isSelectAll = records.data[records.data.length - 1].receiveIndicator;
-                    arrayUtil.forEach(records.data, function (item) {
-                        item.set("receiveIndicator", !isSelectAll);
-                    });
-                }
-            },
-            /* #endregion Tuan-out: add selectall */
-
-            /**
-             * Validate if wonum or gldebitacct are populated and Issue To field is empty
-             * Show message indicating Issue To field is required.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @return	{*} Sends transaction up to server
-             * @public
-             */
-            validateIssueTo: function (eventContext, elem) {
-                var issue = elem.get("issue");
-
-                //only validate if issue == true.
-                if (issue == true) {
-                    if (elem.issueTo == undefined || elem.issueTo == null) {
-                        var msg = MessageService.createResolvedMessage("issueToRequired", [
-                            elem.itemnum,
-                        ]);
-                        this.ui.showMessage(msg);
-                        return false;
-                    }
-                }
-
-                return true;
-            },
-
-            /**
-             * Shipment Receive Item action.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @return	{*} Sends transaction up to server
-             * @public
-             */
-            shipmentReceiveItem: function (eventContext) {
-                //show busy
-                eventContext.application.showBusy();
-
-                var domainitemtypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainitemtype"
-                );
-
-                var receiveExtPo = false;
-                if (
-                    WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2].id ==
-                        "Transfers.ReceivePurchaseOrderItemsSeachView" ||
-                    WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2].id ==
-                        "Transfers.MultiPOListView"
-                ) {
-                    receiveExtPo = true;
-                }
-
-                //iterate over all records on list and check if at least on item has positive quantity
-                var countItemsPositiveQuantity = 0;
-                var issueToErrorThrown = false;
-
-                /* #region  Tuan-in: add checkbox */
-                var receiptInputSet = eventContext.getResource("receiptInput");
-                this.checkBoxValidation(eventContext, receiptInputSet, "receiveIndicator");
-                /* #endregion  Tuan-in: add checkbox  */
-
-                for (var index in eventContext.getResource("receiptInput").data) {
-                    var elem = eventContext.getResource("receiptInput").data[index];
-
-                    /* #region Tuan-in: check formno null for PO */
-                    if (receiveExtPo && elem.formno == null) {
-                        var requiredMsg =
-                            MessageService.createStaticMessage("requiredField").getMessage();
-                        eventContext.ui.showMessage(requiredMsg);
-                        return;
-                    }
-                    /* #endregion Tuan-in: check formno null for PO */
-
-                    if (!elem.itemnum && elem.quantitydue > 0) {
-                        //IJ08694
-                        // record must have an itemnum otherwise it can't be received
-                        eventContext.ui.showMessage(msg);
-                        return;
-                    }
-
-                    if (issueToErrorThrown) {
-                        eventContext.application.hideBusy();
-                        return;
-                    }
-
-                    //validate IssueTo for External Purchase Order Receiving
-                    if (receiveExtPo) {
-                        var linetype = SynonymDomain.resolveToInternal(
-                            domainitemtypes,
-                            elem.linetype
-                        );
-                        if (linetype == "TOOL" && elem.quantitydue > 0) {
-                            if (!this.validateIssueTo(eventContext, elem)) {
-                                issueToErrorThrown = true;
-                                eventContext.application.hideBusy();
-                                return;
-                            }
-                        }
-                    }
-
-                    if (!this.validateNumericFieldShippedItem(eventContext, elem)) {
-                        eventContext.application.hideBusy();
-                        return;
-                    }
-                    if (elem.get("quantitydue") > 0) {
-                        countItemsPositiveQuantity++;
-                    }
-                }
-
-                if (issueToErrorThrown) {
-                    eventContext.application.hideBusy();
-                    return;
-                }
-
-                if (countItemsPositiveQuantity == 0) {
-                    var msg = MessageService.createResolvedMessage("quantityPositive");
-                    eventContext.application.hideBusy();
-                    eventContext.ui.showMessage(msg);
-                    return;
-                }
-
-                var domainIssueTypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                var issuetype = "";
-
-                if (receiveExtPo) {
-                    issuetype = SynonymDomain.resolveToDefaultExternal(domainIssueTypes, "RECEIPT");
-                } else {
-                    issuetype = SynonymDomain.resolveToDefaultExternal(
-                        domainIssueTypes,
-                        "SHIPRECEIPT"
-                    );
-                }
-
-                //construct a list of items to display
-                ModelService.empty("receivedMatrectrans")
-                    .then(function (matrectransSet) {
-                        var currentResource = eventContext.getResource();
-                        currentResource.foreach(function (currentRecord) {
-                            //check if the qty to receive is valid
-                            if (currentRecord.quantitydue > 0) {
-                                //create matrectrans record
-                                matrectrans = matrectransSet.createNewRecord();
-
-                                matrectrans.set("shipment", currentRecord.shipmentnum);
-                                matrectrans.set("shipmentlinenum", currentRecord.shipmentlinenum);
-                                //var linecost = currentRecord.qtyrequested * currentRecord.unitcost;
-                                //matrectrans.set('linecost', linecost);
-                                //receiptref comes from matrectransid of the first transaction of matrectrans
-                                matrectrans.set("receiptref", Number(currentRecord.matrectransid));
-                                matrectrans.set("ponum", currentRecord.ponum);
-                                matrectrans.set("polinenum", currentRecord.polinenum);
-                                matrectrans.set("issuetype", issuetype);
-                                //matrectrans.set('unitcost', currentRecord.unitcost);
-                                matrectrans.set("qtyrequested", currentRecord.qtyrequested);
-                                matrectrans.set("itemnum", currentRecord.itemnum);
-                                matrectrans.set("itemdesc", currentRecord.itemdesc);
-                                matrectrans.set("actualcost", currentRecord.actualcost);
-                                matrectrans.set("rejectqty", currentRecord.rejectqty);
-                                matrectrans.set("enterby", currentRecord.enterby);
-                                matrectrans.set("outside", currentRecord.outside);
-                                matrectrans.set("issue", currentRecord.issue);
-                                matrectrans.set("currencycode", currentRecord.currencycode);
-                                matrectrans.set("loadedcost", currentRecord.loadedcost);
-                                matrectrans.set("prorated", currentRecord.prorated);
-                                matrectrans.set("curbal", currentRecord.curbal);
-                                matrectrans.set("orgid", currentRecord.orgid);
-                                matrectrans.set("siteid", currentRecord.siteid);
-                                matrectrans.set("costinfo", currentRecord.costinfo);
-                                matrectrans.set("enteredastask", currentRecord.enteredastask);
-                                matrectrans.set("fromsiteid", currentRecord.fromsiteid);
-                                matrectrans.set("linetype", currentRecord.linetype);
-                                matrectrans.set("consignment", currentRecord.consignment);
-                                matrectrans.set("receiptquantity", currentRecord.quantitydue); //same works if use quantity
-                                matrectrans.set("conversion", currentRecord.conversion);
-                                //#region Loc-In: set Actual Date, tobin
-                                matrectrans.set("actualdate", currentRecord.actualdate);
-                                matrectrans.set("tobin", currentRecord.tobin);
-                                matrectrans.set("tolot", currentRecord.tolot);
-                                matrectrans.set("externalrefid", "FROMMOBILE");
-                                //#endregion Loc-Out: set Actual Date, tobin
-
-                                if (receiveExtPo) {
-                                    matrectrans.set("issueto", currentRecord.issueTo);
-                                    matrectrans.set("positeid", currentRecord.positeid);
-
-                                    /* #region  Tuan-in: add grn number */
-                                    matrectrans.set("formno", currentRecord.formno);
-                                    /* #endregion */
-                                }
-                            }
-                        });
-
-                        //this is here because when we are doing the search we are getting: <__created__><__search__> and this
-                        //makes our records not appears on search. So, removing the created part, we can see they inside set on search.
-                        arrayUtil.forEach(matrectransSet.data, function (data) {
-                            data.removeFromQueryBase("__created__");
-                        });
-
-                        ModelService.save(matrectransSet)
-                            .then(function () {
-                                //this clear should be enough, but it is not working well, for this reason we are saving after removing the created query string.
-                                ModelService.clearSearchResult(matrectransSet);
-                                //#region Loc-In: clear search fields
-                                eventContext.application[
-                                    "application.handlers.ReceiveShipmentHandler"
-                                ].clearSearchFields(eventContext);
-                                //#endregion Loc-Out: clear search fields
-                                if (receiveExtPo) {
-                                    //eventContext.ui.returnToView("Transfers.ReceivePurchaseOrderItemsSeachView");
-                                    eventContext.ui.show("Transfers.TransactionSubmitDialog");
-                                } else {
-                                    eventContext.ui.returnToView(
-                                        "Transfers.ReceiveShippedItemsSeachView"
-                                    );
-                                }
-                                eventContext.application.hideBusy();
-                            })
-                            .otherwise(function (err) {
-                                eventContext.application.hideBusy();
-                                eventContext.ui.showMessage(err);
-                            });
-                    })
-                    .otherwise(function (err) {
-                        eventContext.application.hideBusy();
-                        eventContext.ui.showMessage(err);
-                    });
-            },
-
-            /**
-             * Search from Shipment Search View
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object}	eventContext - Brings context into function
-             * @return	{}			Process list of shipments available for receipt
-             * @public
-             */
-            searchShipment: function (eventContext) {
-                var filter = [];
-                var oslcQueryParameters = {};
-                var transfersRecord = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var siteid = UserManager.getInfo("defsite");
-                var shipmentnum = transfersRecord.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersRecord.formno;
-                var documentref = transfersRecord.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-                var self = this;
-                var emptySearchResultMsg =
-                    MessageService.createStaticMessage("emptySearchResult").getMessage();
-                var domainIssueTypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                var shiptransferIssueType = SynonymDomain.resolveToDefaultExternal(
-                    domainIssueTypes,
-                    "SHIPTRANSFER"
-                );
-                var shipreturnIssueType = SynonymDomain.resolveToDefaultExternal(
-                    domainIssueTypes,
-                    "SHIPRETURN"
-                );
-                var transferIssueType = SynonymDomain.resolveToDefaultExternal(
-                    domainIssueTypes,
-                    "TRANSFER"
-                );
-                var domaininvusereceipts = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domaininvusereceipts"
-                );
-
-                //verify if we have at least one field filled
-                //#region Loc-In: Loc-In: Add FromNo, DocumentRef
-                //if(!shipmentnum){{
-                //#region Tuan-In: fix syntax error
-                // if (!shipmentNum && !formno && !documentref) {
-                if (!shipmentnum && !formno && !documentref) {
-                    //#endregion Tuan-In: fix syntax error
-                    //#endregion Loc-Out: Loc-In: Add FromNo, DocumentRef
-                    self.ui.showMessage(emptySearchResultMsg);
-                    return;
-                }
-
-                var transfersHand = new TransfersHandler();
-
-                //check for errors
-                if (transfersHand.getError(eventContext)) {
-                    throw new PlatformRuntimeException("reviewErrors");
-                }
-
-                eventContext.application.showBusy();
-                // Checking connectivity
-                CommunicationManager.checkConnectivityAvailable().then(function (hasConnectivity) {
-                    if (hasConnectivity) {
-                        //flush transactions before searching
-                        var flushPromise = PushingCoordinatorService.flush();
-                        flushPromise
-                            .then(function () {
-                                //#region Loc-In: Add FormNo, DocumentRef
-                                //filter.push({shipmentnum: shipmentnum});
-
-                                if (formno) {
-                                    filter.push({ formnumber: '"' + formno + '"' });
-                                }
-                                if (documentref) {
-                                    filter.push({ documentref: '"' + documentref + '"' });
-                                }
-
-                                if (shipmentnum) {
-                                    filter.push({ shipmentnum: shipmentnum });
-                                }
-                                //#endregion Loc-Out: Add FormNo, DocumentRef
-                                filter.push({ siteid: siteid });
-
-                                ModelService.all(
-                                    "shipment",
-                                    PlatformConstants.SEARCH_RESULT_QUERYBASE
-                                ).then(function (searchResultSet) {
-                                    ModelService.clearSearchResult(searchResultSet);
-
-                                    var shipmentPromise = ModelService.filtered(
-                                        "shipment",
-                                        PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                        filter,
-                                        1000,
-                                        true,
-                                        true,
-                                        oslcQueryParameters,
-                                        false
-                                    );
-                                    shipmentPromise
-                                        .then(function (shipmentSet) {
-                                            //verify if search result data is empty
-                                            if (shipmentSet.data.length == 0) {
-                                                self.ui.showMessage(emptySearchResultMsg);
-                                                return;
-                                            }
-
-                                            //before look at shipmentline we need to guarantee that it is available
-                                            shipmentSet.data[0]
-                                                .getModelDataSet("shipmentline", true)
-                                                .then(function (test) {
-                                                    //verify if search result data is empty
-                                                    if (shipmentSet.data.length == 0) {
-                                                        self.ui.showMessage(emptySearchResultMsg);
-                                                        return;
-                                                    }
-
-                                                    filter = [];
-                                                    //#region Loc-In: Add FormNo, DocumentRef
-                                                    //filter.push({shipment: shipmentnum});
-                                                    if (shipmentnum) {
-                                                        filter.push({ shipment: shipmentnum });
-                                                    }
-                                                    if (formno) {
-                                                        filter.push({ formnumber: formno });
-                                                    }
-                                                    if (documentref) {
-                                                        filter.push({ documentref: documentref });
-                                                    }
-                                                    //#region Loc-Out: Add FormNo, DocumentRef
-
-                                                    var matrectransPromise = ModelService.filtered(
-                                                        "receivedMatrectrans",
-                                                        PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                                        filter,
-                                                        1000,
-                                                        true,
-                                                        true,
-                                                        oslcQueryParameters,
-                                                        false
-                                                    );
-                                                    matrectransPromise
-                                                        .then(function (matrectransSet) {
-                                                            //for each shipmentline we need to calculate the quantity to decided if there is something to receive
-                                                            if (
-                                                                !shipmentSet ||
-                                                                !shipmentSet.data ||
-                                                                !shipmentSet.data[0] ||
-                                                                !shipmentSet.data[0].shipmentline
-                                                            ) {
-                                                                return;
-                                                            }
-
-                                                            //verify if search result data is empty
-                                                            if (matrectransSet.data.length == 0) {
-                                                                self.ui.showMessage(
-                                                                    emptySearchResultMsg
-                                                                );
-                                                                return;
-                                                            }
-
-                                                            //construct a list of items to display
-                                                            ModelService.empty("receiptInput")
-                                                                .then(function (receiptInputSet) {
-                                                                    //verify if search result data is empty
-                                                                    if (
-                                                                        shipmentSet.data.length == 0
-                                                                    ) {
-                                                                        self.ui.showMessage(
-                                                                            emptySearchResultMsg
-                                                                        );
-                                                                        return;
-                                                                    }
-
-                                                                    //we need a count to know if there are something to show on a list
-                                                                    var count = 0;
-
-                                                                    //iterate over each shipmentline record
-                                                                    shipmentSet.data[0].shipmentline.data.forEach(
-                                                                        function (
-                                                                            shipmentlineElem
-                                                                        ) {
-                                                                            //verify if rectransid is null
-                                                                            if (
-                                                                                !shipmentlineElem.rectransid
-                                                                            ) {
-                                                                                /*
-                                                                                 * This logic comes from maximo - file: ReceiptInputSet.java and method: createShipmentReceiptsPrep
-                                                                                 */
-                                                                                var shipmentLineConversion = 0;
-                                                                                if (
-                                                                                    shipmentlineElem.conversion
-                                                                                ) {
-                                                                                    shipmentLineConversion =
-                                                                                        shipmentlineElem.conversion;
-                                                                                }
-                                                                                if (
-                                                                                    shipmentLineConversion ==
-                                                                                    0
-                                                                                ) {
-                                                                                    shipmentLineConversion = 1;
-                                                                                }
-
-                                                                                var qtySum = 0;
-                                                                                var matrectransQuantityDue = 0;
-                                                                                var receivedunit =
-                                                                                    [];
-                                                                                //make a copy of shiptransfer item to fill some values on receive action
-                                                                                var matrectransShipTransfer =
-                                                                                    null;
-                                                                                matrectransSet.data.forEach(
-                                                                                    function (
-                                                                                        matrectransElem,
-                                                                                        matrectransPos,
-                                                                                        matrectransArray
-                                                                                    ) {
-                                                                                        if (
-                                                                                            matrectransElem.shipmentlinenum ==
-                                                                                            shipmentlineElem.shipmentlinenum
-                                                                                        ) {
-                                                                                            //now we have a copy of matrectrans to fill some attribute values
-                                                                                            if (
-                                                                                                matrectransElem.issuetype ==
-                                                                                                shiptransferIssueType
-                                                                                            ) {
-                                                                                                matrectransShipTransfer =
-                                                                                                    matrectransElem;
-                                                                                            }
-                                                                                            //make the calculus of quantity that we can receive
-                                                                                            else if (
-                                                                                                matrectransElem.issuetype !=
-                                                                                                    transferIssueType &&
-                                                                                                matrectransElem.issuetype !=
-                                                                                                    shipreturnIssueType
-                                                                                            ) {
-                                                                                                qtySum +=
-                                                                                                    (matrectransElem.conversion /
-                                                                                                        shipmentLineConversion) *
-                                                                                                    matrectransElem.quantity;
-                                                                                            }
-                                                                                        }
-                                                                                        //if issuetype is null, uses receivedunit
-                                                                                        if (
-                                                                                            !receivedunit[
-                                                                                                matrectransElem
-                                                                                                    .itemnum
-                                                                                            ]
-                                                                                        ) {
-                                                                                            receivedunit[
-                                                                                                matrectransElem.itemnum
-                                                                                            ] =
-                                                                                                matrectransElem.receivedunit ||
-                                                                                                matrectransElem.issueunit;
-                                                                                        }
-                                                                                    }
-                                                                                );
-                                                                                matrectransQuantityDue =
-                                                                                    shipmentlineElem.shippedqty -
-                                                                                    qtySum;
-                                                                                if (
-                                                                                    matrectransQuantityDue >
-                                                                                    0
-                                                                                ) {
-                                                                                    //put on list to display
-                                                                                    var newReceiptInputRecord =
-                                                                                        receiptInputSet.createNewRecord();
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "itemnum",
-                                                                                        shipmentlineElem.itemnum
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "itemdesc",
-                                                                                        shipmentlineElem.itemdescription
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "status",
-                                                                                        matrectransShipTransfer.status
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "location",
-                                                                                        shipmentlineElem.tostoreloc
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "qtyrequested",
-                                                                                        shipmentlineElem.shippedqty
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "shipmentlineid",
-                                                                                        shipmentlineElem.shipmentlineid
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "shipmentlinenum",
-                                                                                        shipmentlineElem.shipmentlinenum
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "orgid",
-                                                                                        matrectransShipTransfer.orgid
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "siteid",
-                                                                                        matrectransShipTransfer.siteid
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "ponum",
-                                                                                        matrectransShipTransfer.ponum
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "polinenum",
-                                                                                        matrectransShipTransfer.polinenum
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "fromsiteid",
-                                                                                        matrectransShipTransfer.fromsiteid
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "tostoreloc",
-                                                                                        matrectransShipTransfer.tostoreloc
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "shipmentnum",
-                                                                                        matrectransShipTransfer.shipment
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "unitcost",
-                                                                                        matrectransShipTransfer.unitcost
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "qtyrequested",
-                                                                                        shipmentlineElem.shippedqty
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "actualcost",
-                                                                                        matrectransShipTransfer.actualcost
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "rejectqty",
-                                                                                        matrectransShipTransfer.rejectqty
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "enterby",
-                                                                                        matrectransShipTransfer.enterby
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "outside",
-                                                                                        matrectransShipTransfer.outside
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "issue",
-                                                                                        matrectransShipTransfer.issue
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "currencycode",
-                                                                                        matrectransShipTransfer.currencycode
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "loadedcost",
-                                                                                        matrectransShipTransfer.loadedcost
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "prorated",
-                                                                                        matrectransShipTransfer.prorated
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "curbal",
-                                                                                        matrectransShipTransfer.curbal
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "costinfo",
-                                                                                        matrectransShipTransfer.costinfo
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "enteredastask",
-                                                                                        matrectransShipTransfer.enteredastask
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "linetype",
-                                                                                        matrectransShipTransfer.linetype
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "consignment",
-                                                                                        matrectransShipTransfer.consignment
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "conversion",
-                                                                                        matrectransShipTransfer.conversion
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "matrectransid",
-                                                                                        matrectransShipTransfer.matrectransid
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "receivedunit",
-                                                                                        matrectransShipTransfer.issueunit ||
-                                                                                            receivedunit[
-                                                                                                matrectransShipTransfer
-                                                                                                    .itemnum
-                                                                                            ]
-                                                                                    );
-
-                                                                                    /* #region  Tuan-in: set fromlot */
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "fromlot",
-                                                                                        matrectransShipTransfer.fromlot
-                                                                                    );
-                                                                                    /* #endregion Tuan-out: set fromlot*/
-
-                                                                                    if (
-                                                                                        matrectransShipTransfer.rotassetnum
-                                                                                    ) {
-                                                                                        matrectransQuantityDue = 1;
-                                                                                        newReceiptInputRecord.set(
-                                                                                            "rotassetnum",
-                                                                                            matrectransShipTransfer.rotassetnum
-                                                                                        );
-                                                                                    }
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "quantitydue",
-                                                                                        matrectransQuantityDue
-                                                                                    );
-                                                                                    newReceiptInputRecord.set(
-                                                                                        "quantityAvailableToReceive",
-                                                                                        matrectransQuantityDue
-                                                                                    );
-                                                                                    //#region Loc-In: set default actualdate
-                                                                                    newReceiptInputRecord.setDateValue(
-                                                                                        "actualdate",
-                                                                                        eventContext.application.getCurrentDateTime()
-                                                                                    );
-                                                                                    //#endregion Loc-Out: set default actualdate
-                                                                                    count++;
-                                                                                }
-                                                                                /*
-                                                                                 * end of logic that comes from maximo
-                                                                                 */
-                                                                            }
-                                                                            //final iteration over each shipmentline record
-                                                                        }
-                                                                    );
-
-                                                                    //#region Loc-In: add hideBusy
-                                                                    eventContext.application.hideBusy();
-                                                                    //#endregion Loc-Out: add hideBusy
-                                                                    if (count > 0) {
-                                                                        ModelService.clearSearchResult(
-                                                                            matrectransSet
-                                                                        );
-                                                                        receiptInputSet.resourceID =
-                                                                            "receiptInput";
-                                                                        receiptInputSet.sort(
-                                                                            "itemnum"
-                                                                        );
-                                                                        eventContext.application.addResource(
-                                                                            receiptInputSet
-                                                                        );
-                                                                        eventContext.ui.show(
-                                                                            "Transfers.ShipmentItemsListView"
-                                                                        );
-                                                                    }
-                                                                    //verify if the shipment is on complete status
-                                                                    else if (
-                                                                        SynonymDomain.resolveToInternal(
-                                                                            domaininvusereceipts,
-                                                                            shipmentSet.data[0]
-                                                                                .receipts
-                                                                        ) == "COMPLETE"
-                                                                    ) {
-                                                                        var msg =
-                                                                            MessageService.createStaticMessage(
-                                                                                "shipmentReceived"
-                                                                            ).getMessage();
-                                                                        self.ui.showMessage(msg);
-                                                                    } else {
-                                                                        self.ui.showMessage(
-                                                                            emptySearchResultMsg
-                                                                        );
-                                                                    }
-
-                                                                    //receiptInputSet
-                                                                })
-                                                                .otherwise(function (error) {
-                                                                    //#region Loc-In: add hideBusy
-                                                                    eventContext.application.hideBusy();
-                                                                    //#endregion Loc-Out: add hideBusy
-                                                                    Logger.trace(
-                                                                        self._className +
-                                                                            ": " +
-                                                                            error
-                                                                    );
-                                                                });
-
-                                                            //matrectransPromise
-                                                        })
-                                                        .otherwise(function (error) {
-                                                            //#region Loc-In: add hideBusy
-                                                            eventContext.application.hideBusy();
-                                                            //#endregion Loc-Out: add hideBusy
-                                                            Logger.trace(
-                                                                self._className + ": " + error
-                                                            );
-                                                        });
-                                                    // shipment
-                                                })
-                                                .otherwise(function (error) {
-                                                    //#region Loc-In: add hideBusy
-                                                    eventContext.application.hideBusy();
-                                                    //#endregion Loc-Out: add hideBusy
-                                                    Logger.trace(self._className + ": " + error);
-                                                });
-                                        })
-                                        .otherwise(function (error) {
-                                            //#region Loc-In: add hideBusy
-                                            eventContext.application.hideBusy();
-                                            //#endregion Loc-Out: add hideBusy
-                                            Logger.trace(self._className + ": " + error);
-                                        });
-                                });
-                            })
-                            .otherwise(function (error) {
-                                //#region Loc-In: add hideBusy
-                                eventContext.application.hideBusy();
-                                //#endregion Loc-Out: add hideBusy
-                                Logger.trace(self._className + ": " + error);
-                            });
-                    } else {
-                        //#region Loc-In: add hideBusy
-                        eventContext.application.hideBusy();
-                        //#endregion Loc-Out: add hideBusy
-                        self.ui.showMessage(
-                            MessageService.createStaticMessage("connectionFailure").getMessage()
-                        );
-                    }
-                    //#region Loc-In: move hideBusy into else
-                    //eventContext.application.hideBusy();
-                    //#endregion Loc-Out: move hideBusy into else
-                });
-            },
-
-            /* #region Tuan-in: handle tolot in case user input a new lot number  */
-
-            filterTobinReceiveShipmentForLookup: function (eventContext) {
-                var currentRecord = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "receiptInput"
-                ).getCurrentRecord();
-                var dataLookup = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "invbalForBinLookup"
-                );
-                CommonHandler._clearFilterForResource(eventContext, dataLookup);
-                var filter = [];
-
-                filter.push({ itemnum: currentRecord.itemnum, location: currentRecord.location });
-                dataLookup.lookupFilter = filter;
-            },
-
-            updateBinReceiveItem: function (eventContext) {
-                var filter = [];
-
-                var receiptInput = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "receiptInput"
-                );
-                var receiptInputRecord = receiptInput.getCurrentRecord();
-
-                var siteid = receiptInputRecord.get("siteid");
-                var storeroom = receiptInputRecord.get("tostoreloc");
-
-                filter.push({ siteid: siteid });
-                filter.push({ location: storeroom });
-                filter.push({ stagingbin: 0 });
-
-                arrayUtil.forEach(receiptInput.data, function (record) {
-                    filter.push({ itemnum: record.itemnum });
-                });
-
-                var invbalPromise = ModelService.filtered(
-                    "invbalance",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    null,
-                    false
-                );
-
-                invbalPromise.then(function (invbalSet) {
-                    ModelService.clearSearchResult(invbalSet);
-                    invbalSet.resourceID = "invbalForBinLookup";
-                    eventContext.application.addResource(invbalSet);
-                });
-            },
-
-            handleTobinReceiveShipment: function (eventContext) {
-                var transferResources = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "receiptInput"
-                );
-
-                var invbalTempResource = eventContext.application.getResource("invbalForBinLookup");
-                CommonHandler._clearFilterForResource(eventContext, invbalTempResource);
-
-                console.log("check data", invbalTempResource.data);
-
-                arrayUtil.forEach(transferResources.data, function (transferResource) {
-                    if (invbalTempResource) {
-                        var invbalTempSet = invbalTempResource.find(
-                            "binnum == $1 && itemnum == $2",
-                            transferResource.tobin,
-                            transferResource.itemnum
-                        );
-                        if (invbalTempSet.length > 0) {
-                            var invbalTempRecord = invbalTempSet[0];
-                            var lotnum = transferResource.fromlot;
-                            // handle user choose a binnum from lookup which has multiple lotnums
-                            if (invbalTempSet.length > 1 && lotnum) {
-                                invbalTempSet = invbalTempResource.find("lotnum == $1", lotnum);
-                                if (invbalTempSet.length > 0) {
-                                    invbalTempRecord = invbalTempSet[0];
-                                }
-                            }
-                            transferResource.set("tolot", invbalTempRecord.lotnum);
-                        } else {
-                            transferResource.set("tolot", "0");
-                        }
-                    } else {
-                        transferResource.set("tolot", "0");
-                    }
-                });
-            },
-            /* #endregion Tuan-out: handle tolot in case user input a new lot number */
-
-            /**
-             * Dynamic fetch for the Shipment lookup view
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} 	eventContext - Brings context into function
-             * @return	{}			Process list of shipments for lookup
-             * @public
-             */
-            shipmentLookup: function (eventContext) {
-                var self = this;
-                var siteid = UserManager.getInfo("defsite");
-                var user = UserManager.getCurrentUser(); //IJ21206: Get the username to add into the filter
-                var filter = [{ siteid: siteid, enterby: user }]; //IJ21206: The lookup i now returning the records from the current user only.
-                var domaininvusereceipts = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domaininvusereceipts"
-                );
-                var completeStatus = SynonymDomain.resolveToDefaultExternal(
-                    domaininvusereceipts,
-                    "COMPLETE"
-                );
-                var assetPromise = ModelService.filtered(
-                    "shipment",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    null,
-                    false
-                );
-                assetPromise.then(function (shipmentSet) {
-                    shipmentSet.resourceID = "shipment";
-                    eventContext.application.addResource(shipmentSet);
-
-                    shipmentSet.filter("invusenum != null");
-
-                    //make the filter based on history:
-                    // "Transfers.ReceiveShippedItemsSeachView" - do not show COMPLETE shipments
-                    if (
-                        WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1]
-                            .id == "Transfers.ReceiveShippedItemsSeachView"
-                    ) {
-                        shipmentSet.filter('receipts != "' + completeStatus + '"');
-                    }
-
-                    //verify if search result data is empty
-                    if (shipmentSet.data.length == 0) {
-                        var msg =
-                            MessageService.createStaticMessage("emptySearchResult").getMessage();
-                        self.ui.showMessage(msg);
-                    } else {
-                        eventContext.ui.show("Transfers.ShipmentListView");
-                    }
-                });
-            },
-
-            /**
-             * Manage user selection of shipment from lookup
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} 	eventContext - Brings context into function
-             * @return	{}			Return shipment selected to previous screen
-             * @public
-             */
-            selectShipmentSelection: function (eventContext) {
-                var shipmentnum = eventContext.getCurrentRecord().get("shipmentnum");
-                var transfers = eventContext.application
-                    .getResource("transfers")
-                    .getCurrentRecord();
-                transfers.set("shipment", shipmentnum);
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Cancel button for Shipment Select View
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            cancelShipmentSelection: function (eventContext) {
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Clear shipment selection from Shipment Select View
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            clearShipmentSelection: function (eventContext) {
-                var transfers = eventContext.application
-                    .getResource("transfers")
-                    .getCurrentRecord();
-                transfers.set("shipment", "");
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Transits back to Search view of shipment for receipt
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            transitsBackToReceiveShippedItemsSeachView: function (eventContext) {
-                eventContext.application[
-                    "application.handlers.ReceiveShipmentHandler"
-                ].clearSearchFields(eventContext);
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Transits back to Search view of shipment for return
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            transitsBackToShipmentSearchView: function (eventContext) {
-                eventContext.application[
-                    "application.handlers.ReceiveShipmentHandler"
-                ].clearSearchFields(eventContext);
-                eventContext.ui.returnToView("Transfers.ManageReceivedShipmentSeachView");
-            },
-
-            /**
-             * Cancel receiving from shipped list items view
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            shipmentCancelItem: function (eventContext) {
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Method deprecated
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @private
-             */
-            searchVoidShipment: function (eventContext) {
-                this.searchShippedItemsToVoid(eventContext);
-                //bypassing list of shipped items for test
-                //eventContext.ui.show("Transfers.RecordsToVoidListView");
-            },
-
-            /* #region Tuan-in: add formnumber lookup Search Shipments*/
-
-            updateFormnumberLookupBase: function (eventContext, filter) {
-                var formnumPromise = ModelService.filtered(
-                    "additionalReceivedMatrectrans",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    null,
-                    false
-                );
-
-                formnumPromise.then(function (data) {
-                    ModelService.clearSearchResult(data);
-                    data.resourceID = "formnumberTemp";
-                    eventContext.application.addResource(data);
-                });
-            },
-
-            updateManageFormnumLookupData: function (eventContext) {
-                var filter = [{ issuetype: "SHIPRECEIPT" }];
-                this.updateFormnumberLookupBase(eventContext, filter);
-            },
-
-            updateFormnumLookupData: function (eventContext) {
-                var filter = [{ issuetype: "SHIPTRANSFER" }];
-                this.updateFormnumberLookupBase(eventContext, filter);
-            },
-            /* #endregion Tuan-out: add formnumber lookup Search Shipment*/
-
-            /**
-             * Search items already received
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             * @throws {PlatformRuntimeException} If error is found.
-             */
-            searchReceivedItems: function (eventContext) {
-                var filter = [];
-                var oslcQueryParameters = {};
-                var transfersLocalResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-
-                var siteid = UserManager.getInfo("defsite");
-                var shipmentNum = transfersLocalResource.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersLocalResource.formno;
-                var documentref = transfersLocalResource.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-
-                var self = this;
-
-                //verify if we have at least one field filled
-                //#region Loc-In: Add partNo
-                //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
-                    //#endregion Loc-Out: Add partNo
-                    var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
-                    self.ui.showMessage(msg);
-                    return;
-                }
-
-                var transfersHand = new TransfersHandler();
-
-                //check for errors
-                if (transfersHand.getError(eventContext)) {
-                    throw new PlatformRuntimeException("reviewErrors");
-                }
-
-                // Checking connectivity
-                CommunicationManager.checkConnectivityAvailable().then(function (hasConnectivity) {
-                    eventContext.application.showBusy();
-                    if (hasConnectivity) {
-                        //flush transactions before searching
-                        var flushPromise = PushingCoordinatorService.flush();
-                        flushPromise
-                            .then(function () {
-                                //#region Loc-In: Add FormNo, DocumentRef
-                                //filter = self.buildFilterForReceivedItems(eventContext, siteid, shipmentNum);
-                                filter = self.buildFilterForReceivedItems(
-                                    eventContext,
-                                    siteid,
-                                    shipmentNum,
-                                    formno,
-                                    documentref
-                                );
-                                //#endregion Loc-Out: Add FormNo, DocumentRef
-
-                                var matrectransPromise = ModelService.filtered(
-                                    "receivedMatrectrans",
-                                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                    filter,
-                                    1000,
-                                    true,
-                                    true,
-                                    oslcQueryParameters,
-                                    false
-                                );
-                                matrectransPromise
-                                    .then(function (matrectransSet) {
-                                        //verify if search result data is empty
-                                        if (matrectransSet.data.length == 0) {
-                                            var msg =
-                                                MessageService.createStaticMessage(
-                                                    "emptySearchResult"
-                                                ).getMessage();
-                                            self.ui.showMessage(msg);
-                                            return;
-                                        }
-                                        //#region Loc-In: filter list by condition [issuetype='SHIPRECEIPT' and not exists (select 1 from matrectrans matsub where receiptref=matrectrans.matrectransid) ]
-                                        /* ModelService.clearSearchResult(matrectransSet);
-							matrectransSet.resourceID = 'receivedMatrectrans';
-							matrectransSet.sort('itemnum');
-							eventContext.application.addResource(matrectransSet);
-							eventContext.ui.show("Transfers.ReceivedItemsListView"); */
-                                        else {
-                                            filter = [];
-
-                                            arrayUtil.forEach(
-                                                matrectransSet.data,
-                                                function (matrectrans) {
-                                                    filter.push({
-                                                        receiptref: matrectrans.matrectransid,
-                                                    });
-                                                }
-                                            );
-
-                                            ModelService.filtered(
-                                                "receivedMatrectrans",
-                                                null,
-                                                filter,
-                                                1000,
-                                                true,
-                                                true,
-                                                oslcQueryParameters,
-                                                false
-                                            )
-                                                .then(function (refSet) {
-                                                    var deleteIndexs = [];
-                                                    if (refSet.data.length > 0) {
-                                                        for (
-                                                            let index = 0;
-                                                            index < matrectransSet.count();
-                                                            index++
-                                                        ) {
-                                                            arrayUtil.forEach(
-                                                                refSet.data,
-                                                                function (set) {
-                                                                    var currentRecord =
-                                                                        matrectransSet.getRecordAt(
-                                                                            index
-                                                                        );
-                                                                    if (
-                                                                        currentRecord.matrectransid ==
-                                                                        set.receiptref
-                                                                    ) {
-                                                                        deleteIndexs.push(index);
-                                                                        return;
-                                                                    }
-                                                                }
-                                                            );
-                                                        }
-                                                    }
-
-                                                    for (
-                                                        let index = deleteIndexs.length - 1;
-                                                        index >= 0;
-                                                        index--
-                                                    ) {
-                                                        matrectransSet
-                                                            .getRecordAt(index)
-                                                            .deleteLocal();
-                                                    }
-
-                                                    ModelService.clearSearchResult(matrectransSet);
-                                                    matrectransSet.resourceID =
-                                                        "receivedMatrectrans";
-                                                    matrectransSet.sort("itemnum");
-                                                    eventContext.application.addResource(
-                                                        matrectransSet
-                                                    );
-                                                    eventContext.ui.show(
-                                                        "Transfers.ReceivedItemsListView"
-                                                    );
-                                                })
-                                                .otherwise(function (error) {
-                                                    Logger.trace(self._className + ": " + error);
-                                                });
-                                        }
-                                        //#endregion Loc-Out: filter list by condition [issuetype='SHIPRECEIPT' and not exists (select 1 from matrectrans matsub where receiptref=matrectrans.matrectransid) ]
-                                    })
-                                    .otherwise(function (error) {
-                                        Logger.trace(self._className + ": " + error);
-                                    });
-                            })
-                            .otherwise(function (error) {
-                                Logger.trace(self._className + ": " + error);
-                            });
-                    } else {
-                        self.ui.showMessage(
-                            MessageService.createStaticMessage("connectionFailure").getMessage()
-                        );
-                    }
-                    eventContext.application.hideBusy();
-                });
-            },
-
-            /**
-             * Prepare data set of matrectrans objects for return/void process
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} matrectransSet - Set of raw matrectrans objects
-             * @param	{String} returnProcess - Type of the process
-             * @return	{promise} Filtered matrectrans data set
-             * @public
-             */
-            prepareMatrectransListToReturn: function (eventContext, matrectransSet, returnProcess) {
-                var prepDeferred = new Deferred();
-                var receiptStatusSet = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainreceiptstatus"
-                );
-                var deferreds = [];
-                var invalidMarectrans = [];
-                var isReturnProcess = true;
-                var isVoidProcess = false;
-
-                //Setting variables according to process type
-                if (returnProcess.toLowerCase() == "void") {
-                    isReturnProcess = false;
-                    isVoidProcess = true;
-                }
-
-                //For each matrectrans
-                for (var i = 0; i < matrectransSet.data.length; i++) {
-                    var matrectransRecord = matrectransSet.data[i];
-
-                    //Get rotating attribute of item for matrectrans element
-                    var isRotatingItem = matrectransRecord.itemrotating ? true : false;
-
-                    //If returning item and item is rotating = remove item from list
-                    if (isReturnProcess && isRotatingItem) {
-                        invalidMarectrans.push(matrectransRecord.matrectransid);
-                        continue;
-                    }
-
-                    var matrecStatus = matrectransRecord.status;
-                    //If voiding item and
-                    if (isVoidProcess) {
-                        //If item is rotating and matrectrans status is not WINSP OR WASSET = remove item from list
-                        if (
-                            isRotatingItem &&
-                            !(
-                                matrecStatus ==
-                                    SynonymDomain.resolveToDefaultExternal(
-                                        receiptStatusSet,
-                                        "WASSET"
-                                    ) ||
-                                matrecStatus ==
-                                    SynonymDomain.resolveToDefaultExternal(
-                                        receiptStatusSet,
-                                        "WINSP"
-                                    )
-                            )
-                        ) {
-                            invalidMarectrans.push(matrectransRecord.matrectransid);
-                            continue;
-                        }
-
-                        //If receipt status equals to COMP or WASSET or WINSP	AND 	inspectedqty attribute from receipt is greater than 0 = remove from list
-                        if (
-                            (matrecStatus ==
-                                SynonymDomain.resolveToDefaultExternal(receiptStatusSet, "COMP") ||
-                                matrecStatus ==
-                                    SynonymDomain.resolveToDefaultExternal(
-                                        receiptStatusSet,
-                                        "WASSET"
-                                    ) ||
-                                matrecStatus ==
-                                    SynonymDomain.resolveToDefaultExternal(
-                                        receiptStatusSet,
-                                        "WINSP"
-                                    )) &&
-                            matrectransRecord.inspectedqty > 0
-                        ) {
-                            invalidMarectrans.push(matrectransRecord.matrectransid);
-                            continue;
-                        }
-
-                        //If list of RETURNSHIPRECEIPTS relationship is not empty = remove item from list
-                        var isReturnShipReceiptsEmptyPromise =
-                            this.isReturnShipReceiptsRelationEmpty(eventContext, matrectransRecord);
-                        deferreds.push(isReturnShipReceiptsEmptyPromise);
-                        isReturnShipReceiptsEmptyPromise.then(function (response) {
-                            if (!response.isEmpty) {
-                                invalidMarectrans.push(response.object.matrectransid);
-                            }
-                        });
-                    }
-
-                    var qtyToBeReturnedPromise = this.calcQuantityToReturn(
-                        eventContext,
-                        matrectransRecord,
-                        isVoidProcess
-                    );
-                    deferreds.push(qtyToBeReturnedPromise);
-                    qtyToBeReturnedPromise.then(function (response) {
-                        response.object.qtyToBeReturned = response.qty;
-                        if (response.qty == 0) {
-                            invalidMarectrans.push(response.object.matrectransid);
-                        }
-                        Logger.trace("quantity response is : " + response.qty);
-                    });
-                }
-
-                all(deferreds).then(function (results) {
-                    arrayUtil.forEach(invalidMarectrans, function (id) {
-                        matrectransSet.filter('matrectransid != "' + id + '"');
-                    });
-
-                    ModelService.clearSearchResult(matrectransSet);
-                    matrectransSet.resourceID = "matrectrans";
-                    eventContext.application.addResource(matrectransSet);
-
-                    prepDeferred.resolve();
-                });
-
-                return prepDeferred.promise;
-            },
-
-            /**
-             * Calculate quantity for return
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} matRecParent - Matrectrans object
-             * @param	{Boolean} isVoidProcess - If this is a void process
-             * @return	{promise} Quantity available for return from matRecParent
-             * @public
-             */
-            calcQuantityToReturn: function (eventContext, matRecParent, isVoidProcess) {
-                var deferred = new Deferred();
-                var issueTypeSet = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                var receiptStatusSet = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainreceiptstatus"
-                );
-                var filter = [];
-
-                filter.push({ receiptref: matRecParent.matrectransid.toString() });
-                //filter.push ( {issuetype : SynonymDomain.resolveToDefaultExternal(issueTypeSet, 'SHIPRETURN') } );
-                //filter.push ( {issuetype : SynonymDomain.resolveToDefaultExternal(issueTypeSet, 'VOIDSHIPRECEIPT') } );
-                oslcQueryParameters = {};
-
-                var matrectransChildrenPromise = ModelService.filtered(
-                    "receivedMatrectrans",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    oslcQueryParameters,
-                    false
-                );
-                matrectransChildrenPromise
-                    .then(function (matrecChildrenSet) {
-                        Logger.trace(
-                            "calc for parent " +
-                                matRecParent.matrectransid +
-                                " using filter " +
-                                JSON.stringify(filter) +
-                                " resulting total " +
-                                matrecChildrenSet.data.length
-                        );
-
-                        var shipreturnIssuetype = SynonymDomain.resolveToDefaultExternal(
-                            issueTypeSet,
-                            "SHIPRETURN"
-                        );
-                        var voidshipreceiptIssuetype = SynonymDomain.resolveToDefaultExternal(
-                            issueTypeSet,
-                            "VOIDSHIPRECEIPT"
-                        );
-
-                        matrecChildrenSet.filter(
-                            "issuetype == $1 || issuetype == $3",
-                            shipreturnIssuetype,
-                            voidshipreceiptIssuetype
-                        );
-
-                        var qtyToBeReturned = 0;
-                        var matrecStatus = matRecParent.status;
-
-                        if (matrecChildrenSet.count() == 0) {
-                            if (
-                                matrecStatus ==
-                                SynonymDomain.resolveToDefaultExternal(receiptStatusSet, "COMP")
-                            ) {
-                                qtyToBeReturned = matRecParent.receiptquantity;
-                            } else if (
-                                isVoidProcess &&
-                                (matrecStatus ==
-                                    SynonymDomain.resolveToDefaultExternal(
-                                        receiptStatusSet,
-                                        "WINSP"
-                                    ) ||
-                                    matrecStatus ==
-                                        SynonymDomain.resolveToDefaultExternal(
-                                            receiptStatusSet,
-                                            "WASSET"
-                                        ))
-                            ) {
-                                qtyToBeReturned = matRecParent.receiptquantity;
-                            }
-                        } else {
-                            var receiptSum = 0;
-
-                            arrayUtil.forEach(matrecChildrenSet.data, function (child) {
-                                if (child.quantity) receiptSum += child.receiptquantity;
-                            });
-
-                            if (
-                                matrecStatus ==
-                                SynonymDomain.resolveToDefaultExternal(receiptStatusSet, "WINSP")
-                            ) {
-                                qtyToBeReturned = matRecParent.inspectedqty - receiptSum * -1;
-                            } else {
-                                qtyToBeReturned = matRecParent.receiptquantity - receiptSum * -1;
-                            }
-                        }
-
-                        ModelService.clearSearchResult(matrecChildrenSet);
-                        deferred.resolve({ qty: qtyToBeReturned, object: matRecParent });
-                    })
-                    .otherwise(function (error) {
-                        Logger.trace(self._className + ": " + error);
-                    });
-                return deferred.promise;
-            },
-
-            /**
-             * Check whether Relationship RETURNSHIPRECEIPTS return something
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} matRecParent - Matrectrans object
-             * @return	{promise} Object with empty list indicator and matrectrans
-             * @public
-             */
-            isReturnShipReceiptsRelationEmpty: function (eventContext, matRecParent) {
-                var deferred = new Deferred();
-                var issueTypeSet = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                var filter = [];
-
-                filter.push({ receiptref: matRecParent.matrectransid.toString() });
-                filter.push({
-                    issuetype: SynonymDomain.resolveToDefaultExternal(issueTypeSet, "SHIPRETURN"),
-                });
-                oslcQueryParameters = {};
-
-                var matrectransChildrenPromise = ModelService.filtered(
-                    "childMatrectrans",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    oslcQueryParameters,
-                    false
-                );
-                matrectransChildrenPromise
-                    .then(function (matrecChildrenSet) {
-                        Logger.trace(
-                            "isEmpty for parent " +
-                                matRecParent.matrectransid +
-                                " using filter " +
-                                JSON.stringify(filter) +
-                                " resulting total " +
-                                matrecChildrenSet.data.length
-                        );
-
-                        var isEmpty = false;
-                        if (matrecChildrenSet.data.length == 0) {
-                            isEmpty = true;
-                        }
-
-                        ModelService.clearSearchResult(matrecChildrenSet);
-                        deferred.resolve({ isEmpty: isEmpty, object: matRecParent });
-                    })
-                    .otherwise(function (error) {
-                        Logger.trace(self._className + ": " + error);
-                    });
-
-                return deferred.promise;
-            },
-
-            /**
-             * Search shipped items possible to void
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             * @throws {PlatformRuntimeException} If error is found.
-             */
-            searchShippedItemsToVoid: function (eventContext) {
-                var transfersLocalResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var siteid = UserManager.getInfo("defsite");
-                var shipmentNum = transfersLocalResource.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersLocalResource.formno;
-                var documentref = transfersLocalResource.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-                var self = this;
-                var filter = [];
-                var oslcQueryParameters = {};
-                var transfersHand = new TransfersHandler();
-
-                //verify if we have at least one field filled
-                //#region Loc-In: Add FromNo, DocumentRef
-                //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
-                    //#endregion Loc-Out: Add FromNo, DocumentRef
-                    var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
-                    self.ui.showMessage(msg);
-                    return;
-                }
-
-                //check for errors
-                if (transfersHand.getError(eventContext)) {
-                    throw new PlatformRuntimeException("reviewErrors");
-                }
-
-                // Checking connectivity
-                CommunicationManager.checkConnectivityAvailable().then(function (hasConnectivity) {
-                    eventContext.application.showBusy();
-                    if (hasConnectivity) {
-                        //flush transactions before searching
-                        var flushPromise = PushingCoordinatorService.flush();
-                        flushPromise
-                            .then(function () {
-                                //#region Loc-In: Add FormNo, DocumentRef
-                                //oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
-                                if (shipmentNum) {
-                                    oslcQueryParameters["sqp:shipmentNum"] = shipmentNum;
-                                }
-                                if (formno) {
-                                    filter.push({ formnumber: formno });
-                                }
-                                if (documentref) {
-                                    filter.push({ documentref: documentref });
-                                }
-                                //#endregion Loc-Out: Add FormNo, DocumentRef
-                                oslcQueryParameters["sqp:siteid"] = siteid;
-
-                                var matrectransPromise = ModelService.filtered(
-                                    "matrectrans",
-                                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                    filter,
-                                    1000,
-                                    true,
-                                    true,
-                                    oslcQueryParameters,
-                                    false
-                                );
-                                matrectransPromise
-                                    .then(function (matrectransSet) {
-                                        //verify if search result data is empty
-                                        if (matrectransSet.data.length == 0) {
-                                            var msg =
-                                                MessageService.createStaticMessage(
-                                                    "emptySearchResult"
-                                                ).getMessage();
-                                            self.ui.showMessage(msg);
-                                            return;
-                                        }
-
-                                        self.prepareMatrectransListToReturn(
-                                            eventContext,
-                                            matrectransSet,
-                                            "void"
-                                        ).then(function () {
-                                            //verify if search result data is empty
-                                            if (matrectransSet.data.length == 0) {
-                                                var msg =
-                                                    MessageService.createStaticMessage(
-                                                        "emptySearchResult"
-                                                    ).getMessage();
-                                                self.ui.showMessage(msg);
-                                                return;
-                                            }
-                                            eventContext.ui.show("Transfers.RecordsToVoidListView");
-                                        });
-                                    })
-                                    .otherwise(function (error) {
-                                        Logger.trace(self._className + ": " + error);
-                                    });
-                            })
-                            .otherwise(function (error) {
-                                Logger.trace(self._className + ": " + error);
-                            });
-                    } else {
-                        self.ui.showMessage(
-                            MessageService.createStaticMessage("connectionFailure").getMessage()
-                        );
-                    }
-                    eventContext.application.hideBusy();
-                });
-            },
-
-            /**
-             * Search shipped items possible to return
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             * @throws {PlatformRuntimeException} If error is found.
-             */
-            searchShippedItemsToReturn: function (eventContext) {
-                var transfersLocalResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var siteid = UserManager.getInfo("defsite");
-                var shipmentNum = transfersLocalResource.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersLocalResource.formno;
-                var documentref = transfersLocalResource.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-                var transfersHand = new TransfersHandler();
-                var self = this;
-                var filter = [];
-                var oslcQueryParameters = {};
-
-                //verify if we have at least one field filled
-                //#region Loc-In: Add FromNo, DocumentRef
-                //if(!shipmentNum){
-                if (!shipmentNum && !formno && !documentref) {
-                    //#endregion Loc-Out: Add FromNo, DocumentRef
-                    var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
-                    self.ui.showMessage(msg);
-                    return;
-                }
-
-                //check for errors
-                if (transfersHand.getError(eventContext)) {
-                    throw new PlatformRuntimeException("reviewErrors");
-                }
-
-                // Checking connectivity
-                CommunicationManager.checkConnectivityAvailable().then(function (hasConnectivity) {
-                    eventContext.application.showBusy();
-                    if (hasConnectivity) {
-                        //flush transactions before searching
-                        var flushPromise = PushingCoordinatorService.flush();
-                        flushPromise
-                            .then(function () {
-                                //#region Loc-In: Add FormNo, DocumentRef
-                                //oslcQueryParameters['sqp:shipmentNum'] =  shipmentNum;
-                                if (shipmentNum) {
-                                    oslcQueryParameters["sqp:shipmentNum"] = shipmentNum;
-                                }
-                                if (formno) {
-                                    filter.push({ formnumber: formno });
-                                }
-                                if (documentref) {
-                                    filter.push({ documentref: documentref });
-                                }
-                                //#endregion Loc-Out: Add FormNo, DocumentRef
-                                oslcQueryParameters["sqp:siteid"] = siteid;
-
-                                var matrectransPromise = ModelService.filtered(
-                                    "matrectrans",
-                                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                    filter,
-                                    1000,
-                                    true,
-                                    true,
-                                    oslcQueryParameters,
-                                    false
-                                );
-                                matrectransPromise
-                                    .then(function (matrectransSet) {
-                                        //verify if search result data is empty
-                                        if (matrectransSet.data.length == 0) {
-                                            var msg =
-                                                MessageService.createStaticMessage(
-                                                    "emptySearchResult"
-                                                ).getMessage();
-                                            self.ui.showMessage(msg);
-                                            return;
-                                        }
-
-                                        self.prepareMatrectransListToReturn(
-                                            eventContext,
-                                            matrectransSet,
-                                            "return"
-                                        ).then(function () {
-                                            //verify if search result data is empty
-                                            if (matrectransSet.data.length == 0) {
-                                                var msg =
-                                                    MessageService.createStaticMessage(
-                                                        "emptySearchResult"
-                                                    ).getMessage();
-                                                self.ui.showMessage(msg);
-                                                return;
-                                            }
-                                            eventContext.ui.show(
-                                                "Transfers.RecordsToReturnListView"
-                                            );
-                                        });
-                                    })
-                                    .otherwise(function (error) {
-                                        Logger.trace(self._className + ": " + error);
-                                    });
-                            })
-                            .otherwise(function (error) {
-                                Logger.trace(self._className + ": " + error);
-                            });
-                    } else {
-                        self.ui.showMessage(
-                            MessageService.createStaticMessage("connectionFailure").getMessage()
-                        );
-                    }
-                    eventContext.application.hideBusy();
-                });
-            },
-
-            /**
-             * Cancel void process
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            cancelReturnVoidSelection: function (eventContext) {
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            /**
-             * Submit request with items to void
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            voidSelectedItems: function (eventContext) {
-                var transfersLocalResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var shipmentNum = transfersLocalResource.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersLocalResource.formno;
-                var documentref = transfersLocalResource.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-                var matrectransSet = eventContext.getResource("matrectrans");
-                var self = this;
-                var filter = [];
-
-                CommonHandler._clearFilterForResource(eventContext, matrectransSet);
-                this.checkBoxValidation(eventContext, matrectransSet, "voidindicator");
-
-                //#region Loc-In: Add FormNo, DocumentRef
-                //filter.push({shipmentnum: shipmentNum});
-                if (shipmentNum) {
-                    filter.push({ shipmentnum: shipmentNum });
-                }
-                /* #region  Tuan-in: fix cann't void */
-                if (formno) {
-                    filter.push({ formnumber: '"' + formno + '"' });
-                }
-                if (documentref) {
-                    filter.push({ documentref: '"' + documentref + '"' });
-                }
-                /* #endregion Tuan-out: fix cann't void */
-                //#endregion Loc-Out: Add FormNo, DocumentRef
-                var shipmentPromise = ModelService.filtered(
-                    "shipment",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    {},
-                    false
-                );
-                shipmentPromise.then(function (shipmentSet) {
-                    if (shipmentSet.data.length == 0) {
-                        var msg =
-                            MessageService.createStaticMessage("emptySearchResult").getMessage();
-                        self.ui.showMessage(msg);
-                        return;
-                    }
-
-                    var getShipmentLineModelPromise = shipmentSet.data[0].getModelDataSet(
-                        "shipmentline",
-                        true
-                    );
-                    getShipmentLineModelPromise.then(function (shipmentLineSet) {
-                        var shipmentLineRecord = null;
-                        if (shipmentLineSet.data.length > 0) {
-                            shipmentLineRecord = shipmentLineSet.data[0];
-                        }
-
-                        var size = matrectransSet.data.length;
-                        for (var i = 0; i < size; i++) {
-                            var matrectransToVoid = matrectransSet.data[i];
-                            var newReceipt = matrectransSet.createNewRecord();
-                            self.prepareReturnShipReceipt(
-                                eventContext,
-                                newReceipt,
-                                matrectransToVoid,
-                                "void",
-                                shipmentLineRecord,
-                                shipmentSet
-                            );
-                        }
-
-                        ModelService.save(matrectransSet)
-                            .then(function (event) {
-                                Logger.trace("Save complete response");
-                                //flush transactions before checking for errors
-                                //						var flushPromise = PushingCoordinatorService.flush();
-                                //						flushPromise.then(function(){
-                                //							/*self.clearSearchFields(eventContext);
-                                //							eventContext.ui.returnToView("Transfers.ManageReceivedShipmentSeachView");*/
-                                self.searchReceivedItems(eventContext);
-                                //						});
-                            })
-                            .otherwise(function (err) {
-                                eventContext.ui.showMessage(err);
-                            });
-                    });
-                });
-            },
-
-            /**
-             * Submit request with items to return
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            returnSelectedItems: function (eventContext) {
-                var transfersLocalResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var shipmentNum = transfersLocalResource.shipment;
-                //#region Loc-In: Add FromNo, DocumentRef
-                var formno = transfersLocalResource.formno;
-                var documentref = transfersLocalResource.documentref;
-                //#endregion Loc-Out: Add FromNo, DocumentRef
-                var matrectransSet = eventContext.getResource("matrectrans");
-                var self = this;
-                var filter = [];
-                var message = null;
-
-                CommonHandler._clearFilterForResource(eventContext, matrectransSet);
-                this.checkBoxValidation(eventContext, matrectransSet, "returnindicator");
-
-                //iterate over all records on list
-                for (var index in matrectransSet.data) {
-                    var elem = matrectransSet.data[index];
-                    if (!this.validateQuantityForReturn(eventContext, elem)) {
-                        return;
-                    }
-                }
-
-                //#region Loc-In: Add FormNo, DocumentRef
-                //filter.push({shipmentnum: shipmentNum});
-                if (shipmentNum) {
-                    filter.push({ shipmentnum: shipmentNum });
-                }
-                /* #region  Tuan-in: fix can't return */
-                if (formno) {
-                    filter.push({ formnumber: '"' + formno + '"' });
-                    // filter.push({ formnumber: formno });
-                }
-                if (documentref) {
-                    // filter.push({ documentref: documentref });
-                    filter.push({ documentref: '"' + documentref + '"' });
-                }
-                /* #endregion  Tuan-out: fix can't return  */
-                //#endregion Loc-Out: Add FormNo, DocumentRef
-                var shipmentPromise = ModelService.filtered(
-                    "shipment",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    {},
-                    false
-                );
-                shipmentPromise.then(function (shipmentSet) {
-                    if (shipmentSet.data.length == 0) {
-                        var msg =
-                            MessageService.createStaticMessage("emptySearchResult").getMessage();
-                        self.ui.showMessage(msg);
-                        return;
-                    }
-
-                    var getShipmentLineModelPromise = shipmentSet.data[0].getModelDataSet(
-                        "shipmentline",
-                        true
-                    );
-                    getShipmentLineModelPromise.then(function (shipmentLineSet) {
-                        var shipmentLineRecord = null;
-                        if (shipmentLineSet.data.length > 0) {
-                            shipmentLineRecord = shipmentLineSet.data[0];
-                        }
-
-                        var size = matrectransSet.data.length;
-                        for (var i = 0; i < size; i++) {
-                            var matrectransToReturn = matrectransSet.data[i];
-                            var newReceipt = matrectransSet.createNewRecord();
-                            self.prepareReturnShipReceipt(
-                                eventContext,
-                                newReceipt,
-                                matrectransToReturn,
-                                "return",
-                                shipmentLineRecord,
-                                shipmentSet
-                            );
-                        }
-
-                        ModelService.save(matrectransSet)
-                            .then(function (event) {
-                                Logger.trace("Save complete response");
-                                //flush transactions before checking for errors
-                                var flushPromise = PushingCoordinatorService.flush();
-                                flushPromise.then(function () {
-                                    /*self.clearSearchFields(eventContext);
-							eventContext.ui.returnToView("Transfers.ManageReceivedShipmentSeachView");*/
-                                    self.searchReceivedItems(eventContext);
-                                });
-                            })
-                            .otherwise(function (err) {
-                                eventContext.ui.showMessage(err);
-                            });
-                    });
-                });
-            },
-
-            /**
-             * Prepare matrectrans object
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} newReceipt - A new matrectrans object
-             * @param	{Object} matrectrans - Matrectrans object where attributes will be copied from
-             * @param	{String} process - Type of the process triggered
-             * @param	{Object} shipmentLine - Shipmentline object relative to matrectrans
-             * @return	{Object} Return the matrectrans attributes populated
-             * @public
-             */
-            prepareReturnShipReceipt: function (
+        _className: "[application.handlers.TransfersHandler]",
+
+        /**
+         * Set lookup filter for Asset Lookup Data Filter
+         *
+         * @memberof module:application/handlers/TransfersHandler#
+         * @param	{Object} eventContext - It brings context into function
+         * @public
+         */
+        /**@memberOf application.handlers.TransfersHandler */
+        filterAssetForLookup: function (eventContext) {
+            var additionalasset = CommonHandler._getAdditionalResource(
                 eventContext,
-                /*ModelData*/ newReceipt,
-                /*ModelData*/ matrectrans,
-                /*string*/ process,
-                /*ModelData*/ shipmentLine
-            ) {
-                //receivedMatrectrans
-                var domainIssueTypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
+                "additionalasset"
+            );
+            var filter = [];
+            additionalasset._lookupFilter = null;
+
+            var siteid = UserManager.getInfo("defsite");
+            filter.push({ siteid: siteid });
+
+            additionalasset.lookupFilter = filter;
+        },
+
+        /**
+         * From storeroom Lookup Data Filter
+         */
+        filterStoreroomForLookup: function (eventContext) {
+            var additionalStoreroom = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalstoreroom"
+            );
+            var filter = [];
+
+            additionalStoreroom._lookupFilter = null;
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+
+            var siteid = transfersResource.get("siteid");
+
+            CommonHandler._clearFilterForResource(eventContext, additionalStoreroom);
+
+            if (siteid) filter.push({ siteid: siteid });
+
+            additionalStoreroom.lookupFilter = filter;
+        },
+
+        /**
+         * To storeroom Lookup Data Filter
+         */
+        filterToStoreroomForLookup: function (eventContext) {
+            var additionalStoreroom = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalstoreroom"
+            );
+            var filter = [];
+
+            additionalStoreroom._lookupFilter = null;
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+
+            var tositeid = transfersResource.get("tositeid");
+
+            CommonHandler._clearFilterForResource(eventContext, additionalStoreroom);
+
+            if (tositeid) {
+                filter.push({ siteid: tositeid });
+                additionalStoreroom.lookupFilter = filter;
+            }
+        },
+
+        /**
+         * Check and validate From storeroom input
+         */
+        validateFromStoreroom: function (eventContext) {
+            var transfersResource = eventContext.getCurrentRecord();
+            var siteid = transfersResource.getPendingOrOriginalValue("siteid");
+            var storeroom = transfersResource.getPendingOrOriginalValue("storeroom");
+
+            if (storeroom && storeroom.length > 0) {
+                var self = this;
+                // Querying storerooms available
+                ModelService.filtered(
+                    "additionalstoreroom",
+                    null,
+                    [{ location: storeroom, siteid: siteid }],
+                    null,
+                    false,
+                    true
+                ).then(function (storeroomSet) {
+                    if (storeroomSet.count() == 0) {
+                        self.ui.showMessage(
+                            MessageService.createStaticMessage("invalidLocation").getMessage()
+                        );
+                        transfersResource.set("storeroom", "");
+                    } else {
+                        var validStoreroom = storeroomSet.getRecordAt(0);
+                        transfersResource.set("storeroom", validStoreroom.location);
+                    }
+                });
+            }
+        },
+
+        /**
+         * Check and validate To storeroom input
+         */
+        validateToStoreroom: function (eventContext) {
+            var transfersResource = eventContext.getCurrentRecord();
+            var siteid = transfersResource.getPendingOrOriginalValue("tositeid");
+            var storeroom = transfersResource.getPendingOrOriginalValue("tostoreroom");
+
+            var filter = [];
+
+            if (siteid && storeroom) {
+                filter.push({ siteid: siteid, location: storeroom });
+            } else if (storeroom && !siteid) {
+                filter.push({ location: storeroom });
+            }
+
+            if (storeroom && storeroom.length > 0) {
+                var self = this;
+                // Querying storerooms available
+                ModelService.filtered("additionalstoreroom", null, filter, null, false, true).then(
+                    function (storeroomSet) {
+                        if (storeroomSet.count() == 0) {
+                            self.ui.showMessage(
+                                MessageService.createStaticMessage("invalidLocation").getMessage()
+                            );
+                            transfersResource.set("tostoreroom", "");
+                        } else {
+                            var validStoreroom = storeroomSet.getRecordAt(0);
+                            transfersResource.set("tostoreroom", validStoreroom.location);
+                        }
+                    }
                 );
-                var receiptStatusSet = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainreceiptstatus"
-                );
-                var issueType = "";
+            }
+        },
 
-                /*
-                 * if it is VOID process
-                 * 		set issuetype as VOIDSHIPRECEIPT and copy actualdate from current matrectrans
-                 * else
-                 * 		set issuetype as SHIPRETURN
-                 */
+        /**
+         * Rotating Asset Lookup Data Filter
+         */
+        filterRotAssetForLookup: function (eventContext) {
+            var additionalasset = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalasset"
+            );
+            var itemnum = this.ui.application
+                .getResource("splitqtyacrossbins")
+                .getCurrentRecord()
+                .get("itemnum");
+            var siteid = UserManager.getInfo("defsite");
+            var storeroom = this.ui.application
+                .getResource("splitqtyacrossbins")
+                .getCurrentRecord()
+                .get("storeloc");
+            var filter = [];
+            CommonHandler._clearFilterForResource(eventContext, additionalasset);
+            filter.push({ itemnum: itemnum, siteid: siteid, storeloc: storeroom });
 
-                /*
-                 * set receiptquantity as (qtyrequested from current matrectrans * -1)
-                 */
-                if (process.toLowerCase() == "void") {
-                    issueType = SynonymDomain.resolveToDefaultExternal(
-                        domainIssueTypes,
-                        "VOIDSHIPRECEIPT"
-                    );
-                    newReceipt.set("actualdate", matrectrans.actualdate);
+            additionalasset.lookupFilter = filter;
+        },
 
-                    //	newReceipt.set('receiptquantity', ( matrectrans.qtyrequested * -1 ) );
-                    //				newReceipt.set('receiptquantity',  matrectrans.receiptquantity );
-                    newReceipt.set("receiptquantity", matrectrans.receiptquantity * -1);
-                } else {
-                    issueType = SynonymDomain.resolveToDefaultExternal(
-                        domainIssueTypes,
-                        "SHIPRETURN"
-                    );
-                    //				newReceipt.set('receiptquantity',  matrectrans.qtyToBeReturned );
-                    newReceipt.set("receiptquantity", matrectrans.qtyToBeReturned * -1);
-                }
-                newReceipt.set("issuetype", issueType);
+        /**
+         * Item Lookup Data Filter
+         *
+         * Filter Hint:
+         * 	a. It is case sensitive
+         * 	b. Each object added is considered in filter as OR
+         * 	c. Each attribute of an object in filter is considered as AND
+         */
 
-                /*
-                 * set new receipt attributes same as current matrectrans
-                 * shipmentnum, shipmentlinenum, ponum, polinenum, exchangerate,
-                 * tostoreloc, tobin, tolot,
-                 * enterby, receiptref
-                 */
-                newReceipt.set("receiptref", parseInt(matrectrans.matrectransid));
-                newReceipt.set("shipment", matrectrans.shipment);
-                newReceipt.set("shipmentlinenum", matrectrans.shipmentlinenum);
-                newReceipt.set("ponum", matrectrans.ponum);
-                newReceipt.set("polinenum", matrectrans.polinenum);
-                newReceipt.set("exchangerate", matrectrans.exchangerate);
+        asyncfilterItemForLookup: function (eventContext) {
+            var additionalInventory = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalInventory"
+            );
 
-                if (shipmentLine) {
-                    newReceipt.set("tostoreloc", shipmentLine.tostoreloc);
-                } else {
-                    newReceipt.set("tostoreloc", matrectrans.tostoreloc);
-                }
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom"); //.toUpperCase();
 
-                newReceipt.set("tobin", matrectrans.tobin);
-                newReceipt.set("tolot", matrectrans.tolot);
-                newReceipt.set("enterby", matrectrans.enterby);
-                newReceipt.set("invuselineid", matrectrans.invuselineid);
-                newReceipt.set("conversion", matrectrans.conversion);
-                newReceipt.set("fromsiteid", matrectrans.fromsiteid);
+            CommonHandler._clearFilterForResource(eventContext, additionalInventory);
 
-                newReceipt.markAsModified("tobin");
-                newReceipt.markAsModified("tolot");
-
-                /*
-                 * if qtyrequested less than 0
-                 * 		set qtyrequested as (qtyrequested from current matrectrans * -1)
-                 */
-                if (matrectrans.qtyrequested && matrectrans.qtyrequested < 0) {
-                    newReceipt.set("qtyrequested", matrectrans.qtyrequested * -1);
-                }
-
-                /*
-                 * if new receipt conversion not equals to 0
-                 * 		set quantity as ( receiptquantity from new receipt * conversion from new receipt)
-                 * else
-                 * 		set quantity as receiptquantity from new receipt
-                 */
-                var quantity = 0;
-                if (newReceipt.conversion && newReceipt.conversion != 0) {
-                    quantity = newReceipt.receiptquantity * newReceipt.conversion;
-                } else {
-                    quantity = newReceipt.receiptquantity;
-                }
-
-                newReceipt.set("quantity", quantity);
-
-                /*
-                 * REMAKR ????
-                 */
-
-                /*
-                 * if firstShipmentLine is not null
-                 * 		set fromstoreloc from fromstoreloc of firstShipmentLine
-                 */
-                if (shipmentLine) {
-                    newReceipt.set("fromstoreloc", shipmentLine.fromstoreloc);
-                }
-
-                /*
-                 * if inspectionrequired is true current matrectrans
-                 * 		set status as COMPLETE
-                 */
-                //			if (matrectrans.inspectionrequired) {
-                //				newReceipt.set('status', SynonymDomain.resolveToDefaultExternal(receiptStatusSet, 'COMP') );
-                //			}
-                newReceipt.set(
-                    "status",
-                    SynonymDomain.resolveToDefaultExternal(receiptStatusSet, "COMP")
-                );
-
-                /*
-                 * Missing attribute
-                 */
-                newReceipt.set("siteid", matrectrans.siteid);
-
-                return newReceipt;
-            },
-
-            /**
-             * Validate if any checkbox is selected. Throws PlatformRuntimeException.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} recordSet - Set of records to iterate
-             * @param	{String} indicator - Attribute to check against
-             * @public
-             * @throws {PlatformRuntimeException} If set of records does not exist or has 0 records.
-             */
-            checkBoxValidation: function (eventContext, recordSet, indicator) {
-                //check if checkboxes are selected
-                recordSet.filter(indicator + " == true");
-
-                if (recordSet && recordSet.count() == 0) {
-                    //#region Loc-In: fix not clear filter
-                    CommonHandler._clearFilterForResource(eventContext, recordSet);
-                    //#endregion Loc-Out: fix not clear filter
-                    throw new PlatformRuntimeException("atLeastOneItem");
-                }
-            },
-
-            /**
-             * Validates quantity to be returned. Throws PlatformRuntimeException.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} matrectransRecord - Object to execute validation
-             * @return	{Boolean} True for a valid record. False otherwise.
-             * @public
-             * @throws {PlatformRuntimeException} If quantity is not a number or quantity is higher than allowed.
-             */
-            validateQuantityForReturn: function (eventContext, matrectransRecord) {
-                //var matrectransRecord = eventContext.getCurrentRecord();
-                if (!matrectransRecord) {
-                    matrectransRecord = eventContext.getCurrentRecord();
-                }
-
-                var qtyToBeReturned = matrectransRecord.qtyToBeReturned;
-                var newQtyToBeReturned =
-                    matrectransRecord.getPendingOrOriginalValue("qtyToBeReturned");
-                var message = null;
-
-                //verify if issue quantity is a positive number
-                if (
-                    newQtyToBeReturned !== "" &&
-                    NumberUtil.parse(newQtyToBeReturned, this.application.getUserLocale()) <= 0
-                ) {
-                    message = "quantityPositive";
-                    throw new PlatformRuntimeException(message);
-                    return false;
-                }
-                //verify if issue quantity is a valid number
-                else if (isNaN(NumberUtil.parse(Number(newQtyToBeReturned)))) {
-                    message = MessageService.createResolvedMessage("newReadingNaN", [
-                        newQtyToBeReturned,
-                    ]);
-                    throw new PlatformRuntimeException(message);
-                    return false;
-                }
-
-                //verify if issue quantity is greater than quantity available
-                else if (
-                    !isNaN(NumberUtil.parse(Number(newQtyToBeReturned))) &&
-                    qtyToBeReturned < newQtyToBeReturned
-                ) {
-                    message = MessageService.createResolvedMessage("quantityItemValidation", [
-                        qtyToBeReturned,
-                        matrectransRecord.itemnum,
-                    ]);
-                    //matrectransRecord.clearPendingValue('qtyToBeReturned');
-                    //matrectransRecord.setPendingValue('qtyToBeReturned', qtyToBeReturned);
-                    throw new PlatformRuntimeException(message);
-                    return false;
-                }
-                return true;
-            },
-
-            /**
-             * Constructs filter to search received items
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{String} siteid - Site id of user
-             * @param	{String} shipment - Shipment number
-             * @return	{Object} Filter object
-             * @public
-             */
-            //#region Loc-In: Add FormNo, DocumentRef
-            //buildFilterForReceivedItems : function(eventContext, siteid, shipment) {
-            buildFilterForReceivedItems: function (
+            additionalInventory.lookupFilter = this.buildFilterForItem(
                 eventContext,
                 siteid,
-                shipment,
-                formno,
-                documentref
-            ) {
-                //#region Loc-Out: Add FormNo, DocumentRef
+                storeroom
+            );
+        },
 
-                var types = this.selectableReceiptsFilter(eventContext);
-                var filter = [];
+        /**
+         * Location Lookup Data Filter
+         */
+        filterLocationForLookup: function (eventContext) {
+            var additionallocations = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionallocations"
+            );
+            var filter = [];
+            additionallocations.lookupFilter = null;
 
-                // create a filter for each status that has everything you need to filter on
-                var mainFilter = {};
-                //#region Loc-In: Add FormNo, DocumentRef
-                //mainFilter.shipment = shipment;
+            var siteid = UserManager.getInfo("defsite");
+            filter.push({ siteid: siteid });
 
-                var domainIssueTypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                if (shipment) {
-                    mainFilter.shipment = shipment;
-                }
-                if (formno) {
-                    mainFilter.formnumber = formno;
-                }
-                if (documentref) {
-                    mainFilter.documentref = documentref;
-                }
+            additionallocations.lookupFilter = filter;
+        },
 
-                //#endregion Loc-Out: Add FormNo, DocumentRef
-                mainFilter.siteid = siteid;
+        /**
+         * Set Default Site Id on storeroom view
+         */
+        storeroomSiteRender: function (eventContext) {
+            var siteid = UserManager.getInfo("defsite");
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfers.set("siteid", siteid);
+        },
 
-                //#region Loc-In: filter only status is 'SHIPRECEIPT'
-                /* arrayUtil.forEach(types, function(type, tin){
-				var result = {};
-				lang.mixin(result, type);
-				lang.mixin(result, mainFilter);
-				filter.push(result);
-			}); */
+        /**
+         * Set fields readonly exclusive of each other on Search View.
+         */
+        setFieldsReadonly: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var ponum = transfers.getPendingOrOriginalValue("ponum");
+            //var assetnum = transfers.getPendingOrOriginalValue('asset');
 
-                var issuetype = SynonymDomain.resolveToDefaultExternal(
-                    domainIssueTypes,
-                    "SHIPRECEIPT"
-                );
-                mainFilter.issuetype = issuetype;
-                filter = mainFilter;
+            //transfers.getRuntimeFieldMetadata('ponum').set('readonly', false);
+            //transfers.getRuntimeFieldMetadata('polinenum').set('readonly', false);
 
-                //#endregion Loc-Out: filter only status is 'SHIPRECEIPT'
-                return filter;
-            },
+            //#region Loc-In: Add fields
+            var formno = transfers.getPendingOrOriginalValue("formno");
 
-            /**
-             * Creates and validate fiter based on issue type domain
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @return	{Object} Filter of receipts
-             * @public
-             */
-            selectableReceiptsFilter: function (eventContext) {
-                var domainIssueTypes = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "domainissuetype"
-                );
-                var shipTransfer = SynonymDomain.resolveToDefaultExternal(
-                    domainIssueTypes,
-                    "SHIPTRANSFER"
-                );
+            if (ponum) {
+                transfers.getRuntimeFieldMetadata("formno").set("readonly", true);
+            } else if (formno) {
+                transfers.getRuntimeFieldMetadata("ponum").set("readonly", true);
+            } else {
+                transfers.getRuntimeFieldMetadata("formno").set("readonly", false);
+                transfers.getRuntimeFieldMetadata("ponum").set("readonly", false);
+            }
+            //#endregion Loc-Out: Add fields
+        },
 
-                var exceptionArray = [shipTransfer];
-                var internalIssueTypes = this.getMaxvalueFromDomainExcept(
-                    eventContext,
-                    domainIssueTypes,
-                    exceptionArray
-                );
+        /* #region  Tuan-in: add update callout */
+        updateCallOutLookupData: function (eventContext) {
+            eventContext.application.showBusy();
+            var self = this;
+            var filter = [];
+            filter.push({ status: "APPR" });
+            filter.push({ internal: true });
 
-                var filter = [];
+            var poPromise = ModelService.filtered(
+                "poResource",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                200,
+                true,
+                true,
+                null,
+                false
+            );
+            poPromise
+                .then(function (poSet) {
+                    poSet.sort("orderdate asc");
+                    poSet.resourceID = "grnPonumTemp";
+                    eventContext.application.addResource(poSet);
 
-                arrayUtil.forEach(internalIssueTypes, function (anIssueType) {
-                    CommonHandler._clearFilterForResource(eventContext, domainIssueTypes);
-                    var externalOnes = Object.keys(
-                        SynonymDomain.resolveToExternal(domainIssueTypes, anIssueType)
+                    eventContext.application.hideBusy();
+
+                    //verify if search result data is empty
+                    if (poSet.data.length == 0) {
+                        var msg =
+                            MessageService.createStaticMessage("emptySearchResult").getMessage();
+                        self.ui.showMessage(msg);
+                    }
+                })
+                .otherwise(function (error) {
+                    Logger.trace(self._className + ": " + error);
+                });
+        },
+        /* #endregion */
+
+        /**
+         * Search Reserved Items - Button action on search view
+         */
+        searchReservedItem: function (eventContext) {
+            var filter = [];
+            var filter2 = [];
+            var oslcQueryParameters = {};
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var domainIssueTypes = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainissuetype"
+            );
+            var shiptransferIssueType = SynonymDomain.resolveToDefaultExternal(
+                domainIssueTypes,
+                "SHIPTRANSFER"
+            );
+            //var wonum = transfers.wonum;
+            //var assetnum = transfers.asset;
+            var siteid = UserManager.getInfo("defsite");
+            var storeroom = transfers.storeroom;
+            var tostoreroom = transfers.tostoreroom;
+            var tositeid = transfers.tositeid;
+            var ponum = transfers.ponum;
+            //#region Loc-In: Add fields
+            var formno = transfers.formno;
+            //#endregion Loc-Out: Add fields
+            var reservationDaysInAdvance = AppConfig.getSearchDays();
+            var self = this;
+
+            //PO is required
+            //#region Loc-In: Add FormNo is required
+            //if(!ponum){
+            //var msg = MessageService.createStaticMessage("reqPO").getMessage();
+            if (!ponum && !formno) {
+                var msg = MessageService.createStaticMessage("reqPOorFormNo").getMessage();
+                //#endregion Add FormNo is required
+                self.ui.showMessage(msg);
+                return;
+            }
+
+            //verify if we have at least one field filled
+            if (!storeroom && !tostoreroom && !tositeid) {
+                var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
+                self.ui.showMessage(msg);
+                return;
+            }
+
+            //from storeroom is required
+            if (!storeroom) {
+                var msg = MessageService.createStaticMessage("reqFromStoreroom").getMessage();
+                self.ui.showMessage(msg);
+                return;
+            }
+
+            //verify if fromstoreroom is different of tostoreroom
+            if (storeroom == tostoreroom && siteid == tositeid) {
+                var msg = MessageService.createStaticMessage(
+                    "fromStoreroomEqualsToStoreroom"
+                ).getMessage();
+                self.ui.showMessage(msg);
+                return;
+            }
+
+            if (this.getError(eventContext)) {
+                throw new PlatformRuntimeException("reviewErrors");
+            }
+
+            // Checking connectivity
+            CommunicationManager.checkConnectivityAvailable().then(function (hasConnectivity) {
+                //eventContext.application.showBusy();
+                if (hasConnectivity) {
+                    //flush transactions before searching
+                    var flushPromise = PushingCoordinatorService.flush();
+                    flushPromise
+                        .then(function () {
+                            filter.push({ siteid: siteid });
+
+                            if (storeroom) {
+                                filter.push({ location: storeroom });
+                            }
+                            if (tostoreroom) {
+                                filter.push({ tostoreloc: tostoreroom });
+                            }
+                            if (tositeid) {
+                                filter.push({ tositeid: tositeid });
+                            }
+                            if (ponum) {
+                                filter.push({ ponum: ponum });
+                            }
+                            //#region Loc-In: Add fields
+                            if (formno) {
+                                filter.push({ formno: "%" + formno + "%" });
+                            }
+
+                            var invreserveSet = eventContext.getResource("invreserve");
+                            CommonHandler._clearFilterForResource(eventContext, invreserveSet);
+                            //#endregion Loc-Out: Add fields
+
+                            var invreservePromise = ModelService.filtered(
+                                "invreserve",
+                                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                                filter,
+                                1000,
+                                true,
+                                true,
+                                oslcQueryParameters,
+                                false
+                            );
+                            invreservePromise
+                                .then(function (invreserveSet) {
+                                    //display records which have remaining reservations
+                                    invreserveSet.filter("qtyRemaining == true");
+
+                                    //verify if search result data is empty
+                                    if (invreserveSet.data.length == 0) {
+                                        var msg =
+                                            MessageService.createStaticMessage(
+                                                "emptySearchResult"
+                                            ).getMessage();
+                                        self.ui.showMessage(msg);
+                                        return;
+                                    }
+
+                                    ModelService.clearSearchResult(invreserveSet);
+                                    invreserveSet.resourceID = "invreserve";
+                                    //sort by localsortbin - needed since dynamic mapped bin sorting is not working on initial load.
+                                    invreserveSet.sort("localsortbin asc");
+                                    eventContext.application.addResource(invreserveSet);
+                                    eventContext.ui.show("Transfers.InvreserveListView");
+                                })
+                                .otherwise(function (error) {
+                                    Logger.trace(self._className + ": " + error);
+                                });
+                        })
+                        .otherwise(function (error) {
+                            Logger.trace(self._className + ": " + error);
+                        });
+                } else {
+                    self.ui.showMessage(
+                        MessageService.createStaticMessage("connectionFailure").getMessage()
                     );
-                    arrayUtil.forEach(externalOnes, function (aValue) {
-                        filter.push({ issuetype: aValue });
+                }
+                eventContext.application.hideBusy();
+            });
+        },
+
+        /**
+         * Cancels the Additional Items on Items Details View (Unreserved Item) and returns back to the list view or search view with fields cleared.
+         */
+        cancelAdditionalItems: function (eventContext) {
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+            this.clearSearchFields(eventContext);
+        },
+
+        completeAdditionalItems: function (eventContext) {
+            Logger.trace(self._className + ": completeAdditionalItems");
+        },
+
+        /**
+         * Clears search view fields.
+         */
+        clearSearchFields: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfers.setNullValue("ponum");
+            transfers.setNullValue("itemnum");
+            transfers.setNullValue("itemdesc");
+            transfers.setNullValue("bin");
+            transfers.setNullValue("storeroom");
+            transfers.setNullValue("tositeid");
+            transfers.setNullValue("tostoreroom");
+            //#region Loc-In: clear formno value
+            transfers.setNullValue("formno");
+            //#endregion Loc-Out: clear formno value
+        },
+
+        /**
+         * Reset search fields upon initial entry of the view, initialize within app.xml
+         */
+        resetSearchFields: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfers.setNullValue("ponum");
+            transfers.setNullValue("itemnum");
+            transfers.setNullValue("itemdesc");
+            transfers.setNullValue("bin");
+            transfers.setNullValue("shipment");
+            //#region Loc-In: clear new field value
+            transfers.setNullValue("formno");
+            transfers.setNullValue("documentref");
+            //#endregion Loc-Out: clear formno value
+
+            /* #region  Tuan-in: clear  defaultBin text */
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "defaultBinShipment"
+            ).getCurrentRecord();
+            transfers.setNullValue("defaultBin");
+            /* #endregion Tuan-in: clear  defaultBin text */
+        },
+
+        resetAdditionalItemFields: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+            transfers.setNullValue("wonum");
+            transfers.setNullValue("asset");
+            transfers.setNullValue("location");
+            transfers.setNullValue("glaccount");
+            transfers.setNullValue("taskid");
+            transfers.setNullValue("issueto");
+            transfers.setNullValue("glcreditacct");
+            transfers.setNullValue("gldebitacct");
+            transfers.setNullValue("frombin");
+            transfers.setNullValue("tobin");
+            transfers.setNullValue("fromlot");
+            transfers.setNullValue("tolot");
+
+            //#region Loc-In: clear new fields
+            transfers.setNullValue("actualdate");
+            transfers.setNullValue("frombincurbal");
+            transfers.setNullValue("issueTo");
+            transfers.setNullValue("issueQty");
+            transfers.setNullValue("tostoreroom");
+            transfers.setNullValue("tositeid");
+            transfers.setNullValue("conversion");
+
+            eventContext.application[
+                "application.handlers.TransfersAvailableItemsHandler"
+            ].clearAdditionalUsage(eventContext);
+            //#region Loc-Out: clear new fields
+        },
+
+        /**
+         * Clears search fields for Transferred Items for Return
+         */
+        /*clearReturnSearchFields : function(eventContext) {
+			var transfers = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
+			transfers.setNullValue('itemnum');
+			transfers.setNullValue('wonum');
+		},*/
+
+        /**
+         * Validation for quantity field on Transfer Receive Item (Ship and Complete action)
+         */
+        validateNumericFieldTransferItem: function (eventContext, currentRecord) {
+            if (!currentRecord) {
+                currentRecord = eventContext.getCurrentRecord();
+            }
+            var item = currentRecord.get("item");
+            var qty = currentRecord.get("localreservedqty");
+            var qtyAvailable = currentRecord.get("reservedqty");
+
+            //verify if issue quantity is a positive number
+            if (NumberUtil.parse(qty, this.application.getUserLocale()) < 0) {
+                var msg = MessageService.createResolvedMessage("quantityPositive");
+                this.ui.showMessage(msg);
+                return false;
+            }
+            //verify if issue quantity is a valid number
+            else if (qty == null || qty == undefined || isNaN(NumberUtil.parse(Number(qty)))) {
+                var msg = MessageService.createResolvedMessage("newReadingNaN", [qty]);
+                this.ui.showMessage(msg);
+                return false;
+            }
+            return true;
+        },
+
+        iterateAllRecordsToCheckQuantity: function (eventContext) {
+            //iterate over all records on list and check if at least on item has positive quantity
+            var countItemsPositiveQuantity = 0;
+            for (var index in eventContext.getResource("invreserve").data) {
+                var elem = eventContext.getResource("invreserve").data[index];
+                if (!this.validateNumericFieldTransferItem(eventContext, elem)) {
+                    return false;
+                }
+                if (elem.get("localreservedqty") > 0) {
+                    countItemsPositiveQuantity++;
+                }
+            }
+            if (countItemsPositiveQuantity == 0) {
+                var msg = MessageService.createResolvedMessage("quantityPositive");
+                eventContext.ui.showMessage(msg);
+                return false;
+            }
+            return true;
+        },
+
+        completeReservation: function (eventContext) {
+            if (this.iterateAllRecordsToCheckQuantity(eventContext)) {
+                this.initiateTransfer(eventContext, "COMPLETE");
+            }
+        },
+
+        shipReservation: function (eventContext) {
+            /* #region Tuan-in: add checkbox to reserved Items List  */
+            var invreserveSet = eventContext.getResource();
+            this.checkBoxValidation(eventContext, invreserveSet);
+            /* #endregion Tuan-out: add checkbox to reserved Items List  */
+            if (this.iterateAllRecordsToCheckQuantity(eventContext)) {
+                this.initiateTransfer(eventContext, "SHIPPED");
+            }
+        },
+
+        /**
+         * Cancels the Reservation and returns back to the search view with fields cleared.
+         */
+        cancelReservation: function (eventContext) {
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+            this.clearSearchFields(eventContext);
+            //#region Loc-In: clear reserved header
+            this.clearReservedHeader(eventContext);
+            //#endregion Loc-Out: clear reserved header
+        },
+
+        /**
+         * Create Shipment and change status to shipped.
+         */
+        shipItems: function (eventContext) {
+            eventContext.application.showBusy();
+            var invuse = this.application.getResource("invuse").getCurrentRecord();
+            var self = this;
+            var searchView = this.getSearchView(eventContext);
+            var status = this.getStatus(eventContext);
+
+            //create shipment record
+            this.shipment(eventContext, self);
+
+            //change status after shipment record is created
+            self.changeStatus(invuse, eventContext, searchView, self, status);
+            this.clearStatus(eventContext);
+            this.clearSearchView(eventContext);
+        },
+        /* #region  Tuan-in: add init sort for inventory usages */
+        initSortInventoryUsage: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invuse");
+            records.sort("createdate desc");
+        },
+        /* #endregion Tuan-out: add init sort for inventory usages */
+
+        /* #region  Tuan-in: add init Inventory Usage Detail */
+        initInventoryUsageDetail: function (eventContext) {
+            var recordTemp = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invuselineTemp"
+            ).getCurrentRecord();
+            var record = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invuse"
+            ).getCurrentRecord();
+            record.getModelDataSet("invuseline", true).then(function (lineData) {
+                var lineRecord = lineData.getRecordAt(0);
+                recordTemp.set("issueto", lineRecord.issueto);
+                recordTemp.set("wonum", lineRecord.wonum);
+                recordTemp.set("taskid", lineRecord.taskid);
+                recordTemp.set("tostoreloc", lineRecord.tostoreloc);
+                recordTemp.set("fromstoreloc", lineRecord.fromstoreloc);
+                recordTemp.set("gldebitacct", lineRecord.gldebitacct);
+                recordTemp.set("glcreditacct", lineRecord.glcreditacct);
+                recordTemp.set("quantity", lineRecord.quantity);
+                recordTemp.set("conversion", lineRecord.conversion);
+                recordTemp.set("frombin", lineRecord.frombin);
+                recordTemp.set("tobin", lineRecord.tobin);
+                recordTemp.set("fromlot", lineRecord.fromlot);
+                recordTemp.set("tolot", lineRecord.tolot);
+                recordTemp.set("actualdate", lineRecord.actualdate);
+            });
+        },
+        /* #endregion Tuan-in: add init Inventory Usage Detail */
+
+        /**
+		 * Create Shipment document and load items on shipment document
+		 
+		shipItemsNoSplits : function(eventContext){
+			var transfers = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
+			var invuse = this.application.getResource("invuse").getCurrentRecord();
+			var self = this;
+			
+			var shipmentline = "";
+			invuse.getModelDataSet("shipment", true).then(function(shipmentSet){
+				invuse.openPriorityChangeTransaction();
+				var shipment = shipmentSet.createNewRecord();
+				shipment.set('siteid',transfers.tositeid);
+				shipment.setDateValue('shipdate',self.application.getCurrentDateTime());
+								
+				invuse.getModelDataSet("invuseline", true).then(function(invuselineSet){
+					arrayUtil.forEach(invuselineSet.data, function(ivline){
+						//create and populate shipment lines
+						invuse.getModelDataSet("shipmentline", true).then(function(shipmentlineset){
+							shipmentline = shipmentlineset.createNewRecord();	
+
+							shipmentline.set('itemnum',ivline.itemnum);
+							shipmentline.set('itemdescription',ivline.description);
+							shipmentline.set('itemsetid',ivline.itemsetid);
+							var qty = ivline.quantity;
+							shipmentline.set('shippedqty',qty.toString());
+							shipmentline.set('fromstoreloc',ivline.fromstoreloc);
+							shipmentline.set('tostoreloc',ivline.tostoreloc);							
+							//shipmentline.set('fromsiteid',ivline.fromsiteid);
+							shipmentline.set('siteid',ivline.tositeid);
+							shipmentline.set('toorgid',ivline.toorgid);
+							//shipmentline.set('fromorgid',ivline.fromorgid);
+
+							shipmentline.set('invuselinenum',ivline.invuselinenum);
+							//shipmentline.set('invuselineid',ivline.invuselineid);
+							//shipmentline.set('invuselinesplitid',ivline.invuselinesplitid);
+							
+							shipmentline.set('frombin',ivline.frombin);
+							shipmentline.set('fromlot',ivline.fromlot);
+							shipmentline.set('rotassetnum',ivline.rotassetnum);
+
+							shipmentline.set('comments','');
+
+							shipmentline.set('ponum',ivline.ponum);
+							shipmentline.set('polinenum',ivline.polinenum);
+							shipmentline.set('polineid',ivline.polineid);
+							shipmentline.set('revisionnum',ivline.porevisionnum);
+						});
+					});
+					invuse.closePriorityChangeTransaction();	
+					shipmentSet.resourceID = 'shipmentResource';
+					eventContext.application.addResource(shipmentSet);
+					
+					//Display shipment view after shipment lines have been created and populated
+					eventContext.ui.show("Transfers.ShipmentDetailView");
+				});				
+			});
+			
+		},
+		 */
+
+        /**
+         * Reset Shipment Detail View
+         */
+        clearSetShipmentDetailData: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var tempShipmentResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "tempShipmentResource"
+            ).getCurrentRecord();
+            tempShipmentResource.set("siteid", transfers.tositeid);
+            tempShipmentResource.setDateValue("shipdate", this.application.getCurrentDateTime());
+
+            var splitqtyacrossbinsResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "splitqtyacrossbins"
+            );
+
+            if (splitqtyacrossbinsResource != null) {
+                var splitqtyacrossbins = splitqtyacrossbinsResource.getCurrentRecord();
+
+                if (splitqtyacrossbins != null) {
+                    var rotassetnum = splitqtyacrossbins.get("rotassetnum");
+                    if (rotassetnum != null) tempShipmentResource.set("rotassetnum", rotassetnum);
+                }
+            }
+
+            tempShipmentResource.setNullValue("expreceiptdate");
+            tempShipmentResource.setNullValue("carrier");
+            tempShipmentResource.setNullValue("packingslipnum");
+            tempShipmentResource.setNullValue("shiptoattn");
+            tempShipmentResource.setNullValue("shipto");
+        },
+
+        /**
+         * Transition to Shipment Detail View
+         */
+        shipItemsWithSplits: function (eventContext, myThis) {
+            //Display tempShipmentRecource view to collect shipment data
+            eventContext.ui.show("Transfers.ShipmentDetailView");
+        },
+
+        /**
+         * Create Shipment document and load items on shipment document with Splits
+         */
+        shipment: function (eventContext, myThis) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var tempShipmentResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "tempShipmentResource"
+            ).getCurrentRecord();
+            var self = this;
+
+            //need this if coming from other handler
+            if (myThis) {
+                self = myThis;
+            }
+
+            var invuse = self.application.getResource("invuse").getCurrentRecord();
+
+            var shipmentline = "";
+            invuse.getModelDataSet("shipment", true).then(function (shipmentSet) {
+                invuse.openPriorityChangeTransaction();
+                var shipment = shipmentSet.createNewRecord();
+                shipment.set("siteid", transfers.tositeid);
+                shipment.set("shipdate", tempShipmentResource.shipdate);
+                shipment.set("expreceiptdate", tempShipmentResource.expreceiptdate);
+                shipment.set("carrier", tempShipmentResource.carrier);
+                shipment.set("packingslipnum", tempShipmentResource.packingslipnum);
+                shipment.set("shiptoattn", tempShipmentResource.shiptoattn);
+                shipment.set("shipto", tempShipmentResource.shipto);
+
+                shipment.setDateValue("shipdate", self.application.getCurrentDateTime());
+                invuse.getModelDataSet("shipmentline", true).then(function (shipmentlineset) {
+                    invuse.getModelDataSet("invuseline", true).then(function (invuselineSet) {
+                        invuse
+                            .getModelDataSet("npinvuselinesplit", true)
+                            .then(function (npSplitSet) {
+                                arrayUtil.forEach(invuselineSet.data, function (ivline) {
+                                    var foundSplitRecord = false;
+                                    arrayUtil.forEach(npSplitSet.data, function (iSplit) {
+                                        if (
+                                            ivline.get("anywhereRefId") ==
+                                            iSplit.get("invuselinelinkid")
+                                        ) {
+                                            foundSplitRecord = true;
+                                        }
+                                    });
+
+                                    if (foundSplitRecord == false) {
+                                        //invuseline record has no split records.
+                                        //add invuseline into shipment
+                                        shipmentline = shipmentlineset.createNewRecord();
+
+                                        shipmentline.set("itemnum", ivline.itemnum);
+                                        shipmentline.set("itemdescription", ivline.description);
+                                        shipmentline.set("itemsetid", ivline.itemsetid);
+                                        var qty = ivline.quantity;
+                                        shipmentline.set("shippedqty", qty.toString());
+                                        shipmentline.set("fromstoreloc", ivline.fromstoreloc);
+                                        shipmentline.set("tostoreloc", ivline.tostoreloc);
+                                        shipmentline.set("fromsiteid", invuse.siteid);
+                                        //shipmentline.set('tositeid',ivline.tositeid);
+                                        shipmentline.set("toorgid", ivline.toorgid);
+                                        shipmentline.set("fromorgid", invuse.orgid);
+
+                                        shipmentline.set(
+                                            "shipmentlinelinkid",
+                                            ivline.get("anywhereRefId")
+                                        ); //link invuseline with shipmentline
+
+                                        shipmentline.set("invuselinenum", ivline.invuselinenum);
+                                        //shipmentline.set('invuselineid',ivline.invuselineid);
+                                        //shipmentline.set('invuselinesplitid',ivline.invuselinesplitid);
+
+                                        shipmentline.set("frombin", ivline.frombin);
+                                        shipmentline.set("fromlot", ivline.fromlot);
+                                        shipmentline.set("rotassetnum", ivline.rotassetnum);
+
+                                        shipmentline.set("comments", "");
+
+                                        shipmentline.set("ponum", ivline.ponum);
+                                        shipmentline.set("polinenum", ivline.polinenum);
+                                        shipmentline.set("polineid", ivline.polineid);
+                                        var porevisionnum = 0;
+                                        if (ivline.porevisionnum) {
+                                            porevisionnum = ivline.porevisionnum;
+                                        }
+                                        shipmentline.set("revisionnum", porevisionnum);
+                                    }
+                                });
+
+                                //check if split records exist and create shipment lines.
+                                if (npSplitSet.count() > 0) {
+                                    arrayUtil.forEach(
+                                        npSplitSet.data,
+                                        function (invuselineSplitRec) {
+                                            shipmentline = shipmentlineset.createNewRecord();
+
+                                            shipmentline.set("itemnum", invuselineSplitRec.itemnum);
+                                            shipmentline.set(
+                                                "itemdescription",
+                                                invuselineSplitRec.invuseline.description
+                                            );
+                                            shipmentline.set(
+                                                "itemsetid",
+                                                invuselineSplitRec.itemsetid
+                                            );
+                                            var qty = invuselineSplitRec.quantity;
+                                            shipmentline.set("shippedqty", qty.toString());
+                                            shipmentline.set(
+                                                "fromstoreloc",
+                                                invuselineSplitRec.fromstoreloc
+                                            );
+                                            shipmentline.set(
+                                                "tostoreloc",
+                                                invuselineSplitRec.invuseline.tostoreloc
+                                            );
+                                            shipmentline.set("fromsiteid", invuse.siteid);
+                                            shipmentline.set(
+                                                "siteid",
+                                                invuselineSplitRec.invuseline.tositeid
+                                            );
+                                            shipmentline.set(
+                                                "toorgid",
+                                                invuselineSplitRec.invuseline.toorgid
+                                            );
+                                            shipmentline.set("fromorgid", invuse.orgid);
+
+                                            shipmentline.set(
+                                                "shipmentlinelinkid",
+                                                invuselineSplitRec.invuseline.get("anywhereRefId")
+                                            ); //link invuseline with shipmentline
+
+                                            shipmentline.set(
+                                                "invuselinenum",
+                                                invuselineSplitRec.invuseline.invuselinenum
+                                            );
+                                            //shipmentline.set('invuselineid',ivline.invuselineid);
+                                            //shipmentline.set('invuselinesplitid',ivline.invuselinesplitid);
+
+                                            shipmentline.set("frombin", invuselineSplitRec.frombin);
+                                            shipmentline.set("fromlot", invuselineSplitRec.fromlot);
+                                            shipmentline.set(
+                                                "rotassetnum",
+                                                invuselineSplitRec.rotassetnum
+                                            );
+
+                                            shipmentline.set("comments", "");
+
+                                            shipmentline.set(
+                                                "ponum",
+                                                invuselineSplitRec.invuseline.ponum
+                                            );
+                                            shipmentline.set(
+                                                "polinenum",
+                                                invuselineSplitRec.invuseline.polinenum
+                                            );
+                                            shipmentline.set(
+                                                "polineid",
+                                                invuselineSplitRec.invuseline.polineid
+                                            );
+
+                                            var porevisionnum = 0;
+                                            if (invuselineSplitRec.invuseline.porevisionnum) {
+                                                porevisionnum =
+                                                    invuselineSplitRec.invuseline.porevisionnum;
+                                            }
+
+                                            shipmentline.set("revisionnum", porevisionnum);
+                                        }
+                                    );
+                                }
+
+                                invuse.closePriorityChangeTransaction();
+                                //							shipmentSet.resourceID = 'shipmentResource';
+                                //							eventContext.application.addResource(shipmentSet);
+
+                                //Display shipment view after shipment lines have been created and populated
+                                // eventContext.ui.show("Transfers.ShipmentDetailView");
+                            });
                     });
                 });
-                CommonHandler._clearFilterForResource(eventContext, domainIssueTypes);
-                return filter;
-            },
+            });
+        },
 
-            /**
-             * Retrieve an array of all records from domainSet excluding exception array values.
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Object} domainSet - Set of values from domain
-             * @param	{Array} exceptionArray - Array of exceptions
-             * @return	{Array} Array of domain values
-             * @public
-             */
-            getMaxvalueFromDomainExcept: function (eventContext, domainSet, exceptionArray) {
-                var maxvaluesArray = [];
+        /* #region Tuan-in: clear fillter for checkbox */
+        clearFilterShipmentData: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
+            CommonHandler._clearFilterForResource(eventContext, records);
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+        /* #endregion Tuan-out: clear fillter for checkbox */
 
-                domainSet.data.forEach(function (domainItem) {
-                    CommonHandler._clearFilterForResource(eventContext, domainSet);
-                    maxvaluesArray.push(domainItem.maxvalue);
-                });
+        /**
+         * Transfers an Item
+         * Invuse and Invuselines are created everytime an item is transferred.
+         */
+        initiateTransfer: function (eventContext, newStatus) {
+            var invreserveSet = eventContext.getResource();
+            var invuseResource = this.application.getResource("invuse");
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var invuse = null;
+            var invuseline = null;
+            var storeroom = transfers.storeroom;
+            var siteid = transfers.siteid;
+            var self = this;
 
-                if (Array.isArray(exceptionArray) && exceptionArray.length > 0) {
-                    exceptionArray.forEach(function (expItem) {
-                        if (expItem && maxvaluesArray.indexOf(expItem) >= 0) {
-                            //remove item from array
-                            maxvaluesArray.splice(maxvaluesArray.indexOf(expItem), 1);
+            //#region Loc-In: Add attributes
+            var transfersReservedHeader = eventContext.application
+                .getResource("transfersReservedHeader")
+                .getCurrentRecord();
+            var formNumber = transfersReservedHeader.get("formnumber");
+            var description = transfersReservedHeader.get("description");
+            var documentRef = transfersReservedHeader.get("documentref");
+            var createDate = transfersReservedHeader.get("createdate");
+
+            /* #region  Tuan-in: require formlot */
+            var validFromlot = true;
+            arrayUtil.forEach(invreserveSet.data, function (item) {
+                if (!item.fromlot) validFromlot = false;
+            });
+            if (!validFromlot) {
+                var msg = MessageService.createStaticMessage("requiredField").getMessage();
+                self.ui.showMessage(msg);
+                return;
+            }
+            /* #endregion  Tuan-in: require formlot*/
+
+            if (!formNumber || !description || !createDate) {
+                var msg = MessageService.createStaticMessage("requiredField").getMessage();
+                self.ui.showMessage(msg);
+                return;
+            }
+            //#endregion Loc-Out: Add attributes
+
+            //show busy message
+            eventContext.application.showBusy();
+
+            //check negative availability
+            var negPromise = this.checkNegativeAvailability(eventContext, invreserveSet, transfers);
+            negPromise
+                .then(function (negObject) {
+                    //clear any data that may have been stuck in resource from prior transactions
+                    invuseResource.data = [];
+                    invuseResource._recordsToCreate = [];
+
+                    //reset splitrotateresource
+                    var splitrotateresource =
+                        eventContext.application.getResource("splitrotateresource");
+                    splitrotateresource.data = [];
+
+                    var domaininvusestatus = CommonHandler._getAdditionalResource(
+                        eventContext,
+                        "domaininvusestatus"
+                    );
+                    var currentStatus = SynonymDomain.resolveToDefaultExternal(
+                        domaininvusestatus,
+                        "ENTERED"
+                    );
+
+                    var domainitemtypes = CommonHandler._getAdditionalResource(
+                        eventContext,
+                        "domainitemtype"
+                    );
+                    var toolItemType = SynonymDomain.resolveToInternal(
+                        domainitemtypes,
+                        SynonymDomain.resolveToDefaultExternal(domainitemtypes, "TOOL")
+                    );
+
+                    var domainusetype = CommonHandler._getAdditionalResource(
+                        eventContext,
+                        "domainusetype"
+                    );
+
+                    var domaininvusetype = CommonHandler._getAdditionalResource(
+                        eventContext,
+                        "domaininvusetype"
+                    );
+                    var transfertype = SynonymDomain.resolveToDefaultExternal(
+                        domaininvusetype,
+                        "TRANSFER"
+                    );
+                    //Loc-In
+                    // set actualDate is current DateTime
+                    var actualDate = self.application.getCurrentDateTime();
+                    //Loc-Out
+
+                    //check if records exist in order to create invuse
+                    arrayUtil.forEach(invreserveSet.data, function (invreserve) {
+                        if (invreserve.localreservedqty > 0) {
+                            if (!invuse) {
+                                var ponum = invreserve.ponum;
+                                invuse = invuseResource.createNewRecord();
+                                invuse.openPriorityChangeTransaction();
+                                invuse.set("usetype", transfertype);
+                                if (ponum && ponum.length > 0) {
+                                    invuse.set(
+                                        "description",
+                                        MessageService.createResolvedMessage(
+                                            "invuseDescriptionPO",
+                                            [ponum]
+                                        )
+                                    );
+                                } else {
+                                    invuse.set(
+                                        "description",
+                                        MessageService.createResolvedMessage("invuseDescription")
+                                    );
+                                }
+                                invuse.set("fromstoreloc", storeroom);
+                                invuse.set("status", currentStatus);
+                                invuse.set("siteid", siteid);
+                                //#region Loc-In: set header fields
+                                invuse.set("formnumber", formNumber);
+                                invuse.set("description", description);
+                                invuse.set("documentref", documentRef);
+                                invuse.set("createdate", createDate);
+                                //#endregion Loc-Out: set header fields
+                                invuse.closePriorityChangeTransaction();
+                            }
+                            return;
                         }
                     });
+
+                    //initialize invuseline on new invuse record
+                    invuse.getModelDataSet("invuseline", true).then(function (ivline) {
+                        var i = 1;
+                        var deferreds = [];
+                        //The Invuseline transactions are wrapped around a priorityChangeTransaction in order for them to get
+                        //sent to the server before the change status transaction.  Important to note, that the  openPriorityChangeTransaction
+                        //is defined using the parent object invuse.
+                        invuse.openPriorityChangeTransaction();
+                        arrayUtil.forEach(invreserveSet.data, function (invreserve) {
+                            if (invreserve.localreservedqty > 0) {
+                                invuseline = ivline.createNewRecord();
+
+                                var splitPromise = new Deferred();
+                                invuseline.set("usetype", transfertype);
+                                //invuseline.set('tostoreloc',storeroom);
+                                invuseline.set("quantity", invreserve.localreservedqty);
+                                invuseline.set("siteid", siteid);
+
+                                invuseline.set("invuselinenum", i++);
+                                invuseline.set("itemnum", invreserve.item);
+                                invuseline.set("description", invreserve.itemdesc);
+                                invuseline.set("itemsetid", invreserve.itemsetid);
+                                invuseline.set("frombin", invreserve.binnum);
+                                invuseline.set("fromlot", invreserve.lotnum);
+                                invuseline.set("gldebitacct", invreserve.glaccount);
+                                invuseline.set("requestnum", invreserve.requestnum);
+                                invuseline.set("tositeid", invreserve.tositeid);
+                                invuseline.set("tostoreloc", invreserve.tostoreloc);
+                                invuseline.set("issueto", invreserve.issueTo);
+                                invuseline.set("ponum", invreserve.ponum);
+                                invuseline.set("polinenum", invreserve.polinenum);
+                                invuseline.set("porevisionnum", invreserve.porevisionnum);
+                                //#region Loc-In
+                                // A value required for the ActualDate field on the INVUSELINE object
+                                //invuseline.setDateValue("actualdate", actualDate);
+                                invuseline.set("actualdate", invreserve.actualdate);
+                                //#endregion Loc-Out
+
+                                var dataKey =
+                                    invreserve.item +
+                                    "::" +
+                                    storeroom +
+                                    "::" +
+                                    siteid +
+                                    "::" +
+                                    invreserve.itemsetid;
+                                var negativeAvailMaxvar = negObject.negativeAvailMaxvar;
+                                var itemBalanceMap = negObject.itemBalanceMap;
+                                var curbaltotalMap = negObject.curbaltotalMap;
+                                var itemAvailableBalanceMap = negObject.itemAvailableBalanceMap;
+
+                                //rotating
+                                if (invreserve.rotating) {
+                                    var rotatingItemTotalQty = itemBalanceMap[dataKey];
+                                    var curbaltotalQty = curbaltotalMap[dataKey];
+
+                                    if (rotatingItemTotalQty > curbaltotalQty) {
+                                        //not enough rotating item balance in bins stop
+                                        //have user change reserve qty
+                                        var msg =
+                                            MessageService.createResolvedMessage("splitLineQtyRot");
+                                        self.ui.showMessage(msg);
+                                        eventContext.application.hideBusy();
+                                        throw new PlatformRuntimeException("splitLineQtyRot");
+                                    }
+                                }
+
+                                /* Negative Availability check is not needed here, since reserved items already get checked when the PO is created/approved
+							if(!invreserve.rotating && negativeAvailMaxvar=='ALLOW'){
+								var itemBalanceRequested = itemBalanceMap[dataKey];
+								var itemQtyAvailable = itemAvailableBalanceMap[dataKey];
+								
+								if(itemBalanceRequested>itemQtyAvailable){
+									//skip splitting this one
+									splitPromise.resolve();
+									deferreds.push(splitPromise);
+									return;
+								}
+							}
+							*/
+
+                                //check split
+                                splitPromise = self.checkSplit(
+                                    eventContext,
+                                    invreserve,
+                                    invuse,
+                                    invuseline
+                                );
+                                deferreds.push(splitPromise);
+                            }
+                        });
+                        //#region Loc-In: adjust closePriorityChangeTransaction order
+                        /* invuse.closePriorityChangeTransaction();
+
+					all(deferreds).then(function(){ */
+
+                        var execCloseTransaction = false;
+                        all(deferreds).then(function () {
+                            if (execCloseTransaction == false) {
+                                invuse.closePriorityChangeTransaction();
+                                execCloseTransaction = true;
+                            }
+                            //#endregion Loc-Out: adjust closePriorityChangeTransaction order
+                            var splitrotateresource =
+                                eventContext.application.getResource("splitrotateresource");
+
+                            if (splitrotateresource && splitrotateresource.count() > 0) {
+                                self.setStatus(eventContext, newStatus);
+                                self.setSearchView(eventContext, "Transfers.SearchInvreserveView");
+                                eventContext.ui.show("Transfers.SplitQtyRotatingAssetView");
+                            } else {
+                                //no split necessary  -- CHANGE STATUS
+                                if (newStatus && newStatus == "SHIPPED") {
+                                    self.setStatus(eventContext, "SHIPPED");
+                                    self.setSearchView(
+                                        eventContext,
+                                        "Transfers.SearchInvreserveView"
+                                    );
+                                    self.shipItemsWithSplits(eventContext);
+                                } else {
+                                    self.changeStatus(
+                                        invuse,
+                                        eventContext,
+                                        "Transfers.SearchInvreserveView",
+                                        self,
+                                        "COMPLETE"
+                                    );
+                                }
+                            }
+                        });
+                    });
+                })
+                .otherwise(function (error) {
+                    Logger.trace(self._className + ": " + error);
+                });
+        },
+
+        /**
+         * Change Status
+         *
+         * Status will be change to Complete when issuing an item
+         */
+        changeStatus: function (invuse, eventContext, startingSearchView, currentThis, status) {
+            var statusChange = CommonHandler._getAdditionalResource(
+                currentThis,
+                "statusChangeResource"
+            ).getCurrentRecord();
+            var transferAdditionItemRecord = eventContext.application
+                .getResource("transferAdditionalItems")
+                .getCurrentRecord();
+            var memo = statusChange.get("memo");
+            var statusDate = this.application.getCurrentDateTime();
+            var invuseResource = invuse.getOwner();
+            var self = this;
+
+            //change status
+            if (status == "COMPLETE") {
+                InvuseObject.complete(invuse, statusDate, memo, eventContext);
+            } else if (status == "SHIPPED") {
+                InvuseObject.shipped(invuse, statusDate, memo, eventContext);
+            } else {
+                InvuseObject.cancelled(invuse, statusDate, memo, eventContext);
+            }
+
+            ModelService.save(invuseResource)
+                .then(function () {
+                    //flush transactions before checking for errors
+                    var flushPromise = PushingCoordinatorService.flush();
+                    flushPromise.then(function () {
+                        self.clearSearchFields(eventContext);
+
+                        //#region Loc-In: clear Reserved Header
+                        self.clearReservedHeader(eventContext);
+                        //#endregion Loc-Out: clear Reserved Header
+
+                        //clear non-persistents
+                        //					invuse.npinvuselinesplit = [];
+                        //					invuse.shipment = [];
+                        //					invuse.shipmentline = [];
+
+                        //reset fields
+                        transferAdditionItemRecord.issueQty = "";
+                        transferAdditionItemRecord.conversion = "";
+                        self.resetAdditionalItemFields(eventContext);
+
+                        //startingSearchView - if null or not defined just change status no transition needed
+                        if (startingSearchView) {
+                            eventContext.application.hideBusy();
+                            eventContext.ui.returnToView(startingSearchView);
+                        }
+                    });
+                })
+                .otherwise(function (err) {
+                    //#region Loc-In: clear Reserved Header
+                    self.clearReservedHeader(eventContext);
+                    //#endregion Loc-Out: clear Reserved Header
+                    eventContext.application.hideBusy();
+                    eventContext.ui.showMessage(err);
+                });
+        },
+
+        discardView: function (eventContext) {
+            //cleanupEditAssetView method is invoked as callback of hideCurrentView
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        hideDialog: function (eventContext) {
+            eventContext.ui.hideCurrentDialog();
+        },
+
+        /**
+         **** VIEW TRANSITION METHODS ****
+         */
+
+        /**
+         * Transits to Search view of Transfer Planned Items
+         * Validates required data and transits to Transfer Planned Items Search view
+         */
+        transitsToTransferPlannedSearchView: function (eventContext) {
+            if (!this._isRequiredFieldFilled(eventContext)) {
+                this.ui.showMessage(
+                    MessageService.createStaticMessage("requiredField").getMessage()
+                );
+                return;
+            }
+            this.clearSearchFields(eventContext);
+            this.ui.show("Transfers.SearchInvreserveView");
+        },
+
+        /**
+         * Transits Back to Search view of Transfer Planned Items
+         * transits to Transfer Planned Items Search view
+         */
+        transitsBackToTransferPlannedSearchView: function (eventContext) {
+            eventContext.application["application.handlers.TransfersHandler"].clearSearchFields(
+                eventContext
+            );
+            //#region Loc-In: clear Reserved Header
+            eventContext.application["application.handlers.TransfersHandler"].clearReservedHeader(
+                eventContext
+            );
+            //#endregion Loc-Out: clear Reserved Header
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Transits Back to Search view of Return Items
+         * transits to Return Item Item Search view
+         */
+        transitsBackToReturnSearchView: function (eventContext) {
+            eventContext.application[
+                "application.handlers.TransfersHandler"
+            ].clearReturnSearchFields(eventContext);
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Check if required fields are populated
+         */
+        _isRequiredFieldFilled: function (eventContext) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                this,
+                "transfers"
+            ).getCurrentRecord();
+            var site = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom");
+
+            if (!site || !storeroom) {
+                return false;
+            }
+
+            return true;
+        },
+
+        /**
+         * Check and validate to storeroom input
+         */
+        validateToSite: function (eventContext) {
+            //var transfersResource = CommonHandler._getAdditionalResource(eventContext,'transfers').getCurrentRecord();
+
+            var transfersResource = eventContext.getCurrentRecord();
+            var siteid = transfersResource.getPendingOrOriginalValue("tositeid");
+
+            if (siteid && siteid.trim().length > 0) {
+                siteid = siteid.toUpperCase();
+
+                var self = this;
+                // Querying storerooms available
+                ModelService.filtered("site", null, [{ siteid: siteid }], null, false, true).then(
+                    function (siteSet) {
+                        if (siteSet.count() == 0) {
+                            self.ui.showMessage(
+                                MessageService.createStaticMessage("invalidSite").getMessage()
+                            );
+                            transfersResource.set("tositeid", "");
+                        } else {
+                            var validSite = siteSet.getRecordAt(0);
+                            transfersResource.set("tositeid", validSite.siteid);
+                        }
+                    }
+                );
+            }
+        },
+
+        /**
+         * Check if any records need to be split when completing the transfer.
+         */
+        checkSplit: function (eventContext, invreserve, invuse, invuseline) {
+            //invreserve info
+            var itemnum = invreserve.get("item");
+            var siteid = invreserve.get("siteid");
+            var itemsetid = invreserve.get("itemsetid");
+            var location = invreserve.get("location");
+            var binnum = invreserve.get("binnum");
+            var lotnum = invreserve.get("lotnum");
+            var issueunit = invreserve.get("issueunit");
+            var description = invreserve.get("itemdesc");
+            var localreservedqty = invreserve.get("localreservedqty");
+            var rotating = invreserve.get("rotating");
+            var processed = invreserve.get("processed");
+            //#region Loc-In: Add fields
+            var frombin = invreserve.get("frombin");
+            var fromlot = invreserve.get("fromlot");
+            var frombinCurbal = invreserve.get("frombincurbal");
+            //#endregion Loc-Out: Add fields
+            var self = this;
+
+            var invbalanceFilter = [
+                { itemnum: itemnum, siteid: siteid, itemsetid: itemsetid, location: location },
+            ];
+
+            //if(binnum){
+            //	invbalanceFilter.push({'binnum':binnum});
+            //}
+            //#region Loc-In: remove this line
+            //var invbalanceFilter = {'itemnum': itemnum, 'siteid':siteid, 'itemsetid':itemsetid, 'location':location, 'binnum':binnum};
+            //#region Loc-Out: remove this line
+            var invbalancesPromise = ModelService.filtered(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                invbalanceFilter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            return invbalancesPromise.then(function (invbalanceSet) {
+                /* #region Tuan-in: fix invbalance null, currentBalance null  */
+                invbalanceSet.filter("curbal > 0");
+                /* #region Tuan-out: fix invbalance null, currentBalance null  */
+                if (invbalanceSet && invbalanceSet.count() > 0) {
+                    //#region Loc-In:
+
+                    /* //check if default binnum exists in invbalance
+					var invbalBinSet = invbalanceSet.find('binnum == $1', binnum);
+					if(invbalBinSet.length==0){
+						invuseline.set('frombin',invbalance.binnum);
+					} else {
+						//invbalance rec for the bin exists, so just set default bin
+						invuseline.set('frombin',binnum);
+					} 
+
+					//if(invbalanceSet && invbalanceSet.count()>0){
+					var invbalance = invbalanceSet.data[0];
+					var currentBalance = invbalance.curbal;
+
+					*/
+
+                    //If exist frombin that user inputted => set frombin = INPUTTED frombin
+                    // Else if default binnum exists in invbalance => set frombin = DEFAULT binnum
+                    // ELse set frombin = FIRST binnum exists in invbalance
+
+                    /* #region Tuan-in: fix invbalance null, currentBalance null  */
+                    // invbalanceSet.filter('curbal > 0');
+                    var invbalance = invbalanceSet.data[0];
+                    var currentBalance = invbalance.curbal;
+                    /* #endregion Tuan-out: fix invbalance null, currentBalance null  */
+                    var dynamicBin;
+                    var dynamicLot;
+                    if (fromlot) {
+                        dynamicBin = frombin;
+                        dynamicLot = fromlot;
+                        currentBalance = frombinCurbal;
+                    } else {
+                        //check if default binnum exists in invbalance
+                        var invbalBinSet = invbalanceSet.find("binnum == $1", binnum);
+                        if (invbalBinSet.length == 0) {
+                            dynamicBin = invbalance.binnum;
+                            dynamicLot = invbalance.lotnum;
+                        } else {
+                            dynamicBin = binnum;
+                            dynamicLot = lotnum;
+                            currentBalance = invbalBinSet[0].curbal;
+                        }
+                    }
+                    invuseline.set("frombin", dynamicBin);
+                    invuseline.set("fromlot", dynamicLot);
+                    //#endregion Loc-Out: Add fields
+
+                    if (rotating || localreservedqty > currentBalance) {
+                        var splitrotateresource = eventContext.application
+                            .getResource("splitrotateresource")
+                            .createNewRecord();
+                        splitrotateresource.set("itemnum", itemnum);
+                        splitrotateresource.set("description", description);
+                        splitrotateresource.set("binnum", binnum);
+                        splitrotateresource.set("lotnum", lotnum);
+                        splitrotateresource.set("issueunit", issueunit);
+                        splitrotateresource.set("quantity", localreservedqty);
+                        splitrotateresource.set("itemsetid", itemsetid);
+                        splitrotateresource.set("siteid", siteid);
+                        splitrotateresource.set("location", location);
+                        splitrotateresource.set("rotating", rotating);
+                        splitrotateresource.set("processed", processed);
+                        splitrotateresource.invuseline = invuseline;
+                        splitrotateresource.invuse = invuse;
+                    } else {
+                        //Sufficient quantity exists, no need to split.
+                        return;
+                    }
+                    //sort asc by item
+                    splitrotateresource.getOwner().sort("itemnum asc");
+                } else {
+                    //reset resource
+                    var splitrotateresource =
+                        eventContext.application.getResource("splitrotateresource");
+                    splitrotateresource.data = [];
+
+                    invuse = null;
+                    invuseline = null;
+                    //throw message
+                    var msg = MessageService.createResolvedMessage("noItemFoundInStoreroom", [
+                        itemnum,
+                    ]);
+                    self.ui.showMessage(msg);
+                    throw new PlatformRuntimeException("noItemFoundInStoreroom");
                 }
+            });
+        },
 
-                return maxvaluesArray;
-            },
+        /**
+         * Handle Back Button - reset data
+         */
+        handleBackButtonOnSplitQtyRotView: function (eventContext) {
+            var splitrotateresource = eventContext.application.getResource("splitrotateresource");
+            splitrotateresource.data = [];
 
-            /**
-             * Clear search fields on search shipped items
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            clearSearchFields: function (eventContext) {
-                var transfersResource = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                transfersResource.setNullValue("shipment");
-                //#region Loc-In: clear new fields
-                transfersResource.setNullValue("formno");
-                transfersResource.setNullValue("documentref");
-                //#endregion Loc-Out: clear new fields
-            },
+            var rotatingAssetResource = eventContext.application.getResource("rotatingAssetUsage");
+            var originalDataSplitBinQty =
+                eventContext.application.getResource("originalDataSplitBinQty");
+            var invuse = eventContext.application.getResource("invuse").getCurrentRecord();
+            invuse.invuseline = []; // clear invuselines
+            invuse.npinvuselinesplit = []; //reset since backing out.
+            originalDataSplitBinQty.data = [];
 
-            /**
-             * Processes the Item Inspection (Non -Rotating)
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            approveInspection: function (eventContext) {
-                //validate view before submitting to server
-                if (!eventContext.ui.getCurrentViewControl().validate()) {
+            if (rotatingAssetResource) {
+                rotatingAssetResource.data[0].rotatingArray = [];
+            }
+
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        handleBackButtonOnSplitQtyAcrossBinsView: function (eventContext) {
+            //var rotatingAssetsMapResource = eventContext.application.getResource('rotatingAssets');
+            var rotatingAssetUsage = eventContext.application.getResource("rotatingAssetUsage");
+            if (rotatingAssetUsage) {
+                rotatingAssetUsage.data[0].rotatingArray = [];
+            }
+            rotatingAssetsMapResource = null;
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        showSplitButton: function (eventContext) {
+            //var  splitrotateresource = eventContext.application.getResource("splitrotateresource").getCurrentRecord();
+            var processed = eventContext.getCurrentRecord().get("processed");
+            var rotating = eventContext.getCurrentRecord().get("rotating");
+
+            //hide split button on nonrotating record
+            if (rotating && rotating == true) {
+                eventContext.setDisplay(false);
+                return;
+            }
+
+            if (processed && processed == true) {
+                eventContext.setDisplay(false);
+            } else {
+                eventContext.setDisplay(true);
+            }
+        },
+
+        showRotateButton: function (eventContext) {
+            var processed = eventContext.getCurrentRecord().get("processed");
+            var rotating = eventContext.getCurrentRecord().get("rotating");
+
+            if (rotating && rotating == true) {
+                if (processed && processed == true) {
+                    eventContext.setDisplay(false);
+                } else {
+                    eventContext.setDisplay(true);
+                }
+            } else {
+                eventContext.setDisplay(false);
+            }
+        },
+
+        /**
+         * Dynamicaly hide/show WINSP icon on Received Items View
+         */
+        showInspectButton: function (eventContext) {
+            var quantity = eventContext.getCurrentRecord().get("receiptquantity");
+            var status = eventContext.getCurrentRecord().get("status");
+
+            var domainreceiptstatus = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainreceiptstatus"
+            );
+            status = SynonymDomain.resolveToInternal(domainreceiptstatus, status);
+
+            if (status == "WINSP" && quantity > 0) {
+                eventContext.setDisplay(true);
+            } else {
+                eventContext.setDisplay(false);
+            }
+        },
+
+        /**
+         * Toggle Inspection View based on Rotating Item
+         */
+        inspectItem: function (eventContext) {
+            var currentRecord = eventContext.getCurrentRecord();
+
+            if (currentRecord.get("itemrotating") == true) {
+                eventContext.ui.show("Transfers.InspectRotatingItemView");
+            } else {
+                eventContext.ui.show("Transfers.InspectItemView");
+            }
+        },
+
+        /**
+         * Dynamicaly hide/show icon on Received Rotating Items View
+         */
+        showReceiveRotatingtButton: function (eventContext) {
+            var quantity = eventContext.getCurrentRecord().get("receiptquantity");
+            var status = eventContext.getCurrentRecord().get("status");
+
+            var domainreceiptstatus = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainreceiptstatus"
+            );
+            var externalStatus = SynonymDomain.resolveToDefaultExternal(
+                domainreceiptstatus,
+                "WASSET"
+            );
+
+            if (status == externalStatus && quantity > 0) {
+                eventContext.setDisplay(true);
+            } else {
+                eventContext.setDisplay(false);
+            }
+        },
+
+        /**
+         * Toggle Receiving Rotating View based on Rotating Item
+         */
+        receiveRotatingItem: function (eventContext) {
+            var currentRecord = eventContext.getCurrentRecord();
+
+            if (currentRecord.get("itemrotating") == true) {
+                eventContext.ui.show("Transfers.ReceiveRotatingItemView");
+            }
+        },
+
+        loadSplitQtyResource: function (eventContext, invbalanceSet, invbalanceFilter) {
+            var originalDataSplitBinQty =
+                eventContext.application.getResource("originalDataSplitBinQty");
+            if (
+                originalDataSplitBinQty &&
+                originalDataSplitBinQty.count() == 1 &&
+                originalDataSplitBinQty.data[0].itemnum == null
+            ) {
+                //first time no data
+                originalDataSplitBinQty.data = [];
+            } else if (
+                originalDataSplitBinQty &&
+                originalDataSplitBinQty.count > 0 &&
+                originalDataSplitBinQty.data[0].itemnum != null
+            ) {
+                //real data exists
+            }
+            var deferred = new Deferred();
+            //var promise =  ModelService.filtered('originalDataSplitBinQty', PlatformConstants.SEARCH_RESULT_QUERYBASE, invbalanceFilter, 1000, false, true, null, true);
+            //ModelService.allCached('originalDataSplitBinQty',null,null).then(function(set){
+            //var invbalanceFilter = {'itemnum': itemnum, 'siteid':siteid, 'itemsetid':itemsetid, 'location':location, 'stagingbin': false};
+            var invbalanceSplitBinQtySet = originalDataSplitBinQty.find(
+                "itemnum == $1  && siteid == $2 && itemsetid == $3 && storeloc == $4",
+                invbalanceFilter.itemnum,
+                invbalanceFilter.siteid,
+                invbalanceFilter.itemsetid,
+                invbalanceFilter.location
+            );
+
+            //promise.then(function(invbalanceSplitBinQtySet){
+            if (invbalanceSplitBinQtySet && invbalanceSplitBinQtySet.length > 0) {
+                //record exists in memory resource
+            } else {
+                var memoryRecord = null;
+                //loop through invbalance set adding to in memory resource.
+                arrayUtil.forEach(invbalanceSet.data, function (invbalance) {
+                    memoryRecord = originalDataSplitBinQty.createNewRecord();
+                    memoryRecord.set("siteid", invbalance.siteid);
+                    memoryRecord.set("itemnum", invbalance.itemnum);
+                    memoryRecord.set("itemsetid", invbalance.itemsetid);
+                    memoryRecord.set("storeloc", invbalance.location);
+                    memoryRecord.set("quantity", invbalance.curbal);
+                    memoryRecord.set("binnum", invbalance.binnum);
+                });
+
+                invbalanceSplitBinQtySet = originalDataSplitBinQty.find(
+                    "itemnum == $1  && siteid == $2 && itemsetid == $3 && storeloc == $4",
+                    invbalanceFilter.itemnum,
+                    invbalanceFilter.siteid,
+                    invbalanceFilter.itemsetid,
+                    invbalanceFilter.location
+                );
+            }
+
+            var calculatedlDataSplitBinQtyTEMP = null;
+            //set original data
+            if (invbalanceSplitBinQtySet.length == 0) {
+                calculatedlDataSplitBinQtyTEMP = lang.clone(originalDataSplitBinQty.data);
+            } else {
+                calculatedlDataSplitBinQtyTEMP = lang.clone(invbalanceSplitBinQtySet);
+            }
+
+            deferred.resolve(calculatedlDataSplitBinQtyTEMP);
+
+            //});
+
+            return deferred.promise;
+        },
+
+        /**
+         * Splits the selected record into available bins with balances
+         */
+        autoSplit: function (eventContext) {
+            var splitqtyacrossbins = eventContext.application.getResource("splitqtyacrossbins");
+            var self = this;
+
+            //reset
+            splitqtyacrossbins.data = [];
+
+            var recordToSplit = eventContext.getCurrentRecord();
+            //recordToSplit.set('processed', true);
+            var balance = recordToSplit.get("quantity");
+
+            //findInvbalance
+            var itemnum = recordToSplit.get("itemnum");
+            var itemsetid = recordToSplit.get("itemsetid");
+            var siteid = recordToSplit.get("siteid");
+            var location = recordToSplit.get("location");
+            var invuseline = recordToSplit.get("invuseline");
+            var invuse = recordToSplit.get("invuse");
+            var description = recordToSplit.get("description");
+            var issueunit = recordToSplit.get("issueunit");
+            var rotating = recordToSplit.get("rotating");
+
+            var invbalanceFilter = {
+                itemnum: itemnum,
+                siteid: siteid,
+                itemsetid: itemsetid,
+                location: location,
+                stagingbin: false,
+            };
+            var invbalancesPromise = ModelService.filtered(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                invbalanceFilter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            invbalancesPromise.then(function (invbalanceSet) {
+                if (invbalanceSet && invbalanceSet.count() > 0) {
+                    //loadSplitQtyResource - inmemory
+                    var loadSplitQtyResource = self.loadSplitQtyResource(
+                        eventContext,
+                        invbalanceSet,
+                        invbalanceFilter
+                    );
+                    var data = null;
+                    //splitting of rotating
+                    if (rotating && rotating == true) {
+                        loadSplitQtyResource.then(function (calculatedlDataSplitBinQtyTEMP) {
+                            arrayUtil.forEach(calculatedlDataSplitBinQtyTEMP, function (inMemory) {
+                                if (inMemory.quantity == 0) {
+                                    return;
+                                } else if (
+                                    (balance > 0 && balance >= inMemory.quantity) ||
+                                    (balance > 0 && balance < inMemory.quantity)
+                                ) {
+                                    while (inMemory.quantity > 0 && balance > 0) {
+                                        var splitrec = splitqtyacrossbins.createNewRecord();
+
+                                        inMemory.quantity = inMemory.quantity - 1;
+                                        splitrec.set("quantity", 1);
+                                        balance = balance - 1;
+
+                                        splitrec.set("quantity", 1);
+                                        splitrec.set("itemnum", inMemory.itemnum);
+                                        splitrec.set("itemsetid", inMemory.itemsetid);
+                                        splitrec.set("location", location);
+                                        splitrec.set("siteid", inMemory.siteid);
+                                        splitrec.set("binnum", inMemory.binnum);
+                                        splitrec.set("lotnum", inMemory.lotnum);
+                                        splitrec.set("description", description);
+                                        splitrec.set("rotating", rotating);
+                                        splitrec.set("issueunit", issueunit);
+                                        //splitrec.set('rotassetnum', rotassetnum);
+                                        splitrec.invuseline = invuseline;
+                                        splitrec.invuse = invuse;
+
+                                        if (balance == 0) {
+                                            return;
+                                        }
+                                    }
+                                } else {
+                                    return;
+                                }
+                            });
+
+                            data = lang.clone(calculatedlDataSplitBinQtyTEMP);
+
+                            //sort by item asc
+                            splitqtyacrossbins.sort("itemnum asc");
+
+                            var calculatedDataSplitBinQty = eventContext.application.getResource(
+                                "calculatedDataSplitBinQty"
+                            );
+                            calculatedDataSplitBinQty.data = data;
+
+                            eventContext.ui.show("Transfers.SplitQtyAcrossBinsView");
+                        });
+                    } else {
+                        loadSplitQtyResource.then(function (calculatedlDataSplitBinQtyTEMP) {
+                            var invbalanceCount = 0;
+                            arrayUtil.forEach(calculatedlDataSplitBinQtyTEMP, function (inMemory) {
+                                //check if bin in inventory has 0 qty, if so skip to next bin
+                                if (inMemory.quantity == 0) {
+                                    invbalanceCount++; //track number of invbalance records
+                                    if (inMemory.getOwner().data.length == invbalanceCount) {
+                                        invbalanceCount = 0;
+                                        //if no records have a balance throw message
+                                        var currentRecord = eventContext.getCurrentRecord();
+                                        currentRecord.processed = true;
+                                        var msg =
+                                            MessageService.createStaticMessage(
+                                                "noBalanceRecord"
+                                            ).getMessage();
+                                        self.ui.showMessage(msg);
+                                        throw new PlatformRuntimeException("noBalanceRecord");
+                                    }
+                                    return;
+                                } else if (
+                                    (balance > 0 && balance >= inMemory.quantity) ||
+                                    (balance > 0 && balance < inMemory.quantity)
+                                ) {
+                                    var splitrec = splitqtyacrossbins.createNewRecord();
+
+                                    if (balance > 0 && balance < inMemory.quantity) {
+                                        splitrec.set("quantity", balance);
+                                        inMemory.quantity = inMemory.quantity - balance;
+                                        if (inMemory.quantity >= 0) {
+                                            balance = 0;
+                                        }
+                                    } else {
+                                        splitrec.set("quantity", inMemory.quantity);
+                                        balance = balance - inMemory.quantity;
+                                        inMemory.quantity = 0;
+                                    }
+
+                                    splitrec.set("itemnum", inMemory.itemnum);
+                                    splitrec.set("itemsetid", inMemory.itemsetid);
+                                    splitrec.set("location", inMemory.location);
+                                    splitrec.set("siteid", inMemory.siteid);
+                                    splitrec.set("binnum", inMemory.binnum);
+                                    splitrec.set("lotnum", inMemory.lotnum);
+                                    splitrec.set("description", description);
+                                    splitrec.set("rotating", rotating);
+                                    splitrec.set("issueunit", issueunit);
+                                    splitrec.invuseline = invuseline;
+                                    splitrec.invuse = invuse;
+
+                                    if (balance < 0) {
+                                        return;
+                                    }
+                                } else {
+                                    return;
+                                }
+                            });
+                            data = lang.clone(calculatedlDataSplitBinQtyTEMP);
+
+                            //sort by item asc
+                            splitqtyacrossbins.sort("itemnum asc");
+
+                            var calculatedDataSplitBinQty = eventContext.application.getResource(
+                                "calculatedDataSplitBinQty"
+                            );
+                            calculatedDataSplitBinQty.data = data;
+
+                            eventContext.ui.show("Transfers.SplitQtyAcrossBinsView");
+                        });
+                    }
+                    //					//sort by item asc
+                    //					splitqtyacrossbins.sort('itemnum asc');
+                    //
+                    //					var  calculatedDataSplitBinQty = eventContext.application.getResource("calculatedDataSplitBinQty");
+                    //					calculatedDataSplitBinQty.data = data;
+                    //
+                    //					eventContext.ui.show("Transfers.SplitQtyAcrossBinsView");
+                }
+            });
+        },
+
+        /**
+         * Confirms the Split and Commits the transaction
+         */
+        doneSplitQtyAcrossBins: function (eventContext) {
+            var splitRecords = eventContext.getResource("splitqtyacrossbins");
+            var invuse = null;
+
+            if (splitRecords && splitRecords.count() > 0) {
+                var il = splitRecords.data[0].invuseline;
+                invuse = il.getOwner().getParent();
+                invuse.openPriorityChangeTransaction();
+            }
+
+            //validate records by checking if rotating asset field is populated
+            arrayUtil.forEach(splitRecords.data, function (splitRecord) {
+                if (splitRecord.rotating) {
+                    var rotassetnum = splitRecord.get("rotassetnum");
+                    if (rotassetnum == null || rotassetnum == undefined) {
+                        //throw message indicating rotating asset field on one of the records is empty
+                        throw new PlatformRuntimeException("rotatingAssetRequired");
+                    }
+                }
+            }),
+                arrayUtil.forEach(splitRecords.data, function (splitRecord) {
+                    var invuseline = splitRecord.get("invuseline");
+                    var anywhererefid = invuseline.get("anywhereRefId");
+                    //invuse = invuseline.getOwner().getParent();
+                    var quantity = splitRecord.get("quantity");
+                    var itemnum = splitRecord.get("itemnum");
+                    var itemsetid = splitRecord.get("itemsetid");
+                    var frombin = splitRecord.get("binnum");
+                    var fromlot = splitRecord.get("lotnum");
+                    var fromstoreloc = splitRecord.get("location");
+                    var rotassetnum = splitRecord.get("rotassetnum");
+
+                    //initialize invuselinesplit on new invuseline record
+                    invuse
+                        .getModelDataSet("npinvuselinesplit", true)
+                        .then(function (invuseuselinesplit) {
+                            var ilSplit = invuseuselinesplit.createNewRecord();
+                            ilSplit.set("itemnum", itemnum);
+                            ilSplit.set("itemsetid", itemsetid);
+                            ilSplit.set("frombin", frombin);
+                            ilSplit.set("fromlot", fromlot);
+                            ilSplit.set("fromstoreloc", fromstoreloc);
+                            ilSplit.set("quantity", quantity);
+                            ilSplit.set("invuselinelinkid", anywhererefid);
+                            ilSplit.set("rotassetnum", rotassetnum);
+                            ilSplit.invuseline = invuseline;
+                        });
+                });
+
+            invuse.closePriorityChangeTransaction();
+
+            //splitrotateresource - will be null processding unreserved item issue.
+            var splitrotateresource = eventContext.application.getResource("splitrotateresource");
+            if (splitrotateresource) {
+                var splitrotaterec = splitrotateresource.getCurrentRecord();
+                if (splitrotaterec) {
+                    splitrotaterec.set("processed", true);
+                }
+            }
+
+            var allprocessed = true;
+            arrayUtil.forEach(splitrotateresource.data, function (record) {
+                if (record.processed == undefined || record.processed == false) {
+                    allprocessed = false;
                     return;
                 }
-                var matrectransSet = eventContext.getResource();
-                var matrectrans = matrectransSet.getCurrentRecord();
-                var statusDate = this.application.getCurrentDateTime();
-                var convertedQty = matrectrans.quantity / matrectrans.conversion;
+            });
 
-                var localacceptqty = matrectrans.localacceptqty;
-                var localrejectqty = matrectrans.localrejectqty;
-
-                var noninspectedqty = convertedQty - matrectrans.inspectedqty;
-
-                if (!localacceptqty) {
-                    localacceptqty = 0;
-                }
-
-                if (!localrejectqty) {
-                    localrejectqty = 0;
-                }
-
-                //validate that a positive entry has been entered
-                if (
-                    (localacceptqty == 0 && localrejectqty == 0) ||
-                    localacceptqty < 0 ||
-                    localrejectqty < 0
-                ) {
-                    var msg = MessageService.createResolvedMessage("quantityPositive");
-                    throw new PlatformRuntimeException(msg);
-                }
-
-                //validate that accept+reject qty is <= receiptqunatity
-                if (localacceptqty + localrejectqty > noninspectedqty) {
-                    var msg = MessageService.createResolvedMessage(
-                        "AcceptQtyPlusRejectQtyGreaterInspQty"
-                    );
-                    throw new PlatformRuntimeException(msg);
-                }
-
-                if (matrectransSet.name == "poListComplexMatrectrans") {
-                    if (localacceptqty >= 0) {
-                        matrectrans.set("acceptedqty", localacceptqty);
-                        matrectrans.set("rejectqty", 0);
+            if (allprocessed) {
+                var status = this.getStatus(eventContext);
+                if (splitrotateresource.data.length == 0) {
+                    //call issueAvailableItemsHandler Change Status
+                    if (status == "COMPLETE") {
+                        this.changeStatus(
+                            invuse,
+                            eventContext,
+                            "Transfers.SearchUnreservedView",
+                            this,
+                            status
+                        );
+                    } else {
+                        //shipped status
+                        this.setSearchView(eventContext, "Transfers.SearchUnreservedView");
+                        this.shipItemsWithSplits(eventContext);
                     }
                 } else {
-                    if (localacceptqty >= 0) {
-                        matrectrans.set("acceptedqty", localacceptqty);
+                    if (status == "COMPLETE") {
+                        this.changeStatus(
+                            invuse,
+                            eventContext,
+                            "Transfers.SearchInvreserveView",
+                            this,
+                            status
+                        );
+                    } else {
+                        //shipped status
+                        this.setSearchView(eventContext, "Transfers.SearchInvreserveView");
+                        this.shipItemsWithSplits(eventContext);
                     }
-
-                    if (localrejectqty >= 0) {
-                        matrectrans.set("rejectqty", localrejectqty);
-                    }
                 }
+            } else {
+                var originalDataSplitBinQty =
+                    eventContext.application.getResource("originalDataSplitBinQty");
+                var calculatedDataSplitBinQty = eventContext.application.getResource(
+                    "calculatedDataSplitBinQty"
+                );
+                originalDataSplitBinQty.data = lang.clone(calculatedDataSplitBinQty.data);
+                calculatedDataSplitBinQty.data = [];
 
-                matrectrans.setDateValue("statusdate", statusDate);
-                matrectrans.set("receiptquantity", convertedQty);
-                matrectrans.set("inspected", true);
+                //eventContext.ui.returnToView("Transfers.SplitQtyRotatingAssetView");
+                eventContext.ui.hideCurrentView();
+            }
+        },
+        negativeAvailability: function (eventContext) {},
 
-                matrectrans.markAsModified("statusdate");
-                matrectrans.markAsModified("receiptquantity");
-                matrectrans.markAsModified("inspected");
-                matrectrans.markAsModified("acceptedqty");
-                matrectrans.markAsModified("rejectqty");
+        errorCheck: function (eventContext) {
+            var filter = { _errored: 1 };
+            return ModelService.filtered("invuse", null, filter, 1000, false, true, null, true);
+        },
 
-                var receiveShipmentHandler =
-                    eventContext.application["application.handlers.ReceiveShipmentHandler"];
-                eventContext.application.showBusy();
+        hideShowErrorLink: function (eventContext) {
+            var self = this;
+            if (self.errorWatch) {
+                self.errorWatch.remove();
+            }
 
-                if (matrectransSet.name == "poListComplexMatrectrans") {
-                    ModelService.save(matrectransSet)
-                        .then(function () {
-                            if (localrejectqty >= 0) {
-                                matrectrans.set("rejectqty", localrejectqty);
-                                matrectrans.set("acceptedqty", 0);
-                            }
-                            matrectrans.markAsModified("rejectqty");
-                            matrectrans.markAsModified("statusdate");
-                            matrectrans.markAsModified("receiptquantity");
-                            matrectrans.markAsModified("inspected");
-                            matrectrans.markAsModified("acceptedqty");
+            self.errorWatch = topic.subscribe(
+                PlatformConstants.DATA_REFRESH_TOPIC + "/invuse",
+                function (fireEvent) {
+                    self.errorCheck(eventContext).then(function (errorSet) {
+                        eventContext.setLabel(MessageService.createResolvedMessage("errorExists"));
 
-                            ModelService.save(matrectransSet).then(function () {
-                                eventContext.ui.show("Transfers.TransactionSubmitDialog");
-                            });
-                        })
-                        .otherwise(function (err) {
-                            eventContext.application.hideBusy();
-                            eventContext.ui.showMessage(err);
-                        });
-                } else {
-                    ModelService.save(matrectransSet)
-                        .then(function () {
-                            receiveShipmentHandler.searchReceivedItems(eventContext);
-                        })
-                        .otherwise(function (err) {
-                            eventContext.application.hideBusy();
-                            eventContext.ui.showMessage(err);
-                        });
-                }
-            },
-
-            /**
-             * Accepts rotating item and triggers function to inspect it
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            acceptRotatingInpection: function (eventContext) {
-                this.inspectRotatingItem(eventContext, true);
-            },
-
-            /**
-             * Reject rotating item Inspection (Rotating)
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            rejectRotatingInpection: function (eventContext) {
-                this.inspectRotatingItem(eventContext, false);
-            },
-
-            /**
-             * Processes the Rotating Item Inspection (Rotating)
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @param	{Boolean} accepted - Rotating item acceptance indicator
-             * @public
-             */
-            inspectRotatingItem: function (eventContext, accepted) {
-                var matrectransSet = eventContext.getResource();
-                var matrectrans = matrectransSet.getCurrentRecord();
-                var statusDate = this.application.getCurrentDateTime();
-
-                matrectrans.setDateValue("statusdate", statusDate);
-                if (accepted) {
-                    matrectrans.set("acceptedqty", 1);
-                    matrectrans.set("rejectqty", 0);
-                } else {
-                    matrectrans.set("acceptedqty", 0);
-                    matrectrans.set("rejectqty", 1);
-                }
-
-                matrectrans.set("inspected", true);
-                matrectrans.markAsModified("statusdate");
-                matrectrans.markAsModified("inspected");
-                matrectrans.markAsModified("acceptedqty");
-                matrectrans.markAsModified("rejectqty");
-
-                var receiveShipmentHandler =
-                    eventContext.application["application.handlers.ReceiveShipmentHandler"];
-                eventContext.application.showBusy();
-
-                ModelService.save(matrectransSet)
-                    .then(function () {
-                        if (matrectransSet.name == "poListComplexMatrectrans") {
-                            var handler =
-                                eventContext.application[
-                                    "application.handlers.ManagePurchaseOrderHandler"
-                                ];
-                            handler.searchReceivedPurchaseOrders(eventContext);
+                        if (errorSet.count() > 0) {
+                            self.setError(eventContext, true);
+                            eventContext.setLabel(
+                                MessageService.createResolvedMessage("errorExists")
+                            );
+                            errorSet.resourceID = "invuse";
+                            eventContext.application.addResource(errorSet);
+                            eventContext.setDisplay(true);
                         } else {
-                            receiveShipmentHandler.searchReceivedItems(eventContext);
+                            self.setError(eventContext, false);
+                            eventContext.setDisplay(false);
                         }
-                    })
-                    .otherwise(function (err) {
-                        eventContext.application.hideBusy();
-                        eventContext.ui.showMessage(err);
+
+                        return;
                     });
-            },
-
-            /**
-             * Set Error Message on Error List Page
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            setErrorMessage: function (eventContext) {
-                var matrectrans = eventContext.getCurrentRecord();
-                matrectrans.set("errorMessage", matrectrans._errorMessage);
-            },
-
-            /**
-             * Search for receivedmatrectrans that contains error
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @return	{Object} ModelDataSet of matrectrans filtered
-             * @public
-             */
-            errorCheck: function (eventContext) {
-                var filter = { _errored: 1 };
-                return ModelService.filtered(
-                    "receivedMatrectrans",
-                    null,
-                    filter,
-                    1000,
-                    false,
-                    true,
-                    null,
-                    true
-                );
-            },
-
-            /**
-             * Search for matrectrans that contains error
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @return	{Object} ModelDataSet of matrectrans filtered
-             * @public
-             */
-            errorCheckVoidReturn: function (eventContext) {
-                var filter = { _errored: 1 };
-                return ModelService.filtered(
-                    "matrectrans",
-                    null,
-                    filter,
-                    1000,
-                    false,
-                    true,
-                    null,
-                    true
-                );
-            },
-
-            /**
-             * This method hides/shows link if errors exist in receivedmatrectrans
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            hideShowErrorLink: function (eventContext) {
-                var self = this;
-                if (self.errorWatch) {
-                    self.errorWatch.remove();
                 }
+            );
 
-                self.errorWatch = topic.subscribe(
-                    PlatformConstants.DATA_REFRESH_TOPIC + "/receivedMatrectrans",
-                    function (fireEvent) {
-                        self.errorCheck(eventContext).then(function (errorSet) {
-                            eventContext.setLabel(
-                                MessageService.createResolvedMessage("errorExists")
-                            );
+            //if topic already processesed, check if error exists
+            if (this.getError(eventContext)) {
+                eventContext.setLabel(MessageService.createResolvedMessage("errorExists"));
+                eventContext.setDisplay(true);
+            } else {
+                eventContext.setDisplay(false);
+            }
+        },
 
-                            if (errorSet.count() > 0) {
-                                self.setMatRecError(eventContext, true);
-                                eventContext.setLabel(
-                                    MessageService.createResolvedMessage("errorExists")
-                                );
-                                errorSet.resourceID = "receivedMatrectrans";
-                                eventContext.application.addResource(errorSet);
-                                eventContext.setDisplay(true);
-                            } else {
-                                self.setMatRecError(eventContext, false);
-                                eventContext.setDisplay(false);
-                            }
+        showErrorPage: function (eventContext) {
+            eventContext.ui.show("Transfers.ErrorDetailPage");
+        },
 
-                            return;
-                        });
+        showErrorList: function (eventContext) {
+            eventContext.ui.show("Transfers.ErrorListPage");
+        },
+
+        setError: function (eventContext, haserror) {
+            var errorRes = eventContext.application.getResource("errorResource").getCurrentRecord();
+            errorRes.set("hasError", haserror);
+        },
+
+        getError: function (eventContext) {
+            var errorRes = eventContext.application.getResource("errorResource").getCurrentRecord();
+            return errorRes.get("hasError");
+        },
+
+        undoAndDelete: function (eventContext) {
+            var test = new ApplicationHandlerBase();
+            var invuse = eventContext.getResource().getCurrentRecord();
+            var self = this;
+            test.discardChanges(eventContext, invuse).then(function () {
+                try {
+                    //clear rotatingArray if error occurs.
+                    var rotatingAssetUsage =
+                        eventContext.application.getResource("rotatingAssetUsage");
+                    if (rotatingAssetUsage && rotatingAssetUsage.data.length > 0) {
+                        rotatingAssetUsage.data[0].rotatingArray = [];
                     }
-                );
 
-                //if topic already processesed, check if error exists
-                if (this.getMatRecError(eventContext)) {
-                    eventContext.setLabel(MessageService.createResolvedMessage("errorExists"));
-                    eventContext.setDisplay(true);
-                } else {
-                    eventContext.setDisplay(false);
+                    //change status to CANCELLED
+                    self.changeStatus(invuse, eventContext, null, self, "CANCELLED");
+                } catch (e) {
+                    //transition back to search page.
+                    var errorRes = eventContext.application
+                        .getResource("errorResource")
+                        .getCurrentRecord();
+                    errorRes.hasError = false;
+                    eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
                 }
-            },
+                //transition back to search page.
+                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+            });
+        },
 
-            /**
-             * This method hides/shows link if errors exist in matrectrans
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            hideShowErrorLinkVoidReturn: function (eventContext) {
-                var self = this;
-                if (self.errorWatch2) {
-                    self.errorWatch2.remove();
-                }
+        hideRotatingField: function (eventContext) {
+            var rotating = eventContext.getCurrentRecord().get("rotating");
+            if (rotating && rotating == true) {
+                eventContext.setDisplay(true);
+            } else {
+                eventContext.setDisplay(false);
+            }
+        },
 
-                self.errorWatch2 = topic.subscribe(
-                    PlatformConstants.DATA_REFRESH_TOPIC + "/matrectrans",
-                    function (fireEvent) {
-                        self.errorCheckVoidReturn(eventContext).then(function (errorSet) {
-                            eventContext.setLabel(
-                                MessageService.createResolvedMessage("errorExists")
-                            );
+        /**
+         * Handle Rotating Asset Assignment when splitting rotating items
+         */
+        assignRotatingAsset: function (eventContext, itemnum) {
+            var siteid = UserManager.getInfo("defsite");
+            var rotatingAssetResource = eventContext.application.getResource("additionalasset");
+            var rotatingAssetsMapResource = eventContext.application
+                .getResource("rotatingAssets")
+                .getCurrentRecord();
 
-                            if (errorSet.count() > 0) {
-                                self.setMatRecVoidReturnError(eventContext, true);
-                                eventContext.setLabel(
-                                    MessageService.createResolvedMessage("errorExists")
-                                );
-                                errorSet.resourceID = "matrectrans";
-                                eventContext.application.addResource(errorSet);
-                                eventContext.setDisplay(true);
-                            } else {
-                                self.setMatRecVoidReturnError(eventContext, false);
-                                eventContext.setDisplay(false);
-                            }
+            CommonHandler._clearFilterForResource(eventContext, rotatingAssetResource);
+            rotatingAssetResource.filter("itemnum == $1 && siteid == $2", itemnum, siteid);
 
-                            return;
-                        });
-                    }
-                );
+            if (rotatingAssetResource && rotatingAssetResource.count() > 0) {
+                var map = rotatingAssetsMapResource.get("map");
 
-                //if topic already processesed, check if error exists
-                if (this.getMatRecVoidReturnError(eventContext)) {
-                    eventContext.setLabel(MessageService.createResolvedMessage("errorExists"));
-                    eventContext.setDisplay(true);
-                } else {
-                    eventContext.setDisplay(false);
-                }
-            },
-
-            /**
-             * Transits to error page
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            showErrorPage: function (eventContext) {
-                eventContext.ui.show("Transfers.ReceivingErrorDetailPage");
-            },
-
-            /**
-             * Show or Hide Shipment Label on Error Page
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            showShipmentErrorLabel: function (eventContext) {
-                var shipment = eventContext.getCurrentRecord().get("shipment");
-                if (shipment) {
-                    eventContext.setDisplay(true);
-                } else {
-                    eventContext.setDisplay(false);
-                }
-            },
-
-            /**
-             * Transits to error page from void/return process
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             */
-            showVoidReturnErrorPage: function (eventContext) {
-                eventContext.ui.show("Transfers.matrectrans_ReceivingErrorDetailPage");
-            },
-
-            /**
-             * Set error attribute from matrectrans for errorResource
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            setMatRecError: function (eventContext, haserror) {
-                var errorRes = eventContext.application
-                    .getResource("errorResource")
-                    .getCurrentRecord();
-                errorRes.set("hasMatRecError", haserror);
-            },
-
-            /**
-             * Get error attribute from matrectrans for errorResource
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            getMatRecError: function (eventContext) {
-                var errorRes = eventContext.application
-                    .getResource("errorResource")
-                    .getCurrentRecord();
-                return errorRes.get("hasMatRecError");
-            },
-
-            /**
-             * Set error attribute from receivedmatrectrans for errorResource
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             */
-            setMatRecVoidReturnError: function (eventContext, haserror) {
-                var errorRes = eventContext.application
-                    .getResource("errorResource")
-                    .getCurrentRecord();
-                errorRes.set("hasMatRecVoidReturnError", haserror);
-            },
-
-            /**
-             * Get error attribute from receivedmatrectrans for errorResource
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             */
-            getMatRecVoidReturnError: function (eventContext) {
-                var errorRes = eventContext.application
-                    .getResource("errorResource")
-                    .getCurrentRecord();
-                return errorRes.get("hasMatRecVoidReturnError");
-            },
-
-            /**
-             * Discards and reverts exception thrown by server
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            undoAndDelete: function (eventContext) {
-                var test = new ApplicationHandlerBase();
-                var matrectrans = eventContext.getResource().getCurrentRecord();
-                var self = this;
-                test.discardChanges(eventContext, matrectrans).then(function () {
-                    try {
-                        //if _originalState is null, that means its a new record
-                        if (matrectrans.get("_errored") && !matrectrans.get("_originalState")) {
-                            if (matrectrans.get("_errored") == 1) {
-                                var errorRes = eventContext.application
-                                    .getResource("errorResource")
-                                    .getCurrentRecord();
-                                if (
-                                    eventContext.getResource().getResourceName() ==
-                                    "receivedMatrectrans"
-                                ) {
-                                    errorRes.hasMatRecError = false;
-                                }
-                                if (eventContext.getResource().getResourceName() == "matrectrans") {
-                                    errorRes.hasMatRecVoidReturnError = false;
-                                }
-                                if (
-                                    eventContext.getResource().getResourceName() ==
-                                    "poComplexMatrectrans"
-                                ) {
-                                    errorRes.hasPOExtMatRecError = false;
-                                }
-                                if (
-                                    eventContext.getResource().getResourceName() ==
-                                    "poListComplexMatrectrans"
-                                ) {
-                                    errorRes.hasPOListComplexExtMatRecError = false;
-                                }
-                            }
-                        }
-                        //change status to CANCELLED
-                        //self.changeStatus(invuse, eventContext, null, self, "CANCELLED");
-                    } catch (e) {
-                        //transition back to search page.
-                        var errorRes = eventContext.application
-                            .getResource("errorResource")
-                            .getCurrentRecord();
-                        errorRes.hasMatRecError = false;
-                        eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-                    }
-                    if (
-                        eventContext.getResource().getResourceName() == "poListComplexMatrectrans"
-                    ) {
-                        //re-execute the search and transition back to manage received items page
-                        if (
-                            WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2]
-                                .id != "Transfers.ManageReceivedPurchaseOrderSeachView"
-                        ) {
-                            var handler =
-                                eventContext.application[
-                                    "application.handlers.ManagePurchaseOrderHandler"
-                                ];
-                            handler.searchReceivedPurchaseOrders(eventContext);
-                        } else {
-                            //transition back to search page.
-                            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+                arrayUtil.forEach(rotatingAssetResource.data, function (rotatingAsset) {
+                    if (map) {
+                        if (map.indexOf(rotatingAsset) < 0) {
+                            map.push(rotatingAsset);
+                            return rotatingAsset.assetnum;
                         }
                     } else {
-                        //transition back to search page.
-                        eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+                        rotatingAssetsMapResource.map = [];
+                        rotatingAssetsMapResource.map.push(rotatingAsset);
+                        return rotatingAsset.assetnum;
                     }
                 });
-            },
+            }
+        },
 
-            /**
-             * Set asset for rotating item for receive process
-             *
-             * @memberof module:application/handlers/ReceiveShipmentHandler#
-             * @param	{Object} eventContext - Brings context into function
-             * @public
-             */
-            receiveRotatingItemProcessAsset: function (eventContext) {
-                var matrectransSet = eventContext.getResource("matrectrans");
-                var currentRecord = matrectransSet.getCurrentRecord();
-                currentRecord
-                    .getModelDataSet("awreceiverotasset", true)
-                    .then(function (rotAssetSet) {
-                        var rotAsset = rotAssetSet.createNewRecord();
-                        var newassetnum = currentRecord.get("newassetnumber");
-                        if (newassetnum) {
-                            rotAsset.set("assetnum", newassetnum);
-                        } else {
-                            rotAsset.set("assetnum", currentRecord.get("rotassetnum"));
-                            currentRecord.markAsModified("assetnum");
-                        }
-                        rotAsset.matrectransid = currentRecord.get("matrectransid");
-                        var receiveShipmentHandler =
-                            eventContext.application["application.handlers.ReceiveShipmentHandler"];
-                        eventContext.application.showBusy();
-                        ModelService.save(matrectransSet)
-                            .then(function () {
-                                receiveShipmentHandler.searchReceivedItems(eventContext);
-                                Logger.trace("Matrectrans save ");
-                            })
-                            .otherwise(function (err) {
-                                eventContext.application.hideBusy();
-                                eventContext.ui.showMessage(err);
-                            });
-                    });
-            },
-
-            //#region Loc-In: process lookup
-            // có thể phải đổi sang Bin Lookup
-
-            toBinLotLookup: function (eventContext) {
-                var filter = [];
-
-                var receiptInput = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "receiptInput"
-                ).getCurrentRecord();
-                var siteid = receiptInput.get("siteid");
-                var storeroom = receiptInput.get("tostoreloc"); //.toUpperCase();
-                var itemnum = receiptInput.get("itemnum");
-
-                filter.push({ siteid: siteid });
-                filter.push({ location: storeroom });
-                filter.push({ itemnum: itemnum });
-                filter.push({ stagingbin: 0 });
-
-                var invbalPromise = ModelService.filtered(
-                    "invbalance",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                    filter,
-                    1000,
-                    true,
-                    true,
-                    null,
-                    false
-                );
-                invbalPromise.then(function (invbalSet) {
-                    ModelService.clearSearchResult(invbalSet);
-                    invbalSet.resourceID = "invbalTemp";
-                    eventContext.application.addResource(invbalSet);
-
-                    eventContext.ui.show("Transfers.ToBinListView");
-                });
-            },
-
-            selectToBinLot: function (eventContext) {
-                var invbalTemp = eventContext.application
-                    .getResource("invbalTemp")
-                    .getCurrentRecord();
-                var receiptInput = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "receiptInput"
-                ).getCurrentRecord();
-
-                // if an empty binnum is set on maximo it won't come down from oslc
-                // but if we found it to be a valid invbal set the binnum to empty string
-                if (!invbalTemp.binnum && invbalTemp.invbalancesid) {
-                    invbalTemp.binnum = "";
-                }
-
-                receiptInput.set("tobin", invbalTemp.binnum);
-                receiptInput.set("tolot", invbalTemp.lotnum);
-
-                eventContext.ui.returnToView("Transfers.ShipmentItemsListView");
-            },
-
-            cancelBinLotSelection: function (eventContext) {
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            clearToBinLotSelection: function (eventContext) {
-                //console.log("CLEAR rotating asset selection");
-                var receiptInput =
-                    CommonHandler._getAdditionalResource("receiptInput").getCurrentRecord();
-
-                receiptInput.set("tobin", "");
-                receiptInput.set("tolot", "");
-                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
-            },
-
-            setDefaultActualDateShipment: function (eventContext) {
-                var shipment = eventContext.getCurrentRecord();
-                shipment.setDateValue("actualdate", this.application.getCurrentDateTime());
-            },
-
-            validateActualDateItems: function (eventContext) {
-                var self = this;
-                var currentRecord = eventContext.getResource().getCurrentRecord();
-                /* #region Tuan-in: fix currentRecord null*/
-                if (currentRecord && !currentRecord.actualdate) {
-                    /* #endregion Tuan-out: fix currentRecord null*/
-                    var msg = MessageService.createStaticMessage("emptyActualDate").getMessage();
-                    if (self.ui.getCurrentDialog()) {
-                        if (self.ui.getCurrentDialog().id == "Platform.DateTimeLookup") {
-                            setTimeout(function () {
-                                self.ui.showMessage(msg);
-                            }, 10);
-                        }
-                    }
-                }
-            },
-
-            setFieldsReadonly: function (eventContext) {
-                var transfers = CommonHandler._getAdditionalResource(
-                    eventContext,
-                    "transfers"
-                ).getCurrentRecord();
-                var shipment = transfers.getPendingOrOriginalValue("shipment");
-                var formno = transfers.getPendingOrOriginalValue("formno");
-                var documentref = transfers.getPendingOrOriginalValue("documentref");
-
-                if (shipment) {
-                    transfers.getRuntimeFieldMetadata("formno").set("readonly", true);
-                    transfers.getRuntimeFieldMetadata("documentref").set("readonly", true);
-                } else if (formno) {
-                    transfers.getRuntimeFieldMetadata("shipment").set("readonly", true);
-                    transfers.getRuntimeFieldMetadata("documentref").set("readonly", true);
-                } else if (documentref) {
-                    transfers.getRuntimeFieldMetadata("shipment").set("readonly", true);
-                    transfers.getRuntimeFieldMetadata("formno").set("readonly", true);
-                } else {
-                    transfers.getRuntimeFieldMetadata("shipment").set("readonly", false);
-                    transfers.getRuntimeFieldMetadata("formno").set("readonly", false);
-                    transfers.getRuntimeFieldMetadata("documentref").set("readonly", false);
-                }
-            },
-
-            /* enableTransitionTo: function(eventContext){
-			if(WL.application.ui.viewHistory[WL.application.ui.viewHistory.length-2].id != 'Transfers.ReceivePurchaseOrderItemsSeachView'){
-				eventContext.list.transitionTo = null;
-			} else {
-				eventContext.list.transitionTo = "Transfers.AttachmentsView";
+        /*validateToSite: function(eventContext) {
+			var tosite = eventContext.getCurrentRecord().getPendingOrOriginalValue('tositeid');
+			var additionalsite = CommonHandler._getAdditionalResource(eventContext,'site');
+			if ( !additionalsite || !tosite ) return;
+			
+			var siteSet = additionalsite.find('siteid == $1', tosite);
+			
+			if(siteSet.length == 0) {
+				throw new PlatformRuntimeWarning('invalidSite');
 			}
-		}, */
-            //#endregion Loc-Out
-        }
-    );
+		
+		},*/
+
+        /**
+         * Validate data if entered manually into field.
+         * Not Used.
+         */
+        asyncvalidateRotatingItemUsage: function (eventContext) {
+            var filter = [];
+
+            var rotassetnum = eventContext
+                .getCurrentRecord()
+                .getPendingOrOriginalValue("rotassetnum");
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom").toUpperCase();
+            var itemnum = eventContext.getCurrentRecord().get("itemnum");
+
+            filter.push({ siteid: siteid });
+            filter.push({ location: storeroom });
+            filter.push({ itemnum: itemnum });
+            filter.push({ assetnum: rotassetnum });
+
+            //			ModelService.all('asset',PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(searchResultSet){
+            //				ModelService.clearSearchResult(searchResultSet).then(function(){
+            //
+            //				});
+            //			});
+            //
+            var assetPromise = ModelService.filtered(
+                "asset",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            assetPromise
+                .then(function (rotatingAssetSet) {
+                    if (rotatingAssetSet.count() > 0) {
+                        //records found validated
+                    } else {
+                        throw new PlatformRuntimeException("dupRotatingAsset");
+                    }
+                })
+                .otherwise(function (error) {
+                    throw new PlatformRuntimeException("dupRotatingAsset");
+                });
+        },
+
+        /**
+         * Dynamic fetch for the Rotating Assets lookup view
+         */
+        rotateLookup: function (eventContext) {
+            var filter = {};
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom").toUpperCase();
+            var itemnum = eventContext.getCurrentRecord().get("itemnum");
+
+            filter.siteid = siteid;
+            filter.location = storeroom;
+            filter.itemnum = itemnum;
+            filter = this.buildFilterForStatus(eventContext, [filter]);
+            var assetPromise = ModelService.filtered(
+                "asset",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            assetPromise.then(function (rotatingAssetSet) {
+                rotatingAssetSet.resourceID = "asset";
+                eventContext.application.addResource(rotatingAssetSet);
+                ModelService.clearSearchResult(rotatingAssetSet);
+                eventContext.ui.show("Transfers.RotatingItemListView");
+            });
+        },
+
+        /**
+         * Validate and Manage selected rotating assets.
+         * Prevent from entering multiple rows with the same rotating asset
+         */
+        selectRotatingAsset: function (eventContext) {
+            var assetRecord = eventContext.getCurrentRecord();
+            var newRotatingAssetNum = assetRecord.get("assetnum");
+            var splitRecord = eventContext.application
+                .getResource("splitqtyacrossbins")
+                .getCurrentRecord();
+            var rotatingAssetResource = eventContext.application
+                .getResource("rotatingAssetUsage")
+                .getCurrentRecord();
+
+            //check if changing rotateassetnum
+            var originalRotatingAssetnum = splitRecord.get("rotassetnum");
+
+            //check if rotating asset changed, if it did remove original from map.
+            if (originalRotatingAssetnum && originalRotatingAssetnum != newRotatingAssetNum) {
+                if (rotatingAssetResource && rotatingAssetResource.rotatingArray != null) {
+                    if (
+                        rotatingAssetResource.rotatingArray.indexOf(originalRotatingAssetnum) > -1
+                    ) {
+                        //remove original from map
+                        rotatingAssetResource.rotatingArray.splice(
+                            rotatingAssetResource.rotatingArray.indexOf(originalRotatingAssetnum),
+                            1
+                        );
+                        splitRecord.set("rotassetnum", "");
+                    }
+                }
+            }
+
+            //update map
+            if (rotatingAssetResource) {
+                if (
+                    rotatingAssetResource.rotatingArray == null ||
+                    rotatingAssetResource.rotatingArray == undefined ||
+                    rotatingAssetResource.rotatingArray.length == 0
+                ) {
+                    rotatingAssetResource.rotatingArray = [];
+                    rotatingAssetResource.rotatingArray.push(newRotatingAssetNum);
+                } else if (rotatingAssetResource.rotatingArray.length > 0) {
+                    if (rotatingAssetResource.rotatingArray.indexOf(newRotatingAssetNum) > -1) {
+                        //splitRecord.set( 'rotassetnum' , originalRotatingAssetnum );
+                        //rotatingAssetResource.rotatingArray.push( originalRotatingAssetnum );
+
+                        throw new PlatformRuntimeException("dupRotatingAsset");
+                    } else {
+                        rotatingAssetResource.rotatingArray.push(newRotatingAssetNum);
+                    }
+                }
+            }
+
+            splitRecord.set("rotassetnum", newRotatingAssetNum);
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * constructs filter for item
+         */
+        buildFilterForItem: function (eventContext, siteid, storeroom) {
+            var statuses = this.selectableItemStatusesAsFilter(eventContext);
+            var types = this.selectableItemTypesAsFilter(eventContext);
+
+            var filter = [];
+
+            // create a filter for each status that has everything you need to filter on
+            locationFilter = {};
+            if (siteid && siteid != "") {
+                locationFilter.siteid = siteid;
+            }
+            if (storeroom && storeroom != "") {
+                locationFilter.location = storeroom;
+            }
+
+            arrayUtil.forEach(statuses, function (status, sin) {
+                arrayUtil.forEach(types, function (type, tin) {
+                    var result = {};
+                    lang.mixin(result, type);
+                    lang.mixin(result, status);
+                    lang.mixin(result, locationFilter);
+                    filter.push(result);
+                });
+            });
+
+            return filter;
+        },
+
+        /**
+         * Retrieve an array from respective domain
+         */
+        selectableItemStatusesAsFilter: function (eventContext) {
+            var domainitemstatus = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainitemstatus"
+            );
+            var internalStatuses = ["ACTIVE", "PENDOBS"];
+            var filter = [];
+            arrayUtil.forEach(internalStatuses, function (anStatus) {
+                CommonHandler._clearFilterForResource(eventContext, domainitemstatus);
+                var externalOnes = Object.keys(
+                    SynonymDomain.resolveToExternal(domainitemstatus, anStatus)
+                );
+                arrayUtil.forEach(externalOnes, function (aValue) {
+                    filter.push({ status: aValue });
+                });
+            });
+            CommonHandler._clearFilterForResource(eventContext, domainitemstatus);
+            return filter;
+        },
+
+        /**
+         * Retrieve an array from respective domain
+         */
+        selectableItemTypesAsFilter: function (eventContext) {
+            var domainitemtypes = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainitemtype"
+            );
+            var internalTypes = ["ITEM", "TOOL"];
+            var filter = [];
+            arrayUtil.forEach(internalTypes, function (anType) {
+                CommonHandler._clearFilterForResource(eventContext, domainitemtypes);
+                var externalOnes = Object.keys(
+                    SynonymDomain.resolveToExternal(domainitemtypes, anType)
+                );
+                arrayUtil.forEach(externalOnes, function (aValue) {
+                    filter.push({ itemtype: aValue });
+                });
+            });
+            CommonHandler._clearFilterForResource(eventContext, domainitemtypes);
+            return filter;
+        },
+
+        /*
+         * Validate the transfer quantity
+         */
+        validateQty: function (eventContext) {
+            var currentRecord = eventContext.getCurrentRecord();
+            var qty = currentRecord.getPendingOrOriginalValue("localreservedqty");
+
+            if (qty != "" && NumberUtil.parse(qty, this.application.getUserLocale()) < 0) {
+                throw new PlatformRuntimeException("quantityPositive");
+            }
+        },
+
+        /**
+         * Get Negative Availability Maxvar Setting
+         * ALLOW or DISALLOW
+         */
+        getNegativeAvailabilityMaxvar: function (eventContext) {
+            var orgid = UserManager.getInfo("deforg");
+            var maxVarsSet = CommonHandler._getAdditionalResource(this, "oslcmaxvars");
+            if (maxVarsSet) {
+                var result = maxVarsSet.find(
+                    "varname == $1 && orgid == $2",
+                    "NEGATIVEAVAIL",
+                    orgid
+                );
+                if (result.length > 0) {
+                    var negAvailable = result[0].get("varvalue");
+                    return negAvailable;
+                }
+            }
+        },
+
+        /*
+         * Check Negative Availability
+         */
+        checkNegativeAvailability: function (eventContext, invreserveSet, transfers) {
+            //if negative availability is enabled, then skip check negative availability check.
+            var negativeAvailMaxvar = this.getNegativeAvailabilityMaxvar(eventContext);
+            if (negativeAvailMaxvar == "ALLOW") return;
+
+            var itemBalanceMap = {}; //create map
+            var storeroom = transfers.storeroom;
+            var siteid = transfers.siteid;
+            var self = this;
+
+            //create map
+            arrayUtil.forEach(invreserveSet.data, function (invreserve) {
+                var dataKey =
+                    invreserve.item +
+                    "::" +
+                    invreserve.location +
+                    "::" +
+                    invreserve.siteid +
+                    "::" +
+                    invreserve.itemsetid;
+
+                if (!itemBalanceMap || itemBalanceMap[dataKey] == null) {
+                    itemBalanceMap[dataKey] = invreserve.localreservedqty;
+                } else {
+                    var quantity = itemBalanceMap[dataKey];
+
+                    //record exists in map
+                    if (quantity) {
+                        var totalQty = invreserve.localreservedqty + quantity;
+                        itemBalanceMap[dataKey] = totalQty;
+                    } else {
+                        itemBalanceMap[dataKey] = invreserve.localreservedqty;
+                    }
+                }
+            });
+
+            //create array of items
+            var itemList = [];
+            var itemBalanceKeys = Object.keys(itemBalanceMap);
+            for (key in itemBalanceKeys) {
+                //var totalItemQty = assetlcnMap[itemBalanceKeys[key]];
+                var itemnum = itemBalanceKeys[key].slice(0, itemBalanceKeys[key].indexOf("::"));
+                itemList.push(itemnum);
+            }
+
+            //create string from array of items
+            var itemFirstTime = true;
+            itemList.forEach(function (item) {
+                if (itemFirstTime) {
+                    itemList = "%22" + item + "%22";
+                    itemFirstTime = false;
+                } else {
+                    itemList += ",%22" + item + "%22";
+                }
+            });
+
+            var inventoryMetadata = ResourceMetaData.getResourceMetadata("inventory");
+            var originalinventoryMetadataWhereClause = inventoryMetadata.whereClause;
+            inventoryMetadata.setWhereClause(
+                "spi:itemnum in [" +
+                    itemList +
+                    "] and spi:siteid=%22" +
+                    siteid +
+                    "%22 and spi:location=%22" +
+                    storeroom +
+                    "%22"
+            );
+
+            ModelService.all("inventory", null, null)
+                .then(function (inventorySet) {
+                    arrayUtil.forEach(inventorySet.data, function (inventoryRec) {
+                        var invDataKey =
+                            inventoryRec.itemnum +
+                            "::" +
+                            inventoryRec.location +
+                            "::" +
+                            inventoryRec.siteid +
+                            "::" +
+                            inventoryRec.itemsetid;
+                        var availableBalance = inventoryRec.avblbalance;
+                        var transferQty = itemBalanceMap[invDataKey];
+
+                        if (transferQty) {
+                            if (transferQty > availableBalance) {
+                                //availablebalance will go negative
+                                var msg = MessageService.createStaticMessage(
+                                    "negativeAvailabilityCheck"
+                                ).getMessage();
+                                self.ui.showMessage(msg, inventoryRec.itemnum);
+                                throw new PlatformRuntimeException("negativeAvailabilityCheck");
+                            }
+                        }
+                    });
+                })
+                .always(function () {
+                    //reset whereclause
+                    inventoryMetadata.setWhereClause(originalinventoryMetadataWhereClause);
+                });
+        },
+        /* #region  Tuan-in: add contactno lookup reserved */
+
+        updateContactnoReserved: function (eventContext) {
+            var filter = [{ tostoreloc: "*" }];
+            var formnumPromise = ModelService.filtered(
+                "invreserveForLookup",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                100,
+                true,
+                true,
+                null,
+                false
+            );
+
+            formnumPromise.then(function (data) {
+                ModelService.clearSearchResult(data);
+                data.resourceID = "contactnoTemp";
+                eventContext.application.addResource(data);
+            });
+        },
+
+        /* #endregion Tuan-out: add contactno lookup reserved */
+        /* #region Tuan-in: handle tolot in case user input a new lot number  */
+
+        updateBinReservedItem: function (eventContext) {
+            var filter = [];
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom");
+
+            var receiptInput = CommonHandler._getAdditionalResource(eventContext, "invreserve");
+            if (siteid) {
+                filter.push({ siteid: siteid });
+            }
+            if (storeroom) {
+                filter.push({ location: storeroom });
+            }
+            filter.push({ stagingbin: 0 });
+
+            arrayUtil.forEach(receiptInput.data, function (record) {
+                filter.push({ itemnum: record.item });
+            });
+
+            var invbalPromise = ModelService.filtered(
+                "invbalanceFormBinlookup",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+
+            invbalPromise.then(function (invbalSet) {
+                ModelService.clearSearchResult(invbalSet);
+                invbalSet.resourceID = "invbalForBinLookup";
+                eventContext.application.addResource(invbalSet);
+            });
+        },
+
+        filterFrombinReservedLookup: function (eventContext) {
+            var currentRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invreserve"
+            ).getCurrentRecord();
+            var dataLookup = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invbalForBinLookup"
+            );
+            CommonHandler._clearFilterForResource(eventContext, dataLookup);
+            var filter = [];
+
+            filter.push({ itemnum: currentRecord.item, location: currentRecord.location });
+            dataLookup.lookupFilter = filter;
+        },
+
+        /* #endregion Tuan-out: handle tolot in case user input a new lot number */
+
+        /**
+         * Dynamic fetch for the Rotating Assets lookup view
+         */
+        fromBinLotLookup: function (eventContext) {
+            var filter = [];
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("siteid");
+            var storeroom = transfersResource.get("storeroom"); //.toUpperCase();
+            //#region Loc-In:
+            //var itemnum = transfersResource.get('itemnum');
+            var invreserve = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invreserve"
+            ).getCurrentRecord();
+            var itemnum = invreserve.get("item");
+            //#endregion Loc-Out:
+
+            if (siteid) {
+                filter.push({ siteid: siteid });
+            }
+
+            if (storeroom) {
+                filter.push({ location: storeroom });
+            }
+
+            filter.push({ itemnum: itemnum });
+            filter.push({ stagingbin: 0 });
+
+            var invbalPromise = ModelService.filtered(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            invbalPromise.then(function (invbalSet) {
+                ModelService.clearSearchResult(invbalSet);
+                //#region Loc-In: where curbal > 0 for frombin
+                invbalSet.filter("curbal > 0");
+                //#endregion Loc-Out: where curbal > 0 for frombin
+                invbalSet.resourceID = "invbalTemp";
+                eventContext.application.addResource(invbalSet);
+
+                eventContext.ui.show("Transfers.FromBinListView");
+            });
+        },
+
+        /**
+         * Dynamic fetch for the bin lookup view
+         */
+        toBinLotLookup: function (eventContext) {
+            var filter = [];
+
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+            var inventory = CommonHandler._getAdditionalResource(
+                eventContext,
+                "inventory"
+            ).getCurrentRecord();
+            var siteid = transfersResource.get("tositeid");
+            var storeroom = transfersResource.get("tostoreroom"); //.toUpperCase();
+            var itemnum = inventory.get("itemnum");
+
+            filter.push({ siteid: siteid });
+            filter.push({ location: storeroom });
+            filter.push({ itemnum: itemnum });
+            filter.push({ stagingbin: 0 });
+
+            var invbalPromise = ModelService.filtered(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                filter,
+                1000,
+                true,
+                true,
+                null,
+                false
+            );
+            invbalPromise.then(function (invbalSet) {
+                ModelService.clearSearchResult(invbalSet);
+                invbalSet.resourceID = "invbalTemp";
+                eventContext.application.addResource(invbalSet);
+
+                eventContext.ui.show("Transfers.ToBinListView");
+            });
+        },
+
+        hideLotnum: function (eventontext) {
+            var additionalInventory = eventContext.application
+                .getResource("inventory")
+                .getCurrentRecord();
+            if (additionalInventory) {
+                if (additionalInventory.lotnum) {
+                    eventContext.setDisplay(true);
+                } else {
+                    eventContext.setDisplay(false);
+                }
+            }
+        },
+
+        selectToBinLot: function (eventContext) {
+            var invbalTemp = eventContext.application.getResource("invbalTemp").getCurrentRecord();
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+
+            // if an empty binnum is set on maximo it won't come down from oslc
+            // but if we found it to be a valid invbal set the binnum to empty string
+            if (!invbalTemp.binnum && invbalTemp.invbalancesid) {
+                invbalTemp.binnum = "";
+            }
+
+            // if an empty binnum is set on maximo it won't come down from oslc
+            // but if we found it to be a valid invbal set the binnum to empty string
+            if (!invbalTemp.binnum && invbalTemp.invbalancesid) {
+                invbalTemp.binnum = "";
+            }
+
+            transfersResource.set("tobin", invbalTemp.binnum);
+            transfersResource.set("tolot", invbalTemp.lotnum);
+
+            eventContext.ui.returnToView("Transfers.AdditionalItemsDetailsView");
+        },
+
+        //#region Loc-In: Adjust selectFromBinLot
+        selectFromBinLot: function (eventContext) {
+            /* var  invbalTemp = eventContext.application.getResource("invbalTemp").getCurrentRecord();
+			var transfersResource = CommonHandler._getAdditionalResource(eventContext,'transferAdditionalItems').getCurrentRecord();
+			
+			transfersResource.set('frombin', invbalTemp.binnum);
+			transfersResource.set('fromlot', invbalTemp.lotnum);
+			
+			//eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+			eventContext.ui.returnToView('Transfers.AdditionalItemsDetailsView'); */
+
+            var invbalTemp = eventContext.application.getResource("invbalTemp").getCurrentRecord();
+
+            var previousView =
+                WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2].id;
+            if (previousView == "Transfers.InvreserveListView") {
+                var issueResource = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "invreserve"
+                ).getCurrentRecord();
+                issueResource.set("frombin", invbalTemp.binnum);
+                issueResource.set("frombincurbal", invbalTemp.curbal);
+                issueResource.set("fromlot", invbalTemp.lotnum);
+                //eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+                eventContext.ui.returnToView("Transfers.InvreserveListView");
+            } else if (previousView == "Transfers.AdditionalItemsDetailsView") {
+                eventContext.application[
+                    "application.handlers.TransferAvailableItemsHandler"
+                ].selectFromBinLot(eventContext);
+            }
+        },
+        //#endregion Loc-Out: Adjust selectFromBinLot
+
+        /**
+         * Cancel button for Rotating Asset Select View
+         */
+        cancelBinLotSelection: function (eventContext) {
+            //console.log("CANCEL rotating asset selection");
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Clear button for Rotating Asset Select View
+         */
+        clearFromBinLotSelection: function (eventContext) {
+            //console.log("CLEAR rotating asset selection");
+            var transferAdditionalItems = eventContext.application
+                .getResource("transferAdditionalItems")
+                .getCurrentRecord();
+
+            transferAdditionalItems.set("frombin", "");
+            transferAdditionalItems.set("fromlot", "");
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Clear button for Rotating Asset Select View
+         */
+        clearToBinLotSelection: function (eventContext) {
+            //console.log("CLEAR rotating asset selection");
+            var transferAdditionalItems = eventContext.application
+                .getResource("transferAdditionalItems")
+                .getCurrentRecord();
+
+            transferAdditionalItems.set("tobin", "");
+            transferAdditionalItems.set("tolot", "");
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+        /**
+         * Set Error Message on Error List Page
+         */
+        setErrorMessage: function (eventContext) {
+            var invuse = eventContext.getCurrentRecord();
+            invuse.set("errorMessage", invuse._errorMessage);
+        },
+
+        /**
+         * Get Negative Availability Maxvar Setting
+         * ALLOW or DISALLOW
+         */
+        getNegativeAvailabilityMaxvar: function (eventContext) {
+            var orgid = UserManager.getInfo("deforg");
+            var maxVarsSet = CommonHandler._getAdditionalResource(eventContext, "oslcmaxvars");
+            if (maxVarsSet) {
+                var result = maxVarsSet.find(
+                    "varname == $1 && orgid == $2",
+                    "NEGATIVEAVAIL",
+                    orgid
+                );
+                if (result.length > 0) {
+                    var negAvailable = result[0].get("varvalue");
+                    return negAvailable;
+                }
+            }
+        },
+
+        /**
+         * Check Negative Availability
+         */
+        checkNegativeAvailability: function (eventContext, invreserveSet, transfers, issueQty) {
+            var negObject = {};
+            var deferred = new Deferred();
+
+            var itemBalanceMap = {}; //create item balance map
+            var itemAvailableBalanceMap = {}; //create item available balance map
+            var curbaltotalMap = {}; //create curbaltotal map
+            var storeroom = transfers.storeroom;
+            var siteid = transfers.siteid;
+            var self = this;
+
+            //create map
+            arrayUtil.forEach(invreserveSet.data, function (invreserve) {
+                var dataKey =
+                    invreserve.item +
+                    "::" +
+                    invreserve.location +
+                    "::" +
+                    invreserve.siteid +
+                    "::" +
+                    invreserve.itemsetid;
+
+                if (issueQty) {
+                    //data comes from issue unreserved item
+                    invreserve.localreservedqty = issueQty;
+                    dataKey =
+                        invreserve.itemnum +
+                        "::" +
+                        invreserve.location +
+                        "::" +
+                        invreserve.siteid +
+                        "::" +
+                        invreserve.itemsetid;
+                }
+
+                if (!itemBalanceMap || itemBalanceMap[dataKey] == null) {
+                    itemBalanceMap[dataKey] = invreserve.localreservedqty;
+                } else {
+                    var quantity = itemBalanceMap[dataKey];
+
+                    //record exists in map
+                    if (quantity) {
+                        var totalQty = invreserve.localreservedqty + quantity;
+                        itemBalanceMap[dataKey] = totalQty;
+                    } else {
+                        itemBalanceMap[dataKey] = invreserve.localreservedqty;
+                    }
+                }
+            });
+
+            negObject.itemBalanceMap = itemBalanceMap;
+            //create array of items
+            var itemList = [];
+            var itemBalanceKeys = Object.keys(itemBalanceMap);
+            for (key in itemBalanceKeys) {
+                //var totalItemQty = assetlcnMap[itemBalanceKeys[key]];
+                var itemnum = itemBalanceKeys[key].slice(0, itemBalanceKeys[key].indexOf("::"));
+                itemList.push(itemnum);
+            }
+
+            //create string from array of items
+            var itemFirstTime = true;
+            itemList.forEach(function (item) {
+                if (itemFirstTime) {
+                    itemList = "%22" + item + "%22";
+                    itemFirstTime = false;
+                } else {
+                    itemList += ",%22" + item + "%22";
+                }
+            });
+
+            var inventoryMetadata = ResourceMetaData.getResourceMetadata("inventory");
+            var originalinventoryMetadataWhereClause = inventoryMetadata.whereClause;
+            inventoryMetadata.setWhereClause(
+                "spi:itemnum in [" +
+                    itemList +
+                    "] and spi:siteid=%22" +
+                    siteid +
+                    "%22 and spi:location=%22" +
+                    storeroom +
+                    "%22"
+            );
+
+            ModelService.all("inventory", null, null)
+                .then(function (inventorySet) {
+                    arrayUtil.forEach(inventorySet.data, function (inventoryRec) {
+                        var invDataKey =
+                            inventoryRec.itemnum +
+                            "::" +
+                            inventoryRec.location +
+                            "::" +
+                            inventoryRec.siteid +
+                            "::" +
+                            inventoryRec.itemsetid;
+                        var availableBalance = inventoryRec.avblbalance;
+                        var curbaltotal = inventoryRec.curbaltotal;
+                        var issueQty = itemBalanceMap[invDataKey];
+
+                        //if negative availability is not allowed, then throw message
+                        var negativeAvailMaxvar = self.getNegativeAvailabilityMaxvar(eventContext);
+                        negObject.negativeAvailMaxvar = negativeAvailMaxvar;
+                        if (negativeAvailMaxvar == "DISALLOW") {
+                            if (issueQty) {
+                                if (issueQty > availableBalance) {
+                                    //availablebalance will go negative
+                                    var msg = MessageService.createResolvedMessage(
+                                        "negativeAvailabilityCheck",
+                                        [inventoryRec.itemnum]
+                                    );
+                                    self.ui.showMessage(msg);
+                                    deferred.resolve(negObject);
+                                    throw new PlatformRuntimeException("negativeAvailabilityCheck");
+                                }
+                            }
+                        }
+
+                        //load curbaltotalMap into Map
+                        curbaltotalMap[invDataKey] = curbaltotal;
+                        negObject.curbaltotalMap = curbaltotalMap;
+
+                        //load itemAvailableBalancedata into Map
+                        itemAvailableBalanceMap[invDataKey] = availableBalance;
+                        negObject.itemAvailableBalanceMap = itemAvailableBalanceMap;
+                    });
+                    deferred.resolve(negObject);
+                })
+                .always(function () {
+                    //reset whereclause
+                    inventoryMetadata.setWhereClause(originalinventoryMetadataWhereClause);
+                });
+
+            return deferred.promise;
+        },
+
+        /**
+         * Cancel button for Rotating Asset Select View
+         */
+        cancelRotatingAssetSelection: function (eventContext) {
+            //			console.log("CANCEL rotating asset selection");
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Clear button for Rotating Asset Select View
+         */
+        clearRotatingAssetSelection: function (eventContext) {
+            //			console.log("CLEAR rotating asset selection");
+
+            var originalRotatingAssetnum = eventContext.application
+                .getResource("splitqtyacrossbins")
+                .getCurrentRecord();
+            this._removeUsedRotatingAsset(
+                eventContext,
+                originalRotatingAssetnum.get("rotassetnum")
+            );
+
+            originalRotatingAssetnum.set("rotassetnum", "");
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+
+        /**
+         * Remove rotating assets used in rotating item selection
+         *
+         * check if rotating asset changed, if it did remove original from map
+         * remove original from map
+         */
+        _removeUsedRotatingAsset: function (eventContext, rotatingAssetNum) {
+            var rotatingAssetResource = eventContext.application
+                .getResource("rotatingAssetUsage")
+                .getCurrentRecord();
+
+            //check if rotating asset changed, if it did remove original from map.
+            if (
+                rotatingAssetNum &&
+                rotatingAssetResource &&
+                rotatingAssetResource.rotatingArray != null &&
+                rotatingAssetResource.rotatingArray.indexOf(rotatingAssetNum) > -1
+            ) {
+                //remove original from map
+                rotatingAssetResource.rotatingArray.splice(
+                    rotatingAssetResource.rotatingArray.indexOf(rotatingAssetNum),
+                    1
+                );
+            }
+        },
+
+        setSearchView: function (eventContext, view) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfersResource.set("searchview", view);
+        },
+
+        getSearchView: function (eventContext) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var searchView = transfersResource.get("searchview");
+            return searchView;
+        },
+
+        setStatus: function (eventContext, status) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfersResource.set("status", status);
+        },
+
+        getStatus: function (eventContext) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var status = transfersResource.get("status");
+            return status;
+        },
+
+        clearStatus: function (eventContext) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfersResource.setNullValue("status");
+        },
+
+        clearSearchView: function (eventContext) {
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            transfersResource.setNullValue("searchview");
+        },
+
+        /**
+         * Validate the Attention Of field
+         */
+        validateAttentionOf: function (eventContext) {
+            var person = eventContext.getCurrentRecord().getPendingOrOriginalValue("shiptoattn");
+            var additionalperson = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalperson"
+            );
+
+            if (!person) return;
+
+            var personSet = additionalperson.find("personid == $1", person);
+
+            if (personSet.length == 0) {
+                throw new PlatformRuntimeWarning("invalidPerson");
+            }
+        },
+
+        /**
+         * Validate the Ship To field
+         */
+        validateShipto: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var siteid = transfers.tositeid;
+            var shipto = eventContext.getCurrentRecord().getPendingOrOriginalValue("shipto");
+            var billtoshipto = CommonHandler._getAdditionalResource(eventContext, "billtoshipto");
+
+            if (!shipto) return;
+
+            var billtoShiptoSet = billtoshipto.find(
+                "addresscode == $1 && siteid == $2",
+                shipto,
+                siteid
+            );
+
+            if (billtoShiptoSet.length == 0) {
+                throw new PlatformRuntimeWarning("invalidAddresscode");
+            }
+        },
+
+        /**
+         * Asset Lookup Data Filter
+         */
+        filterShiptoForLookup: function (eventContext) {
+            var billtoshipto = CommonHandler._getAdditionalResource(eventContext, "billtoshipto");
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var filter = [];
+            billtoshipto._lookupFilter = null;
+
+            var siteid = transfers.tositeid;
+            filter.push({ siteid: siteid });
+
+            billtoshipto.lookupFilter = filter;
+        },
+
+        /**
+         * Create list of Rotating Asset Status
+         */
+        selectableRotatingAssetFilter: function (eventContext) {
+            var domainAssetstatus = CommonHandler._getAdditionalResource(
+                eventContext,
+                "domainAssetstatus"
+            );
+            var internalStatus = ["OPERATING", "NOT READY"];
+            var filter = [];
+            arrayUtil.forEach(internalStatus, function (status) {
+                CommonHandler._clearFilterForResource(eventContext, domainAssetstatus);
+                var externalOnes = Object.keys(
+                    SynonymDomain.resolveToExternal(domainAssetstatus, status)
+                );
+                arrayUtil.forEach(externalOnes, function (aValue) {
+                    filter.push({ status: aValue });
+                });
+            });
+            CommonHandler._clearFilterForResource(eventContext, domainAssetstatus);
+            return filter;
+        },
+
+        /**
+         * Combine field filters with Asset Status filter
+         */
+        buildFilterForStatus: function (eventContext, filter) {
+            var statuses = this.selectableRotatingAssetFilter(eventContext);
+            return arrayUtil.map(statuses, function (status) {
+                var result = lang.mixin({}, status);
+                arrayUtil.forEach(filter, function (condition) {
+                    lang.mixin(result, condition);
+                });
+                return result;
+            });
+        },
+
+        /**
+         * Return specific label for reused view
+         *
+         * According to type of data received there is a
+         * respective label for rotating asset, non rotating asset]
+         */
+        resolveViewLabel: function (eventContext) {
+            var itemsSet = eventContext.application.getResource("splitqtyacrossbins");
+            var label;
+
+            if (itemsSet.data[0].rotating) {
+                label = MessageService.createStaticMessage("assignAssetLabel").getMessage();
+            } else {
+                label = MessageService.createStaticMessage("splitAcrossBinsLabel").getMessage();
+            }
+            return [label];
+        },
+
+        //#region Loc-In: init Reserved Header, default ActualDate
+        initializeReservedHeader: function (eventContext) {
+            var reservedHeader = eventContext.getResource().getCurrentRecord();
+            var transfersResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            reservedHeader.setDateValue("createdate", this.application.getCurrentDateTime());
+            reservedHeader.set("storeroom", transfersResource.storeroom);
+        },
+
+        setDefaultActualDateReservedItems: function (eventContext) {
+            var reservedItem = eventContext.getCurrentRecord();
+            reservedItem.setDateValue("actualdate", this.application.getCurrentDateTime());
+        },
+
+        validateActualDateIssueReturnItems: function (eventContext) {
+            var self = this;
+            var currentRecord = eventContext.getResource().getCurrentRecord();
+            /* #region Tuan-in: fix currentRecord null*/
+            if (currentRecord && !currentRecord.actualdate) {
+                /* #endregion Tuan-out: fix currentRecord null*/
+                var msg = MessageService.createStaticMessage("emptyActualDate").getMessage();
+                if (self.ui.getCurrentDialog().id == "Platform.DateTimeLookup") {
+                    setTimeout(function () {
+                        self.ui.showMessage(msg);
+                    }, 10);
+                }
+            }
+        },
+
+        clearReservedHeader: function (eventContext) {
+            var reservedHeaderResource = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfersReservedHeader"
+            );
+            if (reservedHeaderResource) {
+                var reservedHeaderRecord = reservedHeaderResource.getCurrentRecord();
+                reservedHeaderRecord.formnumber = "";
+                reservedHeaderRecord.description = "";
+                reservedHeaderRecord.documentref = "";
+                reservedHeaderRecord.createdate = null;
+            }
+        },
+
+        checkExistFormNo: function (eventContext) {
+            var self = this;
+            var filter = [];
+
+            var currentRecord = eventContext.getCurrentRecord();
+            var formnumber = currentRecord.get("formnumber");
+            if (formnumber) {
+                filter.push({ formnumber: formnumber });
+
+                eventContext.application.showBusy();
+                var deferred = new Deferred();
+                ModelService.filtered("invuse", null, filter, 1000, true, true, null, false).then(
+                    function (invuseSet) {
+                        deferred.resolve(invuseSet);
+                    }
+                );
+
+                var promise = deferred.promise;
+                promise
+                    .then(function (invuseSet) {
+                        eventContext.application.hideBusy();
+                        //ModelService.clearSearchResult(invuseSet);
+                        if (invuseSet.count() > 0) {
+                            eventContext.getCurrentRecord().setNullValue("formnumber");
+                            var msg = MessageService.createResolvedMessage("existFormNumber");
+                            self.ui.showMessage(msg);
+                            return;
+                        }
+                    })
+                    .otherwise(function (error) {
+                        eventContext.application.hideBusy();
+                    });
+            }
+        },
+
+        selecToBinLotByPreviousView: function (eventContext) {
+            var previousView =
+                WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2].id;
+            if (previousView == "Transfers.AdditionalItemsDetailsView") {
+                eventContext.application[
+                    "application.handlers.TransfersAvailableItemsHandler"
+                ].selectToBinLot(eventContext);
+            } else if (previousView == "Transfers.ShipmentItemsListView") {
+                eventContext.application[
+                    "application.handlers.ReceiveShipmentHandler"
+                ].selectToBinLot(eventContext);
+            }
+        },
+
+        clearToBinLotSelectionByPreviousView: function (eventContext) {
+            var previousView =
+                WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 2].id;
+            if (previousView == "Transfers.AdditionalItemsDetailsView") {
+                eventContext.application[
+                    "application.handlers.TransfersAvailableItemsHandler"
+                ].clearToBinLotSelection(eventContext);
+            } else if (previousView == "Transfers.ShipmentItemsListView") {
+                eventContext.application[
+                    "application.handlers.ReceiveShipmentHandler"
+                ].clearToBinLotSelection(eventContext);
+            }
+        },
+
+        transitsBackToView: function (eventContext) {
+            eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+        },
+        //#endregion Loc-Out: init Reserved Header, default ActualDate
+        //#region Loc-In: Research Attachment
+        onAttachment: function (eventContext) {
+            //eventContext.application['application.handlers.TransfersHandler'].clearSearchFields(eventContext)
+            eventContext.ui.show("Transfers.InvreserveListView");
+        },
+        //#endregion Loc-Out: Research Attachment
+
+        /* #region Tuan-in: add selectall checkbox to reserved Items List   */
+        handleClickAllFilterItem: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invreserve");
+            var header = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfersReservedHeader"
+            ).getCurrentRecord();
+            if (!header) return;
+            var isSelectAll = header.selectall;
+            if (isSelectAll == null) isSelectAll = true;
+            arrayUtil.forEach(records.data, function (item) {
+                item.set("reservedIndicator", !isSelectAll);
+            });
+            header.set("selectall", !isSelectAll);
+        },
+        /* #endregion Tuan-out: add selectall checkbox to reserved Items List  */
+
+        /* #region Tuan-in: add checkbox to reserved Items List */
+        checkBoxValidation: function (eventContext, invreserveSet) {
+            invreserveSet.filter("reservedIndicator == true");
+
+            if (invreserveSet && invreserveSet.count() == 0) {
+                CommonHandler._clearFilterForResource(eventContext, invreserveSet);
+                throw new PlatformRuntimeException("atLeastOneItem");
+            }
+        },
+        /* #endregion Tuan-out: add checkbox to reserved Items List */
+    });
 });
