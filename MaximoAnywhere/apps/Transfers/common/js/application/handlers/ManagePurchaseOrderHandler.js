@@ -1509,8 +1509,8 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     if (grnSet.data.length > 0) {
                         var formno = grnSet.data[0].formnumber;
                         arrayUtil.forEach(receiptInput.data, function (record) {
-                            if (!record.grn_formnumber) {
-                                record.set("grn_formnumber", formno);
+                            if (!record.localformnumber) {
+                                record.set("localformnumber", formno);
                             }
                         });
                     }
@@ -1526,7 +1526,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     "poComplexMatrectrans"
                 );
                 arrayUtil.forEach(receiptInput.data, function (record) {
-                    record.setDateValue("actualdate", new Date());
+                    record.setDateValue("localactualdate", new Date());
                 });
             },
 
@@ -3547,8 +3547,8 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 newReceipt.set("exchangerate", matrectransRef.exchangerate);
 
                 /* #region  Tuan-in: add grn */
-                newReceipt.set("grn_formnumber", matrectransRef.grn_formnumber);
-                newReceipt.set("actualdate", matrectransRef.actualdate);
+                newReceipt.set("grn_formnumber", matrectransRef.localformnumber);
+                newReceipt.set("actualdate", matrectransRef.localactualdate);
                 /* #endregion  Tuan-in: add grn */
 
                 if (matrectransRef.packingslipnum && matrectransRef.packingslipnum.length > 0) {

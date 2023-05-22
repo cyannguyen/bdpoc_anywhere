@@ -1610,9 +1610,9 @@
 					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 					<!-- Tuan-in: add grn -->
-					<text editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="grn_formnumber" layoutInsertAt="r4item1" resourceAttribute="grn_formnumber">
+					<text editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="localformnumber" layoutInsertAt="r4item1" resourceAttribute="localformnumber">
 					</text>
-					<text editable="true" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_actualdate" layoutInsertAt="r4item2" resourceAttribute="actualdate">
+					<text editable="true" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_actualdate" layoutInsertAt="r4item2" resourceAttribute="localactualdate">
 					</text>
 					<!-- Tuan-out: add grn -->
 				</listItemTemplate>
@@ -1623,9 +1623,9 @@
 				<!-- Tuan-out: add grn -->
 			</list>
 			<!-- Tuan-in: add actual date -->
-			<eventHandlers id="Transfers.PurchaseOrderItemsToVoidListView_eventHandlers">
+			<!-- <eventHandlers id="Transfers.PurchaseOrderItemsToVoidListView_eventHandlers">
 				<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="initialize" id="Transfers.PurchaseOrderItemsToVoidListView_eventHandlers_init" method="initListManagePo"/>
-			</eventHandlers>
+			</eventHandlers> -->
 			<!-- Tuan-out: add actual date -->
 			<footer id="Transfers.PurchaseOrderItemsToVoidListView_footer">
 				<button id="Transfers.PurchaseOrderItemsToVoidListView_footer_Cancel_button" label="Cancel">
@@ -1695,9 +1695,9 @@
 					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 					<!-- Tuan-in: add grn -->
-					<text editable="false" id="Transfers.PurchaseOrderItemsToReturnListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="grn_formnumber" layoutInsertAt="r4item1" resourceAttribute="grn_formnumber">
+					<text editable="false" id="Transfers.PurchaseOrderItemsToReturnListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="grn_formnumber" layoutInsertAt="r4item1" resourceAttribute="localformnumber">
 					</text>
-					<text editable="true" id="Transfers.PurchaseOrderItemsToReturnListView_actualdate" layoutInsertAt="r4item2" resourceAttribute="actualdate">
+					<text editable="true" id="Transfers.PurchaseOrderItemsToReturnListView_actualdate" layoutInsertAt="r4item2" resourceAttribute="localactualdate">
 					</text>
 					<!-- Tuan-in: add grn -->
 				</listItemTemplate>
@@ -2747,7 +2747,7 @@
 				</listItemTemplate>
 			</list>
 			<returnAttributes id="Transfers.GrnLookupManagePO_returnAttributes">
-				<returnAttribute id="Transfers.GrnLookupManagePO_returnAttributes_grn_formnumber" sourceAttribute="formnumber" targetAttribute="grn_formnumber"/>
+				<returnAttribute id="Transfers.GrnLookupManagePO_returnAttributes_grn_formnumber" sourceAttribute="formnumber" targetAttribute="localformnumber"/>
 			</returnAttributes>
 		</lookup>
 		<!-- Tuan-out: add grn lookup -->
@@ -4340,6 +4340,9 @@
 				<!-- Tuan-in: add grn -->
 				<attribute describedByProperty="spi:formnumber" id="poComplexMatrectrans_spiformnumber" name="grn_formnumber"/>
 				<!-- Tuan-out: add grn -->
+				<localAttribute dataType="datetime" id="poComplexMatrectrans_transfer_localactualdate" name="localactualdate"/>
+				<localAttribute dataType="string" id="poComplexMatrectrans_transfer_locaformnumber" name="localformnumber"/>
+
 				<localAttribute dataType="boolean" formula="false" id="poComplexMatrectrans_transfer_voidindicator" name="voidindicator"/>
 				<localAttribute dataType="boolean" formula="false" id="poComplexMatrectrans_transfer_returnindicator" name="returnindicator"/>
 				<localAttribute dataType="double" id="poComplexMatrectrans_transfer_qtyToBeReturned" name="qtyToBeReturned"/>
