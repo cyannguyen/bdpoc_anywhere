@@ -134,10 +134,6 @@ define("platform/ui/control/List", [
         errorCountLabel: null,
         errorSeparator: null,
 
-        /* #region  Tuan-in: add need fetch to search  */
-        needFetch: false,
-        /* #endregion */
-
         constructor: function (options) {
             this._controlType = "List";
             //for cloning
@@ -172,12 +168,6 @@ define("platform/ui/control/List", [
             if (options && options.useLongList) {
                 this.useLongList = options.useLongList;
             }
-
-            /* #region  Tuan-in: add need fetch for needed lists */
-            if ((this.id = "Transfers.InventoryUsagesListView_list")) {
-                this.needFetch = true;
-            }
-            /* #endregion */
         },
 
         /**@memberOf platform.ui.control.List */
@@ -1087,10 +1077,7 @@ define("platform/ui/control/List", [
             //the filter in JSONStore, otherwise let
             //the legacy filter run
             this.application.showBusy();
-            /* #region  Tuan-in: fetch data for search  */
-            // if (this.lookupFilter || this.canSearchStore) {
-            if (this.lookupFilter || this.canSearchStore || this.needFetch) {
-                /* #endregion Tuan-out: fetch data for search*/
+            if (this.lookupFilter || this.canSearchStore) {
                 //Keep the search string before refreshing the view
                 //so we're sure it will be available when rebuild the list
                 var searchResource = this.application.getResource("PlatformListSearchResource");
