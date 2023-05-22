@@ -1881,19 +1881,13 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
                 var siteid = UserManager.getInfo("defsite");
                 var poNum = transfersLocalResource.ponum;
-                //#region Loc-In: add formNo
-    			var formno = transfersLocalResource.formno;
-    			//#endregion Loc-Out: add formNo
                 var self = this;
                 var oslcQueryParameters = {};
                 var invalidaAssettransArray = [];
                 var transfersHand = new TransfersHandler();
 
                 //verify if we have at least one field filled
-               //#region Loc-In: add formNo
-    			//if(!poNum){
-    			if (!poNum && !formno) {
-    			//#endregion Loc-Out: add formNo
+                if (!poNum) {
                     var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
                     self.ui.showMessage(msg);
                     return;
@@ -1914,27 +1908,14 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                             flushPromise
                                 .then(function () {
                                     //All set to get data from server
-                                    //#region Loc-In: add formNo
-                                    //oslcQueryParameters["sqp:poNum"] = poNum;
-                                    var filter = [];
-                                    if (poNum){
-                                        oslcQueryParameters["sqp:poNum"] = poNum;
-                                        filter.push( {ponum: poNum} );
-                                    }
-                        			if (formno){
-                                        filter.push({ formno: formno });
-                                    }
-                        			//#endregion Loc-Out: add formNo
+                                    oslcQueryParameters["sqp:poNum"] = poNum;
                                     oslcQueryParameters["sqp:siteid"] = siteid;
 
                                     //Using complex query to retrieve assettrans
                                     var assettransPromise = ModelService.filtered(
                                         "complexAssettrans",
                                         PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                                        //#region Loc-In: add filter
-                                        //[],
-                                        filter,
-                            			//#endregion Loc-Out: add filter
+                                        [],
                                         1000,
                                         true,
                                         true,
@@ -1954,13 +1935,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                     issueTypeSet,
                                                     "RETURN"
                                                 );
-                                            
-                                            //#region Loc-In: add filter
-                                            //var filter = [{ issuetype: returnIssueType}];
-                                            var originalFilter = filter;
-                                            filter.push({ issuetype: returnIssueType });
-                                            
-                                			//#endregion Loc-Out: add filter
+                                            var filter = [{ issuetype: returnIssueType }];
 
                                             //get list of materectrans
                                             var matrectransPromise = ModelService.filtered(
@@ -1975,11 +1950,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                             );
                                             matrectransPromise
                                                 .then(function (matrectransSet) {
-                                                    
-                                                    //#region Loc-In: add filter
-                                                    //var innerFilter = [{ ponum: poNum }];
-                                                    var innerFilter = originalFilter;
-                                        			//#endregion Loc-Out: add filter
+                                                    var innerFilter = [{ ponum: poNum }];
 
                                                     var poPromise = ModelService.filtered(
                                                         "poResource",
