@@ -142,7 +142,7 @@ define("application/handlers/IssuesReturnsHandler", [
         },
         /* #endregion */
 
-        /* #region  Tuan-in: add update wonum for lookup */
+        /* #region  Tuan-in: add update bin for lookup */
         updateWonnumLookup: function (eventContext) {
             var record = CommonHandler._getAdditionalResource(
                 eventContext,
@@ -890,6 +890,37 @@ define("application/handlers/IssuesReturnsHandler", [
             this.clearSearchFields(eventContext);
             this.ui.show("IssuesReturns.SearchInvreserveView");
         },
+
+        initInventoryUsageDetail: function (eventContext) {
+            var recordTemp = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invuelineTemp"
+            ).getCurrentRecord();
+            var record = CommonHandler._getAdditionalResource(
+                eventContext,
+                "invuseViewResource"
+            ).getCurrentRecord();
+            record.getModelDataSet("invuseline", true).then(function (lineData) {
+                var lineRecord = lineData.getRecordAt(0);
+                recordTemp.set("issueto", lineRecord.issueto);
+                recordTemp.set("wonum", lineRecord.wonum);
+                recordTemp.set("taskid", lineRecord.taskid);
+                recordTemp.set("location", lineRecord.location);
+                recordTemp.set("gldebitacct", lineRecord.gldebitacct);
+                recordTemp.set("quantity", lineRecord.quantity);
+                recordTemp.set("frombin", lineRecord.frombin);
+                recordTemp.set("fromlot", lineRecord.fromlot);
+                recordTemp.set("actualdate", lineRecord.actualdate);
+            });
+        },
+
+        /* #region  Tuan-in: add init sort for inventory usages */
+        initSortInventoryUsage: function (eventContext) {
+            var records = CommonHandler._getAdditionalResource(eventContext, "invuseViewResource");
+            CommonHandler._clearFilterForResource(eventContext, records);
+            // records.sort("createdate desc");
+        },
+        /* #endregion Tuan-out: add init sort for inventory usages */
 
         /**
          * Transits Back to Search view of Issue Planned Items

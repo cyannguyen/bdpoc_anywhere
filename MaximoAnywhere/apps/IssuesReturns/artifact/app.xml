@@ -63,6 +63,13 @@
 					</eventHandlers>
 				</button> -->
 				<container id="IssuesReturns.StoreroomSelectionView_IssuesReturns_container_0_1" layout="MainButtonListItem">
+					<!-- Tuan-in: add list view invuse usage -->
+					<button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_listusagesview_button" label="List of inventory usages" layoutInsertAt="button1">
+						<eventHandlers id="IssuesReturns.StoreroomSelectionView_listusagesview_button_eventHandlers">
+							<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.StoreroomSelectionView_listusagesview_button_eventHandlers_click" transitionTo="IssuesReturns.InventoryUsagesListView"/>
+						</eventHandlers>
+					</button>
+					<!-- Tuan-out: add list view invuse usage -->
 					<button cssClass="mblPrimaryButton mblGroupButtonIssueReturnMainView" id="IssuesReturns.StoreroomSelectionView_IssueReserved_button" label="Issue Reserved Items" layoutInsertAt="button1">
 						<eventHandlers id="IssuesReturns.StoreroomSelectionView_IssuePlannedItem_button_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="click" id="IssuesReturns.StoreroomSelectionView_issueplanned_button_eventHandlers_click" method="transitsToIssuePlannedSearchView"/>
@@ -292,6 +299,35 @@
 		<!-- End SEARCH VIEWS -->
 
 		<!-- Begin LIST/RESULT VIEWS -->
+
+		<!-- Tuan-in: add list inventory usages view -->
+		<view id="IssuesReturns.InventoryUsagesListView" label="Inventory Usages" resource="invuseViewResource">
+			<requiredResources id="IssuesReturns.InventoryUsagesListView_requiredResources">
+				<requiredResource id="IssuesReturns.InventoryUsagesListView_requiredResource_invuse" name="invuseViewResource" reload="true"/>
+			</requiredResources>
+			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.InventoryUsagesListView_list" label="Records" resource="invuseViewResource" showHeader="true" transitionTo="IssuesReturns.InventoryUsagesItemsDetailsView">
+				<searchAttributes id="InventoryUsagesListView__searchAttributes">
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_formnumber" name="formnumber"/>
+					<!-- <searchAttribute id="InventoryUsagesListView__searchAttribute_description" name="description"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_preparedby" name="preparedby"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_usetype" name="usetype"/> -->
+				</searchAttributes>
+
+				<listItemTemplate id="IssuesReturns.InventoryUsagesListView_listItemTemplate" layout="InventoryUsageList">
+					<listtext id="IssuesReturns.InventoryUsagesListView_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+					<listtext id="IssuesReturns.InventoryUsagesListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
+					<listtext id="IssuesReturns.InventoryUsagesListView_documentref" layoutInsertAt="item3" resourceAttribute="documentref"/>
+					<listtext id="IssuesReturns.InventoryUsagesListView_createdate" layoutInsertAt="item4" resourceAttribute="createdate"/>
+					<listtext id="IssuesReturns.InventoryUsagesListView_preparedby" layoutInsertAt="item5" resourceAttribute="preparedby"/>
+					<listtext id="IssuesReturns.InventoryUsagesListView_usetype" layoutInsertAt="item6" resourceAttribute="usetype"/>
+				</listItemTemplate>
+			</list>
+
+			<eventHandlers id="IssuesReturns.InventoryUsagesListView_view_1_eventHandlers">
+				<eventHandler class="application.handlers.IssuesReturnsHandler" event="initialize" id="IssuesReturns.InventoryUsagesListView_view_1_eventHandlers_init" method="initSortInventoryUsage"/>
+			</eventHandlers>
+		</view>
+		<!-- Tuan-out: add list inventory usages view -->
 
 		<!-- Issue Reserved List View -->
 		<view id="IssuesReturns.InvreserveListView" label="Issue Reserved Items" resource="invreserve">
@@ -697,6 +733,76 @@
 				<eventHandler class="application.handlers.IssuesReturnsHandler" event="back" id="IssuesReturns.SplitQtyAcrossBinsView_backbutton" method="handleBackButtonOnSplitQtyAcrossBinsView"/>
 			</eventHandlers>
 		</view>
+
+		<!-- Tuan-in: add inventory usages detail view -->
+		<view id="IssuesReturns.InventoryUsagesItemsDetailsView" label="Inventory Usages Details" resource="invuse">
+			<requiredResources id="IssuesReturns.InventoryUsagesItemsDetailsView_requiredResources">
+				<requiredResource id="IssuesReturns.InventoryUsagesItemsDetailsView_requiredResource_invuse" name="invuse"/>
+				<requiredResource id="IssuesReturns.InventoryUsagesItemsDetailsView_requiredResource_invuseline" name="invuelineTemp"/>
+			</requiredResources>
+
+			<container id="IssuesReturns.InventoryUsagesItemsDetailsView_container_3" resource="invuse">
+				<group id="IssuesReturns.InventoryUsagesItemsDetailsView_group_3">
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_usage_groupitem_1">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_fromno" label="Form No" resourceAttribute="formnumber">
+						</text>
+					</groupitem>
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_usage_groupitem_2">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_description" label="Description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_usage_groupitem_3">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_documentref" label="Document Ref" resourceAttribute="documentref"/>
+					</groupitem>
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_usage_groupitem_4">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_createdate" label="Create Date" type="datetime" resourceAttribute="createdate"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="IssuesReturns.InventoryUsagesItemsDetailsView_container_2" resource="invuelineTemp">
+				<group id="IssuesReturns.InventoryUsagesItemsDetailsView_group_2">
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_issue_groupitem_2">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_issue" label="Issue To" resourceAttribute="issueto"/>
+					</groupitem>
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_wo_groupitem_3">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_wo" label="Work Order" resourceAttribute="wonum">
+						</text>
+					</groupitem>
+					<groupitem id="IssuesReturns.IInventoryUsagesItemsDetailsView_task_groupitem_4">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_task" label="Task ID" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_location_groupitem_6">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_location" label="Location/Tag Number" resourceAttribute="location">
+						</text>
+					</groupitem>
+
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_account_groupitem_5">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_account" label="GL Account" resourceAttribute="gldebitacct">
+						</text>
+					</groupitem>
+
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_issueQty_groupitem_8">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_isseQty" label="Issue Quantity" resourceAttribute="quantity">
+						</text>
+					</groupitem>
+
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_frombin_groupitem_10">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_frombin" label="From Bin" required="false" resourceAttribute="frombin">
+						</text>
+						<text id="IssuesReturns.InventoryUsagesItemsDetailsView_lotnum" editable="false" label="Lotnum" resourceAttribute="fromlot"/>
+					</groupitem>
+
+					<groupitem id="IssuesReturns.InventoryUsagesItemsDetailsView_actualdate_groupitem_9">
+						<text editable="false" id="IssuesReturns.InventoryUsagesItemsDetailsView_actualdate" label="Actual Date" type="date" resourceAttribute="actualdate"/>
+					</groupitem>
+				</group>
+			</container>
+
+			<eventHandlers id="InventoryUsagesItemsDetailsView_eventHandlers">
+				<eventHandler event="initialize" id="InventoryUsagesItemsDetailsView_eventHandlers_initialize" class="application.handlers.IssuesReturnsHandler" method="initInventoryUsageDetail" />
+			</eventHandlers>
+		</view>
+
+		<!-- Tuan-out: add inventory usages detail view -->
 
 		<!-- Item Details View (Unreserved item) -->
 		<view id="IssuesReturns.AdditionalItemsDetailsView" label="Item Details" resource="inventory">
@@ -1240,7 +1346,7 @@
 		<!-- Tuan-out: add wonum lookup -->
 
 		<!-- Tuan-in: add GlaccountLookup -->
-		<lookup id="IssuesReturns.GlaccountLookup" label="Select Form number" resource="glaccountForLookup">
+		<lookup id="IssuesReturns.GlaccountLookup" label="Select Glaccount" resource="glaccountForLookup">
 			<requiredResources id="IssuesReturns.GlaccountLookup_requiredResources">
 				<requiredResource id="IssuesReturns.GlaccountLookup_glaccountTemp" name="glaccountForLookup" reload="false"/>
 			</requiredResources>
@@ -1261,6 +1367,22 @@
 
 	<!--DATA DEFINITION SECTION-->
 	<data id="data">
+
+		<!-- Tuan-in: add invuelineTemp -->
+		<resource id="invuelineTemp" inMemory="true" name="invuelineTemp">
+			<attributes id="invuelineTemp_attributes">
+				<localAttribute dataType="string" id="invuelineTemp_issueto_string" name="issueto"/>
+				<localAttribute dataType="string" id="invuelineTemp_wonum_string" name="wonum"/>
+				<localAttribute dataType="string" id="invuelineTemp_taskid_string" name="taskid"/>
+				<localAttribute dataType="string" id="invuelineTemp_location_string" name="location"/>
+				<localAttribute dataType="string" id="invuelineTemp_gldebitacct_string" name="gldebitacct"/>
+				<localAttribute dataType="string" id="invuelineTemp_quantity_string" name="quantity"/>
+				<localAttribute dataType="string" id="invuelineTemp_frombin_string" name="frombin"/>
+				<localAttribute dataType="string" id="invuelineTemp_fromlot_string" name="fromlot"/>
+				<localAttribute dataType="date" id="invuelineTemp_actualdate_string" name="actualdate"/>
+			</attributes>
+		</resource>
+		<!-- Tuan-in: add invuelineTemp -->
 
 		<!-- Tuan-in: add glaccount temp data -->
 		<resource id="glaccountTemp" inMemory="true" name="glaccountTemp" singleton="true">
@@ -1579,7 +1701,10 @@
 				<attribute describedByProperty="spi:documentref" id="invuseResourceResource_documentref_spi_documentref" index="true" name="documentref"/>
 				<attribute describedByProperty="spi:createdate" id="invuseResourceResource_createdate_spi_createdate" name="createdate"/>
 				<!-- Loc-Out Add attrinutes -->
-				<localAttribute dataType="string" id="nvuseResourceResource_errorMessage" name="errorMessage"/>
+				<!-- Tuan-in: add attributes -->
+				<attribute describedByProperty="spi:preparedby" id="invuseResourceResource_preparedby_spi_cpreparedby" name="preparedby"/>
+				<!-- Tuan-in: add attributes -->
+				<localAttribute dataType="string" id="invuseResourceResource_errorMessage" name="errorMessage"/>
 				<!-- Local Attributes -->
 				<localAttribute dataType="dateTime" id="invuseResource_statusDate_dateTime" name="statusDate"/>
 			</attributes>
@@ -1591,6 +1716,43 @@
 			</queryBases>
 			<whereClause id="invuse_whereClause"/>
 		</resource>
+
+		<!-- Tuan-in: add invuse to view data -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invuse" defaultOrderBy="invuseid desc" id="invuseViewResource" pageSize="50" name="invuseViewResource" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="invuseViewResource_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="invuseViewResource_invuseid_dcterms_invuseid" index="true" name="invuseid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="invuseViewResource_invusenum_spi_invusenum" name="invusenum"/>
+				<attribute describedByProperty="dcterms:title" id="invuseViewResource_description_dcterms_description" index="true" name="description"/>
+				<attribute describedByProperty="spi:usetype" id="invuseViewResource_usetype_spi_usetype" name="usetype"/>
+				<attribute describedByProperty="spi:status" id="invuseViewResource_status_spi_status" name="status"/>
+				<attribute describedByProperty="spi:fromstoreloc" id="invuseViewResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
+				<attribute describedByProperty="spi:changeby" id="invuseViewResource_changeby_spi_changeby" name="changeby"/>
+				<attribute describedByProperty="spi:changedate" id="invuseViewResource_changedate_spi_changedate" name="changedate"/>
+				<attribute describedByProperty="spi:orgid" id="invuseViewResource_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="invuseViewResource_siteid_spi_siteid" name="siteid"/>
+				<attribute describedByProperty="spi:statusdate" id="invuseViewResource_statusdate_spi_statusdate" name="statusdate"/>
+				<attribute describedByProperty="spi:invuseline" describedByResource="invuselineResource" id="invuseViewResource_invuseline_spi_invuseline" name="invuseline"/>
+				<attribute describedByProperty="spi:invuselinesplit" describedByResource="invuselineSplitResource" id="invuseViewResource_aw_npinvuselinesplit" name="npinvuselinesplit"/>
+				<attribute describedByProperty="spi:statusdate" id="invuseViewResource_changestatusdate_spi_statusdate" name="changestatusdate"/>
+				<attribute describedByProperty="spi:np_statusmemo" id="invuseViewResource_memo_spi_np_statusmemo" name="memo"/>
+				<attribute describedByProperty="spi:formnumber" id="invuseViewResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:documentref" id="invuseViewResource_documentref_spi_documentref" index="true" name="documentref"/>
+				<attribute describedByProperty="spi:createdate" id="invuseViewResource_createdate_spi_createdate" name="createdate"/>
+				<attribute describedByProperty="spi:preparedby" id="invuseViewResource_preparedby_spi_cpreparedby" name="preparedby"/>
+				<localAttribute dataType="string" id="invuseViewResource_errorMessage" name="errorMessage"/>
+				<localAttribute dataType="dateTime" id="invuseViewResource_statusDate_dateTime" name="statusDate"/>
+
+			</attributes>
+
+			<creationFactories id="invuseViewResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvuse" id="invuseViewResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
+			</creationFactories>
+			<queryBases id="invuseViewResource_queryBases">
+				<queryBase id="invuseViewResource_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
+			</queryBases>
+			<whereClause id="invuseViewResource_whereClause"/>
+		</resource>
+		<!-- Tuan-in: add invuse to view data -->
 
 		<!-- Invuseline Resource -->
 		<resource id="invuselineResource" name="invuselineResource">
