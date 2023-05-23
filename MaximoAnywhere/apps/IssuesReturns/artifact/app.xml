@@ -512,6 +512,8 @@
 					<listtext id="IssuesReturns.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
 					<text id="IssuesReturns.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/>
 					<listtext id="IssuesReturns.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
+					<text id="IssuesReturns.AdditionalItemsListView_partlabel" label="Part #" layoutInsertAt="item8"/>
+					<listtext id="IssuesReturns.AdditionalItemsListView_partno" layoutInsertAt="item9" resourceAttribute="modelnumref"/>
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="IssuesReturns.AdditionalItemsListView_eventHandlers">
@@ -847,7 +849,7 @@
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_itemnum" label="Item" resourceAttribute="itemnum" layoutInsertAt="item1"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_partno" label="Part #" resourceAttribute="modelnumref" layoutInsertAt="item2"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_warehouse" label="Warehouse" resourceAttribute="location" layoutInsertAt="item3"/>
-				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_bin" label="Bin" resourceAttribute="binnum" layoutInsertAt="item4"/>
+				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_bin" label="Default Bin" resourceAttribute="binnum" layoutInsertAt="item4"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_qty" label="Quantity Available" placeHolder="Tap to enter" resourceAttribute="avblbalance" layoutInsertAt="item5"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_unit" label="Unit of Measure" resourceAttribute="issueunit" layoutInsertAt="item6"/>
 				<text editable="false" id="IssuesReturns.AdditionalItemsDetailsView_itemdesc" label="Item Description" resourceAttribute="description" layoutInsertAt="item7"/>
