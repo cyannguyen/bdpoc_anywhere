@@ -764,9 +764,15 @@ define("application/handlers/IssuesAvailableItemsHandler", [
          * Clear some fields (taskid, glaccount, location and asset)
          */
         clearBaseFieldsFromWO: function (eventContext) {
-            var issueAdditionItemRecord = eventContext.application
-                .getResource("issueAdditionalItems")
-                .getCurrentRecord();
+            /* #region  Tuan-in: check record null */
+            // var issueAdditionItemRecord = eventContext.application
+            //     .getResource("issueAdditionalItems")
+            //     .getCurrentRecord();
+            var issueAdditionItemRecords =
+                eventContext.application.getResource("issueAdditionalItems");
+            if (!issueAdditionItemRecords) return;
+            var issueAdditionItemRecord = issueAdditionItemRecords.getCurrentRecord();
+            /* #endregion */
             // issueAdditionItemRecord.taskid = "";
             // issueAdditionItemRecord.glaccount = "";
             // issueAdditionItemRecord.location = "";
@@ -774,7 +780,11 @@ define("application/handlers/IssuesAvailableItemsHandler", [
             issueAdditionItemRecord.setNullValue("glaccount");
             issueAdditionItemRecord.setNullValue("location");
             issueAdditionItemRecord.setNullValue("asset");
-            issueAdditionItemRecord.set("taskid", "");
+
+            /* #region  Tuan-in: fix incomparable field */
+            issueAdditionItemRecord.setNullValue("taskid");
+            // issueAdditionItemRecord.set("taskid", "");
+            /* #endregion Tuan-in: fix incomparable field*/
         },
 
         /**
@@ -1220,9 +1230,15 @@ define("application/handlers/IssuesAvailableItemsHandler", [
         },
 
         clearAdditionalUsage: function (eventContext) {
-            var issueAdditionUsageRecord = eventContext.application
-                .getResource("issueAdditionalUsage")
-                .getCurrentRecord();
+            /* #region  Tuan-in: check null record */
+            // var issueAdditionUsageRecord = eventContext.application
+            //     .getResource("issueAdditionalUsage")
+            //     .getCurrentRecord();
+            var issueAdditionUsageRecords =
+                eventContext.application.getResource("issueAdditionalUsage");
+            if (!issueAdditionUsageRecords) return;
+            var issueAdditionUsageRecord = issueAdditionUsageRecords.getCurrentRecord();
+            /* #endregion */
             issueAdditionUsageRecord.formnumber = "";
             issueAdditionUsageRecord.description = "";
             issueAdditionUsageRecord.documentref = "";
@@ -1230,9 +1246,15 @@ define("application/handlers/IssuesAvailableItemsHandler", [
         },
 
         clearAdditionalItems: function (eventContext) {
-            var issueAdditionItemRecord = eventContext.application
-                .getResource("issueAdditionalItems")
-                .getCurrentRecord();
+            /* #region  Tuan-in: check null record */
+            // var issueAdditionItemRecord = eventContext.application
+            //     .getResource("issueAdditionalItems")
+            //     .getCurrentRecord();
+            var issueAdditionItemRecords =
+                eventContext.application.getResource("issueAdditionalItems");
+            if (!issueAdditionItemRecords) return;
+            var issueAdditionItemRecord = issueAdditionItemRecords.getCurrentRecord();
+            /* #endregion */
             issueAdditionItemRecord.issueTo = "";
             issueAdditionItemRecord.wonum = "";
             issueAdditionItemRecord.issueQty = "";
