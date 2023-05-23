@@ -155,17 +155,16 @@
 		</view>
 
 		<!-- Tuan-in: add list inventory usages view -->
-		<view id="Transfers.InventoryUsagesListView" label="Inventory Usages" resource="invuse">
+		<view id="Transfers.InventoryUsagesListView" label="Inventory Usages" resource="invuseViewResource">
 			<requiredResources id="Transfers.InventoryUsagesListView_requiredResources">
-				<requiredResource id="Transfers.InventoryUsagesListView_requiredResource_invuse" name="invuse" reload="true"/>
+				<requiredResource id="Transfers.InventoryUsagesListView_requiredResource_invuse" name="invuseViewResource" reload="true"/>
 			</requiredResources>
 
-			<list displayPageSize="20" hideEmpty="true" id="Transfers.InventoryUsagesListView_list" label="Records" resource="invuse" showHeader="true" transitionTo="Transfers.InventoryUsagesItemsDetailsView">
+			<list displayPageSize="20" hideEmpty="true" id="Transfers.InventoryUsagesListView_list" label="Records" resource="invuseViewResource" showHeader="true" transitionTo="Transfers.InventoryUsagesItemsDetailsView">
 				<searchAttributes id="InventoryUsagesListView__searchAttributes">
 					<searchAttribute id="InventoryUsagesListView__searchAttribute_formnumber" name="formnumber"/>
-					<searchAttribute id="InventoryUsagesListView__searchAttribute_description" name="description"/>
-					<searchAttribute id="InventoryUsagesListView__searchAttribute_preparedby" name="preparedby"/>
-					<searchAttribute id="InventoryUsagesListView__searchAttribute_usetype" name="usetype"/>
+					<!-- <searchAttribute id="InventoryUsagesListView__searchAttribute_description" name="description"/>
+					<searchAttribute id="InventoryUsagesListView__searchAttribute_usetype" name="usetype"/> -->
 				</searchAttributes>
 
 				<listItemTemplate id="Transfers.InventoryUsagesListView_listItemTemplate" layout="InventoryUsageList">
@@ -3654,7 +3653,46 @@
 		</resource>
 
 		<!-- Tuan-in: add invuse to view data -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invuse" defaultOrderBy="invuseid desc" id="invuseViewResource" pageSize="50" name="invuseViewResource" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="invuseViewResource_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="invuseViewResource_invuseid_dcterms_invuseid" index="true" name="invuseid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="invuseViewResource_invusenum_spi_invusenum" name="invusenum"/>
+				<attribute describedByProperty="dcterms:title" id="invuseViewResource_description_dcterms_description" index="true" name="description"/>
+				<attribute describedByProperty="spi:usetype" id="invuseViewResource_usetype_spi_usetype" index="true" name="usetype"/>
+				<attribute describedByProperty="spi:status" id="invuseViewResource_status_spi_status" name="status"/>
+				<attribute describedByProperty="spi:fromstoreloc" id="invuseViewResource_fromstoreloc_spi_fromstoreloc" name="fromstoreloc"/>
+				<attribute describedByProperty="spi:changeby" id="invuseViewResource_changeby_spi_changeby" name="changeby"/>
+				<attribute describedByProperty="spi:changedate" id="invuseViewResource_changedate_spi_changedate" name="changedate"/>
+				<attribute describedByProperty="spi:orgid" id="invuseViewResource_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="invuseViewResource_siteid_spi_siteid" name="siteid"/>
+				<attribute describedByProperty="spi:shipmentdate" id="invuseViewResource_shipdate_spi_shipdate" name="shipdate"/>
+				<attribute describedByProperty="spi:shiptoattn" id="invuseViewResource_shiptoattn_spi_shiptoattn" name="shiptoattn"/>
+				<attribute describedByProperty="spi:packingslipnum" id="invuseViewResource_packingslipnum_spi_packingslipnum" name="packingslipnum"/>
+				<attribute describedByProperty="spi:expreceiptdate" id="invuseViewResource_expreceiptdate_spi_expreceiptdate" name="expreceiptdate"/>
+				<attribute describedByProperty="spi:carrier" id="invuseViewResource_packingslipnum_spi_carrier" name="carrier"/>
+				<attribute describedByProperty="spi:shipto" id="invuseViewResource_shipto_spi_shipto" name="shipto"/>
+				<attribute describedByProperty="spi:statusdate" id="invuseViewResource_statusdate_spi_statusdate" name="statusdate"/>
+				<attribute describedByProperty="spi:invuseline" describedByResource="invuselineResource" id="invuseViewResource_invuseline_spi_invuseline" name="invuseline"/>
+				<attribute describedByProperty="spi:invuselinesplit" describedByResource="invuselineSplitResource" id="invuseViewResource_aw_npinvuselinesplit" name="npinvuselinesplit"/>
+				<attribute describedByProperty="spi:awshipment" describedByResource="shipmentResource" id="invuseViewResource_awshipment" name="shipment"/>
+				<attribute describedByProperty="spi:awshipmentline" describedByResource="shipmentLineResource" id="invuseViewResource_awshipmentline" name="shipmentline"/>
+				<attribute describedByProperty="spi:statusdate" id="invuseViewResource_changestatusdate_spi_statusdate" name="changestatusdate"/>
+				<attribute describedByProperty="spi:np_statusmemo" id="invuseViewResource_memo_spi_np_statusmemo" name="memo"/>
+				<attribute describedByProperty="spi:formnumber" id="invuseViewResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
+				<attribute describedByProperty="spi:documentref" id="invuseViewResource_documentref_spi_documentref" index="true" name="documentref"/>
+				<attribute describedByProperty="spi:createdate" id="invuseViewResource_createdate_spi_createdate" name="createdate"/>
+				<localAttribute dataType="string" id="invuseViewResource_errorMessage" name="errorMessage"/>
+				<localAttribute dataType="dateTime" id="invuseViewResource_statusDate_dateTime" name="statusDate"/>
+			</attributes>
 
+			<creationFactories id="invuseViewResource_creationFactories">
+				<creationFactory creationUri="/oslc/os/oslcinvuse" id="invuseViewResource_creationFactory_invuseResourceCF" name="invuseResourceCF"/>
+			</creationFactories>
+			<queryBases id="invuseViewResource_queryBases">
+				<queryBase id="invuseViewResource_queryBase_invuse" name="searchAllInvuse" queryUri="/oslc/os/oslcinvuse"/>
+			</queryBases>
+			<whereClause id="invuseViewResource_whereClause"/>
+		</resource>
 		<!-- Tuan-in: add invuse to view data -->
 
 		<!-- Invuseline Resource -->

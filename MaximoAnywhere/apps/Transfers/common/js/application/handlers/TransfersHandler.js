@@ -749,8 +749,9 @@ define("application/handlers/TransfersHandler", [
         },
         /* #region  Tuan-in: add init sort for inventory usages */
         initSortInventoryUsage: function (eventContext) {
-            var records = CommonHandler._getAdditionalResource(eventContext, "invuse");
-            records.sort("createdate desc");
+            var records = CommonHandler._getAdditionalResource(eventContext, "invuseViewResource");
+            CommonHandler._clearFilterForResource(eventContext, records);
+            // records.sort("createdate desc");
         },
         /* #endregion Tuan-out: add init sort for inventory usages */
 
@@ -762,7 +763,7 @@ define("application/handlers/TransfersHandler", [
             ).getCurrentRecord();
             var record = CommonHandler._getAdditionalResource(
                 eventContext,
-                "invuse"
+                "invuseViewResource"
             ).getCurrentRecord();
             record.getModelDataSet("invuseline", true).then(function (lineData) {
                 var lineRecord = lineData.getRecordAt(0);
