@@ -512,8 +512,10 @@
 					<listtext id="IssuesReturns.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
 					<text id="IssuesReturns.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/>
 					<listtext id="IssuesReturns.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
+					<!-- Tuan-in: add part # -->
 					<text id="IssuesReturns.AdditionalItemsListView_partlabel" label="Part #" layoutInsertAt="item8"/>
 					<listtext id="IssuesReturns.AdditionalItemsListView_partno" layoutInsertAt="item9" resourceAttribute="modelnumref"/>
+					<!-- Tuan-out: add part # -->
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="IssuesReturns.AdditionalItemsListView_eventHandlers">
@@ -1477,7 +1479,7 @@
 				<localAttribute dataType="string" id="issueReservedHeader_documentref_string" name="documentref"/>
 				<localAttribute dataType="date" id="issueReservedHeader_createdate_datetime" name="createdate"/>
 				<!-- Tuan-in: add selectall attribute to track selectall for the list -->
-				<localAttribute dataType="boolean" formula="true" id="invreserve_item_selectall" name="selectall"/>
+				<localAttribute dataType="boolean" formula="false" id="invreserve_item_selectall" name="selectall"/>
 				<!-- Tuan-out: add selectall attribute to track selectall for the list -->
 			</attributes>
 			<whereClause id="issueReservedHeader_whereClause"/>
@@ -1660,7 +1662,7 @@
 				<localAttribute dataType="date" formula="new Date()" id="invreserveResource_actualDate" name="actualdate"/>
 
 				<!-- Tuan-in: add reserved checkbox -->
-				<localAttribute dataType="boolean" formula="true" id="invreserve_item_reservedindicator" name="reservedIndicator"/>
+				<localAttribute dataType="boolean" formula="false" id="invreserve_item_reservedindicator" name="reservedIndicator"/>
 				<!-- Tuan-out: add reserved checkbox -->
 
 				<!-- <localAttribute dataType="string" id="invreserveResource_partno" name="modelnum"/> -->
