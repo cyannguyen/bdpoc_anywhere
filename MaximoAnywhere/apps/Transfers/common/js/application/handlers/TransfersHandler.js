@@ -606,11 +606,13 @@ define("application/handlers/TransfersHandler", [
             //#endregion Loc-Out: clear formno value
 
             /* #region  Tuan-in: clear  defaultBin text */
-            var transfers = CommonHandler._getAdditionalResource(
+            var binRecords = CommonHandler._getAdditionalResource(
                 eventContext,
                 "defaultBinShipment"
-            ).getCurrentRecord();
-            transfers.setNullValue("defaultBin");
+            );
+            if (!binRecords) return;
+            var binRecord = binRecords.getCurrentRecord();
+            binRecord.setNullValue("defaultBin");
             /* #endregion Tuan-in: clear  defaultBin text */
         },
 

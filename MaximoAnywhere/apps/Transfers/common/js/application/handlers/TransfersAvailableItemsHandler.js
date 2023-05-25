@@ -1553,6 +1553,16 @@ define("application/handlers/TransfersAvailableItemsHandler", [
         initializeAdditionalUsage: function (eventContext) {
             var additionalUsage = eventContext.getResource().getCurrentRecord();
             additionalUsage.setDateValue("createdate", this.application.getCurrentDateTime());
+            /* #region  Tuan-in: add default formno */
+            var isInternal = this.isInternalStoreroom(eventContext);
+            if (!isInternal) return;
+            var currentDateTime = dojo.date.locale.format(new Date(), {
+                datePattern: "ddMMyy-HHmm",
+                selector: "date",
+            });
+            var defaultFormno = "MTN-BIN-" + currentDateTime;
+            additionalUsage.set("formnumber", defaultFormno);
+            /* #endregion Tuan-out: add default formno */
         },
 
         initializeAdditionalItems: function (eventContext) {
@@ -1859,39 +1869,17 @@ define("application/handlers/TransfersAvailableItemsHandler", [
 
         /* #region  Tuan-in: display ship button */
         setButtonShipReadonly: function (eventContext) {
-            var transfers = CommonHandler._getAdditionalResource(
-                eventContext,
-                "transfers"
-            ).getCurrentRecord();
-            var formRecord = CommonHandler._getAdditionalResource(
-                eventContext,
-                "transferAdditionalItems"
-            ).getCurrentRecord();
-
-            var storeroomOffs = transfers.storeroomoffs;
-            var tostoreroomOffs = formRecord.tostoreroomoffs;
-            if (tostoreroomOffs == null) {
-                tostoreroomOffs = transfers.tostoreroomoffs;
-            }
-            if (storeroomOffs == tostoreroomOffs) {
-                eventContext.setDisplay(false);
-            } else {
-                eventContext.setDisplay(true);
-            }
+            var isInternal = this.isInternalStoreroom(eventContext);
+            eventContext.setDisplay(!isInternal);
         },
         /* #endregion Tuan-in: display ship button */
 
         setButtonReadonly: function (eventContext) {
-            var transfers = CommonHandler._getAdditionalResource(
-                eventContext,
-                "transfers"
-            ).getCurrentRecord();
             /* #region  Tuan-in: handle display complete button */
-            var formRecord = CommonHandler._getAdditionalResource(
-                eventContext,
-                "transferAdditionalItems"
-            ).getCurrentRecord();
-
+            // var transfers = CommonHandler._getAdditionalResource(
+            //     eventContext,
+            //     "transfers"
+            // ).getCurrentRecord();
             // var storeroomOffs = transfers.storeroomoffs;
             // var tostoreroomOffs = transfers.tostoreroomoffs;
             // if (storeroomOffs == tostoreroomOffs) {
@@ -1900,20 +1888,30 @@ define("application/handlers/TransfersAvailableItemsHandler", [
             //     eventContext.setDisplay(false);
             // }
 
+            var isInternal = this.isInternalStoreroom(eventContext);
+            eventContext.setDisplay(isInternal);
+            /* #endregion Tuan-out: handle display complete button */
+        },
+        //#endregion Loc-In: init Additional Usage
+
+        /* #region  Tuan-in: add function to check internal storeroom */
+        isInternalStoreroom: function (eventContext) {
+            var transfers = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transfers"
+            ).getCurrentRecord();
+            var formRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "transferAdditionalItems"
+            ).getCurrentRecord();
+
             var storeroomOffs = transfers.storeroomoffs;
             var tostoreroomOffs = formRecord.tostoreroomoffs;
             if (tostoreroomOffs == null) {
                 tostoreroomOffs = transfers.tostoreroomoffs;
             }
-            if (storeroomOffs == tostoreroomOffs) {
-                eventContext.setDisplay(true);
-            } else {
-                eventContext.setDisplay(false);
-            }
-
-            /* #endregion Tuan-out: handle display complete button */
+            return storeroomOffs == tostoreroomOffs;
         },
-
-        //#endregion Loc-In: init Additional Usage
+        /* #endregion Tuan-out: add function to check internal storeroom*/
     });
 });

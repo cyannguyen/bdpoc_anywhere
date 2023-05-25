@@ -1451,12 +1451,10 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     "receiptInput"
                 );
                 arrayUtil.forEach(receiptInput.data, function (record) {
-                    console.log("Record: ", record);
                     if (record.ponum != null) {
                         filter.push({ ponum: record.ponum });
                     }
                 });
-                console.log("Filter: ", filter);
                 var grnPromise = ModelService.filtered(
                     "grnResource",
                     // PlatformConstants.SEARCH_RESULT_QUERYBASE,
@@ -1494,7 +1492,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                         filter.push({ ponum: record.ponum });
                     }
                 });
-                console.log("Filter: ", filter);
                 var grnPromise = ModelService.filtered(
                     "grnResource",
                     null,
@@ -1797,12 +1794,22 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
                                 //#region Loc-In: Add FormNo
                                 // oslcQueryParameters['sqp:poNum'] =  poNum;
-                                if (poNum) {
-                                    oslcQueryParameters["sqp:poNum"] = poNum;
-                                }
-                                if (formno) {
-                                    filter.push({ formno: formno });
-                                }
+                                // if (poNum) {
+                                //     oslcQueryParameters["sqp:poNum"] = poNum;
+                                // }
+                                // if (formno) {
+                                //     filter.push({ formno: formno });
+                                // }
+                                var poExternalResourceSet = CommonHandler._getAdditionalResource(
+                                    eventContext,
+                                    "poListComplexMatrectrans"
+                                );
+                                arrayUtil.forEach(
+                                    poExternalResourceSet.data,
+                                    function (poExternal) {
+                                        filter.push({ matrectransid: poExternal.matrectransid });
+                                    }
+                                );
                                 //#endregion Loc-Out: Add FormNo
                                 oslcQueryParameters["sqp:siteid"] = siteid;
 
@@ -2273,6 +2280,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                     //#endregion Loc-Out: add formNo
                     var msg = MessageService.createStaticMessage("emptySearchFields").getMessage();
                     self.ui.showMessage(msg);
+
                     return;
                 }
 
@@ -2300,12 +2308,22 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                 //All set to get data from server
                                 //#region Loc-In: Add FormNo
                                 // oslcQueryParameters['sqp:poNum'] =  poNum;
-                                if (poNum) {
-                                    oslcQueryParameters["sqp:poNum"] = poNum;
-                                }
-                                if (formno) {
-                                    filter.push({ formno: formno });
-                                }
+                                // if (poNum) {
+                                //     oslcQueryParameters["sqp:poNum"] = poNum;
+                                // }
+                                // if (formno) {
+                                //     filter.push({ formno: formno });
+                                // }
+                                var poExternalResourceSet = CommonHandler._getAdditionalResource(
+                                    eventContext,
+                                    "poListComplexMatrectrans"
+                                );
+                                arrayUtil.forEach(
+                                    poExternalResourceSet.data,
+                                    function (poExternal) {
+                                        filter.push({ matrectransid: poExternal.matrectransid });
+                                    }
+                                );
                                 //#endregion Loc-Out: Add FormNo
                                 oslcQueryParameters["sqp:siteid"] = siteid;
 
@@ -2321,8 +2339,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                 );
                                 matrectransPromise
                                     .then(function (matrectransSet) {
-                                        //console.log(matrectransSet.data);
-
                                         //verify if search result data is empty
                                         if (matrectransSet.data.length == 0) {
                                             var msg =
@@ -2330,6 +2346,7 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                     "emptySearchResult"
                                                 ).getMessage();
                                             self.ui.showMessage(msg);
+
                                             return;
                                         }
 
@@ -2345,9 +2362,9 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                                                         "emptySearchResult"
                                                     ).getMessage();
                                                 self.ui.showMessage(msg);
+
                                                 return;
                                             }
-
                                             ModelService.clearSearchResult(matrectransSet);
                                             matrectransSet.resourceID = "poComplexMatrectrans";
                                             eventContext.application.addResource(matrectransSet);
@@ -2449,28 +2466,30 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                             //If voiding item and
                             if (isVoidProcess) {
                                 //If item is rotating and matrectrans status is not WINSP OR WASSET = remove item from list
-                                if (
-                                    isRotatingItem &&
-                                    !(
-                                        matrecStatus ==
-                                            SynonymDomain.resolveToDefaultExternal(
-                                                receiptStatusSet,
-                                                "WASSET"
-                                            ) ||
-                                        matrecStatus ==
-                                            SynonymDomain.resolveToDefaultExternal(
-                                                receiptStatusSet,
-                                                "WINSP"
-                                            )
-                                    )
-                                ) {
-                                    invalidMarectrans.push(matrectransRecord.matrectransid);
-                                    Logger.trace(
-                                        self._className +
-                                            "Invalid matrectrans due: rotating item and status"
-                                    );
-                                    continue;
-                                }
+                                /* #region  Tuan-in: Remove retating item check */
+                                // if (
+                                //     isRotatingItem &&
+                                //     !(
+                                //         matrecStatus ==
+                                //             SynonymDomain.resolveToDefaultExternal(
+                                //                 receiptStatusSet,
+                                //                 "WASSET"
+                                //             ) ||
+                                //         matrecStatus ==
+                                //             SynonymDomain.resolveToDefaultExternal(
+                                //                 receiptStatusSet,
+                                //                 "WINSP"
+                                //             )
+                                //     )
+                                // ) {
+                                //     invalidMarectrans.push(matrectransRecord.matrectransid);
+                                //     Logger.trace(
+                                //         self._className +
+                                //             "Invalid matrectrans due: rotating item and status"
+                                //     );
+                                //     continue;
+                                // }
+                                /* #endregion  Tuan-out: remove rotating item check*/
 
                                 //If invoicenum of receipt is NOT null and invoice status equals APPR then set receipt invalid
                                 if (matrectransRecord.invoice) {
@@ -3785,8 +3804,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
              * @public
              */
             hideIssueToLabel: function (eventContext) {
-                console.log("Hide issue to field");
-
                 var domainitemtypes = CommonHandler._getAdditionalResource(
                     eventContext,
                     "domainitemtype"
@@ -4164,7 +4181,6 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
             /* #region Tuan-in: check all history view to display correctly   */
             checkToDisplay: function (eventContext) {
-                console.log("check view history: ", WL.application.ui.viewHistory);
                 for (var i = 0; i < WL.application.ui.viewHistory.length; ++i) {
                     var historyView = WL.application.ui.viewHistory[i].id;
                     if (historyView == "Transfers.ReceivePurchaseOrderItemsSeachView") {

@@ -29,10 +29,12 @@
 	<!-- Loc-Out: Add layout items -->
 	<!-- Tuan-in: add grn -->
 	<row id="row_3">
-		<column colspan="6" columnid="r4item1" id="item7_column"/>
+		<column colspan="5" columnid="r4item1" id="item7_column"/>
+		<column colspan="5" columnid="r4item2" id="item8_column"/>
 	</row>
-	<row id="row_3">
-		<column colspan="6" columnid="r4item2" id="item8_column"/>
+	<row id="row_4">
+		<column colspan="5" columnid="r5item1" id="item9_column"/>
+		<column colspan="7" columnid="r5item2" id="item10_column"/>
 	</row>
 	<!-- Tuan-in: add grn -->
 </layout>
