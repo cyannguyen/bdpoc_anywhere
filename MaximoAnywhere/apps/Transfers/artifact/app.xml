@@ -549,11 +549,18 @@
 					<groupitem id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_groupitem_3">
 						<!-- Tuan-in: add contact number lookup -->
 						<!-- <text codeScannable="true" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno"> -->
-						<text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+						<text codeScannable="true" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+							<!-- <text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_1" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno"> -->
 							<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandlers">
 								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ReceivePurchaseOrderItemsSeachView_formno_eventHandler" method="setFieldsReadonly"/>
 								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ReceivePurchaseOrderItemsSeachView_render_eventHandler" method="updatePOLookupData"/>
 							</eventHandlers>
+							<button id="Transfers.ReceivePurchaseOrderItemsSeachView_imagesaction_contractno_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+								<eventHandlers id="Transfers.ReceivePurchaseOrderItemsSeachView_imagesaction_contractno_lookup_OFF.svg_button_eventHandlers">
+									<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.ReceivePurchaseOrderItemsSeachView_contractno_click_eventhandler" method="contractNoLookup"/>
+									<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ReceivePurchaseOrderItemsSeachView_contractno_render" method="setButtonReadonlyContractno"/>
+								</eventHandlers>
+							</button>
 						</text>
 						<!-- Tuan-out: add contact number lookup -->
 					</groupitem>
@@ -761,11 +768,18 @@
 					<!-- Loc-In: Add FormNo Searching -->
 					<groupitem id="Transfers.ManageReceivedPurchaseOrderSeachView_group_formno">
 						<!-- Tuan-in: add contact number lookup  -->
-						<text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+						<text codeScannable="true" editable="true" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno">
+							<!-- <text codeScannable="true" lookup="Transfers.ContactnoLookup" lookupAttribute="formno" editable="true" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno" label="Contract No" placeHolder="Tap to enter" resourceAttribute="formno"> -->
 							<eventHandlers id="Transfers.ManageReceivedPurchaseOrderSeachView_formno_eventHandlers">
 								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ManageReceivedPurchaseOrderSeachView_formno_eventHandler" method="setFieldsReadonly"/>
-								<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="datachange" id="Transfers.ManageReceivedPurchaseOrderSeachView_render_eventHandler" method="updateManagePOLookupData"/>
+								<!-- <eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ManageReceivedPurchaseOrderSeachView_render_eventHandler" method="updateManagePOLookupData"/> -->
 							</eventHandlers>
+							<button id="Transfers.ManageReceivedPurchaseOrderSeachView_imagesaction_contractno_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
+								<eventHandlers id="Transfers.ManageReceivedPurchaseOrderSeachView__imagesaction_contractno_lookup_OFF.svg_button_eventHandlers">
+									<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.ManageReceivedPurchaseOrderSeachView__contractno_click_eventhandler" method="contractNoLookup"/>
+									<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.ManageReceivedPurchaseOrderSeachView__contractno_render" method="setButtonReadonlyContractno"/>
+								</eventHandlers>
+							</button>
 						</text>
 						<!-- Tuan-out: add contact number lookup  -->
 					</groupitem>
@@ -862,16 +876,16 @@
 					<text id="Transfers.ShipmentItemsListView_quantityOrdered" label="Quantity Ordered" layoutInsertAt="item5"/>
 					<listtext id="Transfers.ShipmentItemsListView_quantity" layoutInsertAt="item6" resourceAttribute="qtyrequested"/> -->
 
-					<listtext id="Transfers.ShipmentItemsListView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.ShipmentItemsListView_partno" layoutInsertAt="item2" resourceAttribute="modelnumref" />
-					<listtext id="Transfers.ShipmentItemsListView_unit" layoutInsertAt="item3" resourceAttribute="receivedunit"/>
+					<text labelCss="labelDetailText" editable="false" label="Item" id="Transfers.ShipmentItemsListView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
+					<text labelCss="labelDetailText" editable="false" label="Part #" id="Transfers.ShipmentItemsListView_partno" layoutInsertAt="item2" resourceAttribute="modelnumref" />
+					<!-- <text editable="false" label="Received Unit" id="Transfers.ShipmentItemsListView_unit" layoutInsertAt="item3" resourceAttribute="receivedunit"/> -->
 					<!-- <text id="Transfers.ShipmentItemsListView_quantityOrdered" label="Quantity Ordered" layoutInsertAt="item5"/> -->
-					<listtext id="Transfers.ShipmentItemsListView_quantity" layoutInsertAt="item4" resourceAttribute="qtyrequested"/>
+					<text labelCss="labelDetailText" editable="false" label="Qty.Requested" id="Transfers.ShipmentItemsListView_quantity" layoutInsertAt="item3" resourceAttribute="qtyrequested"/>
 					<!-- Either Location or Work order will populated item3 layout location, depending if charged to work order. -->
-					<listtext id="Transfers.ShipmentItemsListView_location" layoutInsertAt="item5" resourceAttribute="location"/>
+					<text labelCss="labelDetailText" editable="false" label="To Storeroom" id="Transfers.ShipmentItemsListView_location" layoutInsertAt="item4" resourceAttribute="location"/>
 					<!-- Tuan-in: update tobin incoming items -->
 					<!-- <text editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="to bin" resourceAttribute="tobin"> -->
-					<text editable="true" id="Transfers.ShipmentItemsListView_tobin" lookup="Transfers.TobinReseiveShipmentLookup" lookupAttribute="binmum" layoutInsertAt="item10" placeHolder="to bin" resourceAttribute="tobin">
+					<text cssClass="fromBinText" labelCss="labelDetailText" label="To bin" editable="true" id="Transfers.ShipmentItemsListView_tobin" lookup="Transfers.TobinReseiveShipmentLookup" lookupAttribute="binmum" layoutInsertAt="item8" placeHolder="to bin" resourceAttribute="tobin">
 						<!-- <button cssClass="lookupIcon" id="Transfers.ShipmentItemsListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="Transfers.ShipmentItemsListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
 								<eventHandler class="application.handlers.ReceiveShipmentHandler" event="click" id="Transfers.ShipmentItemsListView_tobin_eventhandler_click" method="toBinLotLookup"/>
@@ -886,10 +900,10 @@
 					<!-- Tuan-in: update tobin incoming items -->
 					<!-- label="To Bin" -->
 					<!-- Tuan-In: add lotnum -->
-					<text editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/>
+					<!-- <text labelCss="labelDetailText" label="To lot" editable="false" id="Transfers.ShipmentItemsListView_tolot" layoutInsertAt="item11" resourceAttribute="tolot"/> -->
 					<!-- Tuan-Out: add lotnum -->
 					<!-- Tuan-In: add formnumber -->
-					<text editable="false" id="Transfers.ShipmentItemsListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookup" lookupAttribute="formno" layoutInsertAt="item6" resourceAttribute="formno">
+					<text labelCss="labelDetailText" label="GRN" editable="false" id="Transfers.ShipmentItemsListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookup" lookupAttribute="formno" layoutInsertAt="item11" resourceAttribute="formno">
 						<eventHandlers id="Transfers.ShipmentItemsListView_formnumber_eventhandlers">
 							<eventHandler id="Transfers.ShipmentItemsListView_formnumber_eventhandlers_render" event="render" class="application.handlers.ManagePurchaseOrderHandler" method="handleRenderFormnumber"/>
 						</eventHandlers>
@@ -899,19 +913,19 @@
 					<checkbox cssClass="rightCheckBox" id="Transfers.ShipmentItemsListView_receiveflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="receiveIndicator"/>
 					<!-- Tuan-out: add checkbox -->
 					<!-- <text codeScannable="false" editable="true" id="Transfers.ShipmentItemsListView_tobin" layoutInsertAt="item6" placeHolder="Tap to enter" resourceAttribute="tobin" /> -->
-					<text cssClass="copyPlanActual" editable="true" id="Transfers.ShipmentItemsListView_quantityDue" layoutInsertAt="item7" resourceAttribute="quantitydue">
+					<text labelCss="labelDetailText" label="Qty" cssClass="copyPlanActual" editable="true" id="Transfers.ShipmentItemsListView_quantityDue" layoutInsertAt="item7" resourceAttribute="quantitydue">
 						<eventHandlers id="Transfers.ShipmentItemsListView_quantityDue_eventHandlers">
 							<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ShipmentItemsListView_quantityDue_eventHandler" method="validateNumericFieldShippedItem"/>
 						</eventHandlers>
 					</text>
 					<!-- label="Actual Date" -->
-					<text editable="true" id="Transfers.ShipmentItemsListView_actualdate" layoutInsertAt="item8" placeHolder="Tap to enter" type="date" required="true" resourceAttribute="actualdate">
+					<text labelCss="labelDetailText" label="Actual date" editable="true" id="Transfers.ShipmentItemsListView_actualdate" layoutInsertAt="item10" placeHolder="Tap to enter" type="date" required="true" resourceAttribute="actualdate">
 						<eventHandlers id="Transfers.ShipmentItemsListView_actualdate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.ReceiveShipmentHandler" event="render" id="Transfers.ShipmentItemsListView_eventHandlers_render_actualdate" method="setDefaultActualDateShipment"/> -->
 							<eventHandler class="application.handlers.ReceiveShipmentHandler" event="datachange" id="Transfers.ShipmentItemsListView_eventHandlers_datachange_actualdate" method="validateActualDateItems"/>
 						</eventHandlers>
 					</text>
-					<listtext id="Transfers.ShipmentItemsListView_description" layoutInsertAt="item9" resourceAttribute="itemdesc"/>
+					<listtext cssClass="titleText" id="Transfers.ShipmentItemsListView_description" layoutInsertAt="item9" resourceAttribute="itemdesc"/>
 
 					<!-- <listtext id="Transfers.ShipmentItemsListView_refwo" layoutInsertAt="item3" resourceAttribute="wonum"/>
 
@@ -1010,13 +1024,13 @@
 					<listtext id="Transfers.ReceivedItemsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
 					<listtext id="Transfers.ReceivedItemsListView_unit" layoutInsertAt="r3item2" resourceAttribute="receivedunit"/> -->
 
-					<listtext id="Transfers.ReceivedItemsListView_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.ReceivedItemsListView_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
-					<listtext id="Transfers.ReceivedItemsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<listtext id="Transfers.ReceivedItemsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
-					<listtext id="Transfers.ReceivedItemsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
-					<listtext id="Transfers.receiveditemslistview_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
-					<listtext id="Transfers.ReceivedItemsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
+					<text editable="false" labelCss="labelDetailText" label="Item" id="Transfers.ReceivedItemsListView_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text editable="false" labelCss="labelDetailText" label="Part #" id="Transfers.ReceivedItemsListView_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text editable="false" labelCss="labelDetailText" label="Received Unit" id="Transfers.ReceivedItemsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text editable="false" labelCss="labelDetailText" label="Receipt Qty" id="Transfers.ReceivedItemsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
+					<text editable="false" labelCss="labelDetailText" label="Status" id="Transfers.ReceivedItemsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
+					<text editable="false" labelCss="labelDetailText" label="GRN" id="Transfers.receiveditemslistview_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
+					<text editable="false" cssClass="titleText" id="Transfers.ReceivedItemsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
 
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 
@@ -1111,15 +1125,15 @@
 					<listtext id="Transfers.POMaterialReceiptsListView_issuetype" layoutInsertAt="r2item1" resourceAttribute="issuetype"/>
 					<listtext id="Transfers.POMaterialReceiptsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
 					<listtext id="Transfers.POMaterialReceiptsListView_unit" layoutInsertAt="r3item2" resourceAttribute="receivedunit"/> -->
-
-					<listtext id="Transfers.POMaterialReceiptsListView_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.POMaterialReceiptsListView_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
-					<listtext id="Transfers.POMaterialReceiptsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<listtext id="Transfers.POMaterialReceiptsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
-					<listtext id="Transfers.POMaterialReceiptsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
-					<listtext id="Transfers.POMaterialReceiptsListView_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
-					<listtext id="Transfers.POMaterialReceiptsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
-
+					<!-- Tuan-in: update layout -->
+					<text labelCss="labelDetailText" editable="false" label="Item" id="Transfers.POMaterialReceiptsListView_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text labelCss="labelDetailText" editable="false" label="Part #" id="Transfers.POMaterialReceiptsListView_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text labelCss="labelDetailText" editable="false" label="Received Unit" id="Transfers.POMaterialReceiptsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text labelCss="labelDetailText" editable="false" label="Receipt Qty" id="Transfers.POMaterialReceiptsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
+					<text labelCss="labelDetailText" editable="false" label="Status" id="Transfers.POMaterialReceiptsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
+					<text labelCss="labelDetailText" editable="false" label="GRN" id="Transfers.POMaterialReceiptsListView_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
+					<text cssClass="titleText" editable="false" id="Transfers.POMaterialReceiptsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
+					<!-- Tuan-out: update layout -->
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 				</listItemTemplate>
 			</list>
@@ -1215,28 +1229,26 @@
 					<listtext id="Transfers.InvreserveListView_binnum" layoutInsertAt="item4" resourceAttribute="binnum"/>
 					<text cssClass="copyPlanActual" editable="true" id="Transfers.InvreserveListView_localreservedqty" layoutInsertAt="item6" resourceAttribute="localreservedqty"/>
 					<listtext id="Transfers.InvreserveListView_ponum" layoutInsertAt="item7" resourceAttribute="ponum"/> -->
-
-					<listtext id="Transfers.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
-					<listtext id="Transfers.InvreserveListView_binnum" layoutInsertAt="item2" resourceAttribute="binnum"/>
-					<listtext id="Transfers.InvreserveListView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
-					<listtext id="Transfers.InvreserveListView_modelnum" layoutInsertAt="item4" resourceAttribute="modelnumref"/>
-					<listtext id="Transfers.InvreserveListView_avblbalance" layoutInsertAt="item5" resourceAttribute="avblbalance"/>
-					<text id="Transfers.InvreserveListView_actualdate" layoutInsertAt="item6" resourceAttribute="actualdate">
+					<text editable="false" labelCss="labelDetailText" label="Itemnum" id="Transfers.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
+					<text editable="false" labelCss="labelDetailText" label="To Storeroom" id="Transfers.InvreserveListView_tostoreroom" layoutInsertAt="item2" resourceAttribute="tostoreloc"/>
+					<text editable="false" labelCss="labelDetailText" label="Issue unit" id="Transfers.InvreserveListView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
+					<text editable="false" labelCss="labelDetailText" label="Part #" id="Transfers.InvreserveListView_modelnum" layoutInsertAt="item4" resourceAttribute="modelnumref"/>
+					<text editable="false" labelCss="labelDetailText" label="Avb.bal" id="Transfers.InvreserveListView_avblbalance" layoutInsertAt="item12" resourceAttribute="avblbalance"/>
+					<text editable="true" labelCss="labelDetailDateText" label="Actual date" id="Transfers.InvreserveListView_actualdate" layoutInsertAt="item10" resourceAttribute="actualdate">
 						<eventHandlers id="Transfers.InvreserveListView_actualDate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.TransfersHandler" event="render" id="Transfers.InvreserveListView_actualDate_eventHandlers_render" method="setDefaultActualDateReservedItems"/> -->
 							<eventHandler class="application.handlers.TransfersHandler" event="datachange" id="Transfers.InvreserveListView_actualDate_eventHandlers_datachange" method="validateActualDateIssueReturnItems"/>
 						</eventHandlers>
 					</text>
-					<listtext id="Transfers.InvreserveListView_itemdesc" layoutInsertAt="item7" resourceAttribute="itemdesc"/>
-					<!-- <listtext id="Transfers.InvreserveListView_ponum" layoutInsertAt="item8" resourceAttribute="ponum"/> -->
-					<text cssClass="copyPlanActual" editable="true" id="Transfers.InvreserveListView_localreservedqty" layoutInsertAt="item8" resourceAttribute="localreservedqty">
+					<text editable="false" cssClass="titleText" id="Transfers.InvreserveListView_itemdesc" layoutInsertAt="item7" resourceAttribute="itemdesc"/>
+					<text cssClass="copyPlanActual" label="Qty" labelCss="labelDetailText" editable="true" id="Transfers.InvreserveListView_localreservedqty" layoutInsertAt="item5" resourceAttribute="localreservedqty">
 						<eventHandlers id="Transfers.InvreserveListView_localreservedqty_eventHandlers">
 							<eventHandler class="application.handlers.TransfersHandler" event="validate" id="Transfers.InvreserveListView_label_eventHandlers_localreservedqty" method="validateQty"/>
 						</eventHandlers>
 					</text>
-					<!-- Tuan-in: update frombin -->
+
 					<!-- <text editable="true" id="Transfers.InvreserveListView_frombin" placeHolder="from bin" required="false" layoutInsertAt="item9" resourceAttribute="frombin"> -->
-					<text cssClass="fromBinText" editable="false" id="Transfers.InvreserveListView_frombin" lookup="Transfers.FrombinReservedLookup" lookupAttribute="binnum" placeHolder="from bin" required="false" layoutInsertAt="item9" resourceAttribute="frombin">
+					<text label="From bin" labelCss="labelDetailText" editable="false" id="Transfers.InvreserveListView_frombin" lookup="Transfers.FrombinReservedLookup" lookupAttribute="binnum" placeHolder="from bin" required="false" layoutInsertAt="item6" resourceAttribute="frombin">
 						<!-- <eventHandlers id="Transfers.InvreserveListView_frombin_text_eventHandlers"> -->
 						<!-- <eventHandler class="application.handlers.TransfersHandler" event="click" id="Transfers.InvreserveListView_eventhandler_text_click" method="fromBinLotLookup"/> -->
 						<!-- </eventHandlers> -->
@@ -1246,15 +1258,11 @@
 							</eventHandlers>
 						</button> -->
 					</text>
+					<text editable="false" cssClass="detailText" label="From lot" labelCss="labelDetailText" id="Transfers.InvreserveListView_lotnum" required="false" layoutInsertAt="item11" resourceAttribute="fromlot"/>
 					<!-- Tuan-in: update frombin -->
-
 					<!-- Loc-In: arrange all fields AND Add partNo, lot, actualDate -->
-					<!-- Tuan-in: add checkbox to reserved Items List -->
 					<checkbox cssClass="rightCheckBox" id="Transfers.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
-					<!-- Tuan-out: add checkbox to reserved Items List -->
-					<!-- Tuan-In: add lotnum -->
-					<text editable="false" id="Transfers.InvreserveListView_lotnum" required="false" layoutInsertAt="item11" resourceAttribute="fromlot"/>
-					<!-- Tuan-Out: add lotnum -->
+					<!-- Tuan-out: add label to text -->
 				</listItemTemplate>
 				<!-- Tuan-in: update tobin incoming items -->
 				<eventHandlers id="Transfers.InvreserveListItem_list_eventHandlers">
@@ -1306,15 +1314,17 @@
 				</searchAttributes>
 				<!-- Tuan-in: add search -->
 				<listItemTemplate id="Transfers.AdditionalItemsListView_listItemTemplate" layout="InvbalanceListItem">
-					<listtext id="Transfers.AdditionalItemsListView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.AdditionalItemsListView_itemdesc" layoutInsertAt="item2" resourceAttribute="description"/>
-					<listtext id="Transfers.AdditionalItemsListView_binnum" layoutInsertAt="item3" resourceAttribute="binnum"/>
-					<listtext id="Transfers.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
+					<!-- Tuan-in: update layout -->
+					<text editable="false" label="Item" labelCss="labelDetailText" id="Transfers.AdditionalItemsListView_itemnum" layoutInsertAt="item3" resourceAttribute="itemnum"/>
+					<text editable="false" cssClass="titleText" id="Transfers.AdditionalItemsListView_itemdesc" layoutInsertAt="item1" resourceAttribute="description"/>
+					<!-- <text editable="false" label="" labelCss="labelDetailText" id="Transfers.AdditionalItemsListView_binnum" layoutInsertAt="item3" resourceAttribute="binnum"/> -->
+					<text editable="false" label="Issue Unit" labelCss="labelDetailText" id="Transfers.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
 					<!-- Loc-In: Add partno field -->
-					<listtext id="Transfers.AdditionalItemsListView_partno" layoutInsertAt="item7" resourceAttribute="modelnumref"/>
+					<text editable="false" label="Part #" labelCss="labelDetailText" id="Transfers.AdditionalItemsListView_partno" layoutInsertAt="item7" resourceAttribute="modelnumref"/>
 					<!-- Loc-Out: Add partno field -->
-					<text id="Transfers.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/>
-					<listtext id="Transfers.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
+					<!-- <text id="Transfers.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/> -->
+					<text editable="false" label="Avb.balance" labelCss="labelDetailText" id="Transfers.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
+					<!-- Tuan-out: update layout -->
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="Transfers.AdditionalItemsListView_eventHandlers">
@@ -1518,12 +1528,12 @@
 					
 					<listtext id="Transfers.RecordsToVoidListView_matrec_partno" layoutInsertAt="r4item1" resourceAttribute="modelnum" /> -->
 
-					<listtext id="Transfers.RecordsToVoidListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.RecordsToVoidListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text editable="false" labelCss="labelDetailText" label="Item" id="Transfers.RecordsToVoidListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text editable="false" labelCss="labelDetailText" label="Part #" id="Transfers.RecordsToVoidListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
 					<checkbox cssClass="rightCheckBox" id="Transfers.RecordsToVoidListView_tovoid_checkbox" layoutInsertAt="checkbox1" resourceAttribute="voidindicator"/>
-					<listtext id="Transfers.RecordsToVoidListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<listtext id="Transfers.RecordsToVoidListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned"/>
-					<listtext id="Transfers.RecordsToVoidListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
+					<text editable="false" labelCss="labelDetailText" label="Received Unit" id="Transfers.RecordsToVoidListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text editable="false" labelCss="labelDetailText" label="Qty" id="Transfers.RecordsToVoidListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned"/>
+					<text editable="false" cssClass="titleText" id="Transfers.RecordsToVoidListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 				</listItemTemplate>
 			</list>
@@ -1569,16 +1579,16 @@
 						</eventHandlers>
 					</text> -->
 
-					<listtext id="Transfers.RecordsToReturnListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.RecordsToReturnListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text labelCss="labelDetailText" editable="false" label="Item" id="Transfers.RecordsToReturnListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text labelCss="labelDetailText" editable="false" label="Part #" id="Transfers.RecordsToReturnListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
 					<checkbox cssClass="rightCheckBox" id="Transfers.RecordsToReturnListView_tovoid_checkbox" layoutInsertAt="checkbox1" resourceAttribute="returnindicator"/>
-					<listtext id="Transfers.RecordsToReturnListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<text cssClass="copyPlanActual" editable="true" id="Transfers.RecordsToReturnListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned">
+					<text labelCss="labelDetailText" editable="false" label="Received Unit" id="Transfers.RecordsToReturnListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text labelCss="labelDetailText" label="Qty" cssClass="copyPlanActual" editable="true" id="Transfers.RecordsToReturnListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned">
 						<eventHandlers id="Transfers.IssuedItemsListView_returnQty_eventHandlers">
 							<eventHandler class="application.handlers.ReceiveShipmentHandler" event="validate" id="Transfers.RecordsToReturnListView_qnty_eventHandlers_validate" method="validateQuantityForReturn"/>
 						</eventHandlers>
 					</text>
-					<listtext id="Transfers.RecordsToReturnListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
+					<text cssClass="titleText" editable="false" id="Transfers.RecordsToReturnListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 				</listItemTemplate>
 			</list>
@@ -1629,21 +1639,21 @@
 		               </eventHandlers>
 		            </text> -->
 
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text labelCss="labelDetailText" label="Item" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text labelCss="labelDetailText" label="Part #" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
 					<checkbox cssClass="rightCheckBox" id="Transfers.PurchaseOrderItemsToVoidListView_tovoid_checkbox" layoutInsertAt="checkbox1" resourceAttribute="voidindicator"/>
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned"/>
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
+					<text labelCss="labelDetailText" label="Received Unit" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text labelCss="labelDetailText" label="Qty" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned"/>
+					<text cssClass="titleText" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
 					<!-- Tuan-in: add bin lot -->
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_tobin" layoutInsertAt="r4item1" resourceAttribute="tobin"/>
-					<listtext id="Transfers.PurchaseOrderItemsToVoidListView_matrec_tolot" layoutInsertAt="r4item2" resourceAttribute="tolot"/>
+					<text labelCss="labelDetailText" label="To bin" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_tobin" layoutInsertAt="r4item1" resourceAttribute="tobin"/>
+					<text labelCss="labelDetailText" label="To lot" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_tolot" layoutInsertAt="r4item2" resourceAttribute="tolot"/>
 					<!-- Tuan-in: add bin lot -->
 					<!-- Tuan-in: add grn -->
-					<text editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="localformnumber" layoutInsertAt="r5item1" resourceAttribute="localformnumber">
+					<text labelCss="labelDetailText" label="GRN" editable="false" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="localformnumber" layoutInsertAt="r5item1" resourceAttribute="localformnumber">
 					</text>
-					<text editable="true" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_actualdate" layoutInsertAt="r5item2" resourceAttribute="localactualdate">
+					<text labelCss="labelDetailText" label="Actual date" editable="true" id="Transfers.PurchaseOrderItemsToVoidListView_matrec_actualdate" layoutInsertAt="r5item2" resourceAttribute="localactualdate">
 					</text>
 					<!-- Tuan-out: add grn -->
 				</listItemTemplate>
@@ -1688,6 +1698,7 @@
 			</container>
 			<list displayPageSize="20" hideEmpty="true" id="Transfers.PurchaseOrderItemsToReturnListView_list" label="Items" resource="poComplexMatrectrans" showHeader="true">
 				<listItemTemplate id="Transfers.PurchaseOrderItemsToReturnListView_listItemTemplate" layout="ReturnExternalItemList">
+					<!-- Loc-in: arrange all fields AND add PartNo -->
 					<!-- <listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
 					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_description" layoutInsertAt="r1item2" resourceAttribute="itemdesc"/>
 					<checkbox cssClass="rightCheckBox" id="Transfers.PurchaseOrderItemsToReturnListView_tovoid_checkbox" layoutInsertAt="checkbox1" resourceAttribute="returnindicator"/>
@@ -1712,29 +1723,24 @@
 						</eventHandlers>
 					</text> -->
 
-
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
+					<text labelCss="labelDetailText" editable="false" label="Item" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_itemnum" layoutInsertAt="r1item1" resourceAttribute="itemnum"/>
+					<text labelCss="labelDetailText" editable="false" label="Part #" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_partno" layoutInsertAt="r1item2" resourceAttribute="modelnumref" />
 					<checkbox cssClass="rightCheckBox" id="Transfers.PurchaseOrderItemsToReturnListView_tovoid_checkbox" layoutInsertAt="checkbox1" resourceAttribute="returnindicator"/>
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
-					<text cssClass="copyPlanActual" editable="true" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned">
+					<text labelCss="labelDetailText" editable="false" label="Received Unit" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
+					<text labelCss="labelDetailText" cssClass="copyPlanActual" label="Qty" editable="true" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_quantity" layoutInsertAt="r2item2" resourceAttribute="qtyToBeReturned">
 						<eventHandlers id="Transfers.PurchaseOrderItemsToReturnListView_returnQty_eventHandlers">
 							<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="validate" id="Transfers.PurchaseOrderItemsToReturnListView_qnty_eventHandlers_validate" method="validateQuantityForReturn"/>
 							<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="render" id="Transfers.PurchaseOrderItemsToReturnListView_qnty_eventHandlers_render" method="showHideNonRotatingAssetAttributes"/>
 						</eventHandlers>
 					</text>
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
+					<text cssClass="titleText" editable="false" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_description" layoutInsertAt="r3item1" resourceAttribute="itemdesc"/>
+					<text labelCss="labelDetailText" editable="false" label="To bin" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_tobin" layoutInsertAt="r4item1" resourceAttribute="tobin"/>
+					<text labelCss="labelDetailText" editable="false" label="To lot" id="Transfers.PurchaseOrderItemsToReturnListView_matrec_tolot" layoutInsertAt="r4item2" resourceAttribute="tolot" />
+					<text labelCss="labelDetailText" editable="false" label="GRN" id="Transfers.PurchaseOrderItemsToReturnListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="grn_formnumber" layoutInsertAt="r5item1" resourceAttribute="localformnumber">
+					</text>
+					<text labelCss="labelDetailText" editable="true" label="Actual date" id="Transfers.PurchaseOrderItemsToReturnListView_actualdate" layoutInsertAt="r5item2" resourceAttribute="localactualdate">
+					</text>
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
-					<!-- Tuan-in: add bin lot -->
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_tobin" layoutInsertAt="r4item1" resourceAttribute="tobin"/>
-					<listtext id="Transfers.PurchaseOrderItemsToReturnListView_matrec_tolot" layoutInsertAt="r4item2" resourceAttribute="tolot" />
-					<!-- Tuan-out: add bin lot -->
-					<!-- Tuan-in: add grn -->
-					<text editable="false" id="Transfers.PurchaseOrderItemsToReturnListView_formnumber" placeHolder="Tap to enter" lookup="Transfers.GrnLookupManagePO" lookupAttribute="grn_formnumber" layoutInsertAt="r5item1" resourceAttribute="localformnumber">
-					</text>
-					<text editable="true" id="Transfers.PurchaseOrderItemsToReturnListView_actualdate" layoutInsertAt="r5item2" resourceAttribute="localactualdate">
-					</text>
-					<!-- Tuan-out: add grn -->
 				</listItemTemplate>
 				<!-- Tuan-in: add grn -->
 				<eventHandlers id="Transfers.PurchaseOrderItemsToReturnListView_list_eventHandlers">
@@ -2560,6 +2566,7 @@
 				<!-- Tuan-in: add search attribute  -->
 				<searchAttributes id="Transfers.POListView_searchAttributes">
 					<searchAttribute id="Transfers.POListView_searchAttribute_ponum" name="ponum"/>
+					<!-- <searchAttribute id="Transfers.POListView_searchAttribute_formno" name="formno"/> -->
 					<!-- <searchAttribute id="Transfers.POListView_searchAttribute_description" name="description"/>
 					<searchAttribute id="Transfers.POListView_searchAttribute_receipts" name="receipts"/> -->
 				</searchAttributes>
@@ -2604,18 +2611,76 @@
 			</eventHandlers> -->
 		</view>
 
+		<!-- ContractNO Lookup View -->
+		<view id="Transfers.ContractNoListView" label="Select Contract Number" resource="poResource">
+			<requiredResources id="Transfers.ContractNoListView_requiredResources">
+				<requiredResource id="Transfers.ContractNoListView_requiredResource_transfers" name="poExternalResource"/>
+				<requiredResource id="Transfers.ContractNoListView_requiredResource_domainpostatus" name="domainpostatus"/>
+			</requiredResources>
+			<list displayPageSize="20" hideEmpty="true" id="Transfers.ContractNoListView_list" label="Records" resource="poResource" showHeader="true">
+				<!-- Tuan-in: add search attribute  -->
+				<searchAttributes id="Transfers.ContractNoListView_searchAttributes">
+					<!-- <searchAttribute id="Transfers.ContractNoListView_searchAttribute_ponum" name="ponum"/> -->
+					<searchAttribute id="Transfers.ContractNoListView_searchAttribute_formno" name="formno"/>
+					<!-- <searchAttribute id="Transfers.ContractNoListView_searchAttribute_description" name="description"/>
+                    <searchAttribute id="Transfers.ContractNoListView_searchAttribute_receipts" name="receipts"/> -->
+				</searchAttributes>
+
+				<sortOptions id="Transfers.ContractNoListView_list_sortOptions">
+					<sortOption id="Transfers.ContractNoListView_sortOption_orderedDate" label="Ordered Date">
+						<sortAttribute direction="desc" id="Transfers.ContractNoListView_sortOption_orderedDate_desc" name="orderdate"/>
+					</sortOption>
+				</sortOptions>
+				<!-- Tuan-out: add search attribute  -->
+				<listItemTemplate id="Transfers.ContractNoListView_listItemTemplate" layout="POListItem">
+					<!-- Tuan-in: add contract number -->
+					<listtext cssClass="bold textappearance-medium" id="Transfers.ContractNoListView_ponum" layoutInsertAt="item1" resourceAttribute="ponum"/>
+					<listtext id="Transfers.ContractNoListView_fromno" layoutInsertAt="item2" resourceAttribute="formno"/>
+					<listtext id="Transfers.ContractNoListView_vendor" layoutInsertAt="item3" resourceAttribute="vendor"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.ContractNoListView_description" layoutInsertAt="item4" resourceAttribute="description"/>
+					<listtext id="Transfers.ContractNoListView_receipts" layoutInsertAt="item5" resourceAttribute="receipts"/>
+					<listtext id="Transfers.ContractNoListView_orderdate" layoutInsertAt="item6" resourceAttribute="orderdate"/>
+					<!-- Tuan-out: add contract number -->
+
+					<eventHandlers id="Transfers.ContractNoListView_eventHandlers">
+						<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.ContractNoListView_eventHandlers_click" method="selectContractSelection"/>
+					</eventHandlers>
+				</listItemTemplate>
+			</list>
+
+			<footer id="Transfers.ContractNoListView_footer">
+				<button id="Transfers.ContractNoListView_footer_Cancel_button" label="Cancel">
+					<eventHandlers id="Transfers.ContractNoListView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.ContractNoListView_button_eventHandlers_click_Cancel" method="cancelPOSelection"/>
+					</eventHandlers>
+				</button>
+				<button id="Transfers.ContractNoListView_footer_Clear_button" label="Clear Value">
+					<eventHandlers id="Transfers.ContractNoListView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.ContractNoListView_button_eventHandlers_click_Clear" method="clearPOSelection"/>
+					</eventHandlers>
+				</button>
+			</footer>
+
+			<!-- <eventHandlers id="Transfers.ContractNoListView_eventHandlers_view">
+                <eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="back" id="Transfers.ContractNoListView_eventHandlers_back" method="transitsBackToReceivePOSeachView"/>
+            </eventHandlers> -->
+		</view>
+
+
 		<!-- Multiple Purchase Order List View, which transitions to single PO-->
 		<view id="Transfers.MultiPOListView" label="Purchase Orders" resource="vendorPOResource">
 			<list displayPageSize="20" hideEmpty="true" id="Transfers.MultiPOListView_list" label="Records" resource="vendorPOResource" showHeader="true">
 				<listItemTemplate cssClass=".mblListItem .mblDomButtonArrow" id="Transfers.MultiPOListView_listItemTemplate" layout="POListItem">
-					<listtext cssClass="bold textappearance-medium" id="Transfers.MultiPOListView_ponum" layoutInsertAt="item1" resourceAttribute="ponum"/>
-					<listtext cssClass="bold textappearance-medium" id="Transfers.MultiPOListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
-					<listtext id="Transfers.MultiPOListView_vendor" layoutInsertAt="item3" resourceAttribute="vendor"/>
-					<listtext id="Transfers.MultiPOListView_orderdate" layoutInsertAt="item4" resourceAttribute="orderdate"/>
-					<listtext id="Transfers.MultiPOListView_receipts" layoutInsertAt="item5" resourceAttribute="receipts"/>
+					<!-- Tuan-in: update layout -->
+					<text editable="false" label="PO" labelCss="labelDetailText" cssClass="bold textappearance-medium" id="Transfers.MultiPOListView_ponum" layoutInsertAt="item1" resourceAttribute="ponum"/>
+					<text editable="false" labelCss="labelDetailText" cssClass="titleText" id="Transfers.MultiPOListView_description" layoutInsertAt="item5" resourceAttribute="description"/>
+					<text editable="false" label="Vendor" labelCss="labelDetailText" id="Transfers.MultiPOListView_vendor" layoutInsertAt="item3" resourceAttribute="vendor"/>
+					<text editable="false" label="Order Date" labelCss="labelDetailText" id="Transfers.MultiPOListView_orderdate" layoutInsertAt="item4" resourceAttribute="orderdate"/>
+					<text editable="false" label="Receipts Status" labelCss="labelDetailText" id="Transfers.MultiPOListView_receipts" layoutInsertAt="item2" resourceAttribute="receipts"/>
 					<eventHandlers id="Transfers.MultiPOListView_eventHandlers_Group_1">
 						<eventHandler class="application.handlers.ManagePurchaseOrderHandler" event="click" id="Transfers.MultiPOListView_eventHandlers_click" method="searchVendorPO"/>
 					</eventHandlers>
+					<!-- Tuan-out: update layout -->
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="Transfers.MultiPOListView_eventHandlers_Group_2">
@@ -3210,7 +3275,7 @@
 		<!-- Loc-Out: Add Lookup -->
 
 		<!-- Tuan-in: grn lookups -->
-		<lookup id="Transfers.GrnPoLookup" label="Select Purchases Orders" resource="grnPonumTemp">
+		<lookup id="Transfers.GrnPoLookup" label="Select Purchase Order" resource="grnPonumTemp">
 			<requiredResources id="Transfers.GrnPoLookup_requiredResources">
 				<requiredResource id="Transfers.GrnPoLookup_grnTemp" name="grnPonumTemp" reload="false"/>
 			</requiredResources>
@@ -3531,10 +3596,11 @@
 			<whereClause clause="spi:anywhere_formnumber='*'" id="additionalReceivedMatrectrans_whereClause"/>
 		</resource>
 
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" id="additionalManagePOMatrectrans" name="additionalManagePOMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MATRECTRANS" defaultOrderBy="identifier desc" id="additionalManagePOMatrectrans" name="additionalManagePOMatrectrans" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalManagePOMatrectrans_attributes">
 				<attribute describedByProperty="spi:issuetype" id="additionalManagePOMatrectransResource_issuetype_spi_issuetype" index="true" name="issuetype"/>
-				<attribute describedByProperty="spi:formno" id="additionalManagePOMatrectransResource_formno_spi_formno" name="formno"/>
+				<attribute describedByProperty="spi:formno" id="additionalManagePOMatrectransResource_formno_spi_formno" index="true" name="formno"/>
+				<attribute describedByProperty="dcterms:identifier" id="additionalManagePOMatrectransResource_identifier_dcterms_identifier" index="true" name="identifier"/>
 			</attributes>
 			<creationFactories id="additionalManagePOMatrectrans_creationFactories">
 				<creationFactory creationUri="/oslc/os/oslcmatrectrans" id="additionalManagePOMatrectrans_creationFactory_matrectransResourceCF" name="receivedMatrectransCF"/>
@@ -5542,9 +5608,9 @@
 		</resource>
 
 		<!-- Purchase Order Resource -->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#PO" id="poResource" name="poResource" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#PO" defaultOrderBy="poid desc" id="poResource" name="poResource" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="po_attributes">
-				<attribute describedByProperty="dcterms:identifier" id="po_poid_dctermsidentifier" name="poid"/>
+				<attribute describedByProperty="dcterms:identifier" id="po_poid_dctermsidentifier" index="true" name="poid"/>
 				<attribute describedByProperty="oslc:shortTitle" id="po_ponum_spi_ponum" index="true" name="ponum"/>
 				<attribute describedByProperty="dcterms:title" id="po_description_dcterms_description" name="description"/>
 				<attribute describedByProperty="spi:status" id="po_status_spistatus" index="true" name="status"/>

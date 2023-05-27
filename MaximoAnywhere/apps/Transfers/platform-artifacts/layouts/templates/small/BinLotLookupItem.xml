@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="BinLotLookupItem" version="201508201624" width="100">
+   <row id="row_0">
+      <column colspan="4" columnid="item1" halign="left" id="item1_column"/>
+      <column colspan="4" columnid="item2" halign="left" id="item2_column"/>
+      <column colspan="4" columnid="item3" id="item3_column" rowspan="3"/>
+   </row>
+	
+</layout>

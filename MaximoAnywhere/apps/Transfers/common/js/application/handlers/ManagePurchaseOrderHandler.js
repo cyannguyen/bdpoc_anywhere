@@ -350,8 +350,11 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 var ponum = currentPORecord.get("ponum");
                 var vendor = currentPORecord.get("vendor");
                 poExternalResource.set("ponum", ponum);
-                poExternalResource.set("reset_vendor_on_back", vendor);
+                /* #region  Tuan-in: set null value formno to search */
+                // poExternalResource.set("reset_vendor_on_back", vendor);
                 poExternalResource.setNullValue("vendor");
+                poExternalResource.setNullValue("formno");
+                /* #endregion Tuan-in: set null value formno to search */
                 this.searchPurchaseOrders(eventContext);
             },
 
@@ -420,12 +423,17 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 if (ponum) {
                     filter = [{ internal: false, ponum: ponum }];
                 }
+
                 if (vendor) {
                     purchaseOrderResource = "vendorPOResource";
                     filter = [{ internal: false, vendor: "%" + vendor + "%" }];
                 }
+
                 //#region Loc-In: Add FormNo field
                 if (formno) {
+                    /* #region Tuan-in: fix show list PO form formno */
+                    purchaseOrderResource = "vendorPOResource";
+                    /* #endregion Tuan-out: fix show list PO form formno*/
                     filter = [{ internal: false, formno: "%" + formno + "%" }];
                 }
                 //#endregion Loc-Out: Add FormNo field
@@ -949,31 +957,38 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
                 //make the filter based on history:
                 // "Transfers.ReceivePurchaseOrderItemsSeachView" - do not show COMPLETE shipments
+
+                /* #region  Tuan-in: update filter view */
                 if (
                     WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id ==
                     "Transfers.ReceivePurchaseOrderItemsSeachView"
                 ) {
-                    filter.push({ receipts: Object.keys(noneStatus)[0] });
-                    filter.push({ receipts: Object.keys(partialStatus)[0] });
-                    for (i = 0; i < Object.keys(poAPPRStatus).length; i++) {
-                        filter.push({ status: Object.keys(poAPPRStatus)[i] });
-                    }
+                    filter.push({ receipts: "NONE" });
+                    filter.push({ receipts: "PARTIAL" });
+                    // filter.push({ receipts: Object.keys(noneStatus)[0] });
+                    // filter.push({ receipts: Object.keys(partialStatus)[0] });
+                    // for (i = 0; i < Object.keys(poAPPRStatus).length; i++) {
+                    //     filter.push({ status: Object.keys(poAPPRStatus)[i] });
+                    // }
                 }
 
                 if (
                     WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id ==
                     "Transfers.ManageReceivedPurchaseOrderSeachView"
                 ) {
-                    for (i = 0; i < Object.keys(poAPPRStatus).length; i++) {
-                        filter.push({ status: Object.keys(poAPPRStatus)[i] });
-                    }
+                    filter.push({ receipts: "PARTIAL" });
+                    filter.push({ receipts: "COMPLETE" });
+                    // for (i = 0; i < Object.keys(poAPPRStatus).length; i++) {
+                    //     filter.push({ status: Object.keys(poAPPRStatus)[i] });
+                    // }
                 }
+                /* #endregion */
 
                 var poPromise = ModelService.filtered(
                     "poResource",
                     PlatformConstants.SEARCH_RESULT_QUERYBASE,
                     filter,
-                    1000,
+                    50,
                     true,
                     true,
                     null,
@@ -996,6 +1011,86 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                             self.ui.showMessage(msg);
                         } else {
                             eventContext.ui.show("Transfers.POListView");
+                        }
+                    })
+                    .otherwise(function (error) {
+                        Logger.trace(self._className + ": " + error);
+                    });
+            },
+
+            contractNoLookup: function (eventContext) {
+                eventContext.application.showBusy();
+                var self = this;
+                var filter = [{ internal: false }];
+                var domaininvusereceipts = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "domaininvusereceipts"
+                );
+                var domainpostatus = CommonHandler._getAdditionalResource(
+                    eventContext,
+                    "domainpostatus"
+                );
+
+                domaininvusereceipts.clearFilterAndSort();
+                var noneStatus = SynonymDomain.resolveToExternal(domaininvusereceipts, "NONE");
+
+                domaininvusereceipts.clearFilterAndSort();
+                var partialStatus = SynonymDomain.resolveToExternal(
+                    domaininvusereceipts,
+                    "PARTIAL"
+                );
+
+                domainpostatus.clearFilterAndSort();
+                var poAPPRStatus = SynonymDomain.resolveToExternal(domainpostatus, "APPR");
+
+                //make the filter based on history:
+                // "Transfers.ReceivePurchaseOrderItemsSeachView" - do not show COMPLETE shipments
+
+                /* #region  Tuan-in: change check view */
+                if (
+                    WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id ==
+                    "Transfers.ReceivePurchaseOrderItemsSeachView"
+                ) {
+                    filter.push({ receipts: "NONE" });
+                    filter.push({ receipts: "PARTIAL" });
+                }
+
+                if (
+                    WL.application.ui.viewHistory[WL.application.ui.viewHistory.length - 1].id ==
+                    "Transfers.ManageReceivedPurchaseOrderSeachView"
+                ) {
+                    filter.push({ receipts: "PARTIAL" });
+                    filter.push({ receipts: "COMPLETE" });
+                }
+                /* #endregion */
+
+                var poPromise = ModelService.filtered(
+                    "poResource",
+                    PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                    filter,
+                    50,
+                    true,
+                    true,
+                    null,
+                    false
+                );
+                poPromise
+                    .then(function (poSet) {
+                        poSet.sort("orderdate asc");
+                        poSet.resourceID = "poResource";
+                        eventContext.application.addResource(poSet);
+
+                        eventContext.application.hideBusy();
+
+                        //verify if search result data is empty
+                        if (poSet.data.length == 0) {
+                            var msg =
+                                MessageService.createStaticMessage(
+                                    "emptySearchResult"
+                                ).getMessage();
+                            self.ui.showMessage(msg);
+                        } else {
+                            eventContext.ui.show("Transfers.ContractNoListView");
                         }
                     })
                     .otherwise(function (error) {
@@ -1373,6 +1468,17 @@ define("application/handlers/ManagePurchaseOrderHandler", [
                 eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
             },
 
+            /* #region  Tuan-in: add select contract */
+            selectContractSelection: function (eventContext) {
+                var formno = eventContext.getCurrentRecord().get("formno");
+                var poExternalResource = eventContext.application
+                    .getResource("poExternalResource")
+                    .getCurrentRecord();
+                poExternalResource.set("formno", formno);
+                eventContext.ui.hideCurrentView(PlatformConstants.CLEANUP);
+            },
+            /* #endregion */
+
             /**
              * Validate the External Purchase Order
              *
@@ -1687,6 +1793,32 @@ define("application/handlers/ManagePurchaseOrderHandler", [
 
                 //#region Loc-In: adjust for formno fields
             },
+
+            /* #region  Tuan-in: add setbutton readonly contract no */
+            setButtonReadonlyContractno: function (eventContext) {
+                var poExternalResource = this.application
+                    .getResource("poExternalResource")
+                    .getCurrentRecord();
+
+                var formno = poExternalResource.get("ponum");
+                if (formno) {
+                    eventContext.setEnabled(false);
+                }
+
+                eventContext.addResourceWatchHandle(
+                    poExternalResource.watch(
+                        "ponum",
+                        lang.hitch(this, function (attrName, oldValue, newValue) {
+                            if (newValue && newValue != null) {
+                                eventContext.setEnabled(false);
+                            } else {
+                                eventContext.setEnabled(true);
+                            }
+                        })
+                    )
+                );
+            },
+            /* #endregion */
 
             /**
              * Cancel po selection
