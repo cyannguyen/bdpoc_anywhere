@@ -143,6 +143,11 @@ define("application/handlers/IssuesReturnsHandler", [
         /* #endregion */
 
         /* #region  Tuan-in: add update bin for lookup */
+        filterWonumForLookup: function (eventContext) {
+            var records = eventContext.getResource();
+            records.filter("wonum!=null");
+        },
+
         updateWonnumLookup: function (eventContext) {
             var record = CommonHandler._getAdditionalResource(
                 eventContext,

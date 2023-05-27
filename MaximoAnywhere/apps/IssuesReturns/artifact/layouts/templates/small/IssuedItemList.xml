@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout id="IssuedItemList" version="201508111848" width="100">
+	<row id="row_00">
+		<column colspan="3" columnid="description_cel" id="item2_column"/>
+	</row>
 	<row id="row_0">
-	    <column colspan="1" columnid="id_cel" id="item1_column"/>
-		<column colspan="2" columnid="description_cel" id="item2_column"/>
-		
-		<column colspan="1" columnid="flag_cel" id="item3_column" rowspan="3"/>
+		<column colspan="1" columnid="id_cel" id="item1_column"/>
+		<column colspan="2" columnid="partno_cel" id="item9_column" halign="left"/>
+
+
 	</row>
 	<row id="row_1">
-		<column colspan="1" columnid="bin_cel" id="item4_column"/>
+		<!-- <column colspan="1" columnid="bin_cel" id="item4_column"/> -->
 		<column colspan="1" columnid="wonum_cel" id="item5_column"/>
-		
-		<column colspan="1" columnid="return_qty_cel" id="item6_column" rowspan="2"/>
+		<column colspan="1" columnid="return_qty_cel" id="item6_column"/>
+		<column colspan="1" columnid="flag_cel" id="item3_column" />
 	</row>
-	<row id="row_2">
-	    <column colspan="1" columnid="rotating_asset_label_cel" id="item7_column"/>
+	<!-- <row id="row_2">
+		<column colspan="1" columnid="rotating_asset_label_cel" id="item7_column"/>
 		<column colspan="1" columnid="rotating_asset_cel" id="item8_column"/>
-	</row>
+	</row> -->
 	<!-- Loc-In: Add layout items -->
 	<row id="row_3">
-	    <column colspan="2" columnid="partno_cel" id="item9_column" halign="left"/>
-	    <column colspan="1" columnid="actualdate_cel" id="item10_column" halign="left"/>
+		<column colspan="2" columnid="actualdate_cel" id="item10_column" halign="left"/>
 	</row>
 	<!-- Loc-Out: Add layout items -->
 </layout>

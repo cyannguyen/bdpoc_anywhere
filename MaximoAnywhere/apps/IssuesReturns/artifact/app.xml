@@ -116,7 +116,7 @@
 							<eventHandlers id="IssuesReturns.SearchInvreserve_wonum_eventHandlers">
 								<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.SearchInvreserve_wonum_eventHandler" method="setFieldsReadonly"/>
 								<!-- Tuan-in: add wonum lookup -->
-								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SearchInvreserve_wonum_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.SearchInvreserve_wonum_eventHandlers_render" method="updateWonnumLookup"/> -->
 								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
@@ -242,7 +242,7 @@
 							<eventHandlers id="IssuesReturns.SearchReturn_wonum_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_wonum_eventHandlers_datachange" method="setFieldsReadonly"/>
 								<!-- Tuan-in: add wonum lookup -->
-								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.SearchReturn_wonum_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- <eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.SearchReturn_wonum_eventHandlers_render" method="updateWonnumLookup"/> -->
 								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
@@ -420,22 +420,22 @@
 					</text>
 					
 					<listtext id="IssuesReturns.InvreserveListView_wonum" layoutInsertAt="item8" resourceAttribute="wonum"/> -->
-
-					<listtext id="IssuesReturns.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
-					<text editable="false" id="IssuesReturns.InvreserveListView_binnum" layoutInsertAt="item2" resourceAttribute="binnum"/>
-					<listtext id="IssuesReturns.InvreserveListView_issueunit" layoutInsertAt="item3" resourceAttribute="issueunit"/>
-					<text editable="false" id="IssuesReturns.InvreserveListView_modelnum" layoutInsertAt="item4" resourceAttribute="modelnumref"/>
-					<listtext id="IssuesReturns.InvreserveListView_avblbalance" layoutInsertAt="item5" resourceAttribute="avblbalance"/>
-					<text id="IssuesReturns.InvreserveListView_actualdate" layoutInsertAt="item6" required="false" resourceAttribute="actualdate">
+					<!-- Tuan-in: update layout -->
+					<text editable="false" label="Item" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_itemnum" layoutInsertAt="item1" resourceAttribute="item"/>
+					<!-- <text editable="false" label="" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_binnum" layoutInsertAt="item2" resourceAttribute="binnum"/> -->
+					<text editable="false" label="Issue Unit" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_issueunit" layoutInsertAt="item11" resourceAttribute="issueunit"/>
+					<text editable="false" label="Part #" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_modelnum" layoutInsertAt="item4" resourceAttribute="modelnumref"/>
+					<text editable="false" label="Avb.balance" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_avblbalance" layoutInsertAt="item3" resourceAttribute="avblbalance"/>
+					<text label="Actual date" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_actualdate" layoutInsertAt="item6" required="false" resourceAttribute="actualdate">
 						<eventHandlers id="IssuesReturns.InvreserveListView_actualDate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_actualDate_eventHandlers_render" method="setDefaultActualDateReservedItems"/> -->
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.InvreserveListView_actualDate_eventHandlers_datachange" method="validateActualDateIssueReturnItems"/>
 						</eventHandlers>
 					</text>
-					<listtext id="IssuesReturns.InvreserveListView_wonum" layoutInsertAt="item7" resourceAttribute="wonum"/>
-					<listtext id="IssuesReturns.InvreserveListView_itemdesc" layoutInsertAt="item8" resourceAttribute="itemdesc"/>
+					<text editable="false" label="WO" labelCss="labelDetailText" id="IssuesReturns.InvreserveListView_wonum" layoutInsertAt="item2" resourceAttribute="wonum"/>
+					<text editable="false" cssClass="titleText" id="IssuesReturns.InvreserveListView_itemdesc" layoutInsertAt="item8" resourceAttribute="itemdesc"/>
 
-					<text cssClass="copyPlanActual" editable="true" id="IssuesReturns.InvreserveListView_localreservedqty" layoutInsertAt="item9" resourceAttribute="localreservedqty">
+					<text label="Qty" labelCss="labelDetailText" cssClass="copyPlanActual" editable="true" id="IssuesReturns.InvreserveListView_localreservedqty" layoutInsertAt="item5" resourceAttribute="localreservedqty">
 						<eventHandlers id="IssuesReturns.InvreserveListView_localreservedqty_eventHandlers">
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="validate" id="IssuesReturns.InvreserveListView_label_eventHandlers_localreservedqty" method="validateQty"/>
 						</eventHandlers>
@@ -444,7 +444,7 @@
 					<!-- Tuan-in: change select bin from button to lookup  -->
 					<!-- Tuan-in: update formbin editable false -->
 					<!-- <text editable="true" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin"> -->
-					<text editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
+					<text label="From bin" labelCss="labelDetailText" editable="false" id="IssuesReturns.InvreserveListView_frombin" placeHolder="from bin" lookup="IssuesReturns.FromBinReservedLookup" lookupAttribute="binmum" required="false" layoutInsertAt="item10" resourceAttribute="frombin">
 						<!-- Tuan-in: update formbin editable false -->
 						<!-- <button cssClass="lookupIcon" id="IssuesReturns.InvreserveListView_imagesaction_action_lookup_OFF.svg_button" image="/images/action_lookup_OFF.svg" layoutInsertAt="button1">
 							<eventHandlers id="IssuesReturns.InvreserveListView_imagesaction_lookup_OFF.svg_button_eventHandlers">
@@ -458,7 +458,7 @@
 					<!-- Tuan-in: change select bin from button to lookup  -->
 
 					<!-- Tuan-in: add fromlot  -->
-					<text editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item12" resourceAttribute="fromlot"/>
+					<text label="From lot" labelCss="labelDetailText" editable="false" id="IssuesReturns.InvreserveListView_fromlot" required="false" layoutInsertAt="item9" resourceAttribute="fromlot"/>
 					<!-- Tuan-in: add fromlot  -->
 					<!-- Tuan-in: add reserved checkbox -->
 					<checkbox cssClass="rightCheckBox" id="IssuesReturns.InvreserveListView_reservedflag_checkbox" layoutInsertAt="flag_cel" resourceAttribute="reservedIndicator"/>
@@ -479,6 +479,7 @@
 
 
 					<!-- Loc-Out: arrange all fields AND Add partNo, actualDate-->
+					<!-- Tuan-out: update layout -->
 				</listItemTemplate>
 				<eventHandlers id="IssuesReturns.InvreserveListView_events">
 					<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.InvreserveListView_eventhandler_render" method="updateBinnumLookupReserved"/>
@@ -506,16 +507,13 @@
 		<view id="IssuesReturns.AdditionalItemsListView" label="Issue Additional Items" resource="inventory">
 			<list displayPageSize="20" hideEmpty="true" id="IssuesReturns.AdditionalItemsListView_list" label="Records" resource="inventory" showHeader="true" transitionTo="IssuesReturns.AdditionalItemsDetailsView">
 				<listItemTemplate id="IssuesReturns.AdditionalItemsListView_listItemTemplate" layout="InvbalanceListItem">
-					<listtext id="IssuesReturns.AdditionalItemsListView_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
-					<listtext id="IssuesReturns.AdditionalItemsListView_itemdesc" layoutInsertAt="item2" resourceAttribute="description"/>
-					<listtext id="IssuesReturns.AdditionalItemsListView_binnum" layoutInsertAt="item3" resourceAttribute="binnum"/>
-					<listtext id="IssuesReturns.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
-					<text id="IssuesReturns.AdditionalItemsListView_tasklabel" label="Quantity Available" layoutInsertAt="item5"/>
-					<listtext id="IssuesReturns.AdditionalItemsListView_avblbalance" layoutInsertAt="item6" resourceAttribute="avblbalance"/>
-					<!-- Tuan-in: add part # -->
-					<text id="IssuesReturns.AdditionalItemsListView_partlabel" label="Part #" layoutInsertAt="item8"/>
-					<listtext id="IssuesReturns.AdditionalItemsListView_partno" layoutInsertAt="item9" resourceAttribute="modelnumref"/>
-					<!-- Tuan-out: add part # -->
+					<!-- Tuan-in: update layout -->
+					<text editable="false" label="Item" labelCss="labelDetailText" id="IssuesReturns.AdditionalItemsListView_itemnum" layoutInsertAt="item3" resourceAttribute="itemnum"/>
+					<text editable="false" cssClass="titleText" id="IssuesReturns.AdditionalItemsListView_itemdesc" layoutInsertAt="item2" resourceAttribute="description"/>
+					<text editable="false" label="Issue unit" labelCss="labelDetailText" id="IssuesReturns.AdditionalItemsListView_issueunit" layoutInsertAt="item4" resourceAttribute="issueunit"/>
+					<text editable="false" label="Avb.balance" labelCss="labelDetailText" id="IssuesReturns.AdditionalItemsListView_avblbalance" layoutInsertAt="item5" resourceAttribute="avblbalance"/>
+					<text editable="false" label="Part #" labelCss="labelDetailText" id="IssuesReturns.AdditionalItemsListView_partno" layoutInsertAt="item6" resourceAttribute="modelnumref"/>
+					<!-- Tuan-out: update layout -->
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="IssuesReturns.AdditionalItemsListView_eventHandlers">
@@ -566,17 +564,17 @@
 					</sortOption>
 				</sortOptions>
 				<listItemTemplate id="IssuesReturns.IssuedItemsListView_listItemTemplate" layout="IssuedItemList">
-					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.IssuedItemsListView_itemnum" layoutInsertAt="id_cel" resourceAttribute="itemnum"/>
-					<listtext id="IssuesReturns.IssuedItemsListView_itemdesc" layoutInsertAt="description_cel" resourceAttribute="description"/>
-					<listtext id="IssuesReturns.IssuedItemsListView_binnum" layoutInsertAt="bin_cel" resourceAttribute="binnum"/>
-					<listtext id="IssuesReturns.IssuedItemsListView_wonum" layoutInsertAt="wonum_cel" resourceAttribute="wonum"/>
-					<listtext id="IssuesReturns.IssuedItemsListView_rotassetnum" layoutInsertAt="rotating_asset_cel" resourceAttribute="rotassetnum"/>
-					<text id="IssuesReturns.IssuedItemsListView_rotatinglabel" label="Rotating Asset" layoutInsertAt="rotating_asset_label_cel">
+					<text editable="false" labelCss="labelDetailText" label="Item" cssClass="bold textappearance-medium" id="IssuesReturns.IssuedItemsListView_itemnum" layoutInsertAt="id_cel" resourceAttribute="itemnum"/>
+					<text editable="false" cssClass="titleText" id="IssuesReturns.IssuedItemsListView_itemdesc" layoutInsertAt="description_cel" resourceAttribute="description"/>
+					<!-- <text editable="false" labelCss="labelDetailText" label="" id="IssuesReturns.IssuedItemsListView_binnum" layoutInsertAt="bin_cel" resourceAttribute="binnum"/> -->
+					<text editable="false" labelCss="labelDetailText" label="WO" id="IssuesReturns.IssuedItemsListView_wonum" layoutInsertAt="wonum_cel" resourceAttribute="wonum"/>
+					<!-- <text editable="false" labelCss="labelDetailText" label="" id="IssuesReturns.IssuedItemsListView_rotassetnum" layoutInsertAt="rotating_asset_cel" resourceAttribute="rotassetnum"/> -->
+					<!-- <text id="IssuesReturns.IssuedItemsListView_rotatinglabel" label="Rotating Asset" layoutInsertAt="rotating_asset_label_cel">
 						<eventHandlers id="IssuesReturns.IssuedItemsListView_RotatingLabel_eventHandlers">
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_rotasset_eventHandlers_render" method="hideRotatingAssetLabel"/>
 						</eventHandlers>
-					</text>
-					<text cssClass="copyPlanActual" editable="true" id="IssuesReturns.IssuedItemsListView_returnqtd" layoutInsertAt="return_qty_cel" resourceAttribute="localreturnqty">
+					</text> -->
+					<text labelCss="labelDetailText" label="Qty" cssClass="copyPlanActual" editable="true" id="IssuesReturns.IssuedItemsListView_returnqtd" layoutInsertAt="return_qty_cel" resourceAttribute="localreturnqty">
 						<eventHandlers id="IssuesReturns.IssuedItemsListView_returnQty_eventHandlers">
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_returnQty_eventHandlers_render" method="renderReturnQuantity"/>
 							<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.IssuedItemsListView_returnQty_eventHandlers_datachange" method="validateQuantity"/>
@@ -591,8 +589,8 @@
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers_render" method="setDefaultActualDateReturnItems"/>
 						</eventHandlers>
 					</text> -->
-					<listtext id="IssuesReturns.IssuedItemsListView_partno" layoutInsertAt="partno_cel" resourceAttribute="modelnumref"/>
-					<text id="IssuesReturns.IssuedItemsListView_actualdate" layoutInsertAt="actualdate_cel" resourceAttribute="actualdate">
+					<text labelCss="labelDetailText" label="Part #" editable="false" id="IssuesReturns.IssuedItemsListView_partno" layoutInsertAt="partno_cel" resourceAttribute="modelnumref"/>
+					<text labelCss="labelDetailText" label="Actual date" id="IssuesReturns.IssuedItemsListView_actualdate" layoutInsertAt="actualdate_cel" resourceAttribute="actualdate">
 						<eventHandlers id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers">
 							<!-- <eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="render" id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers_render" method="setDefaultActualDateReturnItems"/> -->
 							<eventHandler class="application.handlers.IssuesReturnsHandler" event="datachange" id="IssuesReturns.IssuedItemsListView_actualDate_eventHandlers_datachange" method="validateActualDateIssueReturnItems"/>
@@ -892,7 +890,7 @@
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_1" method="additionalItemWODataChanged"/>
 								<!-- Tuan-in: add wonum lookup -->
-								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_render" method="updateWonnumLookup"/>
+								<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_render" method="updateWonnumLookup"/> -->
 								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
@@ -1329,11 +1327,11 @@
 		<!-- Tuan-out: add formnumber lookup -->
 
 		<!-- Tuan-in: add wonum lookup -->
-		<lookup id="IssuesReturns.WonumLookup" label="Select Work order" resource="wonumTemp">
+		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterWonumForLookup" id="IssuesReturns.WonumLookup" label="Select Work order" resource="invreservewo">
 			<requiredResources id="IssuesReturns.WonumLookup_requiredResources">
-				<requiredResource id="IssuesReturns.WonumLookup_workOrder" name="wonumTemp" reload="false"/>
+				<requiredResource id="IssuesReturns.WonumLookup_workOrder" name="invreservewo" reload="true"/>
 			</requiredResources>
-			<list id="IssuesReturns.WonumLookup_list" resource="wonumTemp">
+			<list hideEmpty="true" id="IssuesReturns.WonumLookup_list" resource="invreservewo">
 				<searchAttributes id="IssuesReturns.WonumLookup_additionallocations_searchAttributes">
 					<searchAttribute id="IssuesReturns.WonumLookup_additionallocations_searchAttribute_wonum" name="wonum"/>
 				</searchAttributes>
@@ -1628,6 +1626,37 @@
 			</queryBases>
 			<whereClause id="matusetrans_whereClause"/>
 		</resource>
+
+		<!-- Tuan-in: invreserve for lookup wonum -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreservewo" name="invreservewo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="invreservewoResource_attributes">
+				<attribute describedByProperty="spi:displaytaskid" id="invreservewoResource_taskid_spi_wmdisplaytaskid" index="true" name="taskid"/>
+				<attribute describedByProperty="spi:requestnum" id="invreservewoResource_requestnum_spi_wmrequestnum" key="1" name="requestnum"/>
+				<attribute describedByProperty="spi:description" id="invreservewoResource_itemdesc_spi_wmdescription" name="itemdesc"/>
+				<attribute describedByProperty="spi:reservedqty" id="invreservewoResource_quantity_spi_wmitemservedqty" name="reservedqty"/>
+				<attribute describedByProperty="spi:location" id="invreservewoResource_quantity_spi_wmlocation" index="true" name="location"/>
+				<attribute describedByProperty="spi:assetnum" id="invreservewoResource_quantity_spi_assetnum" index="true" name="assetnum"/>
+				<attribute describedByProperty="spi:glaccount" id="invreservewoResource_quantity_spi_glaccount" name="glaccount"/>
+				<attribute describedByProperty="spi:inventory{spi:itemsetid}" id="invreservewoResource_itemsetid_spi_wmitemsetid" index="true" name="itemsetid"/>
+				<attribute describedByProperty="spi:storelocsiteid" id="invreservewoResource_storelocsite_string" index="true" key="2" name="siteid"/>
+				<attribute describedByProperty="spi:item{spi:rotating}" id="invreservewoResource_rotating_boolean" name="rotating"/>
+				<attribute describedByProperty="spi:item{oslc:shortTitle}" id="invreservewoResource_item_spi_wmitemnum" name="item"/>
+				<attribute describedByProperty="spi:item{spi:itemtype}" id="invreservewoResource_item_spi_itemtype" name="itemtype"/>
+				<attribute describedByProperty="spi:inventory{spi:binnum}" id="invreservewoResource_inventory_spi_binnum" name="binnum"/>
+				<attribute describedByProperty="spi:inventory{spi:issueunit}" id="invreservewoResource_inventory_spi_issueunit" name="issueunit"/>
+				<attribute describedByProperty="spi:inventory{spi:lotnum}" id="invreservewoResource_inventory_spi_lotnum" name="lotnum"/>
+				<attribute describedByProperty="spi:workorder{oslc:shortTitle}" id="invreservewoResource_quantity_spi_wonum" index="true" name="wonum"/>
+				<attribute describedByProperty="spi:workorder{dcterms:title}" id="invreservewoResource_quantity_spi_wodesc" index="true" name="wodesc"/>
+				<attribute describedByProperty="spi:requesteddate" id="invreservewoResource_requesteddate" name="requestdate"/>
+				<attribute describedByProperty="spi:requireddate" id="invreservewoResource_requireddate" index="true" name="requireddate"/>
+				<attribute describedByProperty="spi:item{spi:modelnumref}" id="invreservewoResource_item_spimodelnumref" name="modelnumref"/>
+				<attribute describedByProperty="spi:inventory{spi:avblbalance}" id="invreservewoResource_inventory_spi_avblbalance" name="avblbalance"/>
+			</attributes>
+			<queryBases id="invreservewo_queryBases">
+				<queryBase defaultForSearch="true" id="invreservewo_queryBase_searchAllInvreserve" name="searchAllInvreserve" queryUri="/oslc/os/oslcinvreserve"/>
+			</queryBases>
+		</resource>
+
 
 		<!-- Invreserve resource -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreserve" name="invreserve" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
