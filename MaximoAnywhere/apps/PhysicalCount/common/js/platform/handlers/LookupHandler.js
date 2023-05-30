@@ -27,11 +27,13 @@ function(declare, ApplicationHandlerBase, PlatformConstants, PlatformRuntimeWarn
 		
 /**@memberOf platform.handlers.LookupHandler */
 		initLookup: function(eventContext){ //used for lookups with selection controls such as dates / durations
-    		var currentObject = this.application.ui.currentObjectStack[this.application.ui.currentObjectStack.length-1];
-    		var resourceSet = currentObject.getResource();
-    		var currentResource = resourceSet.getCurrentRecord();
-    		var value = currentResource.get(currentObject['resourceAttribute']);
-    		eventContext.getCurrentRecord().set(currentObject['lookupAttribute'], value);
+			var currentObject = this.application.ui.currentObjectStack[this.application.ui.currentObjectStack.length-1];
+			var resourceSet = currentObject.getResource();
+			var currentResource = resourceSet.getCurrentRecord();
+			if (currentObject) {
+				var value = currentResource.get(currentObject['resourceAttribute']);
+				eventContext.getCurrentRecord().set(currentObject['lookupAttribute'], value);
+			}
 		},
 		
 		_getReturnAttributes : function(eventContext, returnObject){
@@ -39,7 +41,7 @@ function(declare, ApplicationHandlerBase, PlatformConstants, PlatformRuntimeWarn
 			if(eventContext.viewControl && eventContext.viewControl.returnAttributes && eventContext.viewControl.returnAttributes.children ) {
 				returnAttributes = eventContext.viewControl.returnAttributes.children;
 			}
-			else {
+			else if (returnObject) {
 	            returnAttributes = [ { 'sourceAttribute': returnObject['lookupAttribute'], 'targetAttribute': returnObject['resourceAttribute'] } ];
 			}
             array.forEach(returnAttributes, function(returnAttribute, index) {

@@ -25,7 +25,7 @@
             <encryptWebResources enabled="false"/>
             <testWebResourcesChecksum enabled="false" ignoreFileExtensions="png, jpg, jpeg, gif, mp4, mp3"/>
             <publicSigningKey>Replace this text with the actual public signing key of the certificate used to sign the APK, available by using the 'Extract public signing key' wizard.</publicSigningKey>
-			<packageName>com.ibm.iot.maximoanywhere.physicalcount</packageName>
+			<packageName>com.ibm.maximo.anywhere.physicalcount</packageName>
         </security>
         <compressWebResources enabled="true"/>
     </android>

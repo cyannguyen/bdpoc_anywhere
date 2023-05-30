@@ -165,22 +165,7 @@ function(declare, lang, arrayUtil, Deferred, Stateful, PlatformRuntimeException,
 			this[PlatformConstants.LAST_CHANGED_TS_ATTRIBUTE] = dateISOFormatter.toISOString(new Date());		
 		},
 		openPriorityChangeTransaction: function(){
-			var currentTransactionType = this.__getCurrentTransactionType();
-			if (!currentTransactionType){
-				this.__createTransaction(TXN_TYPE_PRIORITY);
-
-			} else if (currentTransactionType !== TXN_TYPE_PRIORITY){
-				this.__createTransaction(TXN_TYPE_PRIORITY);
-
-			} else if (this.__isCurrentTransactionOpen()){
-				var WARN = 1;
-				Logger.log("There is already an open priority change transaction for record " + 
-					this.getId() + " of resource " + this.getMetadata().getResourceName(), WARN);
-			}
-			else
-			{
-				this.__createTransaction(TXN_TYPE_PRIORITY);
-			}
+			this.__createTransaction(TXN_TYPE_PRIORITY);
 		},
 		closePriorityChangeTransaction: function(){
 			var currentTransactionType = this.__getCurrentTransactionType();
@@ -243,6 +228,9 @@ function(declare, lang, arrayUtil, Deferred, Stateful, PlatformRuntimeException,
 		__closeCurrentTransaction: function(){
 			if (this.__changeTransactions.length > 0){
 				var currentTransaction = this.__changeTransactions[this.__changeTransactions.length - 1];
+				if(currentTransaction[TXN_ISOPEN_ATTR] == false) {
+					return;
+				}
 				currentTransaction[TXN_ISOPEN_ATTR] = false;
 				//Only __isOpen and __transactionType__ keys, so this is
 				//an empty transaction, doesn't work keeping it.
@@ -272,12 +260,13 @@ function(declare, lang, arrayUtil, Deferred, Stateful, PlatformRuntimeException,
 								}
 								else{
 									/* this is the [zero|one]-or-one case */
-									currentTransaction[attribute] = this[attribute] || null;
+									currentTransaction[attribute] = (typeof this[attribute] !== 'undefined' && this[attribute] != null ) ? this[attribute] : null;
 									currentTransaction[attribute + "_ref"] = this[attribute + "_ref"];
 								}
 							}
 						}
 					}					
+					this.getOwner()._cleanupChildrenState(this);
 				}
 			}
 		},
@@ -290,6 +279,12 @@ function(declare, lang, arrayUtil, Deferred, Stateful, PlatformRuntimeException,
 				newTransaction[LOCAL_UNIQUEID_ATTRIBUTE] = this.getRemoteId();
 			}
 			this.__changeTransactions.push(newTransaction);
+		},
+		_getClosedTransactions: function(){
+			if (this.__isCurrentTransactionOpen()){
+				return this.__changeTransactions.slice(1);
+			}
+			return this.__changeTransactions;
 		},
 		pendingTransactions: function(){
 			this.__closeCurrentTransaction();
@@ -760,13 +755,18 @@ function(declare, lang, arrayUtil, Deferred, Stateful, PlatformRuntimeException,
 				//Just load from cached in-memory
 				var fieldMetadata = metadata.getField(complexAttributeName);
 
-				return this._ensureModelServiceIsAvailable().
+				this._ensureModelServiceIsAvailable().
 				then(function(){
 					if(self[complexAttributeName]){
-						if (lang.isArray(self[complexAttributeName])){
-							return self.getLoadedModelDataSetOrNull(complexAttributeName);
-						}						
-						return self[complexAttributeName];
+						var complexAttrDeferred = new Deferred();
+						if (lang.isArray(self[complexAttributeName]) || self[complexAttributeName] == PlatformConstants.EMPTY_COMPLEX_FIELD){
+							var loadedSetOrNull = self.getLoadedModelDataSetOrNull(complexAttributeName);
+							complexAttrDeferred.resolve(loadedSetOrNull); 
+						} 
+						else {
+							complexAttrDeferred.resolve(self[complexAttributeName]);
+						}		
+						return complexAttrDeferred.promise;
 					}
 					else{
 						/* this is destructive and will set an empty set for the attribute */

@@ -18,6 +18,7 @@ define("platform/attachment/AttachmentService",
  "platform/store/SystemProperties",
  "platform/attachment/MimeTypeService",
  "platform/attachment/FileService",
+ "platform/comm/_ConnectivityChecker",
  "platform/util/PlatformConstants",
  "platform/store/_ResourceMetadataContext",
  "platform/warning/PlatformRuntimeWarning",
@@ -26,7 +27,7 @@ define("platform/attachment/AttachmentService",
  "platform/translation/MessageService",
  "platform/plugins/PermissionsPlugin",
  "platform/comm/HTTPHelper"],
- 	function(Deferred, lang, arrayUtil, SystemProperties, MimeTypeService, FileService, PlatformConstants, ResourceMetadataContext, PlatformRuntimeWarning, PlatformRuntimeException, Logger, MessageService, PermissionsPlugin, HTTPHelper) {
+ 	function(Deferred, lang, arrayUtil, SystemProperties, MimeTypeService, FileService, ConnectivityChecker, PlatformConstants, ResourceMetadataContext, PlatformRuntimeWarning, PlatformRuntimeException, Logger, MessageService, PermissionsPlugin, HTTPHelper) {
 	// needed to keep here because of UT
 	(function(){
 		if(typeof WL === "undefined"){
@@ -156,25 +157,58 @@ define("platform/attachment/AttachmentService",
 			if (WL.Client.getMaximoAuthKey()) {
 				requestHeaders.maxauth = WL.Client.getMaximoAuthKey();
 			}
-			
-			var options = {
-				headers: requestHeaders
-			};
-			
-			var onPermissionsError = function(exception){
-				deferred.reject({
-					http_status: null, 
-					message: exception.getMessage()
+
+			if (WL.Client.getEnvironment() == WL.Environment.IPHONE || WL.Client.getEnvironment() == WL.Environment.IPAD){
+
+				let self = this;
+
+				window.cordova.plugins.CookiesPlugin.getCookie(WL.StaticAppProps.WORKLIGHT_BASE_URL,function(cookie) {
+
+					requestHeaders.cookie = cookie;
+
+					var options = {
+						headers: requestHeaders
+					};
+					
+					var onPermissionsError = function(exception){
+						deferred.reject({
+							http_status: null, 
+							message: exception.getMessage()
+						});
+					};
+					
+					Logger.trace("[ATTACHMENTSERVICE]: downloadFileAsPromise starting download serverAddress: " + encodeURI(serverAddress)
+							+ " saveAsPath: " + saveAsPath);	
+					Logger.traceJSON("[ATTACHMENTSERVICE]: downloadFileAsPromise download with options: ", options);
+					
+					PermissionsPlugin.checkAndGrantPermissions(PermissionsPlugin.WRITE_EXTERNAL_STORAGE, [PermissionsPlugin.WRITE_EXTERNAL_STORAGE, PermissionsPlugin.READ_EXTERNAL_STORAGE], 
+						self, self._startDownload, [transfer, rdfAbout, saveAsPath, onSuccess, onError, ACCEPT_ALL_CERTIFICATES, options, started], onPermissionsError);
+				} , function (error) {
+
+					Logger.error("[ATTACHMENTSERVICE]: downloadFileAsPromise error: " + error);
+					Logger.errorJSON("[ATTACHMENTSERVICE]: downloadFileAsPromise error: ",error);					
+					deferred.reject(error);		
+
 				});
-			};
-			
-			Logger.trace("[ATTACHMENTSERVICE]: downloadFileAsPromise starting download serverAddress: " + encodeURI(serverAddress)
-					+ " saveAsPath: " + saveAsPath);	
-			Logger.traceJSON("[ATTACHMENTSERVICE]: downloadFileAsPromise download with options: ", options);
-			
-			PermissionsPlugin.checkAndGrantPermissions(PermissionsPlugin.WRITE_EXTERNAL_STORAGE, [PermissionsPlugin.WRITE_EXTERNAL_STORAGE, PermissionsPlugin.READ_EXTERNAL_STORAGE], 
-					this, this._startDownload, [transfer, rdfAbout, saveAsPath, onSuccess, onError, ACCEPT_ALL_CERTIFICATES, options, started], onPermissionsError);
-			
+			} else {
+				var options = {
+					headers: requestHeaders
+				};
+				 
+				var onPermissionsError = function(exception){
+					deferred.reject({
+						http_status: null, 
+						message: exception.getMessage()
+					});
+				};
+				
+				Logger.trace("[ATTACHMENTSERVICE]: downloadFileAsPromise starting download serverAddress: " + encodeURI(serverAddress)
+						+ " saveAsPath: " + saveAsPath);	
+				Logger.traceJSON("[ATTACHMENTSERVICE]: downloadFileAsPromise download with options: ", options);
+				
+				PermissionsPlugin.checkAndGrantPermissions(PermissionsPlugin.WRITE_EXTERNAL_STORAGE, [PermissionsPlugin.WRITE_EXTERNAL_STORAGE, PermissionsPlugin.READ_EXTERNAL_STORAGE], 
+						this, this._startDownload, [transfer, rdfAbout, saveAsPath, onSuccess, onError, ACCEPT_ALL_CERTIFICATES, options, started], onPermissionsError);
+			}
 			return deferred.promise;
 		},
 		_startDownload: function(transfer, serverAddress, saveAsPath, onSuccess, onError, ACCEPT_ALL_CERTIFICATES, options,started) {
@@ -266,9 +300,14 @@ define("platform/attachment/AttachmentService",
 			options.chunkedMode = false;
 			
 			if (WL.Client.getEnvironment() == WL.Environment.IPHONE || WL.Client.getEnvironment() == WL.Environment.IPAD){
+
+				if ( sourceFilePath.indexOf('Documents') > -1 ) {
+					sourceFilePath = cordova.file.documentsDirectory + sourceFilePath.substring(sourceFilePath.indexOf('Documents')+10, sourceFilePath.length);
+				}
+
 				if(sourceFilePath.indexOf("file://") < 0){
 					sourceFilePath = "file://"+sourceFilePath;
-				  }
+				}
 			}
 
 			window.resolveLocalFileSystemURL(
@@ -303,57 +342,82 @@ define("platform/attachment/AttachmentService",
 				    				oReq.setRequestHeader ("maxauth" , WL.Client.getMaximoAuthKey());
 				    			}
 				                
-				                oReq.onload = function (result) {
-				                    // all done!
-				    				Logger.trace("[ATTACHMENTSERVICE]: uploadFileAsPromise success result: " + result);
+								ConnectivityChecker.checkConnectivityAvailable().
+									then(function(isConnected){
+										if(isConnected) {			
+				                			oReq.onload = function (result) {
+				                    			// all done!
+				    							Logger.trace("[ATTACHMENTSERVICE]: uploadFileAsPromise success result: " + result);
 				    				
-				    				if(result){
+				    							if(result){
 				    					
-				    					//this try catch block will check if the response is a valid JSON before we return the promise to communicator manager
-				    					try{
-				    						Logger.trace("[ATTACHMENTSERVICE]: uploadFileAsPromise result: " + JSON.stringify(result));
-				    						result.response = result.srcElement.response;
-				    						var parsableJsonResponse = JSON.parse(result.response);
-				    						//the if statement was add just to be sure that we are returning a response that is differente of null or empaty
-				    						//in order to avoid duplication or error when merging data
-				    						if(parsableJsonResponse){
-				    							deferred.resolve({
-				    								http_code: result.responseCode, 
-				    								bytes_sent: result.bytesSent, 
-				    								message: result.response
-				    							});
-				    						} else{
-				    							Logger.trace("[ATTACHMENTSERVICE] Empaty JSON response returned from the server");
-				    							deferred.reject({
-				    								http_status: 1,
-				    								//http_code: 1, 
-				    								//bytes_sent: 0, 
-				    								message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
-				    							});
-				    						}
-				    						
-				    						
-				    					}catch (e){
-				    						Logger.trace("[ATTACHMENTSERVICE] Fail to parse JSON from attachment response, error = " + e);
-				    						deferred.reject({
-				    							http_status: 1,
-				    							//http_code: 1, 
-				    							//bytes_sent: 0, 
-				    							message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
-				    						});
-				    					}
-				    					
-				    				} else {
-				    					Logger.trace("[ATTACHMENTSERVICE] Empaty result returned from the server");
-				    					deferred.reject({
-				    						//set to 1 in order to display any attach upload issue
-				    						http_status: 1, 
-				    						message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
-				    					});
-				    				}
-				                };
-				                // Pass the blob in to XHR's send method
-				                oReq.send(blob);
+				    								//this try catch block will check if the response is a valid JSON before we return the promise to communicator manager
+				    								try{
+				    									Logger.trace("[ATTACHMENTSERVICE]: uploadFileAsPromise result: " + JSON.stringify(result));
+														result.response = result.target.response;
+				    									var parsableJsonResponse = JSON.parse(result.response);
+				    									//the if statement was add just to be sure that we are returning a response that is differente of null or empty
+				    									//in order to avoid duplication or error when merging data
+				    									if(parsableJsonResponse){
+				    										deferred.resolve({
+				    											http_code: result.responseCode, 
+				    											bytes_sent: result.bytesSent, 
+				    											message: result.response
+				    										});
+				    									} 
+														else {
+				    										Logger.trace("[ATTACHMENTSERVICE] Empty JSON response returned from the server");
+				    										deferred.reject({
+				    											http_status: 1,
+				    											//http_code: 1, 
+				    											//bytes_sent: 0, 
+				    											message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
+				    										});
+				    									}
+				    								}
+													catch (e){
+				    									Logger.trace("[ATTACHMENTSERVICE] Fail to parse JSON from attachment response, error = " + e);
+				    									deferred.reject({
+				    										http_status: 1,
+				    										//http_code: 1, 
+				    										//bytes_sent: 0, 
+				    										message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
+				    									});
+				    								}
+				    							} 
+												else {
+				    								Logger.trace("[ATTACHMENTSERVICE] Empty result returned from the server");
+				    								deferred.reject({
+				    									//set to 1 in order to display any attach upload issue
+				    									http_status: 1, 
+				    									message: MessageService.createStaticMessage('attachUnexpectedResponse').getMessage()
+				    								});
+													//IJ25457
+													window.UI.showToastMessage(MessageService.createStaticMessage('fileUploadFailed').getMessage());
+				    							}
+				                			};
+											oReq.onerror = function() {
+												Logger.trace("[ATTACHMENTSERVICE] HTTP Request Errored 'onload' call ");
+												var exception = new PlatformRuntimeException("attachmentCouldNotConnect", [serverAddress]);
+												deferred.reject({
+													http_status: null, 
+													message: exception.getMessage()
+												});
+											};
+				                			// Pass the blob in to XHR's send method
+				                			oReq.send(blob);
+										} 
+										else {
+											var err = new Error("Connectivity Broken");
+											Logger.trace("[ATTACHMENTSERVICE] uploadFileAsPromise Attachment Transaction Failed : Connectivity Broken ", err);
+											deferred.reject(err);
+										}
+									}).otherwise(function() {
+										var err = new Error("Device Not Connected");
+                  						// Disconnected Scanario Handling to prevent Orphaned Attachment Transactions
+										Logger.error("[ATTACHMENTSERVICE]: uploadFileAsPromise Device Not Online: ", err);
+										deferred.reject(err);
+									});
 				            };
 				            // Read the file as an ArrayBuffer
 				            reader.readAsArrayBuffer(file);
@@ -365,7 +429,15 @@ define("platform/attachment/AttachmentService",
 					function(error){						
 						Logger.error("[ATTACHMENTSERVICE]: uploadFileAsPromise error: " + error);
 						Logger.errorJSON("[ATTACHMENTSERVICE]: uploadFileAsPromise error: ",error);					
-						deferred.reject(error);				
+						//IJ25457
+						//deferred.reject(error);		
+						var exception = new PlatformRuntimeException("attachmentUploadError", [error.code]);
+						deferred.reject({
+							//set to 1 in order to display any attach upload issue
+							http_status: 1, 
+							message: exception.getMessage()
+						});
+						window.UI.showToastMessage(MessageService.createStaticMessage('fileUploadFailed').getMessage());							
 					}
 				);
 			
@@ -503,6 +575,11 @@ define("platform/attachment/AttachmentService",
 					deferred.reject({
 						message: exception.getMessage()
 					});
+
+					var recordElement = recordSet.getCurrentRecord();
+					recordElement.set('fileNotFound', MessageService.createStaticMessage('fileUploadFailed').getMessage());
+					//IJ25457
+					window.UI.showToastMessage(MessageService.createStaticMessage('fileUploadFailed').getMessage());					
 				}
 			}
 			return deferred.promise;

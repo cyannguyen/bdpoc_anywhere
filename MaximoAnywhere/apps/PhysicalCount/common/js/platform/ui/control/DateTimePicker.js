@@ -100,9 +100,20 @@ function(declare, ControlBase, ContentPane, DatePicker, TimePicker, ValuePickerS
 			});
 			var date = this.getResource().getCurrentRecord().getAsDateOrNull('date');
 			Logger.trace(date);
-			if(date==null || date < 0){
+			//LAFIX IJ35199:This code fix problem related in GMT+10:00(Australia Time), times turn negative in some situations.
+			if(date!=null){
+				var datetime = date.getTime();
+				if(date.getTimezoneOffset() < 0 && datetime < 0){
+					datetime = datetime * -1;
+				}
+				if(datetime < 0){
+					date = new Date();
+				}
+			}
+			else{
 				date = new Date();
 			}
+			//END OF CORRECTION
 			
 			if(this.time || !this.date){
 				var timeValues = new Array(date.getHours(),date.getMinutes());
@@ -337,3 +348,4 @@ function(declare, ControlBase, ContentPane, DatePicker, TimePicker, ValuePickerS
 		}
 	});
 });
+

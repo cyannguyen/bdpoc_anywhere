@@ -46,7 +46,7 @@ function(declare, lang, Deferred, arrayUtil, SystemProperties, Logger, MapProper
 			}
 			else if(!MapProperties.getUseGps()){
 				//verify if we already gain permission from user
-				if(localStorage.getItem('gpsLocationPermission') == true){
+				if(JSON.parse(localStorage.getItem('gpsLocationPermission')) == true){
 					deferred.resolve();
 				}
 				else{
@@ -63,3 +63,4 @@ function(declare, lang, Deferred, arrayUtil, SystemProperties, Logger, MapProper
 		},
 	};
 });
+

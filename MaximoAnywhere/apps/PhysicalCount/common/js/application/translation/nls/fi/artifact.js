@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "Sieppaa aito allekirjoitus",
          "Change Time or Date" : "Vaihda kellonaika tai päivämäärä",
          "Version 7.6.4.0" : "Versio 7.6.4.0",
-         "Build number @build@" : "Koontiversion numero 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "Koontiversion numero 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Lisensoitua aineistoa - IBM:n omaisuutta. ©IBM Corp. 2020. IBM, IBM-logo ja ibm.com ovat IBM Corporationin tavaramerkkejä, jotka on rekisteröity useilla hallintoalueilla maailmanlaajuisesti. Muut tuotteiden ja palvelujen nimet voivat olla IBM:n tai muiden yritysten tavaramerkkejä. Ajantasainen luettelo IBM:n tavaramerkeistä on Internet-osoitteessa www.ibm.com/legal/copytrade.shtml. Tämä ohjelma on lisensoitu Ohjelman lisenssisopimuksen ehtojen mukaisesti. Lue sopimus huolellisesti ennen Ohjelman käyttöä. Käyttämällä Ohjelmaa hyväksyt sopimuksen ehdot.",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "Karttatoimintojen ohjelmointirajapinnan toimittaa Esri ArcGIS Runtime SDK Android- ja iOS-laitteille",
          "Screen Information" : "Näytön tiedot",

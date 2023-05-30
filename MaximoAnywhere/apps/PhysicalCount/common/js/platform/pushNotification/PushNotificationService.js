@@ -104,6 +104,39 @@ function(declare, Deferred, lang, arrayUtil, ModelService,Logger, PlatformConsta
 			
 				
 	},
+	
+	eventsArray: null,
+	pushEventIndex: 0,
+	apiKey: null,
+	subscribeForEvents: function(pushEvents) {
+		var self = this;
+		let success = self._custonDoSubscribeSuccess ? self._custonDoSubscribeSuccess : self.doSubscribeSuccess;
+		let failure = self._custonDoSubscribeFailure ? self._custonDoSubscribeFailure : self.doSubscribeFailure;
+
+		let options = {};
+		self.eventsArray = pushEvents;
+  	 	options.onSuccess = function(resp){
+  	 		self.apiKey = resp.invocationResult.apikey;
+  	 		Logger.trace("INFX_PNS_106: Maximo api key received");
+  	 		var index = 0;
+  			pushnotification.subscribeEventwithApiKey(WL.StaticAppProps.WORKLIGHT_BASE_URL, resp.invocationResult.apikey, self.eventsArray[0], lang.hitch(self, success), lang.hitch(self, failure));
+			let failureL = function() {
+				Logger.trace("INFX_PNS_105: Error calling push notification listner");
+			};
+			let  successL = function(message) {
+				Logger.trace("INFX_PNS_105: Success calling push notification listner");
+			};
+			pushnotification.listen(true,self.pushNotificationReceived, failureL);
+			pushnotification.getBackgroundMessages(successL,failureL);
+    	};
+    	
+    	options.onFailure = function(err){
+    		Logger.trace("INFX_PNS_107: Error to retrieve maximo api key");
+        	return err;
+    	}
+    	
+    	let resp2 = WL.Client.getApiKey(options);
+    },
 			
 		laterDisplayNotification: function(){
 			var deferred = new Deferred();
@@ -125,12 +158,19 @@ function(declare, Deferred, lang, arrayUtil, ModelService,Logger, PlatformConsta
 		},
 			
 		doSubscribeSuccess: function() {
+			var self = this;
 			Logger.trace("INFX_PNS_108: Application success subscribe to push notifications");
-				//alert("doSubscribeSuccess");
+			if(self.pushEventIndex < self.eventsArray.length) {
+				pushnotification.subscribeEventwithApiKey(WL.StaticAppProps.WORKLIGHT_BASE_URL, self.apiKey, self.eventsArray[self.pushEventIndex++], lang.hitch(self, self.doSubscribeSuccess), lang.hitch(self, self.doSubscribeFailure));
+			}
 		},
 
 		doSubscribeFailure: function(err) {
-				Logger.trace("INFX_PNS_109: Application got error ro subscribe for push notifications" + err);
+			var self = this;
+			Logger.trace("INFX_PNS_109: Application got error ro subscribe for push notifications" + err);
+			if(self.pushEventIndex < self.eventsArray.length) {
+				pushnotification.subscribeEventwithApiKey(WL.StaticAppProps.WORKLIGHT_BASE_URL, self.apiKey, self.eventsArray[self.pushEventIndex++], lang.hitch(self, self.doSubscribeSuccess), lang.hitch(self, self.doSubscribeFailure));
+			}
 		},
 			
 		//------------------------------Subscribe to a tag notification

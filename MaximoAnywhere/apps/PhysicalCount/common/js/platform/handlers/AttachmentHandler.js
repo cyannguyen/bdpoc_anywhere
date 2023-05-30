@@ -306,7 +306,7 @@ function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService
 		},
 
 		preview: function(eventContext){
-			var fullPath = eventContext.getCurrentRecord().get(PlatformConstants.ATTACH_LOCATION_ATTR);
+			var fullPath = (eventContext.getCurrentRecord() && eventContext.getCurrentRecord() != null) ? eventContext.getCurrentRecord().get(PlatformConstants.ATTACH_LOCATION_ATTR) : null;
 			if(!fullPath){
 				Logger.error("fullPath is invalid!");
 				return;
@@ -375,7 +375,7 @@ function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService
 				eventContext.ui.show('Platform.AttachmentFileDialog');
 			}
 			else if(WL.Client.getEnvironment() == WL.Environment.ANDROID){
-				
+				/* This part has comment to IJ24813. This code affects the latest versions of android.
 				if(eventContext.getCurrentRecord().get("urlType") != 'FILE'){
 					//This code doesn't work anymore on Android API 24 and above for open file and be applied only for weblinks
 					var previewWindow = window.open(fullPath,"_system", "location=no");
@@ -386,7 +386,8 @@ function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService
 					previewWindow.addEventListener('exit', previewClose);
 					
 				} else {
-
+				*/
+				
 					var fileMIMEType = '';
 					
 					var ext = fullPath.substring(fullPath.lastIndexOf(".")+1, fullPath.length)
@@ -432,7 +433,7 @@ function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService
 								}
 						    }
 							);
-				}
+				//}
 				
 				return;
 				
@@ -480,6 +481,13 @@ function(declare, numberUtil, ApplicationHandlerBase, MediaService, ModelService
 			                    fullPath = "file://" + fullPath;
 			                }
 			                */
+
+							if (WL.Client.getEnvironment() == WL.Environment.IPHONE || WL.Client.getEnvironment() == WL.Environment.IPAD){
+								if ( fullPath.indexOf('Documents') > -1 ) {
+									fullPath = cordova.file.documentsDirectory + fullPath.substring(fullPath.indexOf('Documents')+10, fullPath.length);
+								}
+							}
+
 			                Logger.trace("Trying to preview file: " + fullPath);
 			                //var previewWindow = window.open(fullPath, "_blank", "location=no,enableViewportScale=yes");
 			                var previewWindow = cordova.InAppBrowser.open(fullPath, "_blank", "location=no,enableViewportScale=yes");

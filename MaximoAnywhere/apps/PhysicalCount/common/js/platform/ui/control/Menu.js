@@ -165,6 +165,9 @@ function(declare, ContainerControlBase, BorderContainer, ContentPane, ScrollPane
 						// IE and latest Chrome don't position correctly
 						domStyle.set(popupNode, {'left':(oldLeft-offset)+'px'});
 					}
+					else if(domStyle.get(popupNode, 'left') > 100){
+						domStyle.set(popupNode, {'left': (WL.Client.getEnvironment() == WL.Environment.IPAD || WL.Client.getEnvironment() == WL.Environment.IPHONE)? document.documentElement.clientWidth - domGeometry.getContentBox(menu.baseWidget.domNode).w - 5 + 'px' : 0 + 'px'});
+					}
 				}
 				menu.ui.currentMenu = menu;
 			}, 100);

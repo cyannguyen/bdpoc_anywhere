@@ -66,6 +66,74 @@ function(thisModule, declare, Deferred, lang, arrayUtil, PlatformRuntimeExceptio
 		return filterAsArray;
 	}
 	
+	function prepareCaseInsensitiveSearch(filter) {
+		// APAR IJ31718 - non-Case sensitive search like in Maximo
+		var element = JSON.parse(JSON.stringify(filter));
+		var pattern = "ÆÐƎƏƐƔĲŊŒẞÞǷȜæðǝəɛɣĳŋœĸſßþƿȝĄƁÇĐƊĘĦĮƘŁØƠŞȘŢȚŦŲƯY̨Ƴąɓçđɗęħįƙłøơşșţțŧųưy̨ƴÁÀÂÄǍĂĀÃÅǺĄÆǼǢƁĆĊĈČÇĎḌĐƊÐÉÈĖÊËĚĔĒĘẸƎƏƐĠĜǦĞĢƔáàâäǎăāãåǻąæǽǣɓćċĉčçďḍđɗðéèėêëěĕēęẹǝəɛġĝǧğģɣĤḤĦIÍÌİÎÏǏĬĪĨĮỊĲĴĶƘĹĻŁĽĿʼNŃN̈ŇÑŅŊÓÒÔÖǑŎŌÕŐỌØǾƠŒĥḥħıíìiîïǐĭīĩįịĳĵķƙĸĺļłľŀŉńn̈ňñņŋóòôöǒŏōõőọøǿơœŔŘŖŚŜŠŞȘṢẞŤŢṬŦÞÚÙÛÜǓŬŪŨŰŮŲỤƯẂẀŴẄǷÝỲŶŸȲỸƳŹŻŽẒŕřŗſśŝšşșṣßťţṭŧþúùûüǔŭūũűůųụưẃẁŵẅƿýỳŷÿȳỹƴźżžẓ";
+		if (element && element[0] && element[0]["location"] && element[1] && element[1]["description"]) {
+			// When filtering Locations with Location & Description information
+			for (let i in element[0]["location"]) {
+				if(pattern.indexOf(element[0]["location"][i]) > -1) {
+					element[0]["location"] = element[0]["location"].replace(pattern[pattern.indexOf(element[0]["location"][i])], (pattern[pattern.indexOf(element[0]["location"][i])] == pattern[pattern.indexOf(element[0]["location"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[0]["location"][i])].toUpperCase() : pattern[pattern.indexOf(element[0]["location"][i])].toLowerCase());
+				}
+			}
+			filter.push(element[0]);
+			for (let i in element[1]["description"]) {
+				if(pattern.indexOf(element[1]["description"][i]) > -1) {
+					element[1]["description"] = element[1]["description"].replace(pattern[pattern.indexOf(element[1]["description"][i])], (pattern[pattern.indexOf(element[1]["description"][i])] == pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[1]["description"][i])].toUpperCase() : pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase());
+				}
+			}
+			filter.push(element[1]);
+		} else if (element && element[0] && element[0]["assetnum"] && !element[0]["siteid"] && !element[0]["metername"]) {
+			// When filtering Assets which Asset information
+			for (let i in element[0]["assetnum"]) {
+				if(pattern.indexOf(element[0]["assetnum"][i]) > -1) {
+					element[0]["assetnum"] = element[0]["assetnum"].replace(pattern[pattern.indexOf(element[0]["assetnum"][i])], (pattern[pattern.indexOf(element[0]["assetnum"][i])] == pattern[pattern.indexOf(element[0]["assetnum"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[0]["assetnum"][i])].toUpperCase() : pattern[pattern.indexOf(element[0]["assetnum"][i])].toLowerCase());
+				}
+			}
+			filter.push(element[0]);
+			if (element[1] && element[1]["description"]) {
+				// When filtering Assets with Description & Location information
+				for (let i in element[1]["description"]) {
+					if(pattern.indexOf(element[1]["description"][i]) > -1) {
+						element[1]["description"] = element[1]["description"].replace(pattern[pattern.indexOf(element[1]["description"][i])], (pattern[pattern.indexOf(element[1]["description"][i])] == pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[1]["description"][i])].toUpperCase() : pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase());
+					}
+				}
+				filter.push(element[1]);
+				if (element[2] && element[2]["location"]) {
+					for (let i in element[2]["location"]) {
+						if(pattern.indexOf(element[2]["location"][i]) > -1) {
+							element[2]["location"] = element[2]["location"].replace(pattern[pattern.indexOf(element[2]["location"][i])], (pattern[pattern.indexOf(element[2]["location"][i])] == pattern[pattern.indexOf(element[2]["location"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[2]["location"][i])].toUpperCase() : pattern[pattern.indexOf(element[2]["location"][i])].toLowerCase());
+						}
+					}
+					filter.push(element[2]);
+				}
+				if (element[3] && element[3]["locationdesc"]){
+					for (let i in element[3]["locationdesc"]) {
+						if(pattern.indexOf(element[3]["locationdesc"][i]) > -1) {
+							element[3]["locationdesc"] = element[3]["locationdesc"].replace(pattern[pattern.indexOf(element[3]["locationdesc"][i])], (pattern[pattern.indexOf(element[3]["locationdesc"][i])] == pattern[pattern.indexOf(element[3]["locationdesc"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[3]["locationdesc"][i])].toUpperCase() : pattern[pattern.indexOf(element[3]["locationdesc"][i])].toLowerCase());
+						}
+					}
+					filter.push(element[3]);
+				}
+			}
+		} else if (element && element[0] && element[0]["locationForSearch"] && element[1] && element[1]["description"]) {
+			// When filtering Storerooms with Location & Description information
+			for (let i in element[0]["locationForSearch"]) {
+				if(pattern.indexOf(element[0]["locationForSearch"][i]) > -1) {
+					element[0]["locationForSearch"] = element[0]["locationForSearch"].replace(pattern[pattern.indexOf(element[0]["locationForSearch"][i])], (pattern[pattern.indexOf(element[0]["locationForSearch"][i])] == pattern[pattern.indexOf(element[0]["locationForSearch"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[0]["locationForSearch"][i])].toUpperCase() : pattern[pattern.indexOf(element[0]["locationForSearch"][i])].toLowerCase());
+				}
+			}
+			filter.push(element[0]);
+			for (let i in element[1]["description"]) {
+				if(pattern.indexOf(element[1]["description"][i]) > -1) {
+					element[1]["description"] = element[1]["description"].replace(pattern[pattern.indexOf(element[1]["description"][i])], (pattern[pattern.indexOf(element[1]["description"][i])] == pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase()) ? pattern[pattern.indexOf(element[1]["description"][i])].toUpperCase() : pattern[pattern.indexOf(element[1]["description"][i])].toLowerCase());
+				}
+			}
+			filter.push(element[1]);
+		}
+		return filter;
+	}
 	
 	lang.mixin(thisModule, {
 //		Summary:
@@ -449,6 +517,8 @@ function(thisModule, declare, Deferred, lang, arrayUtil, PlatformRuntimeExceptio
 				}
 				
 				filter = convertExactMatchAttributesInFilter(metadata, filter);
+
+				filter = prepareCaseInsensitiveSearch(filter);
 				
 				if (queryBase == PlatformConstants.ERRORED_QUERYBASE) {
 					return this._getErrored(resourceName, pageSize, filter);

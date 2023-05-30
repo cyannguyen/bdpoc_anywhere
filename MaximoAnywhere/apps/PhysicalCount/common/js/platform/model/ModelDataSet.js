@@ -404,23 +404,23 @@ define("platform/model/ModelDataSet",
 			var deferred = new Deferred();
 			
 			if(self.recordsCount)
+				deferred.resolve(self.recordsCount);
 				//IJ21206 - Fix count error
-				if(self.recordsCount == self.data.length){
-					deferred.resolve(self.recordsCount);
-				}else if (self.recordsCount > self.data.length){
-					deferred.resolve(self.recordsCount);
-				}else{
-					deferred.resolve(self.data.length);
-				}
+				//if(self.recordsCount == self.data.length){
+				//	deferred.resolve(self.recordsCount);
+				//}else{
+				//	deferred.resolve(self.data.length);
+				//}
 			else {
 				CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
 					if (!hasConnectivity)
 					{	
 						// Check if device data is equal to server data then , return false 
 						//TOMR: we do not do the above for counts
+						//#region Loc-In: set List count for OFFLINE
 						//deferred.resolve(' ');
-						//Loc: set List count for OFFLINE
 						deferred.resolve(self.count());
+						//#endregion
 					}
 					else 
 					{				
@@ -431,7 +431,7 @@ define("platform/model/ModelDataSet",
 							var count  = null;
 							if(metrics){
 								count = metrics.getServerCount();
-								if (count < self.count()){
+								if (count < self.count() || self.count() == 0 ){
 									count = self.count();
 								}
 							} else {
@@ -1057,24 +1057,35 @@ define("platform/model/ModelDataSet",
 		_asyncSave: function(){
 			var saveDeferred = new Deferred();
 			var self = this;
-			var callSaves = function(result){
-				var isConnected = true === result;
-				all([self._asyncRemoveDeleted(), 
-				     self._asyncUpdateModified(), 
-				     self._asyncInsertNew(isConnected)
-				]).
-				then(function(flags){				    
-					self._asyncAfterSave(saveDeferred, self._atLeastOneTrue(flags));							
-				}).otherwise(function(error){
-					saveDeferred.reject(error);
-				});
+			var saveNew = function(){
+				if (self.getMetadata().isLocal()){
+					return self._asyncInsertNew(false);  //Connection status not needed for local resources since they are not updated from the server
+				}
+				else{
+					return CommunicationManager.checkConnectivityAvailable().always(function(result){
+						var isConnected = true === result;
+						return self._asyncInsertNew(isConnected);
+					});			
+				}
 			};
-			if (this.getMetadata().isLocal()){
-				callSaves(false);  //Connection status not needed for local resources since they are not updated from the server
+			for(recordId in this._changedRecords){
+				var record = this._changedRecords[recordId];
+				record.__closeCurrentTransaction();
 			}
-			else{
-				CommunicationManager.checkConnectivityAvailable().always(callSaves);			
-			}
+			array.forEach(this._recordsToCreate, function(record) {
+				record.__closeCurrentTransaction();
+			});
+
+			all([self._asyncRemoveDeleted(), 
+			     self._asyncUpdateModified(),
+			     saveNew()
+			]).
+			then(function(flags){				    
+				self._asyncAfterSave(saveDeferred, self._atLeastOneTrue(flags));							
+			}).otherwise(function(error){
+				saveDeferred.reject(error);
+			});
+			
 			return saveDeferred.promise;
 		},
 		_asyncBeforeSave: function(){
@@ -1228,18 +1239,23 @@ define("platform/model/ModelDataSet",
 		},
 		
 		_cleanupRecord: function(record){
-			this._cleanupChildrenState(record);
-			record._isChanged = false;
-			record._isNew = false;
-			record.clearAllPendingValues();
-			record.__clearModifiedAttributeList();
 			var newRec = this._recordsToCreate.indexOf(record);
 			if (newRec >= 0){
-				
+				record._isNew = false;
 				this._recordsToCreate.splice(newRec,1);
+				if (record.__isCurrentTransactionOpen()){
+					record._isChanged = true;
+					this._changedRecords[record.getId()] = record;
+				}
 			}
-			else{
-				delete this._changedRecords[record.getId()];
+			if (!record.__isCurrentTransactionOpen()){
+				this._cleanupChildrenState(record);
+				record._isChanged = false;
+				record.clearAllPendingValues();
+				record.__clearModifiedAttributeList();
+				if (newRec < 0){
+					delete this._changedRecords[record.getId()];
+				}
 			}
 		},
 		
@@ -1318,7 +1334,7 @@ define("platform/model/ModelDataSet",
 								modelData._fromNewToExisting(foundData[data]._id);						
 							}
 							self.put(modelData); //Add record back so it's indexed within the set by new _id
-						}else{
+						}else if (!modelData && foundData[data]["json"]["viewid"] != "Platform.emptyview"){
 							Logger.error("Could not find record with id {0} in dataset to update.", [filter]);							
 						}
 					}

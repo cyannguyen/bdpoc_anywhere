@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "Zajemi lastnoročni podpis",
          "Change Time or Date" : "Čas ali datum spremembe",
          "Version 7.6.4.0" : "Različica 7.6.4.0",
-         "Build number @build@" : "Številka gradnje 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "Številka gradnje 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licenčno gradivo - lastnina IBM-a. ©IBM Corp. 2020. IBM, IBM-ov logotip in ibm.com so blagovne znamke korporacije IBM Corp., registrirane v številnih jurisdikcijah po vsem svetu. Druga imena izdelkov ali storitev so lahko blagovne znamke IBM-a ali drugih podjetij. Trenutni seznam IBM-ovih blagovnih znamk je na voljo na spletu na naslovu www.ibm.com/legal/copytrade.shtml. Ta program je licenciran pod pogoji licenčne pogodbe za program. Pred uporabo programa pozorno preberite to pogodbo. Z uporabo programa se šteje, da soglašate s temi določbami.",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "API za ustvarjanje zemljevidov nudi Esri ArcGIS Runtime SDK for Android and iOS.",
          "Screen Information" : "Informacije o zaslonu",

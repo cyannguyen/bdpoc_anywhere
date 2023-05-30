@@ -49,16 +49,16 @@ require( [
            "platform/map/MapProperties",
            "platform/util/PlatformConstants",
            "dojo/_base/array",
-           "dijit/Tooltip", "dijit/form/Button", 
+           "dijit/Tooltip", "dijit/form/Button",
            "dojo/Deferred", "dojo/date/locale", "dojo/promise/all",
            "dojo/dom-construct", "dojo/on",
            "platform/comm/CommunicationManager", "dojo/query", "dojo/dom-style",
            "platform/ui/util/OrientationManager",
            "platform/store/SystemProperties",
          ], function(declare, parser, ready, Deferred, lang, domClass,
-        		 Logger, ModelService, ResourceMetaData, 
+        		 Logger, ModelService, ResourceMetaData,
         		 TokenAuthentication, ProxyHelper, MaximoSpatialStore, IdentifyTool, SketchTool, SpatialTilePackageManager, SpatialReplicaManager,  MessageService, ConnectivityChecker,
-        		 MapGeoLocation, MapProperties, PlatformConstants, array, Tooltip, Button, Deferred, locale, all, domConstruct, 
+        		 MapGeoLocation, MapProperties, PlatformConstants, array, Tooltip, Button, Deferred, locale, all, domConstruct,
         		 on, CommunicationManager, query, domStyle, OrientationManager, SystemProperties){
 
 	declare( "platform.map.spatial.MobileMaximoSpatial", null, {
@@ -102,12 +102,12 @@ require( [
 		lazyCheckReplicaSync: null,
 		resolutions: null,
 		/*
-		 * Change this property to allow the user to load many offline areas, 
+		 * Change this property to allow the user to load many offline areas,
 		 * if the value is one, just the latest area clicked will be loaded,
 		 */
 		numberAreasOfflineAllowed: 1,
 		spatialReplicaManager: null,
-		
+
 		constructor : function ( options ) {
 			this.layers = [];
 			this.mapToolsLoaded = {};
@@ -122,7 +122,7 @@ require( [
 			this.map = options.mapInstance;
 			this.tokenAuthentication = new platform.map.spatial.security.TokenAuthentication();
 			this.spatialReplicaManager = new platform.map.spatial.SpatialReplicaManager(this.openLayerMap.specificParameters["localMapUrl"]);
-			this.proxyHelper = new platform.map.spatial.proxy.ProxyHelper(); 
+			this.proxyHelper = new platform.map.spatial.proxy.ProxyHelper();
 			this.maximoSpatialStore = new platform.map.spatial.store.MaximoSpatialStore();
 			this.identifyTool = new platform.map.spatial.tool.IdentifyTool();
 			this.sketchTool = new platform.map.spatial.tool.SketchTool(this);
@@ -137,30 +137,39 @@ require( [
 			], dojo.hitch( this, function ( authManager ) {
 				this.userAuthenticationManager = authManager;
 			} ) );
-			
-			dojo.subscribe('_mapDone', lang.hitch(this, 
+
+			dojo.subscribe('_mapDone', lang.hitch(this,
 					function() {
 						this.setZoomStatus(null);
 					}
 			));
-			
+
 			dojo.subscribe('_fixMapDone', lang.hitch(this, this._fixMapDone));
-			
+
 			document.addEventListener("backbutton", lang.hitch(this, function(evt) {
 				this.logEvent("[MobileMaximoSpatial] backbutton pressed! stopping current job " );
 				this.stopCurrentJob = true;
 			}), false);
-			
+
 		},
-		
+
 		onOrientationChanged: function() {
+			//save previus orientation before changed device orientation. 
+			//ie: New Orientation is Portrait return Landscape 
+			var orientationMode = this.isPortrait() ? "L" : "P";
+			localStorage.setItem("lastPreviousDialogOrientationPosition", orientationMode);
 			this._fixMapDone({'showWOPanel':null});
 		},
+		
+		isPortrait : function() {
+    	  var viewport = dojo.window.getBox();
+    	  return  (viewport.h > viewport.w) ? true : false;   	  
+        },
 		
 		setZoomStatus: function(zoomStatus) {
 			this.zoomStatus = zoomStatus;
 		},
-		
+
 		_fixMapDone: function(param) {
 			var newOrientationMode = OrientationManager.isPortrait();
 			var mapErrorDivShown = query(".maperror");
@@ -169,12 +178,12 @@ require( [
 					this.orientationMode = newOrientationMode;
 					if( this.showingWODetailPanel != null &&
 						this.showingWODetailPanel == false) {
-						this._changeWODetailsPanel(true);	
+						this._changeWODetailsPanel(true);
 						setTimeout(lang.hitch(this, function(){
-							this._changeWODetailsPanel(false);	
+							this._changeWODetailsPanel(false);
 							this.fixMapFlag = null;
 						}), 500);
-					
+
 					}
 			} else {
 				if (mapErrorDivShown.length>0 && this.fixMapFlag == null) {
@@ -190,9 +199,9 @@ require( [
 				}
 			}
 			this.fixMapFlag = null;
-			
+
 		},
-		
+
 		syncCurrentMapSystemFile: function(offlineAreaId) {
 			return this.spatialReplicaManager.syncOfflineMap(offlineAreaId, this);
 		},
@@ -203,14 +212,14 @@ require( [
 		 * @param callbackFunction
 		 */
 		_loadLayers : function ( mapManagerInfo, callbackFunction ) {
-			
+
 			CommunicationManager.checkConnectivityAvailable().then(lang.hitch(this, function (isConnectionAvailable) {
 		        if (isConnectionAvailable) {
 		        	this.layers = [];
 					var cacheLayers = [];
-					
+
 					var currentUserSite = this.userAuthenticationManager.currentUserSite;
-					
+
 		        	var deleteMapServiceCachePromise = this.maximoSpatialStore.deleteMapServicesCache();
 					deleteMapServiceCachePromise.then( lang.hitch( this, function () {
 						var mapServiceMeta = ResourceMetaData.getResourceMetadata( "plussmapservice" );
@@ -218,39 +227,39 @@ require( [
 
 						var mapServiceData = ModelService.all( 'plussmapservice', null, null, true );
 						mapServiceData.then( lang.hitch( this, function ( mapserviceset ) {
-							
+
 								var urls = [];
 								var failedServices = [];
 								this.mapServices = mapserviceset.data;
-								array.forEach( mapserviceset.data, lang.hitch( this, function ( serviceData ) {	
+								array.forEach( mapserviceset.data, lang.hitch( this, function ( serviceData ) {
 									if (serviceData.jsonmapserver == null) {
 										failedServices.push(serviceData);
 									} else {
 										urls.push(serviceData.url);
-									}							
+									}
 								} ) );
-								
+
 								if (failedServices.length > 0) {
-									array.forEach( failedServices, lang.hitch( this, function ( failedService ) {	
+									array.forEach( failedServices, lang.hitch( this, function ( failedService ) {
 										var servicename = failedService.servicename;
 										var url = failedService.url;
-										this.logEvent('The service could not be loaded, name: ' + servicename + ' | url: ' + url);								
+										this.logEvent('The service could not be loaded, name: ' + servicename + ' | url: ' + url);
 									} ) );
 									WL.application.showMessage(MessageService.createStaticMessage('errorLoadingSomeLayer').getMessage());
 								}
-								
+
 								if(urls.length>0) {
 									console.log("Tokens calling ");
 									var promise = this.tokenAuthentication.generateTokens(urls, this.mapManager, false);
-									promise.then(lang.hitch(this, function(tokens) {	
+									promise.then(lang.hitch(this, function(tokens) {
 										console.log("Tokens returned " + tokens);
 										for (var url in tokens) {
-											
+
 											var mapService = null;
-											array.forEach( mapserviceset.data, lang.hitch( this, function ( serviceData, i ) {		
+											array.forEach( mapserviceset.data, lang.hitch( this, function ( serviceData, i ) {
 												if (url == serviceData.url) {
 													mapService = serviceData;
-												}									
+												}
 											} ) );
 											if (mapService) {
 												 var token = tokens[url];
@@ -260,7 +269,7 @@ require( [
 											}
 										}
 										this.mapManager.mapServicesList = this.layers;
-										
+
 										if (callbackFunction) {
 											callbackFunction();
 										}
@@ -276,19 +285,19 @@ require( [
 								var errorMsg = e.responseJSON.errors[0]['oslc:message'];
 								console.error(errorMsg);
 								WL.application.showMessage(errorMsg);
-							}				
+							}
 			            });
 					}));
 		        } else {
 		        	WL.application.showMessage(MessageService.createStaticMessage('deviceIsOffline').getMessage());
 		        }
 			}))
-			
-			
 
-			
+
+
+
 		},
-		
+
 		cleanLayers: function(offlineAreaId) {
 			if (this.map) {
 				var layers = this.map.getLayers();
@@ -299,21 +308,21 @@ require( [
                     var layer = layers.item(i);
                     if (layer!= null && layer.get("name") != 'markers' && (layer.url || layer.jsonmapserver)) {
                     	if (offlineAreaId == null ||  (offlineAreaId != null && layer.offlineAreaId == offlineAreaId)) {
-                    		layersToRemove.push(layer);     
+                    		layersToRemove.push(layer);
                     	}
-                    	                 	
-                    }                    
+
+                    }
                 }
-                
+
                 layersToRemove.forEach(lang.hitch( this, function ( layer, i ) {
                 	var layerRemoved = this.map.removeLayer( layer );
                 	this.logEvent('Clean layers, layerRemoved: ' + layerRemoved);
 				}));
-                
-			  
+
+
 			}
 		},
-		
+
 		_buildArcGISLayer: function(url, mapService, tokenValue, visibleLayers) {
 			this.logEvent('Creating ArcGIS Layer for url: ' + url);
 			var params = {};
@@ -324,15 +333,26 @@ require( [
 				Logger.log("New token generated: "+ tokenValue);
 				params = {"token": tokenValue};
 			}
-			url = this.proxyHelper.includeProxyURLIfEnabled( url, this.mapManager );									
+			url = this.proxyHelper.includeProxyURLIfEnabled( url, this.mapManager );
 			console.log("Layer URL to Load " + url);
-			var arcgisLayer =  new ol.source.TileArcGISRest( {
-				url : url,
-				params: params
-			} );
-			var originalTileLoadFunction = arcgisLayer.tileLoadFunction;
-			arcgisLayer.tileLoadFunction = lang.hitch(this, function ( imageTile, src ) {
-				
+			var source = null;
+			var sourceSettings = {url : url, params: params};
+			if (mapService.istiledlayer){
+    			var jsonMapServer = JSON.parse(mapService.jsonmapserver);
+    			if (jsonMapServer.tileInfo){
+                	sourceSettings.url=sourceSettings.url + '/tile/{z}/{y}/{x}';
+                	source = new ol.source.XYZ(sourceSettings);
+            	} else {
+                sourceSettings.ratio = 1;
+                source = new ol.source.ImageArcGISRest(sourceSettings);
+            	}
+			}else {
+    			source = new ol.source.TileArcGISRest(sourceSettings);
+			}
+
+            var originalTileLoadFunction = source.tileLoadFunction;
+            source.tileLoadFunction = lang.hitch(this, function ( imageTile, src ) {
+
 				var ignoreURL = false;
 				var layerToShow = "";
 				var layerIdsIncluded = [];
@@ -344,17 +364,17 @@ require( [
 					}
 					if (tileUrl.indexOf(layer.url) > -1) {
 						var visibleLayers = layer.visibleLayers;
-						
+
 						if (layer.isBasemap == true && visibleLayers != null && visibleLayers.length == 0) {
 							ignoreURL = true;
 						}
-						
+
 						var internalLayers = JSON.parse(layer.internalLayers);
 						array.forEach(internalLayers , lang.hitch( this, function ( internalLayer, i ) {
 							var layerId = internalLayer.id;
 							var defaultVisibility = (internalLayer.details == null)? true : internalLayer.details.defaultVisibility;
-							if (((visibleLayers == null && defaultVisibility == true) 
-									|| (visibleLayers != null && visibleLayers.indexOf(layerId) > -1)) 
+							if (((visibleLayers == null && defaultVisibility == true)
+									|| (visibleLayers != null && visibleLayers.indexOf(layerId) > -1))
 									&& layerIdsIncluded.indexOf(layerId)== -1) {
 								layerToShow = layerToShow + layerId;
 								layerIdsIncluded.push(layerId);
@@ -362,34 +382,41 @@ require( [
 									layerToShow = layerToShow + ",";
 								}
 							}
-							
+
 						}));
-					}																
+					}
 				}));
+
+				if (layerToShow != "") {
+					if (layerToShow.endsWith(",")) {
+						layerToShow = layerToShow.replace(/,\s*$/, "");
+					}
+				}
+
 				if (layerToShow == "") {
 					layerToShow = "-1";
 				}
 				src = src + "&layers=show:" + layerToShow;
-				
+
 				//Needs to remove the Spatial Reference because the BBOX points is already in the correct spatial reference.
 				var newBBOXSR = "BBOXSR=" + this._getMapSpatialReferenceCode() + "&1";
 				src = src.replace("BBOXSR", newBBOXSR);
-				
+
 				//For basemap the layers=show parameter does not work, it needs to modified the URL.
 				if (ignoreURL == true) {
 					src = "";
 				} else {
-					
+
 					if (this.proxyHelper.isProxyEnabled(this.mapManager))
 					{
 						src = src+"&_MAXAUTH="+this.spatialReplicaManager._getMaxAuthHeader();
 					}
 				}
-				
-				
+
+
 				if (this.proxyHelper.isMobileFirstProxyEnabled() && src != "") {
 					var adapterPromise = this.proxyHelper.useImgAdapterProxy( src, this.mapManager );
-					adapterPromise.then(lang.hitch(this, function(result) {		
+					adapterPromise.then(lang.hitch(this, function(result) {
 						var img = result.responseText;
 						if (img && img.indexOf("image")>-1) {
 							imageTile.getImage().src = img;
@@ -399,13 +426,29 @@ require( [
 					return originalTileLoadFunction(imageTile, src);
 				}
 			});
-			
+
 			var opacity = (100-mapService.transparency)/100;
-			var newLayer = new ol.layer.Tile( {
-				source : arcgisLayer,
-				opacity: opacity,
-				visible: mapService.visible
-			} );			
+			var newLayer = null;
+			if (mapService.istiledlayer){
+				newLayer = jsonMapServer.tileInfo
+                ? new ol.layer.Tile({
+                    source: source,
+                    opacity: opacity,
+                    visible: mapService.visible
+                })
+                : new ol.layer.Image({
+                    source,
+                    opacity,
+                    visible: mapService.visible,
+			} );
+			}else {
+				newLayer = new ol.layer.Tile( {
+					source : source,
+					opacity: opacity,
+					visible: mapService.visible
+				} );		
+			}
+			
 			newLayer.isBasemap = mapService.istiledlayer;
 			newLayer.internalLayers = mapService.jsonlayers;
 			newLayer.jsonFeatureServer = mapService.jsonfeatureserver;
@@ -417,10 +460,10 @@ require( [
 			newLayer.defaultOpacity = opacity;
 			newLayer.defaultVisibility = mapService.visible;
 			newLayer.order = mapService.serviceorder;
-			
+
 			return newLayer;
 		},
-		
+
 		/**
 		 * Method to create the Overlay component, used by the map.
 		 */
@@ -440,14 +483,14 @@ require( [
 
 			popupelem.appendChild(contentelem);
 			popupelem.appendChild(aelem);
-			
+
 			var mapElement = document.getElementById(this._mapTarget);
 
 			mapElement.appendChild(popupelem);
 
 			var container = document.getElementById('olpopup');
 			var closer = document.getElementById('popup-closer');
-			
+
 			this.overlayPanel = new ol.Overlay( ( {
 				element : container,
 				autoPan : true,
@@ -456,17 +499,17 @@ require( [
 				},
 				positioning : 'bottom-center'
 			} ) );
-			
+
 			closer.onclick = lang.hitch(this, function() {
 				this.overlayPanel.setPosition(undefined);
 				closer.blur();
 				return false;
 			});
 		},
-		
+
 		// Function to return the Map Spatial Reference code (4326, 3857, etc)
 		_getMapSpatialReferenceCode: function() {
-			
+
 			var spatialReference = this.map.getView().getProjection().getCode();
 			spatialReference = spatialReference.replace( /EPSG:/g, "" );
 			//Consider the spatial reference configured on basemap
@@ -476,16 +519,16 @@ require( [
 					spatialReference = jsonMapServer.spatialReference.wkid;
 				}
 			}));
-			
+
 			return spatialReference;
 		},
-		
+
 		onMapEvent: function(evt) {
 			if(evt.type == "onIdentifyFeature" && this.identifyEnabled) {
 				this.reloadLayersIfTokenExpired(lang.hitch(this, function() {
 					var coordinate = evt.coordinate;
 					this.logEvent("[MobileMaximoSpatial] onMapEvent - Executing Identify tool " + coordinate);
-					
+
 					spatialReference = this._getMapSpatialReferenceCode();
 					this.logEvent('Find Features - Point: ' + coordinate + ' | spatialReference: ' + spatialReference);
 					this.identifyTool.findFeatures( this.map, this.showingOnlineMap, coordinate, evt, spatialReference, this.mapManager );
@@ -496,18 +539,18 @@ require( [
 		_addOnClickMap: function() {
 			var mustEnableIdentify = true;
 			var eventListeners = WL.application[this.mapHandlerClass].eventListeners;
-			array.forEach( eventListeners, lang.hitch( this, function ( eventListener ) {	
+			array.forEach( eventListeners, lang.hitch( this, function ( eventListener ) {
 				if (eventListener._mapTarget != null) {
 					mustEnableIdentify = false;
 				}
 			}))
-			
+
 			if (!this.identifyEnabled || mustEnableIdentify) {
 				var mapHandler = WL.application[this.mapHandlerClass];
 				mapHandler.addMapEventListener(this);
 				this.identifyEnabled = true;
 			}
-			
+
 		},
 
 		disableClickEvents: function() {
@@ -516,13 +559,13 @@ require( [
 				mapHandler.removeMapEventListener(this);
 				this.identifyEnabled = false;
 			}
-			
+
 		},
-			
+
 		enableClickEvents: function() {
 			this._addOnClickMap();
 		},
-		
+
 		getAttributeValue: function(obj, prop) {
 			var value = null;
 			prop = (prop + "").toLowerCase();
@@ -539,9 +582,9 @@ require( [
 			      }
 			}
 			return value;
-			
+
 		},
-		
+
 		_checkTPKConfigured: function() {
 			var deferred = new Deferred();
 			setTimeout(lang.hitch(this, function() {
@@ -561,15 +604,15 @@ require( [
 			}), 100);
 			return deferred.promise;
 		},
-		
+
 		_loadOfflineDataFromFileSystem: function(deferred) {
 			this.cleanLayers();
 			this._createLoadingIconOfflineFeatures();
 			this.spatialReplicaManager.initializeOfflineMap();
-			
+
 			var promiseBasemap = this._loadBasemapUsingTPK();
 			promiseBasemap.then(lang.hitch(this, function() {
-				this._addOnClickMap();		
+				this._addOnClickMap();
 				var promiseReplicas = this._loadReplicasFromFileSystem();
 				promiseReplicas.then(lang.hitch(this, function() {
 					WL.application.hideBusy();
@@ -593,7 +636,7 @@ require( [
 				deferred.reject(error);
 			}))
 		},
-		
+
 		/**
 		 * Load the entire map from the TPK folder (basemap and geodatabases as well)
 		 */
@@ -602,7 +645,7 @@ require( [
 			if (ignoreReplicaCheck == null) {
 				ignoreReplicaCheck = false;
 			}
-			
+
 			if (ignoreReplicaCheck) {
 				this.lazyCheckReplicaSync = true;
 			}
@@ -612,7 +655,7 @@ require( [
 			if (this.expiredAreasAlreadyChecked == false && !ignoreReplicaCheck) {
 				var promises = [];
 				hasOfflineMapsExpired = false;
-				
+
 				var promiseOfflineArea = this.spatialReplicaManager.hasReplicasExpired(this);
 				promiseOfflineArea.then(lang.hitch(this, function(hasExpired) {
 					this.expiredAreasAlreadyChecked = true;
@@ -620,44 +663,44 @@ require( [
 						this.showingOnlineMap = true;
 						WL.application.hideBusy();
 						dojo.publish('_closePercentDialog', []);
-						WL.application.ui.show('Platform.SyncRequired');	
+						WL.application.ui.show('Platform.SyncRequired');
 					} else {
 						this._loadOfflineDataFromFileSystem(deferred);
 					}
 				}))
-				
+
 			} else {
 				this._loadOfflineDataFromFileSystem(deferred);
 			}
-			
+
 			return deferred.promise;
 		},
-		
+
 		/**
 		 * Creates the loading icon div
 		 */
 		_createLoadingIconOfflineFeatures: function() {
-		
+
 			var currentViewId = WL.application.ui.getCurrentView().id;
 			var loadingFeaturesDiv = domConstruct.create('div');
 			loadingFeaturesDiv.setAttribute("id","spatial-offline-map-features-loading"+currentViewId);
 			loadingFeaturesDiv.setAttribute("class","spatial-offline-map-features-loading");
-			
+
 			var divLoadingIcon = document.createElement('div');
 			divLoadingIcon.setAttribute("id","divLoadingIcon"+currentViewId);
 			divLoadingIcon.setAttribute("class","spatial-offline-map-features-loading-btn");
 			domConstruct.place(divLoadingIcon, loadingFeaturesDiv, "first");
-			
+
 			var mapDiv = dojo.byId(currentViewId);
 			domConstruct.place(loadingFeaturesDiv, mapDiv, "last");
 		},
-		
+
 		/**
 		 * Change the loading div visibility
 		 */
 		_changeLoadingDivVisibility: function(show) {
 			var currentViewId = WL.application.ui.getCurrentView().id;
-			var divWarning = dojo.byId("spatial-offline-map-features-loading"+currentViewId);					
+			var divWarning = dojo.byId("spatial-offline-map-features-loading"+currentViewId);
 			if (divWarning!= null) {
 				if (show && !domClass.contains(divWarning, "showPanel")) {
 					domClass.add(divWarning, "showPanel");
@@ -669,7 +712,7 @@ require( [
 	        }
 
 		},
-		
+
 		/**
 		 * When TPK is configured the features will be loaded after a moveend event is triggered on the map
 		 */
@@ -685,7 +728,7 @@ require( [
 		     offlineAreasIds.forEach(lang.hitch(this, function(offlineAreasId) {
 		    	 promises.push(this.spatialReplicaManager.getFeaturesByExtent(this, offlineAreasId));
 		     }))
-		     
+
 		     if (promises.length > 0) {
 			    var self = this;
 				all(promises).then(function(){
@@ -705,8 +748,8 @@ require( [
 		    })).otherwise(lang.hitch(this, function() {
 		    	this._changeLoadingDivVisibility(false);
 			}));;
-			
-			
+
+
 			if (this.lazyCheckReplicaSync) {
 				console.log("Lazy check replica sync ");
 				this.lazyCheckReplicaSync = false;
@@ -717,14 +760,14 @@ require( [
 						if (hasExpired) {
 							WL.application.hideBusy();
 							dojo.publish('_closePercentDialog', []);
-							WL.application.ui.show('Platform.SyncRequiredLazyCheck');	
+							WL.application.ui.show('Platform.SyncRequiredLazyCheck');
 						}
 					}))
-					
+
 				}
 			}
 		},
-		
+
 		/**
 		 * TPK is configured and we need to load the features/tiles from the file system
 		 */
@@ -740,11 +783,11 @@ require( [
 					 * si.map.offline.queryFeaturesDelay
 					 */
 					this.delayedOnMoveEnd = setTimeout(lang.hitch(this, function(offlineAreasIds) {
-						this._onMoveEnd(); 	
+						this._onMoveEnd();
 					}), this.offlineQueryFeaturesDelay);
 				 }));
 			}
-			
+
 			if (this.offlineMoveStartHandler == null) {
 				// When the move start is triggered we need to cancel the remaining requests since the extent is changed.
 				this.offlineMoveStartHandler = this.map.on('movestart', lang.hitch(this, function(evt) {
@@ -752,12 +795,12 @@ require( [
 				 }));
 			}
 			this._onMoveEnd();
-			
+
 			deferred.resolve();
 			return deferred.promise;
-			
+
 		},
-		
+
 		/**
 		 * Load the basemap from TPK
 		 */
@@ -767,59 +810,59 @@ require( [
 			var promiseLoadTPK = SpatialTilePackageManager.createTPKFileStore(localMapUrl, this.spatialReplicaManager.replicaFolderName);
 			promiseLoadTPK.then(lang.hitch(this, function(maxZoom) {
 				// It creates a a url just to execute the tileLoad function (mock), since the map is offline this url will never be reached
-				var xyzproviderurl = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"; 
+				var xyzproviderurl = "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 				var centerPoint = SpatialTilePackageManager.getTPKCenterPoint();
 				this.updateMapView( centerPoint[0], centerPoint[1], maxZoom[1], null );
 				var source = new ol.source.XYZ({
     					url: xyzproviderurl
     				});
 				source.tileLoadFunction = function(imageTile, src) {
-					
+
 						var tilePoint = {};
 						var tileCoord = imageTile.getTileCoord();
 						tilePoint.z = tileCoord[0];
 						tilePoint.x = tileCoord[1];
 						tilePoint.y = (tileCoord[2] + 1) * -1;
-						
+
 						var promiseTile = SpatialTilePackageManager.getTileUrl(tilePoint);
 						promiseTile.then(lang.hitch(this, function(tileSrc) {
 							imageTile.getImage().src = tileSrc;
 						}));
-                        
-                        
+
+
 
 					imageTile.getImage().onerror = function(error){
-						console.error(error);											
+						console.error(error);
 					};
-					
+
 					imageTile.getImage().onload = function(){
-						
+
 					};
 				};
-				
+
 				var baseCacheLayer = new ol.layer.Tile({
 					source: source
 				});
 				baseCacheLayer.isBasemap = true;
 				baseCacheLayer.isFromFileSystem = true;
-				
+
 				this.cacheLayers.unshift( baseCacheLayer );
 
 				var layerIndex = this.map.getLayers().getLength();
 				this.map.getLayers().insertAt(0, baseCacheLayer);
 				baseCacheLayer.setZIndex(0);
 				deferred.resolve();
-				
+
 			})).otherwise(lang.hitch(this, function(error) {
 				deferred.reject(error);
 			}));
 			return deferred.promise;
 		},
-		
+
 		downloadOfflineAreaMetaData: function(offlineAreaId) {
 			return this.spatialReplicaManager.downloadOfflineAreaMetaData(this.mapManager, offlineAreaId);
 		},
-		
+
 		moveLayerToTop: function(layerName, maxZIndex) {
 			var layers = this.map.getLayers();
 			var layersArray = layers.getArray();
@@ -838,7 +881,7 @@ require( [
 							markerLayer.setZIndex(maxZIndex+1);
 						}
 					}));
-					
+
 				}
 			}
 		},
@@ -849,16 +892,16 @@ require( [
 			var resolution = scale/(mpu * 39.37 * dpi);
 			return resolution
 		},
-		
+
 		_createTextFeature: function(feature, jsonDrawingInfo){
 			var labelingInfoArray = jsonDrawingInfo.labelingInfo;
 			var style = null;
-			array.forEach( labelingInfoArray, lang.hitch( this, function ( labelingInfo ) {	
+			array.forEach( labelingInfoArray, lang.hitch( this, function ( labelingInfo ) {
 				var labelExpression = labelingInfo.labelExpression;
-				labelExpression = labelExpression.substring(1, labelExpression.length-1); 
+				labelExpression = labelExpression.substring(1, labelExpression.length-1);
 				var symbol = labelingInfo.symbol;
 				switch(symbol.type) {
-					case "esriTS":	
+					case "esriTS":
 						var textValue = feature.attributes[labelExpression];
 						if (textValue == null) {
 							textValue = " ";
@@ -874,24 +917,24 @@ require( [
 					        fill: new ol.style.Fill({ color: '#000' }),
 							text: textValue
 			            });
-						
+
 						break;
-					case "esriSLS":	
-						
-						
+					case "esriSLS":
+
+
 						break;
-					case "esriSMS":	
-						
-						
-						
+					case "esriSMS":
+
+
+
 						break;
-					case "esriSFS":											
+					case "esriSFS":
 						break;
-					
+
 				}
-					
+
 			}));
-			
+
 			return style;
 		},
 		_getFeatureJSONDrawingInfo: function ( feature ) {
@@ -900,7 +943,7 @@ require( [
 				var drawingInfo = null;
 				array.forEach( internalLayers , lang.hitch( this, function ( internalLayer ){
 					var internalLayerId = internalLayer.id;
-					if ( feature.layerId == internalLayerId ) {					
+					if ( feature.layerId == internalLayerId ) {
 						var layerDetails = internalLayer.details;
 						drawingInfo = layerDetails.drawingInfo;
 					}
@@ -909,7 +952,7 @@ require( [
 				var jsonmapserver = feature.layer.jsonmapserver;
 				drawingInfo = jsonmapserver.drawingInfo;
 			}
-					
+
 			return drawingInfo;
 		},
 		_getStyleByFeature: function(feature, jsonDrawingInfo){
@@ -917,12 +960,12 @@ require( [
 			var style = null;
 			if (symbol != null) {
 				switch(symbol.type) {
-					case "esriPMS":	
+					case "esriPMS":
 						var width = Number(symbol.width)+5;
 						var height = Number(symbol.height)+5;
 					    var img = new Image();
 					    img.src = 'data:'+symbol.contentType+';base64,'+symbol.imageData;
-					    
+
 						style = new ol.style.Style({
 							image: new ol.style.Icon({
 								img: img,
@@ -930,9 +973,9 @@ require( [
 								offset: [symbol.xoffset, symbol.yoffset]
 				            })
 				        });
-						
+
 						break;
-					case "esriSLS":	
+					case "esriSLS":
 						var arcgisColorArray = symbol.color;
 						style = new ol.style.Style({
 							stroke: new ol.style.Stroke({
@@ -954,7 +997,7 @@ require( [
 						      width: strokeWidth
 						          })
 						});
-											
+
 						break;
 				}
 			}
@@ -963,62 +1006,68 @@ require( [
 		_getSymbolByFeature: function(feature, jsonDrawingInfo){
 			var renderer = jsonDrawingInfo.renderer;
 			var defaultSymbol = renderer.defaultSymbol;
-			
+
 			if (defaultSymbol == null) {
 				defaultSymbol = renderer.symbol
 			}
-			
+
 			var field = null;
 			var attributeValue = null;
-			
+
 			var field1 = renderer.field1;
 			var field2 = renderer.field2;
 			var field3 = renderer.field3;
-			
+
 			if (field3 != null){
-				field = field3; 
-			} 
+				field = field3;
+			}
 			if (field2 != null){
 				field = field2;
-			} 
+			}
 			if (field1 != null){
 				field = field1;
 			}
-			
+
 			var attributesFieldsName = feature.attributesFieldsName;
 			if (attributesFieldsName == null) {
 				this.identifyTool.buildAttributesUsingFieldsName( feature );
 				attributesFieldsName = feature.attributesFieldsName;
 			}
-			attributeValue = attributesFieldsName[field];		
 			
 			
+			var vectorFields = [attributesFieldsName[field1], attributesFieldsName[field2], attributesFieldsName[field3]];
+			var attributeValue = '';
+			vectorFields.map((m, index) => {
+			  attributeValue = m !== null ? attributeValue + m + ',' : attributeValue;
+			});
+
+			attributeValue = attributeValue.replace(/,$/,'');
+			
+
 			//Search for a specific symbol
 			var uniqueValueInfos = renderer.uniqueValueInfos;
-			array.forEach( uniqueValueInfos, lang.hitch( this, function ( uniqueValueInfo ) {	
+			array.forEach( uniqueValueInfos, lang.hitch( this, function ( uniqueValueInfo ) {
 				var value = uniqueValueInfo.value;
 				var label = uniqueValueInfo.label;
 				// IF the MapServer contains subtypes the label constains the value, so it's necessary to compare both (value and label)
 				if (value == attributeValue || label == attributeValue) {
 					defaultSymbol = uniqueValueInfo.symbol;
-				}				
-			} ) );	
-			
+				}
+			} ) );
+
 			return defaultSymbol;
-			
-			
-			
+
 		},
-		
+
 		logEvent: function(msg) {
 			Logger.trace(msg);
 			console.log(msg);
 		},
-		
+
 		deleteOfflineDataFromFileSystem: function(offlineAreaId) {
 			return this.spatialReplicaManager.deleteOfflineData(offlineAreaId);
 		},
-		
+
 		updateMapView: function(initialX, initialY, zoomLevel, resolutions) {
 			var view = null;
 			if (resolutions == null || resolutions.length == 0) {
@@ -1037,21 +1086,21 @@ require( [
 					resolutions: resolutions
 				} )
 			}
-			
+
 			this.map.setView(view);
-			
+
 			if (this.moveEndHandler == null) {
-				
+
 				this.moveEndHandler = this.map.getView().on('propertychange', lang.hitch(this, function (e) {
-					
+
 					 switch (e.key) {
 					      case 'resolution':
 					    	  var view = this.map.getView();
 					    	  var maxResolution = this.map.getView().getMaxResolution();
-								var minResolution = this.map.getView().getMinResolution();					     
+								var minResolution = this.map.getView().getMinResolution();
 								var currentResolution = this.map.getView().getResolution();
-							 	if (currentResolution < minResolution) {	
-							 		
+							 	if (currentResolution < minResolution) {
+
 							 		view.animate({
 								          resolution: view.getResolution()
 								        });
@@ -1066,18 +1115,18 @@ require( [
 								}
 					        break;
 					   }
-					
-					
+
+
 			    }));
 			}
-			
+
 		},
-		
+
 		_prepateOnlineMap: function(gpsCoordinate, deferred, keepCurrentExtent) {
 			var zoomLevel = null;
 			var initialx = null;
 			var initialy = null;
-			
+
 			if(keepCurrentExtent == null) {
 				keepCurrentExtent = false;
 			}
@@ -1098,8 +1147,8 @@ require( [
 			if (this.map == null) {
 				this.map = this._createOpenLayerMap(null, initialx, initialy, zoomLevel);
 				this.map.addLayer(this.openLayerMap.glayer);
-				this._addOnClickMap();									
-			}	
+				this._addOnClickMap();
+			}
 			this.loadTools();
 			var resolutions = [];
 			var maxZoom = null;
@@ -1114,7 +1163,7 @@ require( [
 						array.forEach( lods, lang.hitch( this, function ( lod, i ) {
 							this.resolutions.push(lod.resolution);
 						}))
-						
+
 					}
 				}
 				addLayer.visibleLayers = null;
@@ -1127,19 +1176,19 @@ require( [
 				this.updateMapView( centerPoint[0], centerPoint[1], zoomLevel, resolutions );
 			}
 			this.showingOnlineMap = true;
-			
+
 			deferred.resolve(true);
 		},
-		
+
 		loadOnlineMap : function (keepCurrentExtent) {
 			this.identifyTool.hideDialog();
 			var deferred = new Deferred();
 			console.log( "Online map shown at this time" );
-			
+
 			if (keepCurrentExtent == null) {
 				keepCurrentExtent = false;
 			}
-			
+
 			ConnectivityChecker.checkConnectivityAvailable().then(lang.hitch(this, function(isConnectionAvailable){
 				if (isConnectionAvailable ) {
 
@@ -1151,14 +1200,14 @@ require( [
 					for ( var len = 0; len < this.cacheLayers.length; len++ ) {
 						var removeCacheLayer = this.cacheLayers[ len ];
 						this.cacheLayers.visibleLayers = null;
-						this.map.removeLayer( removeCacheLayer );				
+						this.map.removeLayer( removeCacheLayer );
 					}
 					this.cacheLayers = [];
 					this.offlineAreasLoaded = [];
 					if (this.mapManager == null) {
 						this.loadMapManager(false, lang.hitch( this, function ( mapManagerInfo ) {
 							this._loadLayers( this.mapManager, lang.hitch(this, function() {
-								
+
 								var promiseGPS = this.loadGPSPositionIfExtentNotAvailable(this.mapManager);
 								promiseGPS.then(lang.hitch(this, function(jsonGeoLocObj) {
 									if (jsonGeoLocObj != null) {
@@ -1166,13 +1215,13 @@ require( [
 									} else {
 										this._prepateOnlineMap( null, deferred, keepCurrentExtent );
 									}
-									
+
 								})).otherwise(lang.hitch(this, function(error){
 									this.showingOnlineMap = false;
 									WL.application.showMessage(error);
 									deferred.resolve(false);
 								}));
-								
+
 							}));
 
 						} ),
@@ -1182,7 +1231,7 @@ require( [
 							deferred.resolve(error);
 						}));
 					} else {
-						
+
 						this._loadLayers( this.mapManager, lang.hitch(this, function() {
 							var promiseGPS = this.loadGPSPositionIfExtentNotAvailable(this.mapManager);
 							promiseGPS.then(lang.hitch(this, function(jsonGeoLocObj) {
@@ -1191,7 +1240,7 @@ require( [
 								} else {
 									this._prepateOnlineMap( null, deferred, keepCurrentExtent );
 								}
-								
+
 							})).otherwise(lang.hitch(this, function(error){
 								this.showingOnlineMap = false;
 								WL.application.showMessage(error);
@@ -1200,26 +1249,26 @@ require( [
 						}));
 
 					}
-					
-						
-				} else { 
+
+
+				} else {
 					this.showingOnlineMap = false;
 					WL.application.showMessage(MessageService.createStaticMessage('deviceIsOffline').getMessage())
 					deferred.resolve(false);
 				}
 			}));
 			return deferred.promise;
-			
 
-			
+
+
 		},
-		
+
 		/**
 		 * Method to refresh the layers updated by Layers tool.
 		 */
 		updateLayersToolChanges: function() {
 			var deferred = new Deferred();
-			setTimeout(lang.hitch(this, function(){ 
+			setTimeout(lang.hitch(this, function(){
 				var layers = this.map.getLayers();
 				layers.forEach(lang.hitch(this, function(layer, index, array) {
 					if (layer.isFromFileSystem && layer.layersToolChangedIt) {
@@ -1249,7 +1298,7 @@ require( [
 										layer.setVisible(true);
 									}
 								}
-								
+
 							} else {
 								if (visibleLayers != null || visibleLayers.length > 0) {
 									layer.setVisible(true);
@@ -1257,26 +1306,26 @@ require( [
 									layer.setVisible(false);
 								}
 							}
-							
+
 							this.reloadTileCache(layer);
-							
+
 						}
-						
+
 					}
-					
-				}));	
-				
+
+				}));
+
 				if (layers && layers.getLength() > 0) {
 					this._addOnClickMap();
 				}
 				deferred.resolve();
 			}), 100);
-			
+
 			return deferred.promise;
-			
-								
+
+
 		},
-		
+
 		reloadTileCache: function(layer) {
 			//Force the reload the tiles already cached
 			var source = layer.getSource();
@@ -1286,12 +1335,12 @@ require( [
 					if (tileFunction) {
 						source.setTileLoadFunction(tileFunction);
 					}
-					
+
 				}
 			}
-			
+
 		},
-		
+
 		/**
 		 * Method to reload the layers with a new token if it expires
 		 * @param callBackFuntion
@@ -1299,7 +1348,7 @@ require( [
 		reloadLayersIfTokenExpired: function(callBackFuntion) {
 			this._onMoveEnd();
 			//It will check the Tokens only if security is enable on Map Manager
-			if (this.mapManager != null && 
+			if (this.mapManager != null &&
 					this.mapManager.spatialtokensecurity != null && this.mapManager.spatialtokensecurity == true && this.showingOnlineMap) {
 				var layers = this.map.getLayers();
 				var layersIndex = [];
@@ -1315,39 +1364,39 @@ require( [
 								layersIndex.push(index);
 								urlsToRequest.push(url);
 								console.log("Token expired for URL ", url);
-								Logger.log("Token expired for URL " + url);								
+								Logger.log("Token expired for URL " + url);
 							}
 						}
 					}
 			    }));
-				
+
 				if (urlsToRequest.length > 0 && this.mapManager != null) {
 					// Generate the tokens
 					var promise = this.tokenAuthentication.generateTokens(urlsToRequest, this.mapManager, true);
-					promise.then(lang.hitch(this, function(tokens) {			
+					promise.then(lang.hitch(this, function(tokens) {
 						var i=0;
 						for (var url in tokens) {
-							array.forEach( urlsToRequest, lang.hitch( this, function ( urlToRequest, i ) {						
+							array.forEach( urlsToRequest, lang.hitch( this, function ( urlToRequest, i ) {
 								if (url == urlToRequest) {
 									var mapService = null;
-									array.forEach( this.mapServices, lang.hitch( this, function ( service ) {	
+									array.forEach( this.mapServices, lang.hitch( this, function ( service ) {
 										if (service.url == url) {
-											mapService = service;									
-										}									
+											mapService = service;
+										}
 									} ) );
-									
+
 									var layerIndex = layersIndex[i];
 									var layerToRenew = layers.getArray()[layerIndex];
-									
+
 									var token = tokens[url];
 								    var tokenValue = token.tokenValue;
-								    
+
 								    var params = layerToRenew.getSource().getParams();
-								    console.log("old token ", params.token);								    
+								    console.log("old token ", params.token);
 								    params.token = tokenValue;
 								    layerToRenew.token = tokenValue;
 								    console.log("new token ", tokenValue);
-								}									
+								}
 							} ) );
 						}
 						if (callBackFuntion) {
@@ -1365,8 +1414,8 @@ require( [
 				}
 			}
 		},
-		
-		
+
+
 		_createOpenLayerMap: function (layers, initialx, initialy, zoomLevel) {
 			if (initialx == null || initialy == null) {
 				WL.application.showMessage(MessageService.createStaticMessage('gpsNotAvailable').getMessage())
@@ -1379,7 +1428,7 @@ require( [
 			}
 			this._createOverlay();
 			var mapInstance = new ol.Map( {
-				moveTolerance: 5, 
+				moveTolerance: 5,
 				layers : layers,
 				target : this._mapTarget,
 				view : new ol.View( {
@@ -1395,31 +1444,31 @@ require( [
 				controls : []
 
 			} );
-			
+
 			var spatialMapHandler = WL.application["platform.handlers.spatial.SpatialMapHandler"];
 			spatialMapHandler.mobileMaximoSpatial = this;
-			
+
 			return mapInstance;
 		},
-		
+
 		unloadTPKOfflineMap: function() {
 			this.spatialReplicaManager._closeMetadataForAllReplicasAvaiable();
 			SpatialTilePackageManager.unloadTPK();
 			var currentViewId = WL.application.ui.getCurrentView().id;
 			domConstruct.destroy("spatial-offline-map-features-loading"+currentViewId);
-			
+
 		},
-		
+
 		loadGPSPositionIfExtentNotAvailable: function(mapManager) {
 			var deferred = new Deferred();
-			setTimeout(lang.hitch(this, function(){ 
+			setTimeout(lang.hitch(this, function(){
 				var mapSite = mapManager.currentMapSite;
 				if ( mapSite ) {
 					zoomLevel = mapSite[ 'spi_spatial:zoomlevel' ];
 					initialx = mapSite[ 'spi_spatial:initialx' ];
 					initialy = mapSite[ 'spi_spatial:initialy' ];
 				}
-				
+
 				if (initialx == null || initialy == null) {
 					console.log("Getting GPS Location, initial extent is null");
 					var promiseGPS = MapGeoLocation.getInstance().getGPSLocation();
@@ -1437,7 +1486,7 @@ require( [
 					deferred.resolve([initialx,initialy]);
 				}
 			}), 100);
-			
+
 			return deferred.promise;
 		},
 		adjustFitForOfflineMap: function() {
@@ -1447,11 +1496,11 @@ require( [
 				this.moveLayerToTop("markers", this.spatialReplicaManager.maxZIndexAdded);
 			}))
 		},
-		
+
 		_calculateExtentAndReturnOfflineAreas: function(mapManagerInfo) {
 			var offlineAreasIds = [];
 			if (mapManagerInfo) {
-				var mapSite = mapManagerInfo.currentMapSite; 
+				var mapSite = mapManagerInfo.currentMapSite;
 				if ( mapSite ) {
 					var offlineAreas = mapSite['spi_spatial:oslcofflinearea'];
 					array.forEach( offlineAreas, lang.hitch( this, function ( offlineArea, i ) {
@@ -1459,16 +1508,16 @@ require( [
 						var extent = mblExtent.extent;
 						var spatialReference = mblExtent.spatialReference;
 						var offlineAreaExtend = ol.extent.boundingExtent(extent[0]);
-						
+
 						var mapSpatialReference = this._getMapSpatialReferenceCode();
 						var offlineAreaExtendMapSR = ol.proj.transformExtent(offlineAreaExtend,'EPSG:' + spatialReference,'EPSG:'+mapSpatialReference);
-						
+
 						var mapExtent = this.map.getView().calculateExtent(this.map.getSize());
-						
+
 						var extentIntersection = ol.extent.getIntersection(offlineAreaExtendMapSR, mapExtent);
-						
+
 						var isEmpty = ol.extent.isEmpty(extentIntersection);
-						
+
 						if (!isEmpty) {
 							var offlineAreaId = offlineArea["spi_spatial:offlineareauid"];
 							offlineAreasIds.push(offlineAreaId);
@@ -1478,14 +1527,14 @@ require( [
 			}
 			return offlineAreasIds;
 		},
-		
+
 		searchOfflineAreaOverlapsCurrentExtent: function() {
 			var deffered = new Deferred();
 			setTimeout(lang.hitch(this, function() {
 				var offlineAreasIds = [];
 				var mapManagerInfo = this.mapManager;
 				if (mapManagerInfo) {
-					var mapSite = mapManagerInfo.currentMapSite; 
+					var mapSite = mapManagerInfo.currentMapSite;
 					if ( mapSite ) {
 						offlineAreasIds = this._calculateExtentAndReturnOfflineAreas(this.mapManager);
 						deffered.resolve(offlineAreasIds);
@@ -1508,33 +1557,33 @@ require( [
 							deffered.reject();
 						}));
 					}));
-					
+
 				}
-				
+
 			}), 100);
 			return deffered.promise;
-			
+
 		},
-		
+
 		//Method to create the Map
 		createMap : function ( target, callbackFunction, callbackErrorFunction ) {
-			
+
 			this._mapTarget = target;
-			
+
 			ConnectivityChecker.checkConnectivityAvailable().then(lang.hitch(this, function(isConnectionAvailable){
 				console.log("Device is online? " + isConnectionAvailable);
-				
+
 				// Check the last configuration saved for the user, when they switch between online/offline this config is saved in plussmapconfig store.
 				var promiseSavedShowingOnline = this.maximoSpatialStore.getMapConfig();
 				promiseSavedShowingOnline.then(lang.hitch(this, function(mapConfig) {
 					var loadOnline = true;
 					if (mapConfig != null && mapConfig.json != null) {
 						loadOnline = mapConfig.json.showingOnlineMap;
-					} 
-					
+					}
+
 					if (loadOnline == true && isConnectionAvailable ) {
 						this.logEvent("Loading online map ");
-						
+
 						var promiseLoadOnline = this.loadOnlineMap(null);
 						promiseLoadOnline.then(lang.hitch(this, function(result){
 								if (result == true) {
@@ -1549,7 +1598,7 @@ require( [
 						}));
 					} else { // Load offline map
 						this.logEvent("Loading offline map ");
-						
+
 						var checkTPK = this._checkTPKConfigured();
 						checkTPK.then(lang.hitch(this, function() {
 							//Use default values to create the map, later the map will be centralized.
@@ -1557,11 +1606,11 @@ require( [
 							ol.Observable.unByKey(this.offlineMoveStartHandler);
 							this.offlineMoveEndHandler = null;
 							this.offlineMoveStartHandler = null;
-							var centerPoint = SpatialTilePackageManager.getTPKCenterPoint(); 
-							this.map = this._createOpenLayerMap(null, centerPoint[0],centerPoint[1], 14);	
+							var centerPoint = SpatialTilePackageManager.getTPKCenterPoint();
+							this.map = this._createOpenLayerMap(null, centerPoint[0],centerPoint[1], 14);
 							this.loadTools();
 							this._addOnClickMap();
-							
+
 							var promises = [];
 							var loadMetadataOfflineAreas = this.spatialReplicaManager._loadMetadataForAllReplicasAvaiable();
 							loadMetadataOfflineAreas.then(lang.hitch(this, function(offlineAreasId) {
@@ -1575,7 +1624,7 @@ require( [
 							}));
 						})).otherwise(lang.hitch(this, function() {
 							// No offline data configured, try to load the online if there is connectivity, if there isn't come back to the previous screen
-							
+
 							CommunicationManager.checkConnectivityAvailable().then(lang.hitch(this, function (isConnectionAvailable) {
 						        if (isConnectionAvailable) {
 						        	var promiseLoadOnline = this.loadOnlineMap(null);
@@ -1595,30 +1644,30 @@ require( [
 						        	WL.application.showMessage(MessageService.createStaticMessage('localMapNotConfigured').getMessage());
 						        }
 							}))
-							
+
 						}));
 					}
 				}));
 			}));
-			
-			
+
+
 		},
-		
+
 		hasOfflineDataToLoadFromTPK: function() {
 			var deferred = new Deferred();
 			var promises = [];
 			promises.push(this.spatialReplicaManager._hasOfflineDataAvaiable());
-			
+
 			all(promises).then(function(){
 				deferred.resolve();
 			}).otherwise(function(error){
 				 deferred.reject();
 			});
-			
+
 			return deferred.promise;
-			
+
 		},
-		
+
 		loadTools: function() {
 			var toolsAlreadyLoaded = this.mapToolsLoaded[this._mapTarget];
 			if (toolsAlreadyLoaded == null) {
@@ -1626,24 +1675,24 @@ require( [
 				this.sketchTool._createFeatureDisplay( this._mapTarget );
 				this.mapToolsLoaded[this._mapTarget] = true;
 			}
-			
+
 		},
-		
+
 		_searchAllChildren: function(node, componentsToChange) {
 			var children = node.children;
 			if (children != null) {
 				dojo.forEach(children, lang.hitch(this, function(child){
 					//Do not change <p> and the detail panel, just the map
-					if (child.tagName != 'P' && child.className.indexOf('MapView_mapdetail_column') == -1 && 
+					if (child.tagName != 'P' && child.className.indexOf('MapView_mapdetail_column') == -1 &&
 							child.className.indexOf('MapView_row_1') == -1) {
 						componentsToChange.push(child);
 						this._searchAllChildren(child, componentsToChange);
 					}
-					
+
 				}));
 			}
 		},
-		
+
 		_searchElementToChange: function(queryStatement, componentsToChange, addParent, showPanel, rootNode) {
 			var key = null;
 			if (addParent == null || addParent == false) {
@@ -1651,19 +1700,19 @@ require( [
 			} else {
 				key = queryStatement+"-parent";
 			}
-			
+
 			if (!showPanel) {
 				this.woDetailStyles = null;
 			}
-			
-			
+
+
 			var elements;
 			if (rootNode == null) {
 				elements = query(queryStatement);
 			} else {
 				elements = query(queryStatement, rootNode);
 			}
-					
+
 			dojo.forEach(elements, lang.hitch(this, function(element, i)
 					{
 						var elementToChange = null;
@@ -1679,65 +1728,65 @@ require( [
 							this.woDetailStyles.height = height;
 							this.woDetailStyles.width = width;
 						}
-						
+
 						componentsToChange.push(elementToChange);
 						this._searchAllChildren(elementToChange, componentsToChange);
-							
+
 					}));
 		},
-		
+
 		/**
 		 * Function to Show the WO Details
 		 */
 		showWODetailsPanel: function() {
 			if (this.showingWODetailPanel == null || this.showingWODetailPanel == false) {
 				this._changeWODetailsPanel(true);
-			}						
+			}
 		},
-		
+
 		/**
 		 * Function to Hide the WO Details
 		 */
 		hideWODetailsPanel: function() {
 			if (this.showingWODetailPanel != null && this.showingWODetailPanel == true) {
-				this._changeWODetailsPanel(false);	
-			}		
+				this._changeWODetailsPanel(false);
+			}
 		},
-		
+
 		_changeWODetailsPanel: function(showPanel) {
 			this.showingWODetailPanel = showPanel;
 			var isPortrait = OrientationManager.isPortrait();
-			
+
 			var display = "";
 			var width  = "100%"
-			
+
 			if (showPanel) {
 				display = "table-cell";
 			} else {
 				display = "none";
 			}
-			
-			var mapViewRow1 = query(".MapView_mapdetail_column");	
+
+			var mapViewRow1 = query(".MapView_mapdetail_column");
 			dojo.forEach(mapViewRow1, function(row1)
 			{
 				domStyle.set(row1, "display", display);
-				
+
 			});
-			
+
 			var mapHandler = window.UI.application["platform.handlers.MapHandler"];
 			mapHandler.mapControl.showMap(mapHandler.useCurrentIndex, this.showingWODetailPanel);
-			
+
 			if (!mapHandler.mapControl.hasWOCoordinates) {
-				var divNoCoordinate = query(".map-error-nocoordinate ");	
+				var divNoCoordinate = query(".map-error-nocoordinate ");
 				dojo.forEach(divNoCoordinate, function(row1)
 				{
 					domStyle.set(row1, "display", display);
-					
+
 				});
 				mapHandler.mapControl._fixMap(mapHandler.mapControl, this.showingWODetailPanel);
 			}
 		},
-		
+
 		loadMapManagerOffline: function() {
 			var deferred = new Deferred();
 			var mapmanagerdata = ModelService.all( 'plussmapmanager', null, null, false );
@@ -1765,33 +1814,33 @@ require( [
 				} else {
 					console.log( "Map Manager found: " , this.mapManager );
 					deferred.resolve(this.mapManager);
-					
+
 				}
 				ModelService.save(mapmanagerset);
 
 			} ) ).otherwise(function(e) {
-				deferred.reject();			
+				deferred.reject();
             });
 			return deferred.promise;
 		},
 
 		//Method to load the Offline Map Manager created on Map Manager app (Maximo Side)
 		loadMapManager : function (forceServerPreferred, callBackFunction, callBackErrorFunction ) {
-			
+
 			if (this.mapManager != null) {
 				this.logEvent("[MobileMaximoSpatial] loadMapManager: Map manager already loaded, just return it" );
 				if (callBackFunction) {
 					callBackFunction( this.mapManager );
 				}
 			} else {
-				
+
 				CommunicationManager.checkConnectivityAvailable().then(lang.hitch(this, function (isConnectionAvailable) {
 			        if (isConnectionAvailable) {
 			        	var currentUserSite = this.userAuthenticationManager.currentUserSite;
 						var mapManagerMeta = ResourceMetaData.getResourceMetadata( "plussmapmanager" );
 						mapManagerMeta.setWhereClause( "spi_spatial:ismobile=1 and spi_spatial:active=1" );
 
-						
+
 						var deleteMapManagerCachePromise = this.maximoSpatialStore.deleteMapManagerCache();
 						deleteMapManagerCachePromise.then( lang.hitch( this, function () {
 							var mapmanagerdata = ModelService.all( 'plussmapmanager', null, null, true );
@@ -1808,7 +1857,7 @@ require( [
 											var remoteId = this.mapManager.remoteid;
 											var maximoAddress = remoteId.substring(0, remoteId.indexOf("/maximo/")) + "/maximo";
 											this.mapManager.maximoAddress = maximoAddress;
-											
+
 										}
 									} ) );
 
@@ -1826,7 +1875,7 @@ require( [
 									if (callBackFunction) {
 										callBackFunction( this.mapManager );
 									}
-									
+
 								}
 								ModelService.save(mapmanagerset);
 
@@ -1840,12 +1889,12 @@ require( [
 						}
 			        }
 				}))
-				
+
 			}
-			
-			
+
+
 		},
-		
+
 		measureUnitToLabel: function(measureUnit) {
 			measureUnit = measureUnit.trim().toUpperCase();
 			var measureLabel = measureUnit;
@@ -1872,7 +1921,7 @@ require( [
 			case "HECTARES":
 				measureLabel = 'ha';
 				break;
-			
+
 			case "METERS":
 				measureLabel = 'm'
 				break;
@@ -1942,10 +1991,10 @@ require( [
 			default:
 				break;
 			}
-			
+
 			return measure;
 		},
-		
+
 		convertAreaMeasures: function(fromMeasure, toMeasure, measure) {
 			if (fromMeasure == toMeasure) {
 				return measure;
@@ -2007,15 +2056,15 @@ require( [
 			default:
 				break;
 			}
-			
+
 			return measure;
 		},
-		
-		
+
+
 		downloadOfflineAreaFromMapManager: function(offlineAreaId) {
 			return this.spatialReplicaManager.downloadOfflineMap(this, offlineAreaId);
 		},
-		
+
 
 	});
 });

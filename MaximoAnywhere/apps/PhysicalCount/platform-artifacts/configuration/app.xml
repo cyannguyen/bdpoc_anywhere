@@ -219,7 +219,7 @@
 		<message defaultMessage="Last updated:" id="lastupdatetext"/>
 		<message defaultMessage="Login failed because the server time could not be loaded. Try again or contact your administrator." id="Error loading clock server."/>
         <message defaultMessage="Download starting" id="downloadStarting"/>
-        <message defaultMessage="If you are actively editding a workorder, press Continue to keep editing. Press Refresh to reload the worklist" id="downloadRefreshList"/>
+        <message defaultMessage="If you are actively editing a workorder, press Continue to keep editing. Press Refresh to reload the worklist" id="downloadRefreshList"/>
 	    <message defaultMessage="Progress information is not available." id="percentNotAvailable"/>
 	    <message defaultMessage="Downloading ({1}%)." id="downloadProgress"/>
         <message defaultMessage="Downloading attachments from {0} {1} of {2}." id="downloadAttachmentProgress"/>

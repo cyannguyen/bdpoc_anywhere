@@ -87,9 +87,16 @@ function(declare, ApplicationHandlerBase, Logger) {
 		
 		showmap : function(mapControl){
 			Logger.trace('[MapHandler] showmap');
+			localStorage.setItem("lastPreviousDialogOrientationPosition", this.isPortraitorLandScape());
+			localStorage.setItem("getStatedMapDeviceOrientationPosition", this.isPortraitorLandScape());
 			this.mapControl = mapControl;
 			mapControl.showMap(this.useCurrentIndex);
 		},
+		
+		isPortraitorLandScape : function() {
+    	  var viewport = dojo.window.getBox();
+    	  return  (viewport.h > viewport.w) ? "P" : "L";
+      	},
 		
 		nextRecord: function(eventContext){
 			if(!eventContext || !this.mapControl){
@@ -104,7 +111,9 @@ function(declare, ApplicationHandlerBase, Logger) {
 			if (i > -1) {
 				i++;
 				if (i < this.mapControl.markerIndexes.length) {
+					this.disableDeviceOrientationChangedValiation(true);
 					resourceObject.setCurrentIndex(this.mapControl.markerIndexes[i]);
+					this.disableDeviceOrientationChangedValiation(false);
 				}
 			}
 		},
@@ -122,7 +131,9 @@ function(declare, ApplicationHandlerBase, Logger) {
 			if (i > -1) {
 				i--;
 				if (i >= 0) {
+					this.disableDeviceOrientationChangedValiation(true);
 					resourceObject.setCurrentIndex(this.mapControl.markerIndexes[i]);
+					this.disableDeviceOrientationChangedValiation(false);
 				}
 			}
 		},
@@ -190,6 +201,23 @@ function(declare, ApplicationHandlerBase, Logger) {
 				}
 			}
 			eventContext.setEnabled(enable);
+		},
+		getOrientationPosition: function(position) {
+			var returnValue = null;
+			var currentValue = position;
+			if(currentValue.toUpperCase() === 'P' || currentValue.toUpperCase() === 'L' || currentValue.indexOf('DisableValidation') === 1) {
+			  returnValue = currentValue;
+			}
+			return returnValue;
+		},
+		disableDeviceOrientationChangedValiation: function(action){
+			var currentLastPreviousDialogOrientationPosition =  this.getOrientationPosition(localStorage.getItem("lastPreviousDialogOrientationPosition"));
+			if (action){
+				currentLastPreviousDialogOrientationPosition = currentLastPreviousDialogOrientationPosition+"DisableValidation";
+			}else {
+				currentLastPreviousDialogOrientationPosition = currentLastPreviousDialogOrientationPosition.charAt(0);
+			}
+			localStorage.setItem("lastPreviousDialogOrientationPosition",currentLastPreviousDialogOrientationPosition);
 		}
 	});
 });

@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "擷取真實簽章",
          "Change Time or Date" : "變更時間或日期",
          "Version 7.6.4.0" : "7.6.4.0 版",
-         "Build number @build@" : "建置號碼 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "建置號碼 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licensed Materials - Property of IBM. ©IBM Corp. 2020. IBM、IBM 標誌和 ibm.com 是 IBM Corp. 在世界許多適用範圍註冊的商標。 其他產品及服務名稱可能是 IBM 或其他公司的商標。 IBM 商標的最新清單位於 Web 上，網址為 www.ibm.com/legal/copytrade.shtml。 此「程式」在「程式」的授權合約條款下授權。 在使用「程式」之前，請仔細閱讀此合約。 透過使用「程式」，您同意這些條款。",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "由 Esri ArcGIS Runtime SDK for Android and iOS 提供 Mapping API。",
          "Screen Information" : "畫面資訊",

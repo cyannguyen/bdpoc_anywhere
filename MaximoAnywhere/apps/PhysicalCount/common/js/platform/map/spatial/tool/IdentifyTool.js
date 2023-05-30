@@ -258,8 +258,11 @@ require( [
 			var mobileMaximoSpatial = this.getMobileMaximoSpatialInstance();
 			var drawingInfo = mobileMaximoSpatial._getFeatureJSONDrawingInfo( feature );
 			var symbol = mobileMaximoSpatial._getSymbolByFeature( feature, drawingInfo );
-			var contentType = symbol.contentType;
-			var imageData = symbol.imageData;
+			var imageData = null;
+			if(symbol.contentType){
+				var contentType = symbol.contentType;
+				imageData = symbol.imageData;
+			}
 	
 			
 			if (imageData != null && imageData != undefined ) {
@@ -283,10 +286,13 @@ require( [
 					symbol = symbol.outline;		
 				} 
 				
-				var color = symbol.color;
+				if(symbol.color){
+					var color = symbol.color;
+					rectSymbol.style.backgroundColor = "rgba(" + color[0] +","+ color[1] + ","+ color[2] + ", 1)";
+				}
+
 				rectSymbol.id = "feature-legend-rectangle-symbol";
 				rectSymbol.style.width = symbol.width + "px";
-				rectSymbol.style.backgroundColor = "rgba(" + color[0] +","+ color[1] + ","+ color[2] + ", 1)";
 				rectSymbol.innerHTML = " ";	
 				featureLegendContainer.appendChild( rectSymbol );
 			}
@@ -582,8 +588,22 @@ require( [
 						}else if ( feature.geometry.paths != null )
 						{	
 							//If geometry.paths is not null, we have a line  
-							var paths = feature.geometry.paths;
-							point = paths[0][0];	
+							var pointxy= [];
+							var pointFeature = feature.geometry.paths;
+							pointFeature.map((feat, indxA, arrayA) => { 
+					  			if(feat.length > 0){
+					    			feat.map((ft, indxB, arrayB) => {
+						      			if(ft.length > 0) {
+						        			pointxy.push(ft);
+						        		}
+						    		});
+								}
+							});
+					
+							var line = new ol.geom.LineString(pointxy);
+							var extent = line.getExtent();
+							var center = ol.extent.getCenter(extent);	
+							point = line.getClosestPoint(center);;	
 										
 						}else if ( feature.geometry.rings != null )
 						{
@@ -657,8 +677,22 @@ require( [
 				
 				}else if ( feature.geometry.paths != null )
 				{	
-					var paths = feature.geometry.paths;
-					point = paths[0][0];
+					var pointxy= [];
+					var pointFeature = feature.geometry.paths;
+					pointFeature.map((feat, indxA, arrayA) => { 
+					  	if(feat.length > 0){
+					    	feat.map((ft, indxB, arrayB) => {
+						      	if(ft.length > 0) {
+						        	pointxy.push(ft);
+						        }
+						    });
+						}
+					});
+					
+					var line = new ol.geom.LineString(pointxy);
+					var extent = line.getExtent();
+					var center = ol.extent.getCenter(extent);	
+					point = line.getClosestPoint(center);
 				    	
 				}else if ( feature.geometry.rings != null ) 
 				{
@@ -721,6 +755,12 @@ require( [
 					}	
 				}));
 				
+				if (layersToIdentify != "") {
+					if (layersToIdentify.endsWith(",")) {
+						layersToIdentify = layersToIdentify.replace(/,\s*$/, "");
+					}
+				}
+				
 				if (layersToIdentify == "") {
 					layersToIdentify = "-1";
 				}
@@ -733,36 +773,6 @@ require( [
 				{
 					urlToRequest = urlToRequest+"&_MAXAUTH="+this.proxyHelper._getMaxAuthHeader();
 				}
-				
-				this.logEvent('urlToRequest ' + urlToRequest);
-				
-				if (this.proxyHelper.isMobileFirstProxyEnabled()) {
-					urlToRequest = this.proxyHelper.removeProxyURL(urlToRequest);
-					var adapterPromise = this.proxyHelper.useAdapterProxy( urlToRequest, mapManager );
-					adapterPromise.then(lang.hitch(this, function(result) {						
-						if (result.status == 200 && result.responseText) {
-							var dataJson = JSON.parse(result.responseText);
-							deferred.resolve(dataJson);	
-						} else {
-							var errorJson = {};
-						  	var msg = MessageService.createResolvedMessage('errorIdentifyLayer', [layer.layerName]);
-							errorJson.error = {details: msg };
-							deferred.resolve(JSON.stringify(errorJson));
-						}
-					}));
-				} else {
-					Logger.timerStart("IdentifyTool - _identifyFeature url " + urlToRequest);
-					$.get( urlToRequest ).done(lang.hitch(this, function( data ) {
-						Logger.timerEnd("IdentifyTool - _identifyFeature url " + urlToRequest);
-						deferred.resolve(data);				
-					})).fail(function(xhr, status, error) {
-					  	var errorJson = {};
-					  	var msg = MessageService.createResolvedMessage('errorIdentifyLayer', [layer.layerName]);
-						errorJson.error = {details: msg };
-						deferred.resolve(JSON.stringify(errorJson));
-				    });
-				}
-				
 				
 				this.logEvent('urlToRequest ' + urlToRequest);
 				

@@ -922,8 +922,9 @@ table.layout td {
 
 table.layout td .hideextra * {
 	white-space: nowrap;
-	/* Loc */
+	/* Loc-In: comment oveflow attribute*/
 	/* overflow: hidden; */
+	/* Loc-Out: comment oveflow attribute*/
 	text-overflow: ellipsis;
 }
 

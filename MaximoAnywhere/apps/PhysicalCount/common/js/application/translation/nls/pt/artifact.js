@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "Capturar assinatura real",
          "Change Time or Date" : "Alterar Hora ou Data",
          "Version 7.6.4.0" : "Versão 7.6.4.0",
-         "Build number @build@" : "Número da construção 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "Número da construção 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licensed Materials - Property of IBM. ©IBM Corp. 2020. IBM, o logotipo IBM e ibm.com são marcas comerciais da IBM Corp., registradas em vários países no mundo todo. Outros nomes de produtos e serviços podem ser marcas comerciais da IBM ou de outras empresas. Uma lista atual de marcas comerciais da IBM está disponível na web em www.ibm.com/legal/copytrade.shtml. Este Programa está licenciado sob os termos do contrato de licença para o Programa. Leia atentamente este contrato antes de usar o Programa. Ao usar o Programa, você concorda com estes termos.",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "API de mapeamento fornecida pelo Esri ArcGIS Runtime SDK para Android e iOS.",
          "Screen Information" : "Informações da Tela",

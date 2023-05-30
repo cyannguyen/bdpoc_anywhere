@@ -429,7 +429,7 @@ function(declare, ContainerControlBase, ContentPane, domConstruct, Stateful, get
 		    var resource = this.resources[searchId];
 
 		    if (resource) {
-			    return resource;
+				return resource;
 		    }
 
 		    return null;
@@ -615,7 +615,7 @@ function(declare, ContainerControlBase, ContentPane, domConstruct, Stateful, get
 		    dlg.okHandler = on(okBtn.domNode, tap, lang.hitch(dlg, function() {
 			    OrientationManager.unregisterOrientationEventListener(this);
 		    	var dialog = this.ui.dialogStack.pop();
-			    this.hide();
+				this.hide();
 			    var stackSize = this.ui.dialogStack.length;
 			    if (stackSize > 0){
 			    	this.ui.dialogStack[stackSize-1].addCover();
@@ -623,10 +623,11 @@ function(declare, ContainerControlBase, ContentPane, domConstruct, Stateful, get
 			    if(callback){
 			    	callback(callbackArgs);
 			    }
-			    dialog.okHandler.remove();
+				if (dialog.okHandler)
+			    	dialog.okHandler.remove();
 			    dialog.okHandler = null;
 			    dialog.destroyRecursive();
-			    domConstruct.destroy(dialog.donNode);
+			    domConstruct.destroy(dialog.domNode);
 			    dialog = null;
 		    }));
 		    
@@ -755,6 +756,9 @@ function(declare, ContainerControlBase, ContentPane, domConstruct, Stateful, get
 		    if(WL.Client.getEnvironment() == WL.Environment.PREVIEW){
 		    	document.title = WL.StaticAppProps['APP_DISPLAY_NAME'] + ' - ' + layoutInfo.layoutSize + ':' +layoutInfo.orientationDescription;		    	
 		    }
+			
+			//IJ34359
+			dojox.mobile.resizeAll();
 	    },
 	    
 	    getLayoutInfo : function(newOrientation){

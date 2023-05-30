@@ -103,7 +103,7 @@ function(LocalStorageCollection, Logger, SHA, lang, Deferred, topic, PlatformCon
 				deferred.resolve("No user ever logged in, no need to change password");
 				return deferred.promise;
 			}
-			var previousLoggedUsersJson = JSON.parse(localStorage.previousLoggedUsers);
+			var previousLoggedUsersJson = (localStorage.previousLoggedUsers && JSON.parse(localStorage.previousLoggedUsers)[username] && JSON.parse(localStorage.previousLoggedUsers)[username] == encrypted)? JSON.parse(localStorage.previousLoggedUsers) : null;
 			// user exists
 			if(!previousLoggedUsersJson[username]) {
 				Logger.trace("Current user have never logged in, no need to change password");
@@ -298,3 +298,4 @@ function(LocalStorageCollection, Logger, SHA, lang, Deferred, topic, PlatformCon
 	return (hasJsonStore) ? wlJsonStoreProvider : localStoreProvider;
 	
 });
+

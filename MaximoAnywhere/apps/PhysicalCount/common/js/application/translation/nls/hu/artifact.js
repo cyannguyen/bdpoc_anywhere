@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "Valós aláírás lementése",
          "Change Time or Date" : "Időpont vagy dátum módosítása",
          "Version 7.6.4.0" : "7.6.4.0 változat",
-         "Build number @build@" : "Összeépítés száma: 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "Összeépítés száma: 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licenc hatálya alá tartozó anyagok - Az IBM tulajdona. ©IBM Corp. 2020. Az IBM, az IBM logó és az ibm.com az IBM Corp. védjegyei a világ számos országában. Más termék- és szolgáltatásnevek az IBM vagy más vállalatok védjegyei lehetnek. Az IBM védjegyeinek aktuális listája a következő címen érhető el az interneten: www.ibm.com/legal/copytrade.shtml. Ez a Program a hozzá tartozó licencszerződés feltételei szerint engedélyköteles. A Program használatba vétele előtt olvassa el figyelmesen ezt a licencszerződést. A Program használatával elfogadja a szerződés feltételeit.",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "A térképkezelési API felületet az Esri ArcGIS Android és iOS futási környezet SDK biztosítja.",
          "Screen Information" : "Képernyő információk",

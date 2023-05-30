@@ -44,7 +44,7 @@ function(declare, CommonHandler, ApplicationHandlerBase, PlatformRuntimeExceptio
             	
             	eventContext.application.showMessage(MessageService.createResolvedMessage('confirmOfflineSimulation'), function(){
 	            	ConnectivityChecker.pseudoOfflineMode(true);
-	            	ConnectivityChecker.handleConnectionsChange({networkType: currentConnectionType});
+	            	ConnectivityChecker.handleConnectionsChange({networkType: window.currentConnectionType}); //IJ18289
 	            	setActionLabel(MessageService.createStaticMessage('disableOfflineMode').getMessage());
 	            	ConnectivityChecker._reportConnectionStatus(false)
 	            	if (disconnectIcon != null) {

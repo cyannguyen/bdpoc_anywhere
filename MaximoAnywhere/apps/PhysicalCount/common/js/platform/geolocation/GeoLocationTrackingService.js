@@ -14,9 +14,8 @@ define("platform/geolocation/GeoLocationTrackingService",
 		["dojo/_base/declare",
 		  "dojo/Deferred",
 		  "dojo/_base/lang",
-		  "platform/logging/Logger",
-		  "platform/geolocation/BackgroundLocationServices"],
-		function(declare, Deferred, lang, Logger, BackgroundLocationServices) {
+		  "platform/logging/Logger"],
+		function(declare, Deferred, lang, Logger) {
 
 		var GeoLocationTrackingService = declare(null,{
 
@@ -31,8 +30,10 @@ define("platform/geolocation/GeoLocationTrackingService",
 			stopGpsTracking: function(){
 			    Logger.log(this._className+" - stopping tracking.");
 			    if(WL.Client.getEnvironment() == WL.Environment.ANDROID){
-			         var backClass = new BackgroundLocationServices();
-			         backClass.stop();
+			         if (window.plugins && window.plugins.backgroundLocationServices) {
+                        		var backClass = window.plugins.backgroundLocationServices; //new BackgroundLocationServices();
+                        		backClass.stop();
+                    		}
 			    } else {
 			        navigator.geolocation.clearWatch(this._watchId);
 			    }
@@ -46,90 +47,88 @@ define("platform/geolocation/GeoLocationTrackingService",
 				startGpsTracking : function(onSuccess, onError, options){
 
 			    if(WL.Client.getEnvironment() == WL.Environment.ANDROID){
-                        var notf = {};
-                        notf.contentTextText = "Tracking GPS";
+                    var notf = {};
+                    notf.contentTextText = "Tracking GPS";
 
-                    // WL.App.setKeepAliveInBackground(true, notf);
+                    //WL.App.setKeepAliveInBackground(true, notf);
 
-                        navigator.geolocation.getCurrentPosition(function() {
-                            Logger.log("Succesfully retreived our GPS position, we can now start our background tracker.");
-                        }, function(error) {
-                            Logger.error(error);
-                        });
+                    var self = this;
 
+                    if (typeof onSuccess != "function" || typeof onError != "function"){
+                                Logger.log(self._className+" - error, callbacks need to be valid functions.");
+                                return;
+                        }
 
-                        var self = this;
+                    self._callbackOnSuccessFunction = onSuccess;
+                    self._callbackOnErrorFunction = onError;
+                    self._callbackOptions = options;
 
-                        if (typeof onSuccess != "function" || typeof onError != "function"){
-                                    Logger.log(self._className+" - error, callbacks need to be valid functions.");
-                                    return;
-                            }
+                    Logger.log(self._className+" - starting tracking.");
 
-                        self._callbackOnSuccessFunction = onSuccess;
-                        self._callbackOnErrorFunction = onError;
-                        self._callbackOptions = options;
+                    var backClass = window.plugins.backgroundLocationServices;//new BackgroundLocationServices();
 
-                        Logger.log(self._className+" - starting tracking.");
-
-                        var backClass = new BackgroundLocationServices();
-
-
+                    if (backClass) {
                         //Congfigure Plugin
                         backClass.configure({
-                             //Both
-                             desiredAccuracy: 0, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
-                             distanceFilter: 1, // (Meters) How far you must move from the last point to trigger a location update
-                             debug: false, // <-- Enable to show visual indications when you receive a background location update
-                             interval: 9000, // (Milliseconds) Requested Interval in between location updates.
-                             useActivityDetection: false, // Uses Activitiy detection to shut off gps when you are still (Greatly enhances Battery Life)
+                                //Both
+                                desiredAccuracy: 0, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
+                                distanceFilter: 1, // (Meters) How far you must move from the last point to trigger a location update
+                                debug: false, // <-- Enable to show visual indications when you receive a background location update
+                                interval: 9000, // (Milliseconds) Requested Interval in between location updates.
+                                useActivityDetection: false, // Uses Activitiy detection to shut off gps when you are still (Greatly enhances Battery Life)
 
-                             //Android Only
-                             notificationTitle: 'Maximo Anywhere Plugin', // customize the title of the notification
-                             notificationText: 'Tracking', //customize the text of the notification
-                             fastestInterval: 5000 // <-- (Milliseconds) Fastest interval your app / server can handle updates
+                                //Android Only
+                                notificationTitle: 'Maximo Anywhere Plugin', // customize the title of the notification
+                                notificationText: 'Tracking', //customize the text of the notification
+                                fastestInterval: 5000 // <-- (Milliseconds) Fastest interval your app / server can handle updates
 
                         });
 
                         //Register a callback for location updates, this is where location objects will be sent in the background
                         backClass.registerForLocationUpdates(function(location) {
-                             Logger.trace("GPS We got an BG Update " + location.latitude + ' : ' +  location.longitude + ' : ' + location.timestamp  );
-                             var position = {};
-                             position.coords = {};
-                             position.coords.latitude = location.latitude;
-                             position.coords.longitude = location.longitude;
-                             position.coords.altitude = location.altitude;
-                             position.coords.accuracy = location.accuracy;
-                             position.coords.altitudeAccuracy  = location.accuracy;
-                             position.coords.heading = location.heading;
-                             position.coords.speed   = location.speed;
-                             position.coords.timestamp = location.timestamp;
-                             self._callbackOnSuccessFunction(position);
+                                Logger.trace("GPS We got an BG Update " + location.latitude + ' : ' +  location.longitude + ' : ' + location.timestamp  );
+                                var position = {};
+                                position.coords = {};
+                                position.coords.latitude = location.latitude;
+                                position.coords.longitude = location.longitude;
+                                position.coords.altitude = location.altitude;
+                                position.coords.accuracy = location.accuracy;
+                                position.coords.altitudeAccuracy  = location.accuracy;
+                                position.coords.heading = location.heading;
+                                position.coords.speed   = location.speed;
+                                position.coords.timestamp = location.timestamp;
+                                self._callbackOnSuccessFunction(position);
 
-                    }, function(err) {
-                         Logger.trace("GPS Error: Didnt get an update");
-                                         //self._callbackOnErrorFunction(err);
-                         });
+                        }, function(err) {
+                            Logger.trace("GPS Error: Didnt get an update");
+                                            //self._callbackOnErrorFunction(err);
+                        });
 
-                    //Register for Activity Updates
-
-                    //Uses the Detected Activies / CoreMotion API to send back an array of activities and their confidence levels
-                    //See here for more information:
-
-                    backClass.registerForActivityUpdates(function(activities) {
-                        Logger.trace("GPS We got an activity update" );
-                    }, function(err) {
-                        Logger.trace("GPS Error: Something went wrong");
-                    });
-
-                    //Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
-
-
-                    backClass.start();
-
-                    backClass.startAggressiveTracking();
-
-
-
+                        //Register for Activity Updates
+    
+                        //Uses the Detected Activies / CoreMotion API to send back an array of activities and their confidence levels
+                        //See here for more information:
+    
+                        backClass.registerForActivityUpdates(function(activities) {
+                            Logger.trace("GPS We got an activity update" );
+                        }, function(err) {
+                            Logger.trace("GPS Error: Something went wrong");
+                        });
+    
+                        //Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
+    
+                        navigator.geolocation.getCurrentPosition(function() {
+                            Logger.log("Succesfully retreived our GPS position, we can now start our background tracker.");
+    
+                            backClass.start();
+    
+                            backClass.startAggressiveTracking();
+                            
+                        }, function(error) {
+                            Logger.error(error);
+                        });
+                        
+                    }
                 } else {
 
                     var self = this;

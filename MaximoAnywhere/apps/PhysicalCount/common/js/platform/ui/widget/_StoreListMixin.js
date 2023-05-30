@@ -156,7 +156,7 @@ function(ModelData, array, declare, domConstruct, StoreListMixin, ListItem, lang
 
 		_pageForward: function(metrics){
 			var resource = this.control.getResource(); 
-			if ((this.endIndex + this.pageSize) > resource.count() && !resource.getMetadata().additionalData &&
+			if ((this.endIndex + this.pageSize) > resource.count() && (!resource.getMetadata().additionalData || (this.endIndex + this.pageSize) < 1000) &&
 					((metrics && (!metrics.isAllDataDownloaded() || metrics.getServerCount() > resource.count())) || resource.hasNextPageOfData())){
 				var self = this;
 				var loadNextPage = function(useLocal) { 
@@ -189,6 +189,11 @@ function(ModelData, array, declare, domConstruct, StoreListMixin, ListItem, lang
 							self.control.ui.showMessage(MessageService.createStaticMessage('listAtLastWhenNextPage').getMessage());
 						}
 					});
+					return;
+				}
+				else if (resource.getMetadata().additionalData && resource.hasNextPageOfData()){
+					this.control.application.showBusy();
+					loadNextPage(true);
 					return;
 				}
 				else if (resource.hasNextPageOfData()) {

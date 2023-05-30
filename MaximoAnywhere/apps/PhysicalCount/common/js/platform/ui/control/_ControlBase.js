@@ -717,7 +717,7 @@ function(Evented, array, declare, lang, on, domAttr, domClass, domStyle, domCons
 	    },
 	    
 	    highlight : function(mark){
-	    	if (this.baseWidget.domNode) {
+	    	if (this.baseWidget.domNode && this.baseWidget.domNode) {
 	    		domClass[mark?'add':'remove'](this.baseWidget.domNode, 'hightlightControl');
 	    	}
 	    },

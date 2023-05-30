@@ -80,6 +80,11 @@ define("platform/comm/_DeviceConnectivityChecker", [
             }
             
         },
+
+        validURL: function(urlString) {
+            var pattern = new RegExp("^(https?://)?(((www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6})|((\\d{1,3}\\.){3}\\d{1,3}))(:\\d{2,4})?(/[-\\w@\\+\\.~#\\?&/=%]*)?$");
+  		    return (pattern.test(urlString) == true)? urlString : "";
+        },  
         
         checkConnectivityAvailable: function (skipServer) {
                 Logger.trace('INFXDC109 CheckConnectivity called');
@@ -87,7 +92,19 @@ define("platform/comm/_DeviceConnectivityChecker", [
                 selfC = this;
                 var deferred = new Deferred();
                 
-                
+                // Added to ensure Anywhere will reconnect to VPN on wake up
+                var maximoUrl = selfC.validURL(localStorage.getItem('maximo_url')) + '/ping';
+                $.ajax({
+                    url : maximoUrl,
+                    type : 'get',
+                    success : function (data) {
+                        Logger.trace('[_DeviceCOnnectivityChecker.checkCOnnectivityAvailable] ping success');
+                    },
+                    error: function(model, response){ 
+                        Logger.trace('[_DeviceCOnnectivityChecker.checkCOnnectivityAvailable] ping error');
+                    }
+                });
+
                 if(pseudoOfflineModeEnabled){
                      selfC._reportConnectionStatus(false);
                      return deferred.resolve(false);
@@ -309,3 +326,4 @@ define("platform/comm/_DeviceConnectivityChecker", [
     };
 
 });
+

@@ -7,9 +7,9 @@
  * (C) COPYRIGHT IBM CORP. 2013,2020 All Rights Reserved.
  * US Government Users Restricted Rights - Use, duplication or
  * disclosure restricted by GSA ADP Schedule Contract with
- * IBM Corp. 
+ * IBM Corp.
  *
- */   
+ */
 
 define("platform/auth/UserAuthenticationManager", [
     "exports",
@@ -37,11 +37,12 @@ define("platform/auth/UserAuthenticationManager", [
     "platform/store/SystemProperties",
     "platform/auth/AdminModeManager",
 	"platform/auth/SecureRequestManager",
-], function(thisModule, lang, Deferred, all, topic, ServerAuthenticationProvider, Logger, MessageService, ConnectionHeartBeat, UserRolesManager, UserManager, userSessionHelper, ModelService, 
-		CurrentTimeProvider, BusyIndicator, AdditionalDataManager, WorklistDataManager, runOrRejectWithError, ConnectivityChecker, StoreProvider,ResourceContext, PersistenceManager, 
-		SystemProperties, AdminModeManager, SecureRequestManager){
-	 
-	
+	"platform/geolocation/GeoLocationTrackingService",
+], function(thisModule, lang, Deferred, all, topic, ServerAuthenticationProvider, Logger, MessageService, ConnectionHeartBeat, UserRolesManager, UserManager, userSessionHelper, ModelService,
+		CurrentTimeProvider, BusyIndicator, AdditionalDataManager, WorklistDataManager, runOrRejectWithError, ConnectivityChecker, StoreProvider,ResourceContext, PersistenceManager,
+		SystemProperties, AdminModeManager, SecureRequestManager, GeoLocationTrackingService){
+
+
 	var currentUser = null;
 	var currentUserSite = null;
 	var password = null;
@@ -50,7 +51,7 @@ define("platform/auth/UserAuthenticationManager", [
 	var cachingUserInfo = false;
 	var previousInvalidSession  = false;
 	var reauthInProgress = false;
-	
+
 	/*
 	 * Causing nls errors, at this point, the message service is not initialized yet:
 	 * ApplicationUIBuilder.js --> LoginHandler.js --> UserAuthenticationManager.js
@@ -64,36 +65,36 @@ define("platform/auth/UserAuthenticationManager", [
 	// TODO research on better solutions, eg, cache the first msg label for the second round, anyways it is not a very big concern.
  	function invalidLoginMsg() {
 		return MessageService.createStaticMessage('Invalid user credentials.').getMessage();
-	} 	
+	}
  	function invalidServerConnection() {
 		return MessageService.createStaticMessage('serverunreachable').getMessage();
-	} 	
+	}
 	function invalidFirstLoginMsg() {
 		return MessageService.createStaticMessage('Unable to authenticate on server for first authentication').getMessage();
-	}  
-	function unableLoginMsg() { 
-		return MessageService.createStaticMessage('Unable to authenticate user on both server and locally').getMessage(); 
 	}
-	function errorLoadingInfoMsg() { 
-		return MessageService.createStaticMessage('Error loading user information.').getMessage(); 
+	function unableLoginMsg() {
+		return MessageService.createStaticMessage('Unable to authenticate user on both server and locally').getMessage();
 	}
-	function errorLoadingServerClockMsg() { 
-		return MessageService.createStaticMessage('Error loading clock server.').getMessage(); 
+	function errorLoadingInfoMsg() {
+		return MessageService.createStaticMessage('Error loading user information.').getMessage();
 	}
-	function passwordExpiredMsg() { 
-		return MessageService.createStaticMessage('Your password has expired, and you are required to change it.').getMessage(); 
+	function errorLoadingServerClockMsg() {
+		return MessageService.createStaticMessage('Error loading clock server.').getMessage();
+	}
+	function passwordExpiredMsg() {
+		return MessageService.createStaticMessage('Your password has expired, and you are required to change it.').getMessage();
 	}
 	function maximoUnavailableMsg(){
-		return MessageService.createStaticMessage('Could not connect to maximo server.').getMessage(); 
+		return MessageService.createStaticMessage('Could not connect to maximo server.').getMessage();
 	}
 	function mfpUnavailableMsg(){
-		return MessageService.createStaticMessage('Could not connect to mobilefirst server').getMessage(); 
+		return MessageService.createStaticMessage('Could not connect to mobilefirst server').getMessage();
 	}
 	function deployAdapterMsg(){
-		return MessageService.createStaticMessage('Adapters not found. Please make sure all adapters are deployed on the mobile first server.').getMessage(); 
+		return MessageService.createStaticMessage('Adapters not found. Please make sure all adapters are deployed on the mobile first server.').getMessage();
 	}
 	function requestTimeoutMsg(){
-		return MessageService.createStaticMessage('Login request timed out. Make sure the server is running and accessible').getMessage(); 
+		return MessageService.createStaticMessage('Login request timed out. Make sure the server is running and accessible').getMessage();
 	}
 
 	function setSessionId(thisObj, newSessionId) {
@@ -106,13 +107,13 @@ define("platform/auth/UserAuthenticationManager", [
 
 	function setPassword(thisObj, newPassword) {
 		password = newPassword;
-		
+
 		//If running from test send the test the password
 		if ('testPasswordCallback' in thisObj){
 			thisObj['testPasswordCallback'](password);
 		}
 	}
-	
+
 	function setUserIdentity(thisObj, newUserIdentity) {
 		userIdentity = newUserIdentity;
 		//If running from test send the test the password
@@ -120,10 +121,10 @@ define("platform/auth/UserAuthenticationManager", [
 			thisObj['testUserIdentityCallback'](userIdentity);
 		}
 	}
-	
-	lang.mixin(thisModule, {	
+
+	lang.mixin(thisModule, {
 		reLoginError : null,
-	
+
 /**@memberOf platform.auth.UserAuthenticationManager */
 		CLAZZ: 'platform.auth.UserAuthenticationManager',
 
@@ -134,7 +135,7 @@ define("platform/auth/UserAuthenticationManager", [
 			connected: null,
 			error:null
 		},
-		
+
 		relogin: function(user, pwd){
 			SecureRequestManager.enableAuthLock();
 			var clazzmethod = Logger.getCallerClazzMethodString(this.CLAZZ, 'relogin');
@@ -174,7 +175,7 @@ define("platform/auth/UserAuthenticationManager", [
 								self.authState.authenticatedLocally = false;
 								self._handleAuthenticationError(error, true);
 								deferred.reject(error);
-							});						
+							});
 						}
 						else{
 							self._cacheUserInfo(deferred);
@@ -209,12 +210,15 @@ define("platform/auth/UserAuthenticationManager", [
 
 			return deferred.promise;
 		},
-		
+
 		login: function(user, pwd, timeout){
 			timeout = 5000;
-			this.reLoginError = null;			
+			this.reLoginError = null;
 			var deferred = new Deferred();
 			var self = this;
+			if (pwd.indexOf("ssouser") > -1) {
+				setSessionId(this, localStorage.getItem("ltpaToken2"));
+			}
 			if (user && pwd) {
 				currentUser = user;
 				password = pwd;
@@ -260,7 +264,7 @@ define("platform/auth/UserAuthenticationManager", [
 							self.authState.authenticated = false;
 							self.authState.server_auth = error;
 							self.authState.error = error;
-							
+
 							//Only if its a timeout error, do local authentication
 							if(error.error === 'REQUEST TIMEOUT'){
 								self.authState.connected = false;
@@ -285,11 +289,11 @@ define("platform/auth/UserAuthenticationManager", [
 								}
 								else{
 									deferred.reject(self.authState);
-								}							
+								}
 							}
 
 						});
-					
+
 					}else{
 						self.authState.connected = false;
 						self.authState.server_auth = {authenticated : false};
@@ -302,7 +306,7 @@ define("platform/auth/UserAuthenticationManager", [
 							//Local failed. Show login page and login failure message
 						});
 					}
-				
+
 				}));
 			} else {
 				dfd.reject(invalidLoginMsg());
@@ -318,7 +322,7 @@ define("platform/auth/UserAuthenticationManager", [
 		 */
 		_serverAuthentication: function(user, pwd, timeout) {
 			var clazzmethod = Logger.getCallerClazzMethodString(this.CLAZZ, '_realmAuthentication');
-			this.reLoginError = null;					
+			this.reLoginError = null;
 			Logger.trace('[LOGIN] REALM AUTHENTICATION FOR USER: ' + user, null, this.CLAZZ);
 			var self = this;
 			//need to skip the server check in case there's an authenticating proxy
@@ -339,9 +343,15 @@ define("platform/auth/UserAuthenticationManager", [
 				}
 			}
 
-			WL.Client.login(options, callbacks);
-			
-			return dfd.promise; 
+			if (window.WkWebView && window.WkWebView.flushWKWebview) {
+				window.WkWebView.flushWKWebview().then ( function() { 
+					WL.Client.login(options, callbacks);
+				});
+			} else {
+				WL.Client.login(options, callbacks);	
+			}
+
+			return dfd.promise;
 			//return ServerAuthenticationProvider.login(user, pwd)
 
 		},
@@ -354,7 +364,7 @@ define("platform/auth/UserAuthenticationManager", [
 			if (user && pwd) {
 				// collect the credentials to handle challenges
 				ServerAuthenticationProvider.setCredentials(user, pwd);
-				
+
 				var credentials = {username: user, password: pwd};
 				credentials.authenticated = (this.authState.server_auth && this.authState.server_auth.authenticated);
 				var response = {}
@@ -364,14 +374,15 @@ define("platform/auth/UserAuthenticationManager", [
 					response.response = result;
 					self._cacheUserInfo(dfd);
 					//dfd.resolve(response);
-					
+					ConnectionHeartBeat.initialize();
+
 				}).otherwise(function(result){
 					self.authState.authenticatedLocally = false;
 					response.authenticated = false;
 					response.error = result;
 					response.response = result;
 					dfd.reject(response);
-	
+
 				});
 			} else {
 				Logger.trace('[LOGIN] Either Username or Password or both are empty, please re-try with required credentials', null, clazzmethod);
@@ -379,12 +390,12 @@ define("platform/auth/UserAuthenticationManager", [
 			}
 
 			return dfd.promise;
-			
+
 		},
-			
+
 		noSessionChangePassword	: function(username, currentpassword, newpassword, confirmnewpassword, oslcMaxUserURL){
 			var deferred = new Deferred();
-			this.reLoginError = null;			
+			this.reLoginError = null;
 			var self = this;
 			ConnectivityChecker.checkConnectivityAvailable().
 			then(lang.hitch(this, function(isConnectionAvailable){
@@ -409,7 +420,7 @@ define("platform/auth/UserAuthenticationManager", [
 									 "url": oslcMaxUserURL}]
 						};
 					}
-		
+
 					WL.Client.invokeProcedure(invocationData, {
 						onSuccess: lang.hitch(this, function(response) {
 							setPassword(this, newpassword);
@@ -427,8 +438,20 @@ define("platform/auth/UserAuthenticationManager", [
 							deferred.reject(MessageService.createStaticMessage('Cannot change password offline.').getMessage());
 						}),
 						onFailure: lang.hitch(this, function(response) {
-							//TODO change to show error message
-							deferred.reject(MessageService.createStaticMessage('Password change failed.').getMessage());
+							//IJ26394
+							var message;
+							try{
+								message = response.invocationResult["oslc:Error"]["oslc:message"];
+								var index = message.indexOf(' - ')
+								if (index >= 0) {
+									message = message.substr(index + 3)
+								}
+							}
+							catch(error){
+								message = MessageService.createStaticMessage('Password change failed.').getMessage();
+							}
+							deferred.reject(message);
+							//deferred.reject(MessageService.createStaticMessage('Password change failed.').getMessage());
 						})
 					});
 				}else{
@@ -437,13 +460,13 @@ define("platform/auth/UserAuthenticationManager", [
 			}));
 			return deferred.promise;
 		},
-		
+
 		changePassword: function(currentpassword, newpassword, confirmnewpassword){
 			var clazzmethod = Logger.getCallerClazzMethodString(this.CLAZZ, 'changePassword');
 			var deferred = new Deferred();
 			var self = this;
-			this.reLoginError = null;			
-			var oslcUrl = SystemProperties.getProperty('si.auth.oslcUrl');		
+			this.reLoginError = null;
+			var oslcUrl = SystemProperties.getProperty('si.auth.oslcUrl');
 			var authType = SystemProperties.getProperty('si.auth.type');
 			// before anything else, do a connectivity check
 			ConnectivityChecker.checkConnectivityAvailable().
@@ -453,19 +476,19 @@ define("platform/auth/UserAuthenticationManager", [
 						deferred.reject(MessageService.createStaticMessage('Password change failed.').getMessage());
 						return;
 					}
-					
+
 					// then do change password
 					var resource = ResourceContext.getResourceMetadata("userInfo");
 					var queryBase = Object.keys(resource.queryBases)[0];
-					
+
 					ModelService.all("userInfo", queryBase).then(function(userInfoSet){
 						var invocationData;
 						Logger.trace('[LOGIN] si.auth.type: ' + authType, null, clazzmethod);
 						if(authType == 'tririga'){
-						
+
 								invocationData= {
 									adapter:	'OSLCGenericAdapter',
-									procedure:	'changePassword',									
+									procedure:	'changePassword',
 									parameters: [{payload: {"spi:Password":newpassword},url:oslcUrl}]
 
 										};
@@ -473,9 +496,9 @@ define("platform/auth/UserAuthenticationManager", [
 						else{
 							if (oslcUrl==null)
 								oslcUrl = "http://dummyhost:000/maximo/oslc/os/oslcmaxuser/";
-							
+
 							invocationData= {
-									procedure:	'changePassword',									
+									procedure:	'changePassword',
 									parameters: [{payload: {"spi:passwordinput":newpassword, "spi:passwordcheck":confirmnewpassword},url:oslcUrl+userInfoSet.getRecordAt(0).maxuserid}]
 							};
 						}
@@ -501,22 +524,22 @@ define("platform/auth/UserAuthenticationManager", [
 								deferred.reject(MessageService.createStaticMessage(message).getMessage());
 							})
 						});
-						
+
 					});
-					
+
 				}else{
 					deferred.reject(MessageService.createStaticMessage('Cannot change password offline.').getMessage());
 				}
 			}));
-			
-			
+
+
 			return deferred.promise;
 		},
 
 		changeStoredPassword: function(oldpassword){
 			var deferred = new Deferred();
 			var storageDeferred = new Deferred();
-			
+
 			//change the password in JSONStore (either the encryption itself or the encrypted pw)
 			var currentPassword = password;
 			setPassword(this, oldpassword);
@@ -539,10 +562,10 @@ define("platform/auth/UserAuthenticationManager", [
 			.otherwise(function(err){
 				deferred.reject(err);
 			});
-			
+
 			return deferred.promise;
 		},
-		
+
 		resetDataStore: function(){
 			StoreProvider.reset().then(lang.hitch(this, function(){
 				this.logout();
@@ -553,13 +576,13 @@ define("platform/auth/UserAuthenticationManager", [
 			var userData = userInfoSet.getCurrentRecord();
 			var groups = userData.getLoadedModelDataSetOrNull('groupList');
 			var deferreds = [];
-			
+
 			if(groups)
-			{					
+			{
 				deferreds.push(this._loadDataToUserRolesManager(groups));
 			}
 			deferreds.push(this._loadDataToUserManager(userData));
-							
+
 			all(deferreds).
 			then(function() {
 				cachingUserInfo = false;
@@ -570,50 +593,50 @@ define("platform/auth/UserAuthenticationManager", [
 				deferred.reject();
 			});
 		},
-		
-		
-		
+
+
+
 		_handleServerAuthenticationFailure: function(user, pwd, result, isRelogin, deferred) {
 			if (this._isServerLoginFailure(result)){
 				Logger.trace('[LOGIN] Invalid server credentials for user ' + user, null, this.CLAZZ);
 				deferred.reject( invalidLoginMsg() );
-				
+
 			} else if (isRelogin){
 				//MM improve memory utilization remove json.stringify
 				//Logger.log('Failed to reauthenticate user ' + user + ': ' + JSON.stringify(result));
 				deferred.resolve();
-				
+
 			} else {
 				Logger.trace('[LOGIN] Unable to authenticate user ' + user + ' on server', null, this.CLAZZ);
 				//this._localAuthentication(user, pwd, deferred);
 				deferred.reject( invalidFirstLoginMsg() );
 			}
 		},
-		
+
 		_handleAuthenticationError: function(response, isRelogin, promise){
 			if(response){
 				Logger.traceJSON("[INFXAM132] _handleAuthenticationError ", response);
 			}
-			
+
 			if (response && response.oslcError && response.oslcError ==  'null oslcError'){
 				Logger.trace('[LOGIN] Sending oslcServerDown ' + response, null, this.CLAZZ);
 				//this._oslcServerDown();
-				
+
 				if (!isRelogin){
 					this._oslcServerDown();
 				}
 				else{
 					ConnectivityChecker.noOSLCConnection();
 				}
-				
+
 				return {errorCode : 'oslcServerDown', errorMsg : 'oslcServerDown'};
 			}
-			
+
 			var loginErrorMessage = invalidLoginMsg();
 			if (this.authState.authenticatedLocally){
 		    	BusyIndicator.ignoreTimeout = false;
 			}
-			
+
 			if (response && response == "lostconnection"){
 				//In case of lost connectiion, just error the queued requests and keep sessionid.
 				Logger.trace('[UserAuthenticationManager._handleAuthenticationError] received lostconnect when authenticating.', null, this.CLAZZ);
@@ -628,7 +651,7 @@ define("platform/auth/UserAuthenticationManager", [
 				error = response;
 			}
 			errorObject['error'] = error;
-			
+
 			if(this._isServerLoginFailure(response) || !isRelogin){
 				Logger.trace('[UserAuthenticationManager._handleAuthenticationError] publishing reAuthError.');
 				topic.publish('reAuthError', errorObject);
@@ -639,13 +662,13 @@ define("platform/auth/UserAuthenticationManager", [
 				return {'error' : error};
 			}
 		},
-		
-		
-		
+
+
+
 		_retrieveUserAccessData: function(deferred){
 			this._cacheUserInfo(deferred);
 		},
-		
+
 		_isServerLoginFailure: function(result){
 			if (result.errorCode == 'AUTHENTICATION REQUIRED'){
 				return true;
@@ -665,26 +688,26 @@ define("platform/auth/UserAuthenticationManager", [
 				else if (result['responseJSON']){
 					errorResult = result['responseJSON'];
 				}
-				
+
 				if (errorResult != null){
 					statusCode = errorResult['statusCode'] ? errorResult['statusCode'] : null;
 					 if (errorResult.oslcError){
 							statusCode = errorResult.oslcError;
-					 } 
+					 }
 					 else if (errorResult['oslc:Error']){
 						 statusCode = errorResult['oslc:Error']['oslc:statusCode'];
 					 }
-					 else if (errorResult['errors'] && 
+					 else if (errorResult['errors'] &&
 						lang.isArray(errorResult['errors']) &&
 						errorResult['errors'].length > 0){
-					
+
 						 statusCode = errorResult['errors'][0]["oslc:statusCode"];
 					 }
 				}
 			}
-			return (statusCode && (statusCode == '401' || statusCode == '403' || statusCode == '302' || statusCode == '301')); //401: Invalid login; 403: password expired; 302: found; 301: moved	
+			return (statusCode && (statusCode == '401' || statusCode == '403' || statusCode == '302' || statusCode == '301')); //401: Invalid login; 403: password expired; 302: found; 301: moved
 		},
-		
+
 		_initializeLocalStorage: function(force){
 			Logger.trace('[LOGIN] Initializing local storage [user: ' + currentUser + ']', null, this.CLAZZ);
 			var self = this;
@@ -693,12 +716,12 @@ define("platform/auth/UserAuthenticationManager", [
 				// heartbeat rely on local storage to be initialized
 				self.authState.authenticatedLocally = true;
 				return ConnectionHeartBeat.initialize()
-				
+
 			}).otherwise(function(){
 				self.authState.authenticatedLocally = false;
 			});
 		},
-		
+
 		_adapterLogout: function(){
 			var clazzmethod = Logger.getCallerClazzMethodString(this.CLAZZ, '_adapterLogout');
 			Logger.timerStart("UserAuthenticationManager - _adapterLogout");
@@ -712,7 +735,7 @@ define("platform/auth/UserAuthenticationManager", [
 					procedure:	'logout',
 					parameters: []
 				};
-							
+
 				WL.Client.invokeProcedure(invocationData, {
 					onSuccess: function(response){
 						Logger.trace('[LOGOUT] User ' + currentUser + ' successfully logged out from server', null, clazzmethod);
@@ -720,24 +743,24 @@ define("platform/auth/UserAuthenticationManager", [
 						Logger.timerEnd("UserAuthenticationManager - _adapterLogout");
 					},
 					onFailure: function (err) {
-						// MM improve memory utilization remove json.stringify object 
+						// MM improve memory utilization remove json.stringify object
 						//Logger.trace('Unable to logout user ' + currentUser + ' from server: ' + JSON.stringify(err));
 						deferred.reject(err);
 						Logger.timerEnd("UserAuthenticationManager - _adapterLogout");
 					}
 				});
-				
-				return deferred.promise;				
+
+				return deferred.promise;
 			});
 		},
-		
+
 		_realmLogout: function() {
 			Logger.timerStart("UserAuthenticationManager - _realmLogout");
 			Logger.trace("[INFXUAM667] Entering realmLogout");
 			Logger.trace('[LOGOUT] Logging out user ' + currentUser + ' from server (realm)', null, this.CLAZZ);
 			return ServerAuthenticationProvider.logout();
 		},
-		
+
 		_cleanUp: function() {
 			currentUser = null;
 			setPassword(this, null);
@@ -750,7 +773,7 @@ define("platform/auth/UserAuthenticationManager", [
 				};
 			Logger.trace('User successfully logged out');
 		},
-		
+
 		logout: function(){
 			Logger.timerStart("UserAuthenticationManager - logout");
 			return this._stopDownloadsInProgress().
@@ -759,7 +782,7 @@ define("platform/auth/UserAuthenticationManager", [
 
 		_doLogout: function() {
 			var self = this;
-						
+
 			return this._realmLogout().always(function() {
 				Logger.trace('Closing local storage for user ' + currentUser);
 				return PersistenceManager.closeAllStores().
@@ -768,28 +791,28 @@ define("platform/auth/UserAuthenticationManager", [
 						Logger.timerEnd("UserAuthenticationManager - logout");
 					});
 				}
-			);															
+			);
 		},
-		
+
 		_stopDownloadsInProgress: function(){
 			WorklistDataManager.cancelLastWorklistDataDownloadRequest();
 			AdditionalDataManager.cancelLastAdditionalDataDownloadRequest();
-			
+
 			var worklistPromise = WorklistDataManager._overallProcessing.promise;
 			var additionalDataPromise = AdditionalDataManager._overallProcessing;
-			
+
 			//Need to chain instead of use all() because when the first promise
 			//gets canceled, all() won't wait for the other before canceling itself
 			return worklistPromise.always(function(){
 				return additionalDataPromise;
-			});			            
+			});
 		},
-		
+
 		_appendLangCodeParameter: function(invocationData) {
 			var langcode = (WL && WL.App && WL.App.getDeviceLocale() || 'en-US');
 			invocationData.parameters[0]['langcode'] = langcode;
 		},
-		
+
 		invokeAdapterSecurely: function(invocationData, preventReLogin){
 			//invocationData.parameters[0].url = invocationData.parameters[0].url + "&ignorecollectionref=1";
 			var clazzmethod = Logger.getCallerClazzMethodString(this.CLAZZ, 'invokeAdapterSecurely');
@@ -797,11 +820,17 @@ define("platform/auth/UserAuthenticationManager", [
 			var self = this;
 
 			var env = WL.Client.getEnvironment();
-			
+
 			var isLoggedIn = WL.Client.getMaximoAuthKey();
-			if (!preventReLogin &&  !isLoggedIn && currentUser && password && !SecureRequestManager.isAuthLocked()){
+			if (!preventReLogin && currentUser && password && SecureRequestManager.determineIfIdleTimeHasElapsed(invocationData)){
 				//The user never logged into the server so authenticate
 				Logger.trace('Attempting to authenticate user with server. ', clazzmethod);
+				return this.relogin().then(function(){
+					Logger.trace('User sucessfully authenticated with server, sending request. ', clazzmethod);
+					return self.invokeAdapterSecurely(invocationData, true);
+				});
+			} else if (isLoggedIn == null && currentUser && password && !SecureRequestManager.determineIfIdleTimeHasElapsed(invocationData)) {
+				Logger.trace('Attempting to authenticate user with server - after App on device was Offline ', clazzmethod);
 				return this.relogin().then(function(){
 					Logger.trace('User sucessfully authenticated with server, sending request. ', clazzmethod);
 					return self.invokeAdapterSecurely(invocationData, true);
@@ -811,19 +840,22 @@ define("platform/auth/UserAuthenticationManager", [
 			if (currentUser == null){
 				deferred.reject('User not logged in');
 				return deferred.promise;
-			}			
+			}
 
 			this._appendLangCodeParameter(invocationData);
 
 			var options = {
 				onSuccess: lang.hitch(self, function(result){
-					
+
 					/* LTPA token expiration case (APAR IJ00728)
 					 * The LTPA token has been expired, however MF send us a HTTP 200, making 'onSuccess' callback. This will cause SYNC problems
 					 * and the changes will be lost. So we need to monitor the responseJSON or invocationResult to check 'statusCode' to ensure
 					 * that we aren't receiving HTTP 401 hidden in the response. For these cases we must re-authenticate and re-send pending requests.
 					 */
-					if(result && self._isServerLoginFailure(result)){ 
+
+
+					if(result && (self._isServerLoginFailure(result) || 
+						(result.invocationResult && result.invocationResult.url && (result.invocationResult.url.indexOf('webclient/login/login.jsp') > -1 || result.invocationResult.url.indexOf('ui/maximo.jsp') > -1)))){  
 						Logger.traceJSON('[LOGIN] HTTP Authentication error: ', result, clazzmethod);
 						self.relogin().then(function(){
 							if(SecureRequestManager.hasPendingRequest()){
@@ -835,23 +867,46 @@ define("platform/auth/UserAuthenticationManager", [
 							deferred.reject(error);
 						});
 					}
+					//Custom SSO Logout code when Azure Gateway & Websphere Token Timeouts are not synced
+					/* else if(result.invocationResult && 
+						result.invocationResult.redirected && 
+						result.invocationResult.status == 200 && 
+						result.invocationResult.url.indexOf('login.microsoftonline.com') > -1) {
+						try {
+							if(WL.Client.getEnvironment() == WL.Environment.ANDROID) {
+								// disable GPS tracking service
+								var gpsWatchObject = new GeoLocationTrackingService();
+								gpsWatchObject.stopGpsTracking();
+							}
+						}
+						catch(error) {
+							Logger.error('Logout: failed to stop GPS tracking service!');
+							console.log(error);
+						}
+						// do logout
+						self.logout().
+						always(function () {
+							// app reload
+							location.reload();
+						});
+					} */
 					else {
-						// MM improve memory utilization remove json.stringify object 
+						// MM improve memory utilization remove json.stringify object
 						//Logger.trace('UserAuthenticationManager.invokeAdapterSecurely: onSuccess ' + JSON.stringify(result));
 						/* APAR IV67241
-						 * LDAP: sometimes the authentication process doesn't get all 
-						 * cookies, then we need to monitor set-cookie in the response 
+						 * LDAP: sometimes the authentication process doesn't get all
+						 * cookies, then we need to monitor set-cookie in the response
 						 * to avoid open multiple sessions in the backend.
 						 */
 						deferred.resolve(result);
 					}
 				}),
 				onFailure: function(result){
-					// MM improve memory utilization remove json.stringify object 
+					// MM improve memory utilization remove json.stringify object
 					Logger.trace("[UserAuthenticationManager] onFailure INFXAM130");
 					if(result)
 						Logger.traceJSON('result', result);
-					
+
 					if (result && !reauthInProgress && self._isServerLoginFailure(result)){
 						reauthInProgress = true;
 						if (result.errorCode == 'AUTHENTICATION REQUIRED' ){
@@ -863,7 +918,7 @@ define("platform/auth/UserAuthenticationManager", [
 								}
 							}).otherwise(function(error){
 								deferred.reject(error);
-							});			
+							});
 							return;
 						}
 						if (result.invocationResult){
@@ -880,7 +935,7 @@ define("platform/auth/UserAuthenticationManager", [
 										}
 									}).otherwise(function(error){
 										deferred.reject(error);
-									});			
+									});
 									return;
 								}
 								var errorResponse = {};
@@ -907,28 +962,28 @@ define("platform/auth/UserAuthenticationManager", [
 					deferred.reject(result);
 				}
 			};
-			
+
 			if (invocationData.timeout){
 				options.timeout = invocationData.timeout;
 				delete invocationData.timeout;
 			} else {
 				options.timeout = SystemProperties.getConnectivityTimeout();
 			}
-			
-			// MM improve memory utilization remove json.stringify object 
+
+			// MM improve memory utilization remove json.stringify object
 			//Logger.trace('Invoking adapter  with these parameters: ' + JSON.stringify(invocationData));
 			try{
 				Logger.trace("INFXUAM604 REQUEST:" +  JSON.stringify(invocationData));
 			}catch(e){}
-			
+
 			return SecureRequestManager.callAdaptor(invocationData, options, deferred);
 		},
-		
+
 		_oslcServerDown: function(){
 			Logger.trace("INFAM135");
 			ConnectivityChecker.noOSLCConnection();
 		},
-		
+
 		_getCurrentUser: function(){
 			return currentUser;
 		},
@@ -942,8 +997,8 @@ define("platform/auth/UserAuthenticationManager", [
 				deferred.resolve();
 			}).otherwise(function(error){
 				deferred.reject(error);
-			});			
-			return deferred.promise; 
+			});
+			return deferred.promise;
 		},
 		_loadDataToUserRolesManager: function(userRolesSet){
 			UserRolesManager.setCurrentUser(currentUser);
@@ -955,15 +1010,15 @@ define("platform/auth/UserAuthenticationManager", [
 			}
 			UserRolesManager.addRolesToCurrentUser(roles);
 		},
-		
+
 		_loadDataToUserManager: function(userInfoObj){
 			UserManager.addInfoToCurrentUser(userInfoObj);
 		},
-		
+
 		isCachingUserInfo: function(){
 			return cachingUserInfo;
 		},
-		
+
 		_cacheUserInfo: function(deferred){
 			if (cachingUserInfo){
 				deferred.resolve();
@@ -972,27 +1027,27 @@ define("platform/auth/UserAuthenticationManager", [
 				var self = this;
 				var resource = ResourceContext.getResourceMetadata("userInfo");
 				var queryBase = Object.keys(resource.queryBases)[0];
-				
+
 				cachingUserInfo = true;
 				//All applications need a userinfo resource defined, also resource cannot be defined as a system table or additional data.
 				ModelService.allWithComplexAttributes("userInfo", queryBase, ['groupList']).then(function(userInfoSet){
 					 Logger.trace("[UserAuthenticationManager] _cacheUserInfo.ModelService call INFXAM125");
 					//store the timeout value when downloading user info to reset in case od anywherepropval fail
 					var lastTimeout = null;//SystemProperties.getLastTimeoutMoment();
-								
+
 					var propDeferred = new Deferred();
-					
+
 					self._getServerTime();
 					self._setUpUserData(userInfoSet, propDeferred);
-					
+
 					self.currentUserSite = userInfoSet.getCurrentRecord().defsite;
-					
+
 					//retrive admin app data and update system properties, resources and resources value based on retrieved data
 					propDeferred.promise.then(function(result){
 						//only execute admin steops if si.adminmode = true at worklight.properties
 						Logger.trace("[UserAuthenticationManager] _cacheUserInfo.propDeferred.promise.then call INFXAM126");
 
-						/*TO DO: uncoment this code after implementation of properties load*/ 
+						/*TO DO: uncoment this code after implementation of properties load*/
 						//if(!SystemProperties.getProperty('si.adminmode') || SystemProperties.getProperty('si.adminmode') == "false"){
 						//	deferred.resolve();
 						//}else{
@@ -1024,10 +1079,10 @@ define("platform/auth/UserAuthenticationManager", [
 						cachingUserInfo = false;
 						deferred.reject(errorLoadingInfoMsg());
 					}
-				});	
+				});
 			}
-			
-		},		
+
+		},
 		_getServerTime: function(){
 			var deferred = new Deferred();
 			//TODO Implement the replacement of getServerDate
@@ -1035,17 +1090,17 @@ define("platform/auth/UserAuthenticationManager", [
 			var self = this;
 			//Need to define how to get the adapter
 			var url = WL.StaticAppProps.WORKLIGHT_BASE_URL;
-			
+
 			var invocationDataClock = {
 				procedure:	'getServerDate',
 				parameters: [{"url": url}]
 			};
-			
+
 			WL.Client.invokeProcedure(invocationDataClock, {
 				onSuccess: lang.hitch(this, function(response) {
 					var requestDuration = response.invocationResult.requestDuration;
 					var serverDate = response.invocationResult['spi:currentDate'];
-	
+
 					Logger.trace('Server date was successfully retrieved from adapter::'+serverDate, null, clazzmethod);
 					Logger.trace('UserAuthenticationManager._getServerTime: requestDuration = '+ requestDuration, null, clazzmethod);
 					//Invoke CurrentTimeProvider
@@ -1053,7 +1108,7 @@ define("platform/auth/UserAuthenticationManager", [
 					CurrentTimeProvider.setTimeAdjustment('',0,requestDuration,0,serverDate);
 
 					deferred.resolve(serverDate);
-					
+
 				}),
 				onFailure: lang.hitch(this, function(result) {
 					try{
@@ -1061,8 +1116,8 @@ define("platform/auth/UserAuthenticationManager", [
 						Logger.error('Could not retrieve server date from Adapter::' + errors, null, clazzmethod);
 					} finally {
 						deferred.reject(errorLoadingServerClockMsg());
-					}					
-				})		
+					}
+				})
 			});
 			return deferred.promise;
 		},
@@ -1079,7 +1134,7 @@ define("platform/auth/UserAuthenticationManager", [
 		____setPassLocalAuth: function(fakePassLocalAuth){
 			var passLocalAuth = fakePassLocalAuth;
 		}
-		
+
 	});
-	
+
 });

@@ -275,7 +275,7 @@ define("platform/ui/control/Map",
                 return containerSize;
 			},
 			
-			_calculateContainerSize : function() {
+			_calculateContainerSize : function(showPanel ) {
 				var headerHeight = 0;
 				var screenHeight = dojo.window.getBox().h;
 				var screenWidth = dojo.window.getBox().w;
@@ -296,11 +296,19 @@ define("platform/ui/control/Map",
 				// portrait
 				if(screenHeight > screenWidth) {
 					this.portraitContainerSize = this._calculatePortraitContainerSize(headerHeight, this.mapOptionsHeight, mapViewGeometry.h, screenHeight, screenWidth);
-					this.landscapeContainerSize = {'h': (screenWidth - headerHeight), 'w' : (screenHeight / 2), 't' : headerHeight, 'l' : 0};
+					var screenHeightCalc = screenHeight;
+					if (typeof showPanel == 'undefined' || showPanel){
+						screenHeightCalc = screenHeight / 2;
+					}
+					this.landscapeContainerSize = {'h': (screenWidth - headerHeight), 'w' : screenHeightCalc, 't' : headerHeight, 'l' : 0};
                 }
                 else {
                 	this.portraitContainerSize = this._calculatePortraitContainerSize(headerHeight, this.mapOptionsHeight, mapViewGeometry.h, screenWidth, screenHeight);
-                	this.landscapeContainerSize = {'h': (screenHeight - headerHeight), 'w' : (screenWidth / 2), 't' : headerHeight, 'l' : 0};
+                	var screenWidthCalc = screenWidth;
+                	if (typeof showPanel == 'undefined' || showPanel ){
+						screenWidthCalc = screenWidth / 2;
+					}
+                	this.landscapeContainerSize = {'h': (screenHeight - headerHeight), 'w' : screenWidthCalc, 't' : headerHeight, 'l' : 0};
                 }
 			},
 			
@@ -477,7 +485,11 @@ define("platform/ui/control/Map",
 					// replacing the resource reference to the allCached
 					var resource = set;
 					// adding the allCached resource to the global context
-					set.setCurrentIndexByRecord(that.getCurrentRecord());
+					let currentRecord = that.getCurrentRecord();
+					if (currentRecord != null){
+						set.setCurrentIndexByRecord(currentRecord);
+					}
+					//set.setCurrentIndexByRecord(that.getCurrentRecord());
 					that.application.addResource(set);
 					// replacing the resource on both the local context
 					// causes several problems to the view bindings
@@ -539,11 +551,22 @@ define("platform/ui/control/Map",
 						});						
 					}
 					else{
-						that.platformMapMarkerInfo.set('currentMarker', "");
-						that.abstractMap.removeAllLayers();
+						//that.platformMapMarkerInfo.set('currentMarker', "");
+						that.abstractMap.removeAllLayers(checkTokenMXSpatial).always(function() {
+							that.abstractMap.addLayer(null, that.mainLayerId, that.getResource().getCurrentIndex()).then (function(){
+								
+							}).otherwise(function(error) {
+								that._showMapDetailError(error, showWOPanel);
+								//show gps point even when we do not have any markers on screen
+								MapGeoLocation.getInstance().sendGeoLocation(that.abstractMap);
+								
+							}); 
+							
+						 });
+						
 					}
 				};
-				if(metrics.isAllDataDownloaded()){
+				if(metrics =! null  && metrics.isAllDataDownloaded()){
 					// as per customer request using ModelService.allCached instead of this.getResource
 					// so the app shows all the markers despite of the page being showed on the workorder list
 					ModelService.allCached(this.getResource().name, this.getResource().getQueryBase(), 1000).then(setupResource);
@@ -886,11 +909,29 @@ define("platform/ui/control/Map",
 	            var col_map = currentTable.querySelector(".MapView_map_column");
 	            row.appendChild(col_map);
 	            
+	            var headerHeight = 0;
+	            var screenHeight = dojo.window.getBox().h;
+				var screenWidth = dojo.window.getBox().w;
+	            
+	            
+				if (this.viewControl.header) {
+					var headerGeometry = domGeometry.getMarginBox(this.viewControl.header.domNode, false);
+                    var ios7bar = dojo.byId('wl_ios7bar');
+                    if (ios7bar) {
+                        var ios7barSize = domStyle.get(ios7bar, "height");
+                        headerHeight = headerGeometry.h + ios7barSize;
+                    }
+                    else {
+                    	headerHeight = headerGeometry.h;
+                    }
+				}
+				
+	            
 	            //fix size problem
-	            if (showWOPanel == null || showWOPanel == true) {
+	            if (showWOPanel == null || showWOPanel == true || typeof showWOPanel === 'undefined' ) {
 	            	col_map.getElementsByClassName("dijitContentPane")[0].setAttribute("style","width:"+mapControl.landscapeContainerSize.w+"px; height:"+mapControl.landscapeContainerSize.h+"px");	
 	            } else {
-	            	col_map.getElementsByClassName("dijitContentPane")[0].setAttribute("style","width:100%; height:100%");
+	            	col_map.getElementsByClassName("dijitContentPane")[0].setAttribute("style","width:"+screenWidth+"px; height:"+(screenHeight - headerHeight)+"px");
 	            }
 	            
 	            
@@ -905,7 +946,8 @@ define("platform/ui/control/Map",
 			 * so, when we identify that map is wrong, we rebuild and resize it.
 			 */
 			_fixMap : function(mapControl, showWOPanel, emitEvent){ 
-				mapControl._calculateContainerSize();
+				//showWOPanel = showWOPanel !== false;
+				mapControl._calculateContainerSize(showWOPanel);
 				mapControl.isPortrait = OrientationManager.isPortrait();
 				var self = this;
 				var currDiv = document.getElementById(WL.application.ui.getCurrentView().id);

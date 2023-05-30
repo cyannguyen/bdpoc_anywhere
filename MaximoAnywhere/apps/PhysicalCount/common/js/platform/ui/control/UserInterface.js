@@ -399,6 +399,20 @@ function(declare, ContainerControlBase, Menu, ContentPane, Form, domConstruct, S
 		    if (element) {
 			    if (element.parentControl && element.parentControl._controlType) {
 			    	var showControl = element.parentControl;
+					//CORRECTION APAR(IJ35978) TAPPING THE BACK BUTTON TAKES THE USER TO THE FIRST PAGE OF WORK LIST
+					var currentViewControl = this.getCurrentViewControl();
+					if(currentViewControl){
+						if(currentViewControl.id == "WorkExecution.WorkDetailView" && showControl.id == "WorkExecution.WorkItemsView" && showControl.getResource() && currentViewControl.getResource()){
+							if(showControl.getResource().data != currentViewControl.getResource().data){
+								showControl.getResource().data = currentViewControl.getResource().data;
+							}
+							if(showControl.getResource().getCurrentIndex() != currentViewControl.getResource().getCurrentIndex()){
+								
+								showControl.getResource().setCurrentIndex(currentViewControl.getResource().getCurrentIndex());
+							}
+						}
+					}					
+					//FINAL CORRECTION
 			    	if (showControl._controlType == "View") {
 			    		if(mode){
 			    			showControl.editMode = mode;
@@ -435,7 +449,7 @@ function(declare, ContainerControlBase, Menu, ContentPane, Form, domConstruct, S
 				    	this.application.log('Show View {0}', 1, [showControl.id]);
 				    	var curentViewWidget = showControl.baseWidget;
 				    	var currentView;
-				    	if(curentViewWidget){
+				    	if(curentViewWidget && showControl.baseWidget.getShowingView()){
 				    		currentView = showControl.baseWidget.getShowingView().parentControl;
 				    	}
 //				    	if(!currentView){
@@ -742,6 +756,7 @@ function(declare, ContainerControlBase, Menu, ContentPane, Form, domConstruct, S
 				    }
 				    else {
 				    	this.dialogStack.pop();
+						dialog.hide();
 				    	// TODO defect 142436, this is a work around that should be REMOVED
 		    	    	// once dojo team fix their problem around gesture/tap
 		    	    	// where a racing condition occurs and triggers a second long touch

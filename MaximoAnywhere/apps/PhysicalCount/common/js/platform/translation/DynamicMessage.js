@@ -50,7 +50,7 @@ define( "platform/translation/DynamicMessage",
 					params.apply();
 				}
 			    for (index in params) {
-			    	returnString = returnString.replace("{" + index + "}", (typeof params[index] === 'string')? HtmlEntities.encode(params[index]) : params[index]);
+			    	returnString = returnString.replace("{" + index + "}", (typeof params[index] === 'string' && (params[index].indexOf('€') == -1 && params[index].indexOf('Š') == -1 && params[index].indexOf('š') == -1 && params[index].indexOf('Ž') == -1 && params[index].indexOf('ž') == -1 && params[index].indexOf('Č') == -1 && params[index].indexOf('č') == -1 && params[index].indexOf('Œ') == -1 && params[index].indexOf('œ') == -1 && params[index].indexOf('Ÿ') == -1 && params[index].indexOf('â') == -1 && params[index].indexOf('Â') == -1))? HtmlEntities.encode(params[index]) : params[index]);
 			    }
 			    return returnString;
 			}

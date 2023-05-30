@@ -7,24 +7,24 @@
  * (C) COPYRIGHT IBM CORP. 2013,2020 All Rights Reserved.
  * US Government Users Restricted Rights - Use, duplication or
  * disclosure restricted by GSA ADP Schedule Contract with
- * IBM Corp. 
+ * IBM Corp.
  *
  */
 
-define("platform/ui/control/_BoundControlMixin", 
+define("platform/ui/control/_BoundControlMixin",
 	[	"dojo/_base/declare",
 	    "dojo/_base/lang",
 	 	"dojox/mvc/at",
 	 	"dojo/on",
 	 	"dojo/query",
 	 	"dojo/_base/array",
-        "platform/util/PlatformConstants", 
+        "platform/util/PlatformConstants",
 	 	"platform/format/FormatterService",
 	 	"platform/translation/MessageService",
 	 	"platform/exception/PlatformRuntimeException",
 	 	"platform/warning/PlatformRuntimeWarning",
 	 	"platform/logging/Logger",
-	 	"platform/util/XSSSanitizer"], 
+	 	"platform/util/XSSSanitizer"],
 function(declare, lang, at, on, query, array, PlatformConstants, formatterService, MessageService, PlatformRuntimeException, PlatformRuntimeWarning, Logger, XSSSanitizer){
 	return declare( [], {
 	    readOnly : false,
@@ -40,7 +40,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 				this._resetDataBindings();
 			} else {
 				//Old databinding callbacks
-				var resource = this.getResource(); 
+				var resource = this.getResource();
 				if (resource){
 					this.addResourceWatchHandle(resource.onChange(lang.hitch(this, function(field, oldValue, newValue){
 						if(this.textWidget && this.textWidget._beingDestroyed != true && this.getResource().getCurrentRecord()){
@@ -52,7 +52,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			this.baseWidget.startup();
 			return baseWidget;
 	    },
-	    
+
 		binding: function(){
 			if(this.value){
 				return; //don't bind if a value was given.
@@ -80,8 +80,8 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					this.type = this.getDojoDataType();
 				}
 			}
-		},		
-		
+		},
+
 		bindRuntimeMetaData: function(resource){
 			if (resource.getCurrentRecord()){
 				var metaData = resource.getCurrentRecord().getRuntimeFieldMetadata(this.resourceAttribute);
@@ -104,7 +104,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 		    						this._setRequiredByMetaData(newval);
 		    					}
 		    					if (!newval){
-			    					//User may have tried to leave the view with the field required and control was highlighted.  Since 
+			    					//User may have tried to leave the view with the field required and control was highlighted.  Since
 		    						//it's no longer required, make sure it's unhighlighted
 		    						if(this.highlight){
 		    							this.highlight(false);
@@ -113,9 +113,9 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 		    				}));
 		    		this.addMetaDataWatchHandle(requiredwatch);
 	    		}
-			}	
+			}
 		},
-		
+
 		_setReadOnlyByMetaData: function (newval) {
 			if(this['_setReadOnly']){
 				if(this.editable === false && !this.hasLookup){ //if marked as readonly in the xml it should never be changed by the resource.
@@ -124,7 +124,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 				this._setReadOnly(newval);
 			}
 		},
-		
+
         _setRequiredByMetaData: function (newval) {
         	if(this['_setRequired'] && !this.required){
         		this._setRequired(newval);
@@ -143,18 +143,18 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 	    				this.usage = this.metaData.usage.toLowerCase();
 	    			}
 	    		}
-	    		
+
 	    		this.validBinding = true;
 	    	}
 	    	catch (error){
 	    		this.application.log('Attribute [{0}] Does not exist within Resource [{1}]', 1, [this.resourceAttribute, resource.resourceID]);
 	    		this.type = 'invalid';
-	    		
+
 			    this['cssClass'] += ' invalidBinding';
 			    this.value = (MessageService.createStaticMessage('InvalidBindingNoRecord').getMessage());
 	    	}
 	    },
-	    
+
 	    _resetDataBindings: function(){
 	    	var resource = this.getResource();
 	    	if(!resource || !resource.getCurrentRecord() || !this.validBinding){
@@ -178,7 +178,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			})));
 
 	    },
-	    
+
 	    //May not be needed. Would use to convert to dojo widgets, but may no do so.
 	    getDojoDataType: function() {
 	    	var dojoDatatype = this.type;
@@ -193,7 +193,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 	    	}
 	    	return dojoDatatype;
     	},
-	    
+
     	getFieldInfo: function(infoId) {
 	    	var info = null;
 	    	if(this.metaData){
@@ -201,7 +201,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 	    	}
 	    	return info;
     	},
-    	
+
 		showMyLookup: function() {
 			//If I have stored my resource, I need to update the current index to support
 			//multiple resources with lookups on the same page
@@ -210,7 +210,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			}
 	    	switch(this.type) {
 		    	case 'date':
-		    	case 'time':	
+		    	case 'time':
 		    	case 'datetime':
 		    		this.ui.showLookup('Platform.DateTimeLookup', this);
 	    			break;
@@ -222,14 +222,14 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			    		this.ui.showLookup('Platform.DurationLookup', this);
 		    		}
 		    		else if(this.usage !== 'date' && this.usage !== 'datetime' && this.usage !== 'time'){
-		    			this.ui.showLookup(this.lookup, this);  
+		    			this.ui.showLookup(this.lookup, this);
 		    		}
-	    			break;	    			
+	    			break;
 	    		default:
 	    			this.ui.showLookup(this.lookup, this);
 	    			break;
 	    	}
-			
+
 		},
 
 	    postCreate : function(){
@@ -241,14 +241,14 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 				}
 		    }
 		},
-	
+
 	    _attributeAsBindable : function(attributeName) {
 		    // summary:
 		    // constructs a data binder to be used in an input control such as
 		    // text or checkbox
 		    // and listen to/update changes in a stateful modelData object
-	    	
-	    	this.modelData = this.getCurrentRecord();     
+
+	    	this.modelData = this.getCurrentRecord();
 	    	//Need to keep track of the current record for launching the lookup
 		    if (this.modelData !== null) {
 		    	var modelData = this.modelData;
@@ -257,12 +257,12 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 				    var userLocale = this.application.getUserLocale();
 				    var attributeInfo = metadata.getField(attributeName);
 				    if (attributeInfo !== null) {
-				    	var dataType = metadata.getDataType(attributeInfo);				    	
+				    	var dataType = metadata.getDataType(attributeInfo);
 				    	var isNumericField = this.enableNumericKeyboard ? this.enableNumericKeyboard : false;
 				    	var self = this;
-				    	
+
 					    return at(modelData, attributeName).transform({
-					        format : function(value) {	
+					        format : function(value) {
 					        	var theValueToDisplay = modelData.getPendingOrOriginalValue(attributeName);
 					        	if (value!=null && theValueToDisplay != value) {
 					        		//This mismatch means that the value was set through code, not through the UI, we need to get the latest value
@@ -273,7 +273,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        	if (dataType.toUpperCase() === "DOUBLE" && attributeName.toUpperCase() == "NUMVALUE" ){
 					        		return theValueToDisplay;
 					        	}
-					        	
+
 					        	// do not format if enableNumericKeyboard is true and datatype is integer
 					        	// this combination sets <input type='numeric'> which doesn't take 1.000 or 1,000 (thousand separators)
 					        	// only floating points 1000.01 or 1000,01 based on locale
@@ -285,7 +285,8 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        	if (dataType === 'string' && self.editable === false && (!attributeInfo["usage"] || attributeInfo["usage"] === 'upper' || attributeInfo["usage"] === 'longaln')){
 						        	var i = theValueToDisplay.indexOf('<!-- RICH TEXT -->');
 					        		if(i > -1){
-					        			theValueToDisplay = XSSSanitizer.sanitizeValue(theValueToDisplay.substring(0, i)) + theValueToDisplay.substring(i);
+										if (theValueToDisplay.indexOf('data:image/png;base64,') == -1 && theValueToDisplay.indexOf("script") > -1)
+											theValueToDisplay = XSSSanitizer.sanitizeValue(theValueToDisplay.substring(0, i)) + theValueToDisplay.substring(i);
 						        	}
 					        		else{
 					        			theValueToDisplay = XSSSanitizer.sanitizeValue(theValueToDisplay);
@@ -294,7 +295,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        	return self.formatDisplayedValue(theValueToDisplay);
 					        },
 					        parse : function(value) {
-					        	
+
 					        	// Do not trigger validate during undo.
 					        	if (modelData.isUndoInProgress())
 					        	{
@@ -310,7 +311,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        		if (dataType === 'string' && (!attributeInfo["usage"] || attributeInfo["usage"] === 'upper' || attributeInfo["usage"] === 'longaln')){
 						        		newValue = XSSSanitizer.sanitizeValue(newValue);
 						        	}
-					        		
+
 					        		if(self.dataValidate){
                                         modelData.setPendingValue(attributeName, newValue);
 					        			self.application.log(PlatformConstants.LOG_TRACE+'calling '+self.dataValidate['className']+'.'+self.dataValidate['method'], 1, []);
@@ -320,7 +321,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        				result.then(function() {
 												self.setInvalid();
 												modelData.clearPendingValue(attributeName);
-												return newValue;					        					
+												return newValue;
 					        				});
 					        				result.otherwise(function(error) {
 												switch (true) {
@@ -328,7 +329,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 													self.setInvalid(error);
 													self.application.showMessage(error.getMessage());
 													break;
-												default: 
+												default:
 													Logger.error(error);
 													break;
 												return newValue;
@@ -340,10 +341,10 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 					        			}
 					        			else {
 					        				self.dataValidate['class'][self.dataValidate['method']](self);
-					        			}					        				
+					        			}
 					        		}
 									self.setInvalid();
-									
+
 									// Clear the pending value only if the format is not changed
 									// so validation would not trigger
 									if (newValue == value)
@@ -360,10 +361,10 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 											});
 											self.getResource()['validateErrorShown']=true;
 											break;
-										default: 
+										default:
 											Logger.error(throwable);
 											break;
-									}									
+									}
 					        	}
 					        	return value;
 					        }
@@ -372,10 +373,10 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			    }
 		    }
 		    var returnValue = null;
-		   
+
 		    this['cssClass'] += ' invalidBinding';
 		    returnValue = (MessageService.createStaticMessage('InvalidBindingNoRecord').getMessage());
-		    
+
 		    return returnValue;
 	    },
 
@@ -396,7 +397,7 @@ function(declare, lang, at, on, query, array, PlatformConstants, formatterServic
 			}
 			return value;
 		},
-		
+
 	    setInvalid : function(error){
 	    	if(error){
 	    		this.exception = error;

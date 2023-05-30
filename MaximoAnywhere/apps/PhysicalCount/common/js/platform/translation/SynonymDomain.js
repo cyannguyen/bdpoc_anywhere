@@ -56,7 +56,13 @@ define("platform/translation/SynonymDomain",
 			
 			return deferred.promise;*/
 			
-			var externalValueSet = resourceName.find('maxvalue == $1 && defaults == $2', maxvalue, true);
+			var externalValueSet = null;
+			if(Array.isArray(resourceName.data) && Array.isArray(resourceName._originalData) && resourceName.data.length === resourceName._originalData.length && resourceName.data.every((value, index) => value === resourceName._originalData[index])) {
+				externalValueSet = resourceName.find('maxvalue == $1 && defaults == $2', maxvalue, true)
+			} else {
+				resourceName.data = resourceName._originalData
+				externalValueSet = resourceName.find('maxvalue == $1 && defaults == $2', maxvalue, true)
+			}
 			
 			if(externalValueSet.length > 0) {
 				return externalValueSet[0].get('value');

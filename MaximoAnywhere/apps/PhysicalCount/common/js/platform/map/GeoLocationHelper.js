@@ -77,8 +77,8 @@
  *  Licensed Materials - Property of IBM
  *  
  */
-define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang", "dojo/Deferred", "dojo/on", "platform/handlers/WatchLocHandler", "platform/logging/Logger"],
-  function(declare, lang, Deferred, on, wlh, Logger) {
+define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang", "dojo/Deferred", "dojo/on", "platform/handlers/WatchLocHandler", "platform/logging/Logger", "platform/map/MapProperties"],
+  function(declare, lang, Deferred, on, wlh, Logger, MapProperties) {
 	
 	/** @class platform.map.GeoLocationHelper */
  	return declare("geolocationhelper", null, {
@@ -137,7 +137,7 @@ define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang"
 	       	 var deferred = new Deferred();
 			 var theinstance = this;			 
  			 var success = function(position){ 				 
-/*				 Logger.trace('Latitude: '          + position.coords.latitude          + '\n' +
+				 Logger.trace('Latitude: '          + position.coords.latitude          + '\n' +
 	        	       'Longitude: '         + position.coords.longitude         + '\n' +
 	        	       'Altitude: '          + position.coords.altitude          + '\n' +
 	        	       'Accuracy: '          + position.coords.accuracy          + '\n' +
@@ -145,7 +145,7 @@ define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang"
 	        	       'Heading: '           + position.coords.heading           + '\n' +
 	        	       'Speed: '             + position.coords.speed             + '\n' +
 	        	       'Timestamp: '         + new Date(position.timestamp)      + '\n');
-*/				 
+				 
 				 theinstance._setPosition(position, "getLocation");
 				 deferred.resolve(position); // Object with coordinate information returned
 			 };
@@ -164,7 +164,11 @@ define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang"
 				 deferred.reject(error); // Object with error number and messages returned
 			 };
 			 
-			 var options = this.getOptions();
+			var options = this.getOptions();
+			// LAFix - GPS Accurary : System Properties in Maximo aren't honoured
+			options.timeout = MapProperties.getGPSTimeout();		
+			options.enableHighAccuracy = MapProperties.getGPSHighAccuracy();			
+			options.maximumAge = MapProperties.getGPSMaximumAge();
 
 /*			 for (x in options)
 			 {
@@ -180,7 +184,8 @@ define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang"
 			     locationWinJS.getGeopositionAsync().done(success, fail);
 			 }
 			 else {
-			     navigator.geolocation.getCurrentPosition(success, fail, options);
+				// LAFix - GPS Accurary - navigator.geolocation.getCurrentPosition(success, fail, options);
+				this._watchLocationId = navigator.geolocation.watchPosition(success, fail, options);
 			 }
 			 
 			 this._setLocationStatus("Retrieving location...");
@@ -257,7 +262,8 @@ define("platform/map/GeoLocationHelper",["dojo/_base/declare", "dojo/_base/lang"
 		stopLocation: function() {
 			this._setLocationStatus("Stopped");
 			if (this._watchLocationId) {
-				watchLocHandler.remove();
+				// LAFix - GPS Accurary
+				//watchLocHandler.remove();
 				navigator.geolocation.clearWatch(this._watchLocationId);
 				this._watchLocationId = null;
 			}

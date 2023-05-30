@@ -87,8 +87,8 @@ define(
 		            }
 		            //Wait until I've loaded the level
 		            this._initWorklightLogger(this.level);
-		            if (localStorage.logLimit && localStorage.logLimit != "undefined") {
-		                this.logLimit = localStorage.logLimit;
+		            if (localStorage.logLimit && localStorage.logLimit != "undefined" && !isNaN(JSON.parse(localStorage.logLimit))) {
+		                this.logLimit = JSON.parse(localStorage.logLimit);
 		            }
 		            
 		         
@@ -361,7 +361,7 @@ define(
 		        	case (1):
 		        		levelString='INFO';
 		        	    break;
-		        	case (4):
+		        	case (2):
 		        		levelString='DEBUG';
 		        		break;
 		        	}

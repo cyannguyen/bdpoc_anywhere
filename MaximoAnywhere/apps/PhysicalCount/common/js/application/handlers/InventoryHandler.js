@@ -37,12 +37,13 @@ define("application/handlers/InventoryHandler",
 	     "dojo/number",
 	     "platform/auth/AdminModeManager",
 	     "platform/store/SystemProperties"
-	     //[Loc]
+		 //[Loc]
+		 ,"platform/store/_ResourceMetadataContext"
 		 ,"platform/format/FormatterService",
 		 "dojo/date/stamp"
-		],
+	     ],
 function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager, SynonymDomain, ModelService, MessageService, CommonHandler, FieldUtil, PlatformRuntimeException, PlatformRuntimeWarning, UserManager, PlatformConstants, AsyncAwareMixin, Logger, DateTimeUtil, CodeScannerHandlerExt, BluetoothScanner, focusUtil, Deferred, appConfig, numberUtil, AdminModeManager, SystemProperties
-	,FormatterService, dateTimeISOFormatter) {	
+	,ResourceMetadataContext, FormatterService, dateTimeISOFormatter) {	
 
 	var originatingQuerybase = null;
 	return declare( [ApplicationHandlerBase],  {
@@ -129,6 +130,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 						dataSet.filter('location == $1', currentStoreRoom.get('location'));
 
 		    			self.application.addResource(dataSet);
+						//Loc: reload list QueryBase and default storeroom
+						//self.loadInvbalanceByQueryBase(self);
 	    			}
 	    			eventContext.ui.hideCurrentView();
 					self.setOriginatingQuerybase(eventContext,null);
@@ -265,6 +268,12 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			    filter.lotnum = search.lotnum;
 			    filteredItems++;
 			}
+
+			//Loc: Add the field modelnum searching
+			if (search.modelnum){
+			    filter.modelnum = search.modelnum;
+			    filteredItems++;
+			}
 			
 			//In-Loc: bin range
 			if (search.description){
@@ -299,8 +308,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				eventContext.application.showMessage('BinRange is incorrect');
 				return;
 			}
-			//Out-Loc: bin range
-			
+			//Out-Loc: bin range			
+	
 			if(filteredItems == 0){
 				eventContext.ui.show('Inventory.RequiredSearchFieldMissing');
 				return;
@@ -309,6 +318,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			self.populateSearch(eventContext);
 		},
 
+		//Loc-In
+		// Add checkBinRange method
 		checkBinRange: function(value, prefix, suffix){
 			var obj = {};
 			if(typeof value != 'string'){
@@ -339,9 +350,9 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			obj.result = false;
 			return obj;
 		},
-
+		//Loc-Out
+		
 		populateSearch: function(eventContext){
-			var self = this;
 			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
 			eventContext.application.ui.performSearch = true;
 			if(eventContext.application.ui.performSearch){
@@ -391,9 +402,11 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				}
 				//Out-Loc: set default storeroom
 
-				if (search.description){
-					filter.description = search.description;
-					filteredItems++;
+				//Loc-In
+				// Custimze searching by Like %
+				/* if (search.location){				
+				    filter.location = search.location;
+				    filteredItems++;
 				}
 				if (search.binnum){				
 				    filter.binnum = search.binnum;
@@ -405,7 +418,29 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				}				
 				if (search.siteid){
 				    filter.siteid = search.siteid;
+				} */
+
+				if (search.description){
+					filter.description = '%'+ this._addBackSlash(search.description)+'%';
+					filteredItems++;
 				}
+				if (search.binnum){				
+				    filter.binnum = '%'+search.binnum+'%';
+				    filteredItems++;
+				}
+				if (search.lotnum){						
+				    filter.lotnum = '%'+search.lotnum+'%';
+				    filteredItems++;
+				}				
+				if (search.siteid){
+				    filter.siteid = search.siteid;
+				}
+				// Add the field modelnum searching
+				if (search.modelnum){
+					filter.modelnum = '%'+search.modelnum+'%';
+					filteredItems++;
+				}
+				//Loc-Out
 
 				//In-Loc: bin range
 				if (search.binfrom && search.binto){
@@ -432,6 +467,12 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 					eventContext.application.hideBusy();
 					return;
 				}
+
+				//In-Loc: set querybase for search by current querybase
+				var queryBaseForSearch = view.queries.children[eventContext.application.ui.savedQueryIndex].queryBase;
+				var metdaData = ResourceMetadataContext.getResourceMetadata(view.queries.resource);
+				metdaData.queryBaseForSearch = metdaData.queryBases[queryBaseForSearch];
+				//Out-Loc: set querybase for search by current querybase
 			
 				ModelService.all('invbalance',PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(searchResultSet){
 					ModelService.clearSearchResult(searchResultSet);			
@@ -459,7 +500,6 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 										resultSet.setCurrentIndex(0);
 										 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 											 eventContext.ui.show('Inventory.ItemsView');
-											 self.reloadDefaultStoreRoom(eventContext);
 										 });
 									});
 								}
@@ -500,7 +540,6 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 													invbalanceSet.setCurrentIndex(0);
 													 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 														 eventContext.ui.show('Inventory.ItemsView');
-														 self.reloadDefaultStoreRoom(eventContext);
 													 });
 												});
 											}
@@ -555,7 +594,6 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 											invbalanceSet.setCurrentIndex(0);
 											 eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
 												 eventContext.ui.show('Inventory.ItemsView');
-												 self.reloadDefaultStoreRoom(eventContext);
 											 });
 										});
 									}
@@ -593,6 +631,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		
 		populateItemDetail : function(eventContext) {
 			// [Loc]
+			// set Detail Label and add attributes: physcnt, orgid, count, modelnum, lastcountdate, memo
 			this.loadDetailLabel(eventContext);
 			var invbalance = CommonHandler._getAdditionalResource(eventContext,"invbalance").getCurrentRecord();
 						
@@ -603,6 +642,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			eventContext.getResource().getRecordAt(0).set("lot", invbalance.get('lotnum'));
 			eventContext.getResource().getRecordAt(0).set("unit", invbalance.get('issueunit'));
 			eventContext.getResource().getRecordAt(0).set("curbal", invbalance.get('curbal'));
+			eventContext.getResource().getRecordAt(0).set("physcnt", invbalance.get('physcnt'));
+
 
 			// Exercise Unit 4
 			eventContext.getResource().getRecordAt(0).set("orgid", invbalance.get('orgid'));
@@ -610,6 +651,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 
 			eventContext.getResource().getRecordAt(0).set("modelnum", invbalance.get('modelnum'));
 			eventContext.getResource().getRecordAt(0).set("lastcountdate", invbalance.get('lastcountdate'));
+
+			invbalance.set("memo", invbalance.get('anywhcountmemo'));
 			
 			// count++
 			/*var count = invbalance.get('count');
@@ -621,7 +664,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			invbalance.set("count", count);*/
 		},
 
-		// [Loc]
+		// #region Loc-In: Add methods: setStoreRoomTitle, reloadDefaultStoreRoom, loadInvbalanceList ..., _addBackSlash
 		setStoreRoomTitle : function(eventContext, storeRoomTitle) {
 			var currentRecord = CommonHandler._getAdditionalResource(eventContext,"additionalstoreroom").getCurrentRecord();
 			var currentLocation = null;
@@ -1155,7 +1198,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
             return result;
         },
 
-		// [Loc]
+		// Loc-Out
+		//#endregion
 		
 		/*
 		 * Triggered functionality when back button is selected
@@ -1202,7 +1246,17 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		},
 		
 		discardSummaryView: function(eventContext){
-			// Loc
+			//#region Loc-In: Customize discardSummaryView method by location
+
+			/* var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
+			view.changeQueryBase(eventContext.application.ui.savedQueryIndex);
+		    var queryBase = view.queries.children[eventContext.application.ui.savedQueryIndex].queryBase;
+			ModelService.all('invbalance', queryBase).then(function(modelDataSet){
+				modelDataSet.resourceID = 'invbalance';
+				eventContext.application.addResource(modelDataSet);
+				eventContext.application.ui.getViewFromId('Inventory.ItemsView').lists[0].refresh();
+			}); */
+
 			var view = eventContext.application.ui.getViewFromId('Inventory.ItemsView');
 			var savedQueryIndex = eventContext.application.ui.savedQueryIndex;
 			var currentStoreRoom = eventContext.application.getResource('storeRoomResource').getCurrentRecord();
@@ -1247,6 +1301,8 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 				eventContext.application.addResource(modelDataSet);
 				eventContext.application.ui.getViewFromId('Inventory.ItemsView').lists[0].refresh();
 			}); */
+
+			//#endregion Loc-Out
 		},
 		
 		filterItemsForLookup : function(eventContext) {
@@ -1347,13 +1403,15 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			additionalstoreroom.filter(args);					
 		},
 
+		//#region Loc-In: Add filterStoreroomLookup method
 		filterStoreroomLookup: function(eventContext) {
 			var additionalstoreroom = CommonHandler._getAdditionalResource(eventContext,'additionalstoreroom');
 			CommonHandler._clearFilterForResource(eventContext,additionalstoreroom);
 			return additionalstoreroom;					
 		},
-
+		//#endregion Loc-Out
 		
+		//#region Loc-In: Adjust the filterBinLookup by getDistinctBin resource
 		filterBinLookup : function(eventContext) {
 			/* 
 			// set lookup filter on additionalInvbalance
@@ -1380,7 +1438,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			
 			binList = [];
 		
-			return invbalanceSet; 
+			return invbalanceSet;
 			*/
 
 			// set lookup filter on getDistinctBin
@@ -1406,6 +1464,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 			return distinctBin;
 
 		},
+		//#endregion Loc-Out
 		
 		/*
 		 * Clear Adhoc Count Fields
@@ -1413,15 +1472,16 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		clearAdhocFields : function (eventContext){
 			var search = eventContext.application.getResource("searchItems").getCurrentRecord();
 			search.setNullValue('itemnum');
-			//search.setNullValue('location');
+			search.setNullValue('location');
 			search.setNullValue('binnum');
 			search.setNullValue('lotnum');
 			search.setNullValue('siteid');
 
-			// Loc
+			//#region Loc-In: clear value of attributes: description, binfrom, binto, modelnum
 			search.setNullValue('description');
 			search.setNullValue('binfrom');
 			search.setNullValue('binto');
+			search.setNullValue('modelnum');
 		},
 		
 		adhocInit : function (eventContext) {
@@ -1500,7 +1560,7 @@ function(declare, arrayUtil, lang, ApplicationHandlerBase, CommunicationManager,
 		validateCount : function (eventContext) {
 			var currentRecord = eventContext.getCurrentRecord();
 			var count = currentRecord.getPendingOrOriginalValue('count');
-
+					
 			if (count!='' && (numberUtil.parse(count, this.application.getUserLocale()) < 0)) {
 				throw new PlatformRuntimeException('newReadingNaN',[count]);
 			}

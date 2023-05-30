@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "実署名の取り込み",
          "Change Time or Date" : "時間または日付の変更",
          "Version 7.6.4.0" : "バージョン 7.6.4.0",
-         "Build number @build@" : "ビルド番号 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "ビルド番号 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licensed Materials - Property of IBM. ©IBM Corp. 2020. IBM、IBM ロゴおよび ibm.com は、世界の多くの国で登録された International Business Machines Corporation の商標です。 他の製品名およびサービス名等は、それぞれ IBM または各社の商標である場合があります。 現時点での IBM の商標リストについては、www.ibm.com/legal/copytrade.shtml をご覧ください。 この「プログラム」は「プログラム」に同梱のご使用条件に基づき使用許諾されます。 「プログラム」を使用する前にこの使用条件をお読みください。 「プログラム」をご使用になることで、お客様はこれらの条件に同意されたものとみなされます。",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "Esri ArcGIS Runtime SDK for Android および Esri ArcGIS Runtime SDK for iOS に付属するマッピング API。",
          "Screen Information" : "画面情報",

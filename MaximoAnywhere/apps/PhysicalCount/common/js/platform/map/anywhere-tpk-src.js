@@ -932,6 +932,10 @@ O.esri.TPK.autoCenterMap = function(/* Map */ map,/* int */ delay){
         localStorage.setItem("_spatialReference", spatialReference);
     }
 
+    function isFloat(n){
+		return Number(n) === n && n % 1 !== 0;
+	}
+
     /**
      * Pulls a saved location from localStorage
      * Requires that setCenterPt() has been set.
@@ -941,8 +945,9 @@ O.esri.TPK.autoCenterMap = function(/* Map */ map,/* int */ delay){
         var value = null;
 
         try{
-            value = localStorage.getItem("_centerPtX") + "," + localStorage.getItem("_centerPtY") + "," +
-                localStorage.getItem("_spatialReference");
+            value = isFloat(JSON.parse(localStorage.getItem("_centerPtX"))) ? localStorage.getItem("_centerPtX") : "" + "," + 
+					isFloat(JSON.parse(localStorage.getItem("_centerPtY"))) ? localStorage.getItem("_centerPtY") : "" + "," +
+                	!isNaN(JSON.parse(localStorage.getItem("_spatialReference"))) ? localStorage.getItem("_spatialReference"):"";
         }
         catch(err)
         {

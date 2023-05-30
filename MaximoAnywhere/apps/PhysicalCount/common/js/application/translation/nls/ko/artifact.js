@@ -87,7 +87,7 @@ define({
          "Capture Real Signature" : "실제 서명 캡처",
          "Change Time or Date" : "시간 또는 날짜 변경",
          "Version 7.6.4.0" : "버전 7.6.4.0",
-         "Build number @build@" : "빌드 번호 20200214_134307+0100 [202002140006]",
+         "Build number @build@" : "빌드 번호 20220526_155012-0400 [202205261507]",
          "Licensed Materials - Property of IBM. \u00A9IBM Corp. 2020. IBM, the IBM logo, and ibm.com are trademarks of IBM Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at www.ibm.com\/legal\/copytrade.shtml. This Program is licensed under the terms of the license agreement for the Program. Please read this agreement carefully before using the Program. By using the Program, you agree to these terms." : "Licensed Materials - Property of IBM. ©IBM Corp. 2020. IBM, IBM 로고 및 ibm.com은 전세계 여러 국가에 등록된 IBM Corp.의 상표입니다. 기타 제품 및 서비스 이름은 IBM 또는 타사의 상표입니다. 현재 IBM 상표 목록은 웹(www.ibm.com/legal/copytrade.shtml)에 있습니다. 본 프로그램은 프로그램 라이센스 계약에 의하여 라이센스가 부여됩니다. 프로그램을 사용하기 전에 본 계약을 주의 깊게 읽어보십시오. 본 프로그램을 사용하는 경우 귀하는 본 계약에 동의한 것으로 간주됩니다.",
          "Mapping API provided by Esri ArcGIS Runtime SDK for Android and iOS." : "Android 및 iOS용 Esri ArcGIS Runtime SDK에서 제공하는 API 맵핑.",
          "Screen Information" : "화면 정보",

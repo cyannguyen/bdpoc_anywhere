@@ -372,6 +372,13 @@ define("platform/handlers/EsigHandler",
 			rec.set("reason", esigForm.get('reason'));
 			rec.set("userid", esigForm.get('userName'));
 			rec.set("loginid", esigForm.get('userName'));	// username
+			//IJ16092
+			// Anywhere now can insert the transid in logintracking table, but some steps are required to follow in Maximo
+			// Follow the attachment in [MASISMIG-12940] in JIRA
+			// IMPORTANT: to include the transid in custom log table, Maximo Core team need to change the rule in MBO class
+			// responsable to allow it.
+			var transId = "" + loginTrackingResource.data.length + "";
+			rec.set("transid", transId);
 			if (this.esigResource){
 				// keyvalue1 is siteid
 				var site = this.esigResource.get('siteid');

@@ -24,12 +24,14 @@ define("platform/ui/control/TextArea",
 	     "dojo/on",
 	     "dojo/touch",
 	     "dojo/_base/event",
+         "dojo/dom",
+         "dojo/dom-style",
 	     "dojo/dom-construct",
 	     "dojox/mvc/at",
 	     "dojo/dom-class",
 	     "dojo/dom-attr"
 	     ],
-function(declare, ControlBase, StatefulControlMixin, BoundControlMixin, ContentPane, TextArea, Label, lang, array, on, touch, event, domConstruct, at, domClass,domAttr) {
+function(declare, ControlBase, StatefulControlMixin, BoundControlMixin, ContentPane, TextArea, Label, lang, array, on, touch, event, dom, domStyle, domConstruct, at, domClass,domAttr) {
 	return declare( [ ControlBase, BoundControlMixin, StatefulControlMixin ], {
     	editable: true,
     	value: '',
@@ -72,7 +74,7 @@ function(declare, ControlBase, StatefulControlMixin, BoundControlMixin, ContentP
 			//Need to support detecting required from the field metadata
 			var runtimeRequired = this.required;
             if (!runtimeRequired && this.bound && this.validBinding) {
-                if (this.getCurrentRecord()) {
+                if (this.getCurrentRecord() && this.getCurrentRecord() != null) {
                     runTimeMataData = this.getCurrentRecord().getRuntimeFieldMetadata(this.resourceAttribute);
                     runtimeRequired = runTimeMataData && runTimeMataData.required;
                     if (runTimeMataData.required && this.viewControl) {
@@ -90,7 +92,7 @@ function(declare, ControlBase, StatefulControlMixin, BoundControlMixin, ContentP
 				'class': ' ' + ((this['cssClass'])?this['cssClass']:''+ (runtimeRequired ? ' requiredText' : '')),
 			});
 			
-			if (this.bound && this.validBinding) {
+			if (this.bound && this.validBinding && this.getCurrentRecord() && this.getCurrentRecord() != null) {
 				this._setReadOnly(this.getCurrentRecord().getRuntimeFieldMetadata(this.resourceAttribute).readonly);
 				var resource = this.getResource(); 
 				this.addResourceWatchHandle(resource.onChange(lang.hitch(this, function(field, oldValue, newValue){
@@ -119,6 +121,46 @@ function(declare, ControlBase, StatefulControlMixin, BoundControlMixin, ContentP
 			this.addHandler(on(this.textAreaWidget, touch.press, function(e) {
 				e.stopPropagation();
 			}));
+
+			this.addHandler(on(this.textAreaWidget, 'blur', function () {
+                if(WL.Client.getEnvironment() == WL.Environment.IPAD || WL.Client.getEnvironment() == WL.Environment.IPHONE) {
+					switch(window.orientation) 
+					{  
+						case -90: case 90:
+							/* Device is in landscape mode */
+							if (dom.byId("WorkExecution.WorkDetailView"))
+								domStyle.set(dom.byId("WorkExecution.WorkDetailView"), "height", "100%");
+							break;
+						default:
+							/* Device is in portrait mode */
+							if (dom.byId("WorkExecution.NewWorkLogView_footer"))
+								domStyle.set(dom.byId("WorkExecution.NewWorkLogView_footer"), "margin-bottom", "0px");
+					}
+                }
+            }));
+
+			this.addHandler(on(this.textAreaWidget, 'focus', function (e) {
+                if(WL.Client.getEnvironment() == WL.Environment.IPAD || WL.Client.getEnvironment() == WL.Environment.IPHONE) {
+                    switch(window.orientation) 
+					{  
+						case -90: case 90:
+							/* Device is in landscape mode */
+							if (dom.byId("WorkExecution.NewWorkLogView_footer"))
+                    			domStyle.set(dom.byId("WorkExecution.NewWorkLogView_footer"), "margin-bottom", "0px");
+							break; 
+						default:
+							/* Device is in portrait mode */
+							if (document.documentElement.clientWidth > 500) {
+								if (dom.byId("WorkExecution.NewWorkLogView_footer"))
+									domStyle.set(dom.byId("WorkExecution.NewWorkLogView_footer"), "margin-bottom", "320px");
+							} else if (document.documentElement.clientWidth <= 500) {
+								if (dom.byId("WorkExecution.NewWorkLogView_footer"))
+									domStyle.set(dom.byId("WorkExecution.NewWorkLogView_footer"), "margin-bottom", "100px");
+							}
+					}
+                }
+            }));
+
 			this.baseWidget.addChild(this.textAreaWidget);
 			return this.inherited(arguments);
 		},

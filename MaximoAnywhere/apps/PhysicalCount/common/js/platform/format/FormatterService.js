@@ -24,7 +24,7 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 	    if (windows && stringValue && (typeof stringValue == 'string') && stringValue.indexOf("<a href") >= 0) {
 	        stringValue = window.toStaticHTML(stringValue);
 	    }
-		var returnString =  stringValue ? stringValue : "";
+		var returnString = (typeof stringValue !== 'undefined' && stringValue != null ) ? stringValue : "";
         if(options && options.attributeName && options.attributeName==PlatformConstants.ERRORED_ATTRIBUTE_MSG){
             if(returnString.indexOf('BMX') == 0) {
             	returnString = returnString.substring(PlatformConstants.BMX_LENGTH + PlatformConstants.BMX_PADDING) + '<span class=\'errorId\'/>- ' + returnString.substring(0,PlatformConstants.BMX_LENGTH)+'</span>';
@@ -133,46 +133,48 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 		return dateTimeISOFormatter.toISOString(asDate); 
 	};
 	var _fromDate = function(dateValue, userLocale){
-		//IJ26031 - Fix the problem to display the date when we try to add a Labor in Anywhere
-		var newDateValue = dateTimeISOFormatter.fromISOString(dateValue);
-		
-		//If no time given and timezone, it calulates to wrong day. Detecting that and stripping the time.
-		if (dateValue && dateValue.indexOf('00:00:00+00:00') > -1){
-			dateValue = dateValue.substring(0,19);
-		} else {
-            // Leandro's new version (IJ22020)
-            // Separate the datetime string in an array
-            var customDate = dateValue.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)/);
+		if(dateValue){
+			//IJ26031 - Fix the problem to display the date when we try to add a Labor in Anywhere
+			var newDateValue = dateTimeISOFormatter.fromISOString(dateValue);
+			
+			//If no time given and timezone, it calulates to wrong day. Detecting that and stripping the time.
+			if (dateValue.indexOf('00:00:00+00:00') > -1){
+				dateValue = dateValue.substring(0,19);
+			} else {
+				// Leandro's new version (IJ22020)
+				// Separate the datetime string in an array
+				var customDate = dateValue.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)/);
 
-            // Set the local variables to pass as parameters to a new Date() object
-            var year = parseInt(customDate[1]);
-            var month = parseInt(customDate[2]) - 1;
-            var day = parseInt(customDate[3]);
-            var hour = parseInt(customDate[4]);
-            var minute = parseInt(customDate[5]);
-            var second = parseInt(customDate[6]);
+				// Set the local variables to pass as parameters to a new Date() object
+				var year = parseInt(customDate[1]);
+				var month = parseInt(customDate[2]) - 1;
+				var day = parseInt(customDate[3]);
+				var hour = parseInt(customDate[4]);
+				var minute = parseInt(customDate[5]);
+				var second = parseInt(customDate[6]);
 
-            // Get the new Date
-            var dateValue = new Date(year, month, day, hour, minute, second);
+				// Get the new Date
+				var dateValue = new Date(year, month, day, hour, minute, second);
 
-            // Getting the timezone offset from the device
-            function getTimezoneOffsetFromDevice(date) {
-                //This function returns part of the result string
-                function z(n) { return (n < 10 ? '0' : '') + n }
+				// Getting the timezone offset from the device
+				function getTimezoneOffsetFromDevice(date) {
+					//This function returns part of the result string
+					function z(n) { return (n < 10 ? '0' : '') + n }
 
-                var offset = date.getTimezoneOffset();
-                var sign = offset < 0 ? '+' : '-';
+					var offset = date.getTimezoneOffset();
+					var sign = offset < 0 ? '+' : '-';
 
-                offset = Math.abs(offset);
+					offset = Math.abs(offset);
 
-                return "T23:59:59.999" + sign + z(offset / 60 | 0) + ":" + z(offset % 60);
-            }
+					return "T23:59:59.999" + sign + z(offset / 60 | 0) + ":" + z(offset % 60);
+				}
 
-            // Returning the timezone
-            var timezoneOffset = getTimezoneOffsetFromDevice(dateValue);
+				// Returning the timezone
+				var timezoneOffset = getTimezoneOffsetFromDevice(dateValue);
 
-            newDateValue = dateTimeISOFormatter.fromISOString(timezoneOffset, dateValue);
-        }
+				newDateValue = dateTimeISOFormatter.fromISOString(timezoneOffset, dateValue);
+			}
+		}	
 
         return dateValue ? dateTimeFormatter.format((dateValue instanceof Date) ? dateValue : newDateValue, { selector: 'date', formatLength: 'short', locale: userLocale }) : "";
 	};
@@ -250,7 +252,20 @@ function(dateTimeFormatter, dateTimeISOFormatter, numberFormatter, PlatformRunti
 		var round = (options.round == -1 ? -1 : 0); // 0,-1 are the only valid values.  default to 0 (round) unless it's set to -1 (don't round)
 		if (stringValue.replace)
 			stringValue = stringValue.replace(/\s/g, '');
-		var result = numberFormatter.parse(stringValue, {type: "decimal", places: places, round: round, locale: userLocale}); 
+		//var result = numberFormatter.parse(numberFormatter.format(stringValue), {type: "decimal", places: places, round: round, locale: userLocale}); 
+		if (stringValue.indexOf(',') > -1 && stringValue.split(',').length == 2 && /^[-+]?[0-9]+\,[0-9]+$/.test(stringValue)) {
+			result = parseFloat(stringValue.replace(",","."));
+		} else if (stringValue.indexOf("'") > -1 && stringValue.split("'").length == 2 && /^[-+]?[0-9]+\'[0-9]+$/.test(stringValue)) {
+			result = parseFloat(stringValue.replace("'","."));
+		} else if (stringValue.indexOf('٫') > -1 && stringValue.split('٫').length == 2 && /^[-+]?[0-9]+\٫[0-9]+$/.test(stringValue)) {
+			result = parseFloat(stringValue.replace("٫","."));
+		} else if (stringValue.indexOf('.') > -1 && stringValue.split('.').length == 2 && /^[-+]?[0-9]+\.[0-9]+$/.test(stringValue)) {
+			result = parseFloat(stringValue);
+		} else if (stringValue.indexOf(',') == -1 && stringValue.indexOf("'") == -1 && stringValue.indexOf('٫') == -1 && stringValue.indexOf('.') == -1) {
+			result = parseInt(stringValue);
+		} else {
+			result = NaN
+		}
 		if(isNaN(result) || !isFinite(result)){
 			throw new PlatformRuntimeException("invaliddecimal", [stringValue]);
 		}

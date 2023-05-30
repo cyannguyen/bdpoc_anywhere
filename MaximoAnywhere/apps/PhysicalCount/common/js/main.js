@@ -15,7 +15,7 @@ window.wlInitOptions = {
     connectOnStartup : false,
     timeout: 8000, 
 	enableLogger : false,
-	baseUrl: localStorage.getItem('maximo_url')
+	baseUrl: (new RegExp("^(https?://)?(((www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6})|((\\d{1,3}\\.){3}\\d{1,3}))(:\\d{2,4})?(/[-\\w@\\+\\.~#\\?&/=%]*)?$").test(localStorage.getItem('maximo_url')) == true) ? localStorage.getItem('maximo_url'): ""
 };
 
 

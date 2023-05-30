@@ -63,13 +63,14 @@ function(lang, arrayUtil, Deferred, JsonInMemoryFindMixin, PlatformConstants, Lo
 							if(isExactMatch) {
 								queryPart.equal(key, queryPiece[key]);
 							}
-							// Loc
+							//#region Loc-In: Add query between (from, to)
 							else if (typeof queryPiece[key] === "object" && queryPiece[key] != null && ("from" in queryPiece[key] || "to" in queryPiece[key])){
 								var value = [];
 								value.push(queryPiece[key]["from"]);
 								value.push(queryPiece[key]["to"]);
 								queryPart.between(key, value);
 							}
+							//#endregion
 							else {
 								queryPart.like(key, queryPiece[key]);
 							}

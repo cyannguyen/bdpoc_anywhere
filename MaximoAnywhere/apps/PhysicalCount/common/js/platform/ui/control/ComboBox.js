@@ -37,6 +37,7 @@ define("platform/ui/control/ComboBox",
 	 	/* 22 */ "platform/ui/control/DomainValue",
 	 	/* 23 */ "platform/ui/control/DomainValues",
 	 	/* 24 */ "platform/ui/control/Text",
+				"platform/util/XSSSanitizer"
 	     ],
 function(
 		/*  1 */ declare, 
@@ -62,7 +63,8 @@ function(
 		/* 21 */ PlatformRuntimeWarning,
 		/* 22 */ DomainValue,
 		/* 23 */ DomainValues,
-		/* 24 */ Text) {
+		/* 24 */ Text,
+		XSSSanitizer) {
 	
 	return declare([ContainerControlBase, StatefulControlMixin, BoundControlMixin], {
 		
@@ -311,7 +313,7 @@ function(
 		},
 		
 		setLabel: function(newLabel) {
-		   this.labelElement.domNode.innerHTML = newLabel;
+		   this.labelElement.domNode.innerHTML = XSSSanitizer.sanitizeValue(newLabel);
 		},
 		
 		postCreate: function() {

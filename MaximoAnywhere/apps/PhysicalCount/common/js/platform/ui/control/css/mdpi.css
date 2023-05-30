@@ -115,10 +115,11 @@ body {
 	padding: 10px;
 	padding-left: 0;
 	margin: -7px;
-	/* Loc */
+	/* Loc-In */
 	/* margin-left: 0px; */
+	/* Loc-Out */
 	margin-right: 7px !important;
-	border: 0 !important;
+	border: 0;
 	vertical-align: middle;	
 	background-position: center !important;
 	box-shadow: none !important;
@@ -263,7 +264,7 @@ body {
 	font-weight: bold;
 }
 
-/* [Loc]: Add css for textLookupNoScan */
+/* Loc-In: Add css for textLookupNoScan */
 
 .textappearance-smaller {
 	font-size: 90%;
@@ -422,8 +423,7 @@ body {
 .recountlDescription {
 	width: 70% !important;
 }
-
-/* [Loc]: Add css for textLookupNoScan */
+/* Loc-Out: Add css for textLookupNoScan */
 
 .errorIndicator {
 	padding: 0 20px 0 15px;

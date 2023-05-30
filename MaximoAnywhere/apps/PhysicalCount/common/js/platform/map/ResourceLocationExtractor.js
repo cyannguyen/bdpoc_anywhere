@@ -56,7 +56,7 @@ function(declare, LocalizedResource, Logger, RectD) {
 			//for (var resourceIndex = 0; resourceIndex < resource.length; resourceIndex++) {
 				jsonObject = resource[resourceIndex];
 
-				if(jsonObject.hasOwnProperty(this.yPositionAttribute) && jsonObject.hasOwnProperty(this.xPositionAttribute) &&
+				if(jsonObject && jsonObject.hasOwnProperty(this.yPositionAttribute) && jsonObject.hasOwnProperty(this.xPositionAttribute) &&
 					jsonObject[this.yPositionAttribute] && jsonObject[this.xPositionAttribute]) {
 				    var x, y;
 				    

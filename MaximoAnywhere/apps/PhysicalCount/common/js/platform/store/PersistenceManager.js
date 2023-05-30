@@ -99,7 +99,7 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 			// MM memory usage improvement in JSON.stringify , huge spike in memory , this needs to implememt with if condition
 			//Logger.trace("list of previousLoggedUsers: " + JSON.stringify(localStorage.previousLoggedUsers));
 
-			if(localStorage.previousLoggedUsers) {
+			if(localStorage.previousLoggedUsers && JSON.parse(localStorage.previousLoggedUsers)[username]) {
 				var previousLoggedUsersJson = JSON.parse(localStorage.previousLoggedUsers);
 
 				// this user have already logged in the past
@@ -431,11 +431,11 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 		
 		add: function(metadata, dataObject, queryBaseName, truncateBeforeAdd, renewCleanupToken) {
 			var dataArray = dataObject.data ? dataObject.data : dataObject;
-			
+
 			return runOrRejectWithError(this, function() {
 				var timerMsg = "PersistenceManager - add - Adding data into jsonstore - " + metadata.name;
 				Logger.timerStart(timerMsg);
-				
+
 				if (!metadata.additionalData && !metadata.isSystem && dataArray && dataArray.length == 0){
 					if (queryBaseName){
 						DataCleanupService.renewCleanupToken({
@@ -446,7 +446,7 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 					return new CustomDeferred().resolve();
 				}
 				var self = this;
-				
+
 				//Early termination if init needed and asynchronous recursion
 				if (metadata.isInited == false){
 					return this._initCollection(metadata, {username: UserAuthenticationManager._getCurrentUser()}).
@@ -456,25 +456,25 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 							dataObject.data = dataArray;
 							return self.add(metadata, dataObject, queryBaseName, truncateBeforeAdd, renewCleanupToken);
 						}else{
-							return self.add(metadata, dataArray, queryBaseName, truncateBeforeAdd, renewCleanupToken);	
+							return self.add(metadata, dataArray, queryBaseName, truncateBeforeAdd, renewCleanupToken);
 						}
-						
+
 					});
 				}
 				metadata.checkIfOverTheDataLimit(dataArray,false);
-				
+
 				this._initializeNonExistingFields(dataArray, metadata.fields);
 				var resourceName = metadata.name;
 				var jsonStore = this._getStore(resourceName);
-	
+
 				var consumerDeferred = new CustomDeferred();
 				var consumerPromise = consumerDeferred.promise;
-				
-				onAddSuccess = function(res) { consumerDeferred.resolve(); Logger.timerEnd(timerMsg); dataArray=null;jsonStore=null;}; 
-				onAddFailure = function(res) { consumerDeferred.reject(); dataArray=null; jsonStore=null;}; 
-				addOptions = { onSuccess : onAddSuccess, onFailure : onAddFailure}; 
+
+				onAddSuccess = function(res) { consumerDeferred.resolve(); Logger.timerEnd(timerMsg); dataArray=null;jsonStore=null;};
+				onAddFailure = function(res) { consumerDeferred.reject(); dataArray=null; jsonStore=null;};
+				addOptions = { onSuccess : onAddSuccess, onFailure : onAddFailure};
 				truncateBeforeAdd = (truncateBeforeAdd || (metadata.serverOnlyMode && !dataArray.truncated));
-				
+
 				if (metadata.additionalData || metadata.isSystem || truncateBeforeAdd){
 					//Only do this the second time through the function
 					if (truncateBeforeAdd){
@@ -489,7 +489,7 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 								return result;
 							});
 							jsonStore.find(query, {exact: true}).then(function (results) {
-								if(results.length > 0){
+								if(results.length > 0 && dataArray.length > 0){
 									var replace = [];
 									var add = [];
 									arrayUtil.forEach(results, function(data){
@@ -498,36 +498,37 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 										tempObj.json = dataArray.find(function(e){return e.remoteid == data.json["remoteid"]})
 										replace.push(tempObj);
 									});
-									
+
 									arrayUtil.forEach(dataArray, function(data){
 										var tempObj  = results.find(function(e){return data.remoteid == e.json["remoteid"]})
 										if(!tempObj){
 											add.push(data);
 										}
-										
 									});
-									
-									jsonStore.replace(replace, {}).then(function(numberOfDocsRemoved) {
-										if(add.length > 0){
-											return self.add(metadata, add, queryBaseName).
-											then(function(){
+									if (replace[0].json != undefined) {
+										jsonStore.replace(replace, {}).then(function(numberOfDocsRemoved) {
+											if(add.length > 0){
+												return self.add(metadata, add, queryBaseName).
+												then(function(){
+													consumerDeferred.resolve();
+													consumerDeferred = null;
+												}).
+												otherwise(function() {
+													consumerDeferred.reject();
+													consumerDeferred = null;
+												});
+											}else{
 												consumerDeferred.resolve();
 												consumerDeferred = null;
-											}).
-											otherwise(function() {
-												consumerDeferred.reject();
-												consumerDeferred = null;
-											});
-										}else{
-											consumerDeferred.resolve();
-											consumerDeferred = null;
-										}
-										
-										
-									}).
-									fail(function(e) {
-										consumerDeferred.reject(e);
-									});
+											}
+										}).
+										fail(function(e) {
+											consumerDeferred.reject(e);
+										});
+									} else {
+										consumerDeferred.reject();
+										consumerDeferred = null;
+									}
 								} else {
 									return self.add(metadata, dataArray, queryBaseName).
 									then(function(){
@@ -571,17 +572,17 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 							jsonStore.add(dataArray, addOptions);
 							dataArray = null;
 							if (WL.Client.getEnvironment() == WL.Environment.WINDOWS8) {
-						       
+
 						        if (typeof (CollectGarbage) == "function")
 						            CollectGarbage();
-						    } 
+						    }
 						}else {
 					    	return new CustomDeferred().resolve();
 					    }
-						
+
 					}
-									
-				} else if (dataArray && dataArray.length > 0) {	
+
+				} else if (dataArray && dataArray.length > 0) {
 					if (!metadata.isLocal()) {
 						if (metadata.wasWorklistStoreCleared() || (metadata.serverOnlyMode && dataArray.truncated)){
 							//No need to synchronize data since the JSONStroe was cleared so only need to add records
@@ -615,7 +616,7 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 					//Do nothing if dataArray is empty
 					return new CustomDeferred().resolve();
 				}
-				
+
 				return consumerPromise;
 			});
 		},
@@ -1036,6 +1037,49 @@ function(thisModule, Deferred, all, lang, arrayUtil, declare, jsonQuery, Platfor
 			});
 			return deferred.promise;
 			
+		},
+
+		/**
+		 * IJ29687
+		 * Everytime the app send to Maximo a LBSLOCATION transaction, this method is called.
+		 * This method delete the LBSLOCATION from jsonStore and as result the device will have more storage
+		 * space saved.
+		 *
+		 * @param resourceName name of the resource in jsonStore
+		 */
+		 removeLbslocationFromJStore: function(resourceName) {
+			var deferred = new Deferred();
+			var jsonStore = this._getStore(resourceName);
+
+			onRemoveSuccess = function(res) { deferred.resolve(); };
+			onRemoveFailure = function(res) { deferred.reject(); };
+			var options = { onSuccess : onRemoveSuccess, onFailure : onRemoveFailure };
+
+			jsonStore.clear(options).then(function(result) {
+				deferred.resolve(result);
+			});
+		},
+	
+		/**
+		* IJ25457
+		* After display the error message indicating that there is no file inside the device,
+		* Anywhere will remove the transaction and remove the data from JsonStore as well
+		* 
+		* @param attachmentId The attachment id to remove
+		* @param storeId The id to remove in transaction queue
+		*/
+		removeFailedAttachments: function(attachmentId, storeId){
+			var self = this;
+			var defTransac = new Deferred();
+			var transactionStore = this._getStore(TRANSACTION_QUEUE);
+
+			//forcing a remove from transactionQueue resource in jsonStore
+			self.getTransactionRecordOf('workOrder', storeId).then(function(data){
+				self.removeTransactionRecordOf(data[0]);
+				transactionStore.erase(data[0]._id, {push: false});
+
+				defTransac.resolve(data);
+			});
 		}
 	};
 	mixin(thisModule, classBody, JsonTranslationMixin, JsonInMemoryFindMixin, QueryBaseSaveMixin, QueryBaseFilterMixin, JsonInMemorySortMixin, CallbackCreator.prototype);

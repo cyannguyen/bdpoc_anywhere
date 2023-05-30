@@ -80,6 +80,8 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 		MAPMANAGER_PROVIDER_GOOGLE : "google",
 		
 		MARKERS_LAYER_NAME: "markers",
+		BASE_MAP_LAYER_NAME: "BaseMap",
+		WO_LAYER_NAME: "WorkOrders",
 		
 		//when we go out of map and returns (on cases that we need to centralize marker on screen) we need to reuse the last zoom value.
 		lastZoomUsed: -1,
@@ -100,7 +102,7 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 		
 		userAuthenticationManager: null,
 		mapManager: null,
-		
+		identifyDialogEnabled: false,
 
 		/* 
 		 * specificParameters can have the following parameters, default is null
@@ -779,6 +781,20 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
     				if (layerToRemove != null) {
     					this._map.removeLayer(layerToRemove);
     				}
+					// Capture GPS issue
+					if (resourceIndex != undefined) {
+						array.forEach( layersArray , lang.hitch( this, function ( layer, i ){
+							if(layer["name"] == undefined && layer["name"] != this.MARKERS_LAYER_NAME && layer["name"] != this.WO_LAYER_NAME && layer["name"] != this.BASE_MAP_LAYER_NAME && layer["values_"]["layers"] != undefined) {
+								let subLayers = layer["values_"]["layers"]["array_"];
+								for (let j = 0; j < subLayers.length; j++) {
+									if (subLayers[j]["values_"]["name"] == this.MARKERS_LAYER_NAME) {
+										subLayers.splice(j, 1);
+										layer["values_"]["layers"]["values_"]["length"] = layer["values_"]["layers"]["values_"]["length"] - 1;
+									}
+								}
+							}
+						}));
+					}
     			}            			
         	}
 			
@@ -971,7 +987,7 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 	
 		        that._drawGPSMarker(x, y);
 		        that._requestGPSToFirstMarkerLeg();
-		        that._adjustExtentView();
+				//that._adjustExtentView();
 		        that.hasGPSPosition = true;
 			}).otherwise(function (err) {
 			    console.log(err);
@@ -1112,12 +1128,16 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 					promiseUpdateLayers.then(lang.hitch(this, function(){
 						if (checkTokenMXSpatial == true) {
 							this.mobileMaximoSpatial.reloadLayersIfTokenExpired(lang.hitch(this, function() {
-								this.mobileMaximoSpatial.adjustFitForOfflineMap();
+							    if (this.mobileMaximoSpatial.identifyTool.isHidden && !this.mobileMaximoSpatial.showingOnlineMap){
+							    	this.mobileMaximoSpatial.adjustFitForOfflineMap();
+							    }
 								deferred.resolve();
 							}));
 						} else {
-							this.mobileMaximoSpatial.updateLayersToolChanges();
-							this.mobileMaximoSpatial.adjustFitForOfflineMap();
+							if (this.mobileMaximoSpatial.identifyTool.isHidden && !this.mobileMaximoSpatial.showingOnlineMap){
+								this.mobileMaximoSpatial.updateLayersToolChanges();
+								this.mobileMaximoSpatial.adjustFitForOfflineMap();
+							}
 							deferred.resolve();
 						}
 					}));
@@ -1199,7 +1219,9 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 					}
 				}
 				
-				this._adjustExtentView();
+				if(!this.deviceOrientationChanged() && this.mobileMaximoSpatial.identifyTool.isHidden){
+				 	this._adjustExtentView();
+				}
 
 				deferred.resolve(markerInfo);
 			})).otherwise(function(error) {
@@ -1238,8 +1260,11 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 			          duration: animDuration
 			    });
 				
-				view.setZoom(this.lastZoomUsed);
-				view.setCenter(this.currentSelectedPoint);
+				if (this.mobileMaximoSpatial.identifyTool.isHidden && !this.deviceOrientationChanged()){
+					view.setZoom(this.lastZoomUsed);
+					view.setCenter(this.currentSelectedPoint);
+				}
+				
 			}
 			//Verify if we need to make zoom fitting individual marker and gps
 			else if(this.currentSelectedPoint && this.zoomStatus == this.STATUS_FIT){	
@@ -1310,11 +1335,16 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 					
 					//this piece of code is here to force openlayers to update the resolution of map
 					//so, this two lines of code fix this bug on openlayers (https://github.com/openlayers/ol3/issues/3166)
-					var res = this.getResolutionForExtent(tempExtend, map.getSize());
-					view.setResolution(res);					
-						
-					view.setCenter(ol.extent.getCenter(tempExtend));
-					view.fit(tempExtend, map.getSize());						
+					//var res = this.getResolutionForExtent(tempExtend, map.getSize());
+					//view.setResolution(res);					
+					
+					if (this.mobileMaximoSpatial.identifyTool.isHidden && !this.deviceOrientationChanged()){
+						var res = this.getResolutionForExtent(tempExtend, map.getSize());
+						view.setResolution(res);
+						view.setCenter(ol.extent.getCenter(tempExtend));
+						//view.fit(tempExtend, map.getSize());	
+					}	
+										
 				}
 				else{
 					
@@ -1354,12 +1384,61 @@ function(declare, on, AbstractMap, Deferred, lang, Logger, RouteRequest, Directi
 			          center: view.getCenter(),
 			          duration: animDuration
 			        });
-				
-				view.fit(this.fullExtent, map.getSize());	
-				view.setCenter(ol.extent.getCenter(this.fullExtent));
+			        
+			   //only run this code if dialog identifyTool not started and device not change orientation
+				if ((!this.deviceOrientationChanged() || this.mobileMaximoSpatial.identifyTool.isHidden)){
+					view.fit(this.fullExtent, map.getSize());	
+				    view.setCenter(ol.extent.getCenter(this.fullExtent));
+				}
+                
 			}
 		},
+    
+    getOrientationPosition: function(position) {
+      var returnValue = null;
+      var currentValue = position;
+      if(currentValue.toUpperCase() === 'P' || currentValue.toUpperCase() === 'L' || currentValue.indexOf('DisableValidation') === 1) {
+        returnValue = currentValue;
+      }
+      return returnValue;
+    },
+    
+		deviceOrientationChanged: function () {
+			//return true if current device orientation is changed after started Map and current orientation is same to previus orientation.
+			//use localstorage "lastPreviousDialogOrientationPosition" to save last device orientation
+			//saves the device orientation value at the time the map is called, if the device is changed to another position 
+		    //it does not refresh the new area, avoiding the zoom out of the new area
+		    
+		    
+		    
+			var getStatedMapDeviceOrientationPosition = this.getOrientationPosition(localStorage.getItem("getStatedMapDeviceOrientationPosition"));
+			var previousDeviceOrientationPosition = true;
+			var returnValue = true;
+        	var getLastPreviousDialogOrientationPosition = this.getOrientationPosition(localStorage.getItem("lastPreviousDialogOrientationPosition"));
+        	
+        	if (getLastPreviousDialogOrientationPosition.indexOf("DisableValidation") !== -1){
+        		return false;
+        	}
+			
+			if (typeof getLastPreviousDialogOrientationPosition === "undefined" || getLastPreviousDialogOrientationPosition === null) {
+				getLastPreviousDialogOrientationPosition = this.getStatedMapDeviceOrientationPosition;
+			} else if ((getLastPreviousDialogOrientationPosition !== getStatedMapDeviceOrientationPosition)){
+					previousDeviceOrientationPosition = false;
+			   }
 
+			var getActualDeviceOrientationType = this.isPortraitorLandScape()
+			//localStorage.setItem("lastPreviousDialogOrientationPosition", getActualDeviceOrientationType);
+
+			if ((getStatedMapDeviceOrientationPosition === getActualDeviceOrientationType) && previousDeviceOrientationPosition ){
+				returnValue = false;
+			}
+
+			return returnValue;
+		},
+		isPortraitorLandScape : function() {
+    	  var viewport = dojo.window.getBox();
+    	  return  (viewport.h > viewport.w) ? "P" : "L";
+      },
 		/*
 		 * Switch the current marker image (icon) based on the boolean selected
 		 *

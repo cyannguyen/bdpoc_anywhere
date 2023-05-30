@@ -357,11 +357,14 @@ define("platform/map/spatial/SpatialTilePackageManager",
 				},
 				
 				getTPKCenterPoint : function () {
+					var tempMapServerPath = undefined;
+					if (this._inMemTilesObject && this.mapServerPath) {
+						tempMapServerPath = this._inMemTilesObject[this.mapServerPath];
+					}
 					
-					var tempMapServerPath = this._inMemTilesObject[this.mapServerPath];
 					if(tempMapServerPath == undefined ){
-						 console.log("Error in getting MapServerPath return X=0, Y=0");
-						return 0,0 ;
+						console.log("Error in getting MapServerPath return X=0, Y=0");
+						return [0,0];
 					} 
 					
 					tempMapServerPath= JSON.parse(tempMapServerPath);

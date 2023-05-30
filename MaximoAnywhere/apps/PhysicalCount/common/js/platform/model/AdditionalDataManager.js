@@ -106,10 +106,10 @@ function (thisModule, lang, arrayUtil, Logger, SystemProperties, ConnectivityChe
 		},
 
 		allAdditionalDataDownloaded: function(){
-			var allAdditionalDataResourceTypeCheck = this._getDataDownloadChecker(true);
+			var allAdditionalDataResourceTypeCheck = this._getDataDownloadChecker(true, true);
 		
 			
-			var additionalDataResourceNotDownloadTypeCheck = this._getDataDownloadChecker(false);
+			var additionalDataResourceNotDownloadTypeCheck = this._getDataDownloadChecker(false, true);
 		
 			
 			var allAdditionalData = this.getMetaDataList(allAdditionalDataResourceTypeCheck);
@@ -122,7 +122,7 @@ function (thisModule, lang, arrayUtil, Logger, SystemProperties, ConnectivityChe
 			}
 		},
 		
-		_getDataDownloadChecker: function(isRefresh){
+		_getDataDownloadChecker: function(isRefresh, keepMaxrowstamp){
 			var self = this;
 			if(isRefresh){
 				return  function(metadata){
@@ -133,7 +133,9 @@ function (thisModule, lang, arrayUtil, Logger, SystemProperties, ConnectivityChe
 					var metrics = metadata.getResourceMetrics(Object.keys(metadata.queryBases)[0]);
 					if(metrics && metrics.isAllDataDownloaded()){
 						metrics.allowRetry = false;
-						if(metadata['additionalData'] == true && metadata['isSystem'] !== true && ((!SystemProperties.getProperty('wasDeltaLADDownload') && !SystemProperties.getProperty('lastDownloadDateTime')) || (!SystemProperties.getProperty('wasDeltaLADDownload') && SystemProperties.getProperty('additionalDataDownloadState') == "error" ))) {
+						if(!keepMaxrowstamp && metadata['additionalData'] == true && metadata['isSystem'] !== true && (
+								(!SystemProperties.getProperty('wasDeltaLADDownload') && !SystemProperties.getProperty('lastDownloadDateTime')) || 
+								(!SystemProperties.getProperty('wasDeltaLADDownload') && SystemProperties.getProperty('additionalDataDownloadState') == "error" ))) {
 							metrics.setMaxrowstamp(null);
 						}
 					}
@@ -152,7 +154,9 @@ function (thisModule, lang, arrayUtil, Logger, SystemProperties, ConnectivityChe
 						if(!metrics.isAllDataDownloaded()){
 							metrics.allowRetry = true;
 						}
-						if(metadata['additionalData'] == true && metadata['isSystem'] !== true && ((!SystemProperties.getProperty('wasDeltaLADDownload') && !SystemProperties.getProperty('lastDownloadDateTime')) || (!SystemProperties.getProperty('wasDeltaLADDownload') && SystemProperties.getProperty('additionalDataDownloadState') == "error" ))) {
+						if(!keepMaxrowstamp && metrics.hasError() && metadata['additionalData'] == true && metadata['isSystem'] !== true && (
+								(!SystemProperties.getProperty('wasDeltaLADDownload') && !SystemProperties.getProperty('lastDownloadDateTime')) || 
+								(!SystemProperties.getProperty('wasDeltaLADDownload') && SystemProperties.getProperty('additionalDataDownloadState') == "error" ))) {
 							metrics.setMaxrowstamp(null);
 						}
 					}

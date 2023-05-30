@@ -28,6 +28,7 @@ define("platform/auth/SecureRequestManager",
 	var logIdentifier = "INF_SRM_1001";
 	var allowedTIme = 10; //mins;
 	var idleLock = null;
+	//var idleTimeLock = false;
 	var idle_time = (new Date()).getTime();
 	
 	return {
@@ -46,11 +47,12 @@ define("platform/auth/SecureRequestManager",
 				invocationData[_REQUEST_IDENTIFIER] = requestID;
 				var requestObject = {requestID: requestID, invocationData: invocationData, options: options, deferred: deferred};
 				promise.always(function(result){
-					Logger.trace('SecureRequestManager removing request.  ID =  ' +  requestID);
+					if (result.error != "REQUEST TIMEOUT" && result.errorCode != "UNRESPONSIVE_HOST")
+						Logger.trace('SecureRequestManager removing request.  ID =  ' +  requestID);
 					if (lockedRequests[requestID]){
 						delete lockedRequests[requestID];
 					}
-					else{
+					else if (result.error != "REQUEST TIMEOUT" && result.errorCode != "UNRESPONSIVE_HOST") {
 						delete adaptorRequests[requestID];
 					}
 					if(idleLock === requestID){
@@ -69,16 +71,6 @@ define("platform/auth/SecureRequestManager",
 					Logger.trace('SecureRequestManager locked not sending request to adaptor.  ID = ' +  requestID);
 					return promise;
 				}
-
-				
-				var curTIme = (new Date()).getTime();
-
-				if(curTIme > (idle_time + (allowedTIme * 60000)) ){
-					Logger.trace("15 min elapsed with no request. Forcing reauthorization")
-					this.enableAuthLock();
-					idleLock = requestID;
-				}
-
 			}
 			Logger.trace('SecureRequestManager sending request.  ID = ' +  invocationData[_REQUEST_IDENTIFIER]);
 			idle_time = (new Date()).getTime();
@@ -88,6 +80,23 @@ define("platform/auth/SecureRequestManager",
 			Logger.trace("[Request][Timeout] " + logIdentifier + "The request timeout set at: " + options.timeout, null, 'platform.auth.SecureRequestManager');
 			
 			return promise;
+		},
+
+		determineIfIdleTimeHasElapsed: function(invocationData) {
+			if(!invocationData[_REQUEST_IDENTIFIER]){
+				var requestID = new Date().getTime();
+				var curTime = (new Date()).getTime();
+				if(curTime > (idle_time + (allowedTIme * 60000)) ){
+					Logger.trace("15 min elapsed with no request. Forcing reauthorization");
+					this.enableAuthLock();
+					idleLock = requestID;
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
 		},
 
 		hasPendingRequest: function(){

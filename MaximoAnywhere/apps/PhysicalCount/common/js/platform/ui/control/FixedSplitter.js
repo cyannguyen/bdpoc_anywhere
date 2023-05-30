@@ -190,7 +190,7 @@ function(declare, ContainerControlBase, FixedSplitter, Pane, View, css3, domCons
 			    	this.panes[1].open = true;
 				    this.panes[1].onOrientationChanged();
 			    }
-			    if(this.ui.getViewFromId(this.ui.getCurrentView().id).fullScreen || this.panes[1].domNode.clientWidth || this.panes[0].domNode.clientWidth)
+			    if((this.ui.getCurrentView() && this.ui.getViewFromId(this.ui.getCurrentView().id).fullScreen) || this.panes[1].domNode.clientWidth || this.panes[0].domNode.clientWidth)
 			    	this.baseWidget.resize();
 			   
 			},

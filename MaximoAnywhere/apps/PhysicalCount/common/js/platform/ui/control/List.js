@@ -89,7 +89,6 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
         errorImage: null,
         errorCountLabel: null,
         errorSeparator: null,
-        storeroomLabel: null,
 		
         constructor: function (options) {
             this._controlType = 'List';
@@ -163,33 +162,32 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             if (searchString && searchString.length > 0) {
                 isExactMatch = this.searchRecord.get('exact');
             }
-            //In-Loc
-            /* else {
+            //#region Loc-In: add To Do of Else
+            else {
                 return;
-            } */
-            //Out-Loc
-
+            }
+            //#endregion Loc-In: add To Do of Else
             var self = this;
             if (query && Object.keys(query[0]).length) {
                 return ModelService.filtered(currentModelDataSet.getResourceName(), currentModelDataSet.getQueryBase(), query, null, false, isExactMatch).
 		    	then(function (dataSet) {
-		    	    self.application.addResource(dataSet);
-		    	    //In-Loc
-		    	    //self.application.addResource(self.distinctBin(dataSet));
-                    //Out-Loc
+                    //#region Loc-In: get resource from distinctBin method
+		    	    //self.application.addResource(dataSet);
+                    self.application.addResource(self.distinctBin(dataSet));
+                    //#endregion Loc-Out: get resource from distinctBin method
 		    	});
             } else {
                 return ModelService.all(currentModelDataSet.getResourceName(), currentModelDataSet.getQueryBase(), null, false).
 		    	then(function (dataSet) {
-		    	    self.application.addResource(dataSet);
-                    //In-Loc
-		    	    //self.application.addResource(self.distinctBin(dataSet));
-                    //Out-Loc
+                    //#region Loc-In: get resource from distinctBin method
+		    	    //self.application.addResource(dataSet);
+                    self.application.addResource(self.distinctBin(dataSet));
+                    //#endregion Loc-Out: get resource from distinctBin method
 		    	});
             }
         },
 
-        //In-Loc
+        //#region Loc-In: Add distinctBin method
         distinctBin: function(dataSet){
             var binList = [];
 
@@ -208,7 +206,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 		
 			return dataSet;
         },
-        //Out-Loc
+        //#endregion Loc-Out: Add distinctBin method
 
         build: function () {
             //		summary:
@@ -326,6 +324,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 
                 var sortable = this.hasSorting();
 
+                //#region Loc-In: researching render storeroomLable
                 /* this.storeroomLabel = new Text({
                     control: this,
                     labelClassName: "listCount textappearance-medium",
@@ -342,6 +341,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                     currentLocation = currentRecord != null ? currentRecord.get("location") : "";
                     this.storeroomLabel.label = currentLocation;
                 } */
+                //#endregion Loc-Out
 
                 // Sort needs the labels
                 // We will not show the sort if the list is searchable
@@ -570,9 +570,11 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 	    		if(this.getResource() && this.showHeader){
                     //set list count
                     this.getResource().getListCount().then(function (count) {
-                        //Loc
-                        //self.countLabel.setLabel(count);
-                        self.setCustomListCount(count);
+                        //#region Loc-In: set counting from setCustomListCount method
+			/* if (self.countLabel)
+                            self.countLabel.setLabel(count); */
+                            self.setCustomListCount(count);
+                        //#endregion Loc-Out: set counting from setCustomListCount method
                     });
                 }
 	    		//Need to hide the busy icon after building the list
@@ -586,7 +588,8 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                 });
             }
 
-            this.baseWidget.addChild(this.listWidget);
+            if (this.baseWidget)
+            	this.baseWidget.addChild(this.listWidget);
 	                
             if (this.getResource().count() == 0) {
                 this.emptyRow = new ContentPane();
@@ -621,7 +624,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             return createdBaseWidget;
         },
 
-        // Loc
+        //#region Loc-In: add the setCustomListCount method
         setCustomListCount : function(count){
             if (this.searchable) {
             	this.countLabel.setLabel(count);
@@ -629,6 +632,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                 this.countLabel.setLabel("Number record: " + count);
             }
         },
+        //#endregion Loc-Out: add the setCustomListCount method
 
         _setupSearchCriteria: function(metadata) {
         	var performStoreSearch = false;
@@ -661,9 +665,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             }
             else {
                 this.searchRecord = searchSet.getRecordAt(0);
-                //Loc: show all List when searching was previous time (ex: the lookup has searching keyword)
-                //if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName) {
-                if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName || this.searchRecord.get('querybase') == null) {
+                if (this.searchRecord.get('querybase') != this.getResource()._queryBaseName) {
                     this.searchRecord.set('querybase', "");
                     this.searchRecord.set('search', "");
                     this.searchRecord.set('fromscan', false);
@@ -715,7 +717,7 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
         },
 
         checkForErrors: function () {
-        	if(this.viewControl.transitioningOut){
+        	if(this.viewControl == null || this.viewControl.transitioningOut){
         		return;
         	}
             var self = this;
@@ -805,9 +807,11 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
                 //   		 		}
 
                 store.getListCount().then(function (count) {
-                    // Loc
-                    //self.countLabel.setLabel(count);
-                    self.setCustomListCount(count);
+                    //#region Loc-In: set counting from setCustomListCount method
+			/* if (self.countLabel)
+                            self.countLabel.setLabel(count); */
+                            self.setCustomListCount(count);
+                    //#endregion Loc-Out: set counting from setCustomListCount method
                 });
 
             }
@@ -1319,7 +1323,8 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
             }
             this.destroyList();
             this.buildListWidget();
-            this.baseWidget.addChild(this.listWidget);
+            if (this.listWidget)
+                this.baseWidget.addChild(this.listWidget);
             domStyle.set(this.listWidget.domNode, 'display', 'inline');
             this.buildSortMenu();
             var resource = this.getResource();
@@ -1343,9 +1348,11 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
     		if(this.showHeader){
     			resource.getListCount().then(function (count) {
                     try{
-                    // Loc
-    				//self.countLabel.setLabel(count);
-    				self.setCustomListCount(count);
+                    //#region Loc-In: set counting from setCustomListCount method
+                        /* if (self.countLabel)
+                            self.countLabel.setLabel(count); */
+                            self.setCustomListCount(count);
+                    //#endregion Loc-Out: set counting from setCustomListCount method
                     }catch(e){};
     			});
     		}
@@ -1420,10 +1427,12 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 
 		fixTransitionIcons: function(){
 			var list = this;
-			query('.mblListItemRightIcon', list.listWidget.domNode).forEach(function(itemIcon, index, arr){
-				var itemBox = domGeometry.position(itemIcon.parentNode);
-				domStyle.set(itemIcon, 'margin-top', (itemBox.h/2)+'px');
-			});
+			if (list.listWidget) {
+				query('.mblListItemRightIcon', list.listWidget.domNode).forEach(function(itemIcon, index, arr){
+				    var itemBox = domGeometry.position(itemIcon.parentNode);
+				    domStyle.set(itemIcon, 'margin-top', (itemBox.h/2)+'px');
+			 	});
+			 }
 		},
 		
 	    ensureRecordFocus : function(item) {
@@ -1446,6 +1455,6 @@ function (declare, ControlBase, ContainerControlBase, Container, Text, Button, C
 		    });
 		    return true;
 	    }
-
+    
     });
 });

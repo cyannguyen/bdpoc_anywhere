@@ -27,7 +27,7 @@ function(ServerPreferredDataAccessStrategy, LocalDataAccessStrategy, InMemoryOnl
 			
 			if (resourceMetadata.inMemory
 				|| resourceMetadata.name == "PlatformLoginResource"){  //TODO Remove this OR condition when CodeGen properly generates
-														   				//the soft attribute and they and it's declared in the artifact														   
+														   				//the soft attribute and they and it's declared in the artifact
 				dataAccessStrategy = new InMemoryOnlyDataAccessStrategy(resourceMetadata);
 				
 			} else if (resourceMetadata.local === true || resourceMetadata.additionalData === true){

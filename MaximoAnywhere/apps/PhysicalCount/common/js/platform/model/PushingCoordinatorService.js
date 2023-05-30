@@ -165,7 +165,7 @@ function(Deferred, lang, arrayUtil, PlatformRuntimeException,
 				var resourceName = modelData.getMetadata().getResourceName();
 				var id = modelData.getId();			
 				Logger.timerStart("[PUSHING] Staging transactions [" + resourceName + "] id: [" + id + "]");
-				var toStage = arrayUtil.map(modelData.pendingTransactions(), function(subTransaction){
+				var toStage = arrayUtil.map(modelData._getClosedTransactions(), function(subTransaction){
 					var transaction = this._generateTransactionRecord(resourceName, id);
 					this._updateCreateDateOnStaged(transaction);
 					this._addPayloadToStagedTransaction(transaction, subTransaction);
@@ -575,6 +575,12 @@ function(Deferred, lang, arrayUtil, PlatformRuntimeException,
 				promise.then(function() {
 					Logger.trace("[SYNCHRO] Shrink/merge successfully completed!", null, clazzmethod);
 					self._pushSubTransactions(transaction, deferred);
+
+					//IJ29687
+					if(transaction.json.resourceName == 'lbslocation'){
+						PersistenceManager.removeLbslocationFromJStore(transaction.json.resourceName);
+						PersistenceManager.removeTransactionRecordOf(transaction);
+					}
 
 				}).otherwise(function(error){
 					Logger.error("[SYNCHRO] Shrink/merge failed!", null, clazzmethod);
@@ -1056,6 +1062,11 @@ function(Deferred, lang, arrayUtil, PlatformRuntimeException,
 						});						
 					}
 					else if(errorInfo.statusCode == 1) {
+						//IJ25457
+						if(changeRecord['payload']['spi:attachments']){
+							PersistenceManager.removeFailedAttachments(changeRecord.payload["spi:attachments"][0]["wdrs:describedBy"]["spi:anywhererefid"], storeId);
+						}
+						
 						deferred.reject({
 							 "type": "", 
 							 "error": error,								
@@ -1174,12 +1185,13 @@ function(Deferred, lang, arrayUtil, PlatformRuntimeException,
 						// this is virtually impossible to happen because the record had to be removed from the device
 						// if we reach here means we have some problem in the undo or deleteLocal that allowed the record to be removed
 						// and did not clean up the transaction queue.
+						var error = new Error("Record removed.");
 						Logger.error("[SYNCHRO] Could not find record "+resourceName+" - id "+ id +" on device to update error.", null, clazzmethod);;
 						promise.reject({"type": "business", "error": error});
 					}
 				}).otherwise(function(error){
 					Logger.logError("[SYNCHRO] Could not query record "+resourceName+" - id "+ id +" on device to update error.", error, clazzmethod);
-					promise.reject({"type": "business", "error": originalError});
+					promise.reject({"type": "business", "error": error});
 				});
 				return promise.promise;
 			});

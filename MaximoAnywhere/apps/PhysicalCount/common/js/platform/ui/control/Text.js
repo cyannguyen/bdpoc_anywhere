@@ -26,6 +26,8 @@ define("platform/ui/control/Text",
          "dojo/touch",
          "dijit/focus",
          "dojo/_base/event",
+         "dojo/dom",
+         "dojo/dom-style",
          "dojo/dom-construct",
          "dojo/dom-attr",
          "dojo/dom-class",
@@ -38,10 +40,11 @@ define("platform/ui/control/Text",
          "platform/exception/PlatformRuntimeException",
          "platform/warning/PlatformRuntimeWarning",
          "platform/codeScanner/BluetoothScanner",
-         "platform/util/ANumericUtil"],
+         "platform/util/ANumericUtil",
+         "platform/util/XSSSanitizer"],
 function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin, ContentPane, TextBox, Output, Label, lang, array, on, touch,
-        dijitFocus, event, domConstruct, domAttr, domClass, at, Button, tap, CodeScanner, Logger, MessageService,
-        PlatformRuntimeException, PlatformRuntimeWarning, BluetoothScanner, ANumericUtil) {
+        dijitFocus, event, dom, domStyle, domConstruct, domAttr, domClass, at, Button, tap, CodeScanner, Logger, MessageService,
+        PlatformRuntimeException, PlatformRuntimeWarning, BluetoothScanner, ANumericUtil,XSSSanitizer) {
     return declare([ContainerControlBase, StatefulControlMixin, BoundControlMixin], {
         editable: true,
         value: '',
@@ -68,7 +71,7 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
 
         constructor: function (options) {
             this._controlType = 'Text';
-            this.style = 'display: inline; width:inherit;';
+            this.style = 'display: inline;';
             if (options && options.lookup) {
                 this.hasLookup = true;
             }
@@ -259,7 +262,7 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
 
             var runtimeRequired = this.required;
             if (!runtimeRequired && this.bound && this.validBinding) {
-                if (this.getCurrentRecord()) {
+                if (this.getCurrentRecord() && this.getCurrentRecord() != null) {
                     runTimeMataData = this.getCurrentRecord().getRuntimeFieldMetadata(this.resourceAttribute);
                     runtimeRequired = runTimeMataData && runTimeMataData.required;
                     if (runTimeMataData.required) {
@@ -310,6 +313,17 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                 if (windows) {
                     window.scrollTo(0, 0);
                 }
+                if(WL.Client.getEnvironment() == WL.Environment.IPAD || WL.Client.getEnvironment() == WL.Environment.IPHONE) {
+                    setTimeout(() => {
+                        if (dom.byId("WorkExecution.WorkItemsView"))
+                            domStyle.set(dom.byId("WorkExecution.WorkItemsView"), "height", (document.documentElement.clientHeight - 20) + "px");
+                        if (dom.byId("WorkExecution.WorkDetailView"))
+                            domStyle.set(dom.byId("WorkExecution.WorkDetailView"), "height", "100%");
+                        setTimeout(()=>{
+                            window.scrollTo(0, 0);
+                        }, 200);
+                    }, 300);
+                }
             }));
             if (this.bound && this.validBinding) {
                 //For some reason (possibly layout doesn't apply) text control with binding doesn't get 
@@ -323,15 +337,17 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                 if (this.placeHolder && this.placeHolder.textMsg.length > 0) {
                     this._setNonEditablePlaceholder();
                     var resource = this.getResource();
-                    this.addResourceWatchHandle(resource.getCurrentRecord().watch(this.resourceAttribute, lang.hitch(this, function (fieldName, oldValue, newValue) {
-                        this._setNonEditablePlaceholder();
-                    })));
+                    if (resource.getCurrentRecord() && resource.getCurrentRecord() != null) {
+                        this.addResourceWatchHandle(resource.getCurrentRecord().watch(this.resourceAttribute, lang.hitch(this, function (fieldName, oldValue, newValue) {
+                            this._setNonEditablePlaceholder();
+                        })));
 
-                    this.addResourceWatchHandle(resource.onChange(lang.hitch(this, function (field, oldValue, newValue) {
-                        if (this.textWidget && this.textWidget._beingDestroyed != true) {
-                            setTimeout(lang.hitch(this, function () { this._setNonEditablePlaceholder(); }), 100);
-                        }
-                    })));
+                        this.addResourceWatchHandle(resource.onChange(lang.hitch(this, function (field, oldValue, newValue) {
+                            if (this.textWidget && this.textWidget._beingDestroyed != true) {
+                                setTimeout(lang.hitch(this, function () { this._setNonEditablePlaceholder(); }), 100);
+                            }
+                        })));
+                    }
                 }
             }
             domAttr.set(this.textWidget.domNode, {
@@ -348,7 +364,8 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                 });
 
                 this.addHandler(on(this.labelElement, tap, lang.hitch(this, function (e) {
-                    dijitFocus.focus(this.textWidget.domNode);                   
+		    if (this.textWidget)
+                        dijitFocus.focus(this.textWidget.domNode);                   
                     //Need to check to see if we need to pop the lookup
                     this._handleTap(e);
                 })));
@@ -358,7 +375,7 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                 if(!this.editable && !this.lookup){
                     this._setReadOnly(!this.editable); //if this was intentionally set in xml, use it
                 }
-                else{
+                else if (this.getCurrentRecord() && this.getCurrentRecord() != null){
                     this._setReadOnly(this.getCurrentRecord().getRuntimeFieldMetadata(this.resourceAttribute).readonly);
                 }
             }
@@ -407,7 +424,7 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                         /*if(device.model.indexOf("SM-") == -1)
                         {*/
                             this.tbType = 'number';
-                            domAttr.set(this.textWidget.domNode, 'type', 'number');
+                            domAttr.set(this.textWidget.domNode, 'type', 'tel');
                         /*}*/
                     }catch(err){
                         Logger.errorJSON('Cannot set type to numeric textbox', err);
@@ -431,6 +448,14 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
 
             this.addHandler(on(this.textWidget, 'focus', function (e) {
                 control.ui.hideCurrentMenu();
+                if(WL.Client.getEnvironment() == WL.Environment.IPAD || WL.Client.getEnvironment() == WL.Environment.IPHONE) {
+                    if (dom.byId("WorkExecution.ActualLaborEntryView_footer"))
+                        domStyle.set(dom.byId("WorkExecution.ActualLaborEntryView_footer"), "margin-bottom", "0px");
+                    if (dom.byId("WorkExecution.ActualMaterialsEntryView_footer"))
+                        domStyle.set(dom.byId("WorkExecution.ActualMaterialsEntryView_footer"), "margin-bottom", "0px");
+                    if (dom.byId("WorkExecution.ActualToolsEntryView_footer"))
+                        domStyle.set(dom.byId("WorkExecution.ActualToolsEntryView_footer"), "margin-bottom", "0px");
+                }
             }));
 
             var parentReturn = this.inherited(arguments);
@@ -572,7 +597,8 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                                 that.textWidget.set('value', codeScannerResult.text);
                             }
                             // send focus back to the textfield
-                            dijitFocus.focus(this.textWidget.domNode);
+			    if (this.textWidget)
+                                dijitFocus.focus(this.textWidget.domNode);
 
                         }
                         else {
@@ -602,7 +628,7 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
         },
 
         setLabel: function (newLabel) {
-            this.labelElement.domNode.innerHTML = newLabel;
+            this.labelElement.domNode.innerHTML = XSSSanitizer.sanitizeValue(newLabel);
         },
 
         postCreate: function () {
@@ -625,12 +651,12 @@ function (declare, ContainerControlBase, StatefulControlMixin, BoundControlMixin
                     if (this.errorButton) {
                         domClass.add(this.errorButton.domNode, 'fieldMarkerError');
                     }
-                    if (this.textWidget.domNode) {
+                    if (this.textWidget && this.textWidget.domNode) {
                         domClass.add(this.textWidget.domNode, 'errorText');
                     }
                     break;
                 default:
-                    if (this.textWidget.domNode) {
+                    if (this.textWidget && this.textWidget.domNode) {
                         domClass.remove(this.textWidget.domNode, 'errorText');
                         domClass.remove(this.textWidget.domNode, 'warningText');
                     }

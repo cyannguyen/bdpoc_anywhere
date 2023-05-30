@@ -112,5 +112,6 @@
 	    <message defaultMessage="Cannot test files in the simulator.  Retry this test on a real device" id="cannotTestFilesInSimulator"/>
 	    <message defaultMessage="Your attachment properties are not configured correctly.  Contact your administrator" id="doctypesDefpathNotDefined"/>
 	    <message defaultMessage="Unexpected response while uploading attachment.  Contact your system administrator." id="attachUnexpectedResponse"/>
+		<message defaultMessage="File upload has failed." id="fileUploadFailed"/>
 	</messages>
 </app>

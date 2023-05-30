@@ -96,6 +96,20 @@
 			</eventHandlers>
 <!-- 			<text cssClass="loginCopyright" id="platform.LoginView_container_0_2015IBMCorporati" value="&#169; 2020 IBM Corporation"/> -->
 		</view>
+		<dialog id="Platform.AppPermission">
+			<container id="Platform.AppPermission_container">
+				<text editable="false" cssClass="mblSimpleDialogText" id="Platform.AppPermission_text" value="IBM Maximo Anywhere requires access to your device. The location data is used for navigation and routing options to your work. Access to the camera, photos, media and files is required for you to add attachments to work orders and inspections. When you click Next, you are given the option to allow or deny access to this data.">
+					<eventHandlers id="Platform.AppPermission_text_eventHandlers">
+						<eventHandler class="platform.handlers.LoginHandler" event="render" id="Platform.AppPermission_text_eventHandlers_render_setAppPermissionText" method="setAppPermissionText"/>
+					</eventHandlers>
+				</text>
+				<button id="Platform.AppPermission_button" label="Continue">
+					<eventHandlers id="Platform.AppPermission_button_eventHandlers">
+						<eventHandler class="platform.handlers.LoginHandler" event="click" id="Platform.AppPermission_button_eventHandlers_click_acceptAppPermission" method="acceptAppPermission"/>
+					</eventHandlers>
+				</button>
+			</container>
+		</dialog>
 	</ui>
 	<data id="data">
 		<resource id="PlatformLoginResource" inMemory="true" name="PlatformLoginResource" singleton="true">
@@ -130,4 +144,8 @@
 			</attributes>
 		</resource>
 	</data>
+	<messages id="login_messages">
+		<message defaultMessage="IBM Maximo Anywhere requires access to your device’s location, camera, photos, media and files. The location data is used for navigation and routing options to your work. This app collects gps location data, even when the app is in the background, to enhance accuracy of user location placement in the map view. Access to the camera, photos, media and files is required for you to add attachments and to support barcode scanning. When you click Continue, you are given the option to allow or deny access to this data." id="appPermissions"/>
+		<message defaultMessage="IBM Maximo Anywhere requires access to your device's camera, photos, media and files. Access to the camera, photos, media and files is required for you to add attachments and to support barcode scanning. When you click Continue, you are given the option to allow or deny access to this data." id="appPermissionsMedia"/>
+	</messages>
 </app>

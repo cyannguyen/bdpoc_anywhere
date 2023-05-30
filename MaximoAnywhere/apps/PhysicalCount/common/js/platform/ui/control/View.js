@@ -411,7 +411,7 @@ define("platform/ui/control/View", [
 										localStorage.setItem("wasOffline","true");
 									}
 																
-									var wasOffline = localStorage.getItem("wasOffline");                  
+									var wasOffline = (localStorage.getItem("wasOffline") && (localStorage.getItem("wasOffline") == "true" || localStorage.getItem("wasOffline") == "false")) ?  localStorage.getItem("wasOffline") : "false";                  
 									if(this._isConnected && wasOffline === "true"){
 										localStorage.setItem("wasOffline","false");
 										this.sync(context);
@@ -555,6 +555,9 @@ define("platform/ui/control/View", [
 						    	//Need to blur the current node if it's showing on Android
 						    	if (dijitFocus.curNode) 
 						    		dijitFocus.curNode.blur();
+								setTimeout(() => {
+									domStyle.set(dom.byId(WL.application.ui.transitionInfo.id), "height", (document.documentElement.clientHeight) + "px");
+								}, 100);
 							} else {
 								// Hiding the keyboard
 								this.logger.trace("closing ios keyboard");
@@ -809,7 +812,7 @@ define("platform/ui/control/View", [
 									var forceBlockedToFull = false;
 
 									//If previous has fullsCreen true, the child should follow the same
-									if(this.ui.getViewFromId(this.ui.viewHistory.slice(-1).pop().id).fullScreen && this.id !== this.ui.splitPane.leftPaneRootView){
+									if(this.ui.viewHistory && this.ui.viewHistory != null && this.ui.getViewFromId(this.ui.viewHistory.slice(-1).pop().id).fullScreen && this.id !== this.ui.splitPane.leftPaneRootView){
 										this.fullScreen = true;
 									}
 
@@ -898,12 +901,13 @@ define("platform/ui/control/View", [
 										if (cut >= 0) {
 											qb = qb.substring(cut + 11);
 										}
-										//[Loc]: remove ServerQueryList 
+										//#region Loc-In: remove ServerQueryList
 										/* that.queries.addChild(new Query({
 											'id' : name,
 											'label' : label,
 											'queryBase' : qb
 										})); */
+										//#endregion Loc-Out: remove ServerQueryList
 									});
 									array.forEach(systemQueries, function(systemQuery) {
 										var props = {};
@@ -1204,16 +1208,8 @@ define("platform/ui/control/View", [
 //								maxWidthPixels = (document.body.clientWidth * .5);
 //							}
 //							else{
-								// Loc: comment the clientwidth fixing for iphone X and same device
-								//maxWidthPixels = (document.body.clientWidth * .37);
-//							}
-
-							// Loc: comment the clientwidth fixing for iphone X and same device
-							if (document.body.clientWidth < 390){
-								maxWidthPixels = (document.body.clientWidth * .5);
-							} else {
 								maxWidthPixels = (document.body.clientWidth * .37);
-							}
+//							}
 							
 							//another 32px for disconnectImage which is always present plus 8px span each side
 							maxWidthPixels = maxWidthPixels - 48;
@@ -1237,13 +1233,13 @@ define("platform/ui/control/View", [
 
 							//Put into the hiddenButton list for those less than the buttons to	 hide
 							array.forEach(this.potentialToolbarButtons, function(button, index) {
-								// Loc: add button.action is false and button's name is in "previous, next" to toolbarButton
+								//#region Loc-In: add button.action is false and button's name is in "previous, next" to toolbarButton
 								if (button.icon === undefined || button.alt == 'Previous' || button.alt == 'Next'){
 									this.addToolbarButton(button);
 									wrappedButtonCount--;
 									//this.header.addChild(this.disconnectImage.build());
 								} else
-								// Loc
+								//#endregion Loc-Out: add button.action is false and button's name is in "previous, next" to toolbarButton
 							    if (!button.overFlow) { // don't hide the overflow button
 						            if (hiddenButtonCount < wrappedButtonCount) {
 						                hiddenButtonCount++;
@@ -1409,7 +1405,10 @@ define("platform/ui/control/View", [
 							if (//load if the resource has never been loaded
 								!resourceObj 
 								//Only reload if marked and non local resource, or for local resource if we're not moving back	
-								|| requiredResource.reload == true && (!resourceObj.isLocal() || resourceObj.isLocal() && !this.ui.movingBack /* Loc: hardCode for search function*/ && resourceId != 'storeRoomResource') 
+								//#region Loc-In: hardCode for search function
+								//|| requiredResource.reload == true && (!resourceObj.isLocal() || resourceObj.isLocal() && !this.ui.movingBack) 
+								|| requiredResource.reload == true && (!resourceObj.isLocal() || resourceObj.isLocal() && !this.ui.movingBack /* Loc: hardCode for search function*/ && resourceId != 'storeRoomResource')  
+								//#endregion Loc-Out: hardCode for search function
 								//Or reload any child resources when not moving back
 								|| (resourceId.indexOf('.') > -1) && !this.ui.movingBack) {
 								if (resourceObj && resourceObj._currentIndex > -1) {
@@ -1506,31 +1505,6 @@ define("platform/ui/control/View", [
 											this.queries.children[this.queryBaseIndex].queryBase);
 								}
 								deferred.resolve();
-							}
-							return deferred.promise;
-						},
-
-						changeQueryBaseIndex : function(index) {
-							if(this.listView){
-								return this.listView.changeQueryBase(index);
-							}
-							var deferred = new Deferred();
-							if (typeof index == 'undefined' || index == null) {
-								deferred.resolve();
-					    	}
-	    					else{
-								this.queryBaseIndex = index;
-								if (this.queryBaseIndexResource != null) {
-									var view = this.listView?this.listView:this;
-									this.queryBase = view.queries.children[view.queryBaseIndex].queryBase;
-									this.queryBaseIndexRecord.set('index', index);
-									this.queryBaseIndexRecord.set('queryid', this.queryBase);
-									this.application.modelService.save(view.queryBaseIndexResource);
-
-									var resourceForQuery = this.queries.resource ? this.queries.resource : this.resource;
-									deferred.resolve(true);
-								}
-								deferred.resolve(false);
 							}
 							return deferred.promise;
 						},

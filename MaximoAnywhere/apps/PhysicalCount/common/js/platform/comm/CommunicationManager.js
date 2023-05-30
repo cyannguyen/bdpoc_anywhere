@@ -734,7 +734,15 @@ define("platform/comm/CommunicationManager", [
 						
 					}).otherwise(function(error){
 							var attachErrorReturn = {};
-								
+							
+							if (error.http_status === undefined || error.http_status=== null) {
+								error.http_status = error;
+							}
+
+							if (error.message === undefined || error.message=== null) {
+								error.message = "Unknown error";
+							}
+							
 							attachErrorReturn.invocationResult = { "errors": [{"oslc:extendedError": {},
 																"oslc:message": error.message,
 																"oslc:statusCode": error.http_status,

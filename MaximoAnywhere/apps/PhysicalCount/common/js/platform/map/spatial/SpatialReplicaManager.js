@@ -1023,7 +1023,10 @@ require( [
 								} else {
 									if (attributes[columnName] == null) {
 										attributes[columnName] = "";
-									}
+									}else if (column.sde_type == 7) {
+									   attributes[columnName] =  this.dateJuliantoGregorian(attributes[columnName]);
+								    }
+									
 								}
 								
 							}));
@@ -1040,6 +1043,60 @@ require( [
 				
 				return deferred.promise;
 			},
+			
+			dateJuliantoGregorian: function(julianDate) {
+				if (julianDate == null){
+					return "";
+				}
+				var X = parseFloat(julianDate) + 0.5;
+				var Z = Math.floor(X); //Get day without time
+				var F = X - Z; //Get time
+				var Y = Math.floor((Z - 1867216.25) / 36524.25);
+				var A = Z + 1 + Y - Math.floor(Y / 4);
+				var B = A + 1524;
+				var C = Math.floor((B - 122.1) / 365.25);
+				var D = Math.floor(365.25 * C);
+				var G = Math.floor((B - D) / 30.6001);
+
+				//must get number less than or equal to 12)
+				var month = (G < 13.5) ? (G - 1) : (G - 13);
+
+				//if Month is January or February, or the rest of year
+				var year = (month < 2.5) ? (C - 4715) : (C - 4716);
+				month -= 1; //Handle JavaScript month format
+				var UT = B - D - Math.floor(30.6001 * G) + F;
+				var day = Math.floor(UT);
+
+				//Determine time
+				UT -= Math.floor(UT);
+				UT *= 24;
+				var hour = Math.floor(UT);
+				UT -= Math.floor(UT);
+				UT *= 60;
+				var minute = Math.floor(UT);
+				UT -= Math.floor(UT);
+				UT *= 60;
+				var second = Math.round(UT);
+
+				return this.getDateWithTimeZone(new Date(Date.UTC(year, month, day, hour, minute, second)));
+			},
+			
+			 getDateWithTimeZone: function (date) { 
+                 var day  = date.getDate().toString();
+                 var dayF = (day.length == 1) ? '0'+day : day;
+                 var month  = (date.getMonth()+1).toString();
+                 var monthF = (month.length == 1) ? '0'+month : month;
+                 var yearF = date.getFullYear();
+                 var hour = date.getHours().toString();
+                 var hourF = (hour.length == 1) ? '0'+hour: hour;
+                 var minutes = date.getMinutes().toString();
+                 var minutesF = (minutes.length == 1) ? '0'+minutes: minutes;
+                 var seconds = date.getSeconds().toString();
+                 var secondsF = (seconds.length == 1) ? '0'+seconds: seconds;
+
+				 return monthF+"/"+dayF+"/"+yearF+" "+hourF+":"+minutesF+":"+secondsF;
+
+			 },
 			
 			/**
 			 * Check if the configuration is ok for an offline area
@@ -1114,13 +1171,13 @@ require( [
 				return btoa(loginResource.username + ":" + loginResource.password);
 			},
 			
-			_getGeodatabase: function(offlineAreaId, mapService, sizeAlreadLoaded, blockNumber,  mapServicesLoaded, mapServicesToLoad, deferred) {
-				var self = this;
+			_getGeodatabase: async function(offlineAreaId, mapService, sizeAlreadLoaded, blockNumber, mapServicesLoaded, mapServicesToLoad, deferred) {
+				let geodatabase = null;
 				var mapServiceId = mapService.id;
 				var mapServiceName = mapService.name;
 				var sizeMb = mapService.sizeMb;
 				var sizeBytes = Number(sizeMb) * 1024 * 1024;
-				var numberOfBlocks = Math.ceil(sizeBytes/self.replicaBlockSize);
+				var numberOfBlocks = Math.ceil(sizeBytes/this.replicaBlockSize);
 				var baseUrl = this._getMaximoURL();	
 				Logger.trace("_getGeodatabase baseUrl " + baseUrl);
 				var requestURL = baseUrl + "/oslc/plussofflinemapservicereplica";
@@ -1130,7 +1187,7 @@ require( [
 				var params = {
 						"offlineAreaId": offlineAreaId,
 						"mapServiceId": mapServiceId,
-						"maxBytes": self.replicaBlockSize,
+						"maxBytes": this.replicaBlockSize,
 						"position": sizeAlreadLoaded
 				};
 				
@@ -1158,38 +1215,49 @@ require( [
 				  });
 				
 				// Do the post request to Maximo to get the geodatabase
-				xhr(requestURL, {
-					method: "POST",
-					data: params,
-					headers: {
-						"MAXAUTH": self._getMaxAuthHeader()
+				geodatabase = null;
+
+				try {
+					geodatabase = await fetch(requestURL, {
+						"credentials": "include",
+						"headers": {
+							"accept": "*/*",
+							"accept-language": "en-US,en;q=0.9",
+							"content-type": "application/x-www-form-urlencoded",
+							"maxauth": this._getMaxAuthHeader(),
+							"x-requested-with": "XMLHttpRequest"
+						},
+						"referrerPolicy": "no-referrer-when-downgrade",
+						"body": "offlineAreaId="+offlineAreaId+"&mapServiceId="+mapServiceId+"&maxBytes="+this.replicaBlockSize+"&position="+sizeAlreadLoaded,
+						"method": "POST",
+						"mode": "cors"
+					});
+
+					Logger.trace("_getGeodatabase geodatabase returned from maximo ");
+					let resp = await geodatabase.text();
+					if (resp == null || resp == "") {
+						Logger.trace("_getGeodatabase geodatabase is empty for offline area id: " + offlineAreaId + " and  mapService " + mapServiceName);
+						deferred.resolve();
+					} else {
+						sizeAlreadLoaded += this.replicaBlockSize;
+						blockNumber++;
+
+						await this.saveFile(resp, mapServiceId + ".geodatabase", offlineAreaId, true, true);
+						this._getGeodatabase(offlineAreaId, mapService, sizeAlreadLoaded, blockNumber, mapServicesLoaded, mapServicesToLoad, deferred);
+
+						let partialPercent = ((blockNumber-1)/numberOfBlocks)*100;
+						let param = mapServiceName + " " + partialPercent.toFixed(2) + "% - Replica " + mapServicesLoaded + "/" + mapServicesToLoad;
+						console.log(' blockNumber: ', blockNumber);
+						dojo.publish('_updatePercentComplete', [param, 'downloadingMap']);
 					}
-				  }).then(function(geodatabase){
-					  Logger.trace("_getGeodatabase geodatabase returned from maximo ");
-					  if (geodatabase == null || geodatabase == "") {
-						  Logger.trace("_getGeodatabase geodatabase is empty for offline area id: " + offlineAreaId + " and  mapService " + mapServiceName);
-						  deferred.resolve();
-					  } else {
-						  sizeAlreadLoaded += self.replicaBlockSize;
-						  blockNumber++;
-						  var promiseSave = self.saveFile(geodatabase, mapServiceId+".geodatabase", offlineAreaId, true, true);
-							promiseSave.then( lang.hitch( this, function ( response ) {
-								self._getGeodatabase(offlineAreaId, mapService, sizeAlreadLoaded, blockNumber,  mapServicesLoaded, mapServicesToLoad, deferred);
-							})).otherwise( lang.hitch( this, function ( ) {
-								deferred.reject();
-							}));
-					  }
-				  }, function(err){
-					  Logger.log("_getGeodatabase error request geodatabase " + err);
-					  deferred.reject();
-				  }, function(e){
-					  var percentOneBlock = Math.min((1/numberOfBlocks)*100 , 100);
-					  var loaded = ((blockNumber-1)/numberOfBlocks)*100;
-					  var partialLoad = Math.min((e.loaded/e.total)*100 , 100);
-					  var partialPercent = loaded + (partialLoad * percentOneBlock / 100);
-					  var param = mapServiceName + " " + partialPercent.toFixed(2) + "% - Replica " + mapServicesLoaded +"/"+ mapServicesToLoad;
-					  dojo.publish('_updatePercentComplete', [param, 'downloadingMap']);
-				  });
+				}
+				catch(err) {
+					Logger.log("_getGeodatabase error request geodatabase " + err);
+				}
+				finally {
+					geodatabase = null;
+				}
+			
 			},
 			
 			/**
@@ -1450,25 +1518,26 @@ require( [
 			 */
 			saveFile: function(content, fileName, offlineAreaId, isBlob, append) {
 				var deferred = new Deferred();
-				var self = this;
-				var blobContent = null;
+				var blob = null;
 				if (isBlob) {
-					blobContent = this.b64toBlob(content);
+					blob = new Blob(this.b64toBlob(content));
 				}else{
-					blobContent = [content];
+					blob = new Blob([content]);
 				}
-				var directory_path = this._getOfflineStorage();
+				let directory_path = this._getOfflineStorage();
+				let replica = this.replicaFolderName;
 				window.resolveLocalFileSystemURL(directory_path, function(dir) {
 					Logger.trace("Got replicas dir to write", dir);
 					
-					dir.getDirectory(self.replicaFolderName, { create: true }, function (dirReplicas) {
+					dir.getDirectory(replica, { create: true }, function (dirReplicas) {
 						dirReplicas.getDirectory(""+offlineAreaId, { create: true }, function (dirOfflineArea) {
 							dirOfflineArea.getFile(fileName, {create:true}, function(file) {
 								Logger.trace("Creating file", file);
 								file.createWriter(function(fileWriter) {
 									fileWriter.onwriteend = function(evt) {
-							            Logger.trace("content wrote to file", file);
-							            console.log("content wrote to file", file);
+							            console.log("content wrote to file");
+										fileWriter = null;
+										file = null;
 							            deferred.resolve();
 							        };
 							        
@@ -1477,15 +1546,16 @@ require( [
 						                Logger.log('Write failed: ' + e.toString());
 						                deferred.reject(error);
 						            }
-							       
-							        var blob = new Blob(blobContent);
 							        
 							        if (append) {
 							        	console.log("append data to file, length : " + fileWriter.length);
 							        	fileWriter.seek(fileWriter.length);
 							        }
 							        console.log("Writing data to file, total bytes: " + blob.size);
-						            fileWriter.write(blob)
+						            fileWriter.write(blob);
+									blob = null;
+									content = null;
+
 								}, function(error) {
 									Logger.log("Error writing file ", error);
 									deferred.reject(error);
@@ -1636,7 +1706,9 @@ require( [
 						    var layersJsonMapService = dbInfo.jsonLayer.layers;
 							var tables = dbInfo.tables;
 							var tabledAdded = 0;
-							tables.forEach(lang.hitch(this, function(table) {
+							var countLayer = tables.length;
+							var zIndexLayer = 0;
+							tables.forEach(lang.hitch(this, function(table,index) {
 								var layerId = table.layerId;
 								var jsonLayer = table.jsonLayer;
 								var tableName = table.tableName;
@@ -1693,10 +1765,16 @@ require( [
 									layer = vectorLayer;
 									map.addLayer(vectorLayer);
 									tabledAdded++;
-									var zIndexLayer = this.zIndexShift + maxOrder - mapServiceConfigSelected.order;
+									//var zIndexLayer = this.zIndexShift + maxOrder - mapServiceConfigSelected.order;
+									if (index < 1){
+										zIndexLayer = this.zIndexShift + countLayer + 2;	
+									}else {
+										zIndexLayer = (this.zIndexShift + countLayer + 2) - index;
+									}									
+									zIndexLayer = zIndexLayer  + maxOrder - mapServiceConfigSelected.order;
 									layersJsonMapService.forEach(lang.hitch(this, function(layerJsonMapService, i) {
 										if (layerJsonMapService.id == layerId) {
-											zIndexLayer = zIndexLayer + i;
+											//zIndexLayer = zIndexLayer + i;
 										}
 									}));
 									if (zIndexLayer > this.maxZIndexAdded) {
@@ -1919,6 +1997,8 @@ require( [
 				var deferred = new Deferred();
 				var queriesObj = [];
 				queries.forEach(function(query, i) {
+					//Remove % caracter on query   
+        			query = query.replaceAll('%',''); 
 					queriesObj.push({'sql':query, 'qid':i, 'params': []});
 					var msg = "Query to execute: " + query;
 					Logger.trace(msg);
@@ -2102,7 +2182,7 @@ require( [
 						 
 						setStatement += shapeColumn + "='"+geoJsonGeometry+"'";
 						
-						var queryUpdateTable = "update " + tableName + " set " + setStatement + " where gdb_archive_oid=("+archiveOIDValue +");";
+						var queryUpdateTable = "update or ignore " + tableName + " set " + setStatement + " where gdb_archive_oid=("+archiveOIDValue +");";
 						queries.push(queryUpdateTable);
 						//Calculate BBOX
 						var extent = geometry.getExtent();
@@ -2113,7 +2193,7 @@ require( [
 						var xmax = topRight[0];
 						var ymax = topRight[1];
 						
-						var queryUpdateBbox = "update st_spindex__" + tableName + "_shape set minx="+xmin+", miny="+ymin+", maxx="+xmax+", maxy="+ymax+" where pkid=("+archiveOIDValue+");";
+						var queryUpdateBbox = "update or ignore st_spindex__" + tableName + "_shape set minx="+xmin+", miny="+ymin+", maxx="+xmax+", maxy="+ymax+" where pkid=("+archiveOIDValue+");";
 						queries.push(queryUpdateBbox);
 					}));
 				}
@@ -2179,7 +2259,9 @@ require( [
 									var esriDate = new Date(attributeValue);
 									var esriTime = esriDate.getTime();
 									//days since epoch  - subtract offset,  +  days from 4713 B.C. to 1970 A.D.
-									attributeValue = ((esriTime / 86400000) - (esriDate.getTimezoneOffset()/1440) + 2440587.5);
+									//convert Unix Time to julian date/time not include Time Zone
+									//time zone include on indentify display method getDateWithTimeZone
+									attributeValue = ((esriTime / 86400000) + 2440587.5);
 								}
 								attributeValues += attributeValue + ",";
 							}
@@ -2322,12 +2404,14 @@ require( [
 											var xmlSerializer = new XMLSerializer();
 											var queries = [];
 											var definitionReplica = xmlSerializer.serializeToString(syncObject.definition);
-											var queryUpdateReplicaMetadata = "update gdb_items set definition='"+definitionReplica+"' where uuid='" + syncObject.replicaId + "'";
+											let formatdefinitionReplica = definitionReplica.replace(/'/g,"''");
+											var queryUpdateReplicaMetadata = "update or ignore gdb_items set definition='"+formatdefinitionReplica+"' where uuid='" + syncObject.replicaId + "'";
 											queries.push(queryUpdateReplicaMetadata);
 											layersToSync.forEach(function(layerToSync) {
 												var definitionTable = xmlSerializer.serializeToString(layerToSync.definition);
+												let formatdefinitionTable = definitionTable.replace(/'/g,"''");
 												var uuid = layerToSync.uuid;
-												var queryUpdateTableMetadata = "update gdb_items set definition='"+definitionTable+"' where uuid='" + uuid + "'";
+												var queryUpdateTableMetadata = "update or ignore gdb_items set definition='"+formatdefinitionTable+"' where uuid='" + uuid + "'";
 												queries.push(queryUpdateTableMetadata);
 											});
 											var filePath = dbInfo.dbFile;
@@ -2658,43 +2742,6 @@ require( [
 			    });
 				return deferred.promise;
 			},
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-		   
 			
 	});
 });

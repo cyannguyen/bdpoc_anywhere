@@ -91,7 +91,7 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 		},
 		
 		enableDisableSyncMenu: function(eventContext) {
-			var isDownloadInProgress = (this.progressResource.get('started') == true);
+			var isDownloadInProgress = (this.progressResource && this.progressResource.get('started') == true);
 			var qb = this.ui.getCurrentViewControl().queryBase;
 			var isSystemQueryBase = (qb  && (qb == PlatformConstants.ERRORED_QUERYBASE || 
 											 qb == PlatformConstants.CHANGED_QUERYBASE || 
@@ -138,7 +138,7 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 
 		workoffline : function(eventContext) {
 			this.cancelTriggered = false;
-			if (this.progressResource.get('started') == true){
+			if (this.progressResource && this.progressResource.get('started') == true){
 				return;
 			}
 			
@@ -545,15 +545,17 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 		},
 		
 		sync: function(eventContext){
-			if (this.progressResource.get('started') == true){
+			if (this.progressResource && this.progressResource.get('started') == true){
 				return;
 			}
 			
 			var self = this;
 			self.showCancelButton = false;
 			var uploadingMsg = MessageService.createStaticMessage('uploadingChanges').getMessage();
-			this.progressResource.set('progressMsg', uploadingMsg );
-			this.progressResource.set('started', true);
+			if (this.progressResource) {
+				this.progressResource.set('progressMsg', uploadingMsg );
+				this.progressResource.set('started', true);
+			}
 						
 			var uploadPromise = PushingCoordinatorService.flush();
 			

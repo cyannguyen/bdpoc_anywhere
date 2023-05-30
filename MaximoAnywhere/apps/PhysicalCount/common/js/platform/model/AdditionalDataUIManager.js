@@ -68,13 +68,13 @@ function(declare, lang, arrayUtil, Logger, FormatterService, dateTimeISOFormatte
 		showStartADConfirmationDialog: function(){
 			this.userInterface.application.hideBusy();
 			var doDelta = SystemProperties.getProperty('Lookup.data.delta.support');
-			
-			if((doDelta && (doDelta == true || doDelta == 'true')) && SystemProperties.getProperty('additionalDataDownloadState') == 'completed'){
-				this.userInterface.show("Platform.LoadAdditionalDataDeltaDownload");
-			} else {
-				this.userInterface.show("Platform.LoadAdditionalDataYesNo");
+			if(AdditionalDataManager && !AdditionalDataManager.isDownloadInProgress) {
+				if((doDelta && (doDelta == true || doDelta == 'true')) && SystemProperties.getProperty('additionalDataDownloadState') == 'completed'){
+					this.userInterface.show("Platform.LoadAdditionalDataDeltaDownload");
+				} else {
+					this.userInterface.show("Platform.LoadAdditionalDataYesNo");
+				}
 			}
-			
 		},
 		
 		hideDownloadInProgressDialog: function(){

@@ -9,8 +9,10 @@ define("generated/application/pushNotification/PushNotificationSelfRegistrationG
 function(declare, Deferred, lang, arrayUtil,PushNotificationService, SystemProperties) {
    return declare(null, {
       register: function(){
+         var eventsArray = new Array();
+         var pushNotificationService  = new PushNotificationService();
+         pushNotificationService.subscribeForEvents(eventsArray);
       },
-      doUnsubscribe: function(){
-      },
+      doUnsubscribe: function(){}
    });
 });
