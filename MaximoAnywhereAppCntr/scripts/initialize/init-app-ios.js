@@ -34,6 +34,37 @@ class InitAppIOS extends InitApp {
         let cmd = cdvCommand + ' platform add ' + platformPath + ' --force'
         await utils.executeCmd(cmd, createAppPath, this.log);
         //await this.prepareFrameworkArch(this.containerProps.ios.packageType, createAppPath)
+        this.prepareXCodeProjForiOS14(createAppPath);
+    }
+
+    prepareXCodeProjForiOS14(appCreateLocation) {
+        try {
+            let pbxprojPath = path.join(appCreateLocation, 'platforms/ios', this.appDescriptorContents.displayName + '.xcodeproj', 'project.pbxproj');
+            let xcodeProject = xcode.project(pbxprojPath);
+
+            xcodeProject.parseSync();
+
+            // Linking Order of SQLCipher.framework should be well before the libsqlite3.a file as resolution for XCode 12.x upgrade for iOS 14.x devices in the 'Link Binary With Libraries' section
+            let buildPhaseFiles = xcodeProject.pbxFrameworksBuildPhaseObj(xcodeProject.getFirstTarget().uuid).files;
+            let reshuffleFile;
+            for(var pos = buildPhaseFiles.length - 1; pos >= 0; pos--) {
+                let fileRef = buildPhaseFiles[pos], tmpFile = buildPhaseFiles[pos - 1];
+                if(!reshuffleFile && fileRef && fileRef.comment.indexOf('SQLCipher.framework') != -1) {
+                    reshuffleFile = buildPhaseFiles[pos];
+                    buildPhaseFiles[pos] = tmpFile;
+                } else if (reshuffleFile && fileRef && fileRef.comment.indexOf('Security.framework') == -1 && tmpFile && tmpFile.comment.indexOf('Security.framework') == -1) {
+                    buildPhaseFiles[pos] = tmpFile;
+                } else if (reshuffleFile && fileRef && fileRef.comment.indexOf('Security.framework') != -1 && tmpFile && tmpFile.comment.indexOf('Security.framework') == -1) { 
+                    buildPhaseFiles[pos + 1] = reshuffleFile;
+                    break;
+                }
+            }
+            xcodeProject.pbxFrameworksBuildPhaseObj(xcodeProject.getFirstTarget().uuid).files = buildPhaseFiles;
+            fs.writeFileSync(pbxprojPath, xcodeProject.writeSync());
+
+        } catch (e) {
+            throw e;
+        }
     }
 
     async prepareFrameworkArch(packageType, appCreateLocation){

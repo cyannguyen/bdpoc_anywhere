@@ -29,28 +29,30 @@ class BuildAppAndroid extends BuildApp{
     async build(){
         try{
             let cdvCommand = path.resolve(currDir + '/node_modules/cordova/bin/cordova');
-            
+
             let cmd = cdvCommand + ' build android';
-            if(this.info.android.packageType.toLowerCase()  === 'release'){
-                cmd += ' --release'; 
+            if(this.info.android.packageType && encodeURI(this.info.android.packageType.toLowerCase())  === 'release'){
+                cmd += ' --release';
                 cmd += ' -- --keystore=' + this.containerProps.android.keystore;
                 cmd += ' --storePassword=' + this.containerProps.android.storePassword;
                 cmd += ' --alias=' + this.containerProps.android.alias;
                 cmd += ' --password=' + this.containerProps.android.password;
-                //cmd += ' --storeType=pkcs12';
-            }else if(this.info.android.packageType.toLowerCase()  === 'releasenosign'){
+                cmd += ' --storeType=' + this.containerProps.android.storeType;
+                cmd = this.addVersionCode(cmd); //IJ28577
+            }else if(this.info.android.packageType && encodeURI(this.info.android.packageType.toLowerCase())  === 'releasenosign'){
                 cmd += ' --release';
+                cmd = this.addVersionCode(cmd); //IJ28577
             }
             await utils.executeCmd(cmd, this.createdAppDir, this.log);
-            
+
             let outputLoc = '';
-            if(this.info.android.packageType.toLowerCase()  === 'release'){
+            if(this.info.android.packageType && encodeURI(this.info.android.packageType.toLowerCase())  === 'release'){
                 let apkPath = path.resolve(this.createdAppDir, 'platforms/android/app/build/outputs/apk/release/');
                 outputLoc = path.resolve(currDir, BINARY_OUTPUT_FOLDER, 'android');
                 await fs.ensureDir(outputLoc);
                 await fs.copy(path.resolve(apkPath, 'app-release.apk'), path.resolve(outputLoc, this.info.name + '-' + this.info.defaultVersion + '.apk'));
 
-            }else if(this.info.android.packageType.toLowerCase()  === 'releasenosign'){
+            }else if(this.info.android.packageType && encodeURI(this.info.android.packageType.toLowerCase())  === 'releasenosign'){
                 let apkPath = path.resolve(this.createdAppDir, 'platforms/android/app/build/outputs/apk/release/');
                 outputLoc = path.resolve(currDir, BINARY_OUTPUT_FOLDER, 'android');
                 await fs.ensureDir(outputLoc);
@@ -72,11 +74,23 @@ class BuildAppAndroid extends BuildApp{
             this.log.e(ex.message, ex);
             throw ex;
         }
-        
+
+    }
+
+    //IJ28577
+    addVersionCode(cmd){
+        if(this.info.android.addVersionCode){
+            if(this.info.android.packageType.toLowerCase()==='releasenosign'){
+                cmd += ' -- ';
+            }
+            this.log.i("CODE VERSION FOR " + this.info.name + " IS " + this.info.android.versionCode);
+            cmd += '--gradleArg=-PcdvVersionCode=' + this.info.android.versionCode;
+        }
+        return cmd;
     }
 
     signAndVerify(){
-        
+
     }
 
     run(){

@@ -35,14 +35,16 @@ class BuildAppIOS extends BuildApp {
             
                 cmd += releaseMode ? ' --release' : '';
                 cmd += releaseMode ? ' --packageType=' + this.info.ios.packageType.toLowerCase() : '';
-                //cmd += ' --codeSignIdentity=' + (releaseMode ? '"iPhone Distribution"' : '"iPhone Developer"');
+                cmd += ' --codeSignIdentity=' + (releaseMode ? '"iPhone Distribution"' : '"iPhone Developer"');
                 //According to cordova docs above is not valid. To be tested for distribution
-                cmd += ' --codeSignIdentity="iPhone Developer"';
+                //cmd += ' --codeSignIdentity="iPhone Developer"';
                 cmd += ' --provisioningProfile=' + this.info.ios.provisioningProfile;
                 cmd += ' --developmentTeam=' + this.info.ios.teamID;
+                cmd += " --buildFlag='VALID_ARCHS=arm64 CURRENT_ARCH=arm64 ONLY_ACTIVE_ARCH=YES'";
+                cmd += " --buildFlag='VALIDATE_WORKSPACE=YES'";
             }
             //cmd += ' --automaticProvisioning=false'
-              cmd += " --buildFlag='-UseModernBuildSystem=0'";
+            //cmd += " --buildFlag='-UseModernBuildSystem=0'";
             //cmd += " --buildFlag='PROVISIONING_PROFILE=" + this.info.ios.provisioningProfile.split('.')[0] + "'";
             //cmd += " --buildFlag='CODE_SIGN_IDENTITY=" + (releaseMode ? 'iPhone Distribution' : 'iPhone Development') + "'";
         // cmd += ' --buildFlag="CODE_SIGN_IDENTITY=""" --buildFlag="CODE_SIGNING_REQUIRED="NO"" --buildFlag="CODE_SIGN_ENTITLEMENTS=""" --buildFlag="CODE_SIGNING_ALLOWED="NO"" --buildFlag="DEVELOPMENT_TEAM="""'

@@ -5298,6 +5298,7 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
     border-bottom: 1px solid #8d8d8d;
     -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
     transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
+    font-family: "IBM Plex Sans Light" !important;
 }
 
 .bx--text-input:focus,

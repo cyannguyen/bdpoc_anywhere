@@ -152,7 +152,7 @@ const verifyIOS = {
         // }
 
         let arg1 = uuid + '.mobileprovision';
-        let arg2 = profileFullPath
+        let arg2 = '"' + profileFullPath + '"'
         let cmd = 'ruby install_profile.rb ' + arg1 + ' ' + arg2;
         let location = path.resolve(currDir, 'scripts/internal/ios');
         try{

@@ -15,6 +15,7 @@ const { exec } = require('child_process');
 const StreamZip = require('node-stream-zip');
 const fs = require('fs-extra');
 const path = require('path');
+const md5 = require('md5');
 
 /**
  * Executes a command
@@ -79,8 +80,18 @@ function unzip(zipPath, extractLocation, log){
     })
 }
 
+function calcMD5(pathToFile) {
+    try {
+        const data = fs.readFileSync(pathToFile, 'utf8');
+        return md5(data);
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
 
 module.exports = {
     unzip,
-    executeCmd
+    executeCmd,
+    calcMD5
 }

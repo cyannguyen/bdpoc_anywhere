@@ -47,35 +47,35 @@ const verifyAndroid = {
         } 
     },
 
-    setGradleEnvVariables: async(log) => {
+    setGradleEnvVariables: async(log, buildSDKVersion) => {
         //find the gradle install folder. a distribution in homedir/.gradle/wrapper/dist 
         //on windows we need to set path environment variable
         try{
             let gradleZipPath = null
             if (process.platform === 'win32') {
-                let rootPath = path.resolve(homedir, ".gradle/wrapper/dists/gradle-4.10.3-bin")
+                let rootPath = (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? path.resolve(homedir, ".gradle/wrapper/dists/gradle-6.5-bin") : path.resolve(homedir, ".gradle/wrapper/dists/gradle-4.10.3-bin");
                 let gPath = await verifyAndroid.getGradleInnerPath(rootPath);
-                let gBinPath = path.resolve(gPath, "gradle-4.10.3/bin")
+                let gBinPath = path.resolve(gPath, (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? "gradle-6.5/bin": "gradle-4.10.3/bin")
                 process.env.Path += ";" + gBinPath;
-                gradleZipPathsep = "file:///" + path.resolve(gPath, 'gradle-4.10.3-bin.zip');
+                gradleZipPathsep = "file:///" + path.resolve(gPath, (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? 'gradle-6.5-bin.zip' : 'gradle-4.10.3-bin.zip');
                 gradleZipPath = gradleZipPathsep.replace(/\\/g, "/");
                 if(gradleZipPath.indexOf(' ') > -1){
                     process.env['GRADLE_SPACE_EXS'] = gradleZipPath.replace('file:///', '');
-                    gradleZipPath = 'gradle-4.10.3-bin.zip';
+                    gradleZipPath = (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? 'gradle-6.5-bin.zip' : 'gradle-4.10.3-bin.zip';
                 }
                 log.i(null, null, "Setting Gradle Path to : " + gradleZipPath);
                 process.env['CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL'] = gradleZipPath
             } else if (process.platform === 'darwin') {
 
-                let rootPath = path.resolve(homedir, ".gradle/wrapper/dists/gradle-4.10.3-bin")
+                let rootPath = path.resolve(homedir, (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? ".gradle/wrapper/dists/gradle-6.5-bin" : ".gradle/wrapper/dists/gradle-4.10.3-bin")
                 let gPath = await verifyAndroid.getGradleInnerPath(rootPath);
                 //let gBinPath = path.resolve(gPath, "gradle-4.10.3/bin")
                 //process.env.Path += ";" + gBinPath;
-                gradleZipPathsep = "file://" + path.resolve(gPath, 'gradle-4.10.3-bin.zip');
+                gradleZipPathsep = "file://" + path.resolve(gPath, (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? 'gradle-6.5-bin.zip' : 'gradle-4.10.3-bin.zip');
                 gradleZipPath = gradleZipPathsep.replace(/\\/g, "/");
                 if(gradleZipPath.indexOf(' ') > -1){
                     process.env['GRADLE_SPACE_EXS'] = gradleZipPath.replace('file://', '');
-                    gradleZipPath = 'gradle-4.10.3-bin.zip';
+                    gradleZipPath = (parseInt(buildSDKVersion.split("-")[1]) >= 30) ? 'gradle-6.5-bin.zip' : 'gradle-4.10.3-bin.zip';
                 }
                 log.i(null, null, "Setting Gradle Path to : " + gradleZipPath);
                 process.env['CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL'] = gradleZipPath

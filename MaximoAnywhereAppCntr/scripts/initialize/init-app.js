@@ -65,6 +65,12 @@ class InitApp {
         widgetNode.setAttribute('id', descriptorDetails.defaultPackageName);
         widgetNode.setAttribute('version', descriptorDetails.defaultVersion);
 
+        //IJ28577
+        if(descriptorDetails.ios.CFBundleVersion){
+            widgetNode.setAttribute('ios-CFBundleVersion', descriptorDetails.ios.CFBundleVersion);
+            this.log.i(null, null, 'IOS BUILD VERSION: ' + descriptorDetails.ios.CFBundleVersion);
+        }
+
         let nameNode = document.getElementsByTagName('name')[0];
         nameNode.textContent = descriptorDetails.displayName;
 
@@ -106,9 +112,9 @@ class InitApp {
             this.setConfigAttributes(document, descriptorDetails, memoizeName);
 
             //let output = (new XMLSerializer()).serializeToString(widgetNode);
-            let output = "<!--?xml version='1.0' encoding='utf-8'?-->" + '\n' + window.document.documentElement.outerHTML
+            let output = "<!--?xml version='1.0' encoding='utf-8'?-->" + '\n' + window.document.documentElement.outerHTML;
             let writeFile = util.promisify(fs.writeFile);
-            return writeFile(path.resolve(outputLocation, 'config.xml'), output)
+            return writeFile(path.resolve(outputLocation, 'config.xml'), output);
 
         });
     }
