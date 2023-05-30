@@ -144,8 +144,19 @@ define("application/handlers/IssuesReturnsHandler", [
 
         /* #region  Tuan-in: add update bin for lookup */
         filterWonumForLookup: function (eventContext) {
+            var issuesReturnsRecord = CommonHandler._getAdditionalResource(
+                eventContext,
+                "issuesReturns"
+            ).getCurrentRecord();
             var records = eventContext.getResource();
-            records.filter("wonum!=null");
+            CommonHandler._clearFilterForResource(records);
+            records.filter("wonum != null");
+            records.filter("location == $1", issuesReturnsRecord.storeroom);
+        },
+
+        filterWonumAdditionalForLookup: function (eventContext) {
+            var records = eventContext.getResource();
+            CommonHandler._clearFilterForResource(records);
         },
 
         updateWonnumLookup: function (eventContext) {
@@ -155,28 +166,85 @@ define("application/handlers/IssuesReturnsHandler", [
             ).getCurrentRecord();
 
             var filter = [];
-            var oslcQueryParameters = {};
+            var statusAdditionals = [
+                "APPR",
+                "CO1",
+                "CO2",
+                "CO3",
+                "CO4",
+                "CO5",
+                "CO6",
+                "CO7",
+                "EX1",
+                "EX2",
+                "EX3",
+                "EX4",
+                "EX5",
+                "EX6",
+                "EX7",
+                "IM1",
+                "IM2",
+                "IM3",
+                "IM4",
+                "IM5",
+                "IM6",
+                "IM7",
+                "IM8",
+                "IM9",
+                "SCHED",
+                "TECHAPPR",
+                "TS1",
+                "TS2",
+                "TS3",
+                "TS4",
+                "TS5",
+                "TS5.1",
+                "TS6",
+                "WPCOND",
+                "WSCHED",
+                "CHKCOM",
+                "CHKCOMP",
+                "CLOSEOUT",
+                "CLOSEOUTPIC",
+                "DEFERRED",
+                "IMPL",
+                "IMPLENI",
+                "IMPLHSE",
+                "IMPLMECH",
+                "IMPLPROD",
+                "INPRG",
+                "RTNSUPACC",
+                "WMATLRET",
+            ];
 
             filter.push({ location: record.storeroom });
-            oslcQueryParameters["sqp:days"] = 7;
+            filter.push({ istask: false });
+
+            for (var i = 0; i < statusAdditionals.length; ++i) {
+                filter.push({ status: statusAdditionals[i] });
+            }
 
             var wonumPromise = ModelService.filtered(
-                "invreserve",
-                PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                "workOrderLookup",
+                null,
                 filter,
-                1000,
+                50,
                 true,
                 true,
-                oslcQueryParameters,
+                null,
                 false
             );
 
-            wonumPromise.then(function (data) {
-                ModelService.clearSearchResult(data);
-                data.filter("wonum != null");
-                data.resourceID = "wonumTemp";
-                eventContext.application.addResource(data);
-            });
+            wonumPromise
+                .then(function (data) {
+                    ModelService.clearSearchResult(data);
+                    data.filter("wonum != null");
+                    data.resourceID = "wonumTemp";
+                    eventContext.application.addResource(data);
+                })
+                .otherwise(function (error) {
+                    console.log("error: ", error);
+                });
         },
         /* #endregion */
 

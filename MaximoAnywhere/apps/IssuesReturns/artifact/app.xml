@@ -238,7 +238,7 @@
 						</text>
 					</groupitem>
 					<groupitem id="IssuesReturns.SearchReturnView_groupitem_2">
-						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_workorder" lookup="IssuesReturns.WonumLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
+						<text codeScannable="true" editable="true" id="IssuesReturns.SearchReturnView_workorder" lookup="IssuesReturns.WonumReturnLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum">
 							<eventHandlers id="IssuesReturns.SearchReturn_wonum_eventHandlers">
 								<eventHandler class="application.handlers.ReturnIssuedItemsHandler" event="datachange" id="IssuesReturns.SearchReturn_wonum_eventHandlers_datachange" method="setFieldsReadonly"/>
 								<!-- Tuan-in: add wonum lookup -->
@@ -886,11 +886,11 @@
 						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_issue" label="Issue To" lookup="IssuesReturns.IssueToLookup" lookupAttribute="personid" placeHolder="Tap to enter" resourceAttribute="issueTo"/>
 					</groupitem>
 					<groupitem id="IssuesReturns.AdditionalItemsDetailsView_wo_groupitem_3">
-						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_wo" lookup="IssuesReturns.WonumLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" required="false" resourceAttribute="wonum">
+						<text editable="true" id="IssuesReturns.AdditionalItemsDetailsView_wo" lookup="IssuesReturns.WonumAdditionalLookup" lookupAttribute="wonum" label="Work Order" placeHolder="Tap to enter" required="false" resourceAttribute="wonum">
 							<eventHandlers id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers">
 								<eventHandler class="application.handlers.IssuesAvailableItemsHandler" event="datachange" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_1" method="additionalItemWODataChanged"/>
 								<!-- Tuan-in: add wonum lookup -->
-								<!-- <eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_render" method="updateWonnumLookup"/> -->
+								<eventHandler class="application.handlers.IssuesReturnsHandler" event="render" id="IssuesReturns.AdditionalItemsDetailsView_wo_eventHandlers_render" method="updateWonnumLookup"/>
 								<!-- Tuan-out: add wonum lookup -->
 							</eventHandlers>
 						</text>
@@ -1330,19 +1330,56 @@
 		<lookup filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterWonumForLookup" id="IssuesReturns.WonumLookup" label="Select Work order" resource="invreservewo">
 			<requiredResources id="IssuesReturns.WonumLookup_requiredResources">
 				<requiredResource id="IssuesReturns.WonumLookup_workOrder" name="invreservewo" reload="true"/>
+				<!-- <requiredResource id="IssuesReturns.WonumLookup_workOrder" name="wonumTemp" reload="false"/> -->
 			</requiredResources>
 			<list hideEmpty="true" id="IssuesReturns.WonumLookup_list" resource="invreservewo">
 				<searchAttributes id="IssuesReturns.WonumLookup_additionallocations_searchAttributes">
 					<searchAttribute id="IssuesReturns.WonumLookup_additionallocations_searchAttribute_wonum" name="wonum"/>
 				</searchAttributes>
-				<listItemTemplate id="IssuesReturns.WonumLookup_listItemTemplate_Item1" layout="Item1Desc1">
-					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item1Desc1_wonum" layoutInsertAt="item1" resourceAttribute="wonum"/>
-					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item1Desc1_wodesc" layoutInsertAt="desc1" resourceAttribute="wodesc"/>
+				<listItemTemplate id="IssuesReturns.WonumLookup_listItemTemplate_Item1" layout="Item2Desc1">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item2Desc1_requestnum" layoutInsertAt="item1" resourceAttribute="requestnum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item2Desc1_wonum" layoutInsertAt="item2" resourceAttribute="wonum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumLookup_Item2Desc1_wodesc" layoutInsertAt="desc1" resourceAttribute="wodesc"/>
 				</listItemTemplate>
 			</list>
 
 			<returnAttributes id="IssuesReturns.WonumLookup_returnAttributes">
 				<returnAttribute id="IssuesReturns.WonumLookup_wonum" sourceAttribute="wonum" targetAttribute="wonum"/>
+			</returnAttributes>
+		</lookup>
+		<lookup id="IssuesReturns.WonumReturnLookup" label="Select Work order" resource="matusetranswo">
+			<requiredResources id="IssuesReturns.WonumReturnLookup_requiredResources">
+				<requiredResource id="IssuesReturns.WonumReturnLookup_workOrder" name="matusetranswo" reload="true"/>
+				<!-- <requiredResource id="IssuesReturns.WonumLookup_workOrder" name="wonumTemp" reload="false"/> -->
+			</requiredResources>
+			<list hideEmpty="true" id="IssuesReturns.WonumReturnLookup_list" resource="matusetranswo">
+				<searchAttributes id="IssuesReturns.WonumReturnLookup_additionallocations_searchAttributes">
+					<searchAttribute id="IssuesReturns.WonumReturnLookup_additionallocations_searchAttribute_wonum" name="wonum"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.WonumReturnLookup_listItemTemplate_Item1" layout="Item2">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumReturnLookup_Item2Desc1_wonum" layoutInsertAt="item1" resourceAttribute="wonum"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="IssuesReturns.WonumReturnLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.WonumReturnLookup_wonum" sourceAttribute="wonum" targetAttribute="wonum"/>
+			</returnAttributes>
+		</lookup>
+		<lookup id="IssuesReturns.WonumAdditionalLookup" filterClass="application.handlers.IssuesReturnsHandler" filterMethod="filterWonumAdditionalForLookup" label="Select Work order" resource="wonumTemp">
+			<requiredResources id="IssuesReturns.WonumAdditionalLookup_requiredResources">
+				<requiredResource id="IssuesReturns.WonumAdditionalLookup_workOrder" name="wonumTemp" reload="false"/>
+			</requiredResources>
+			<list hideEmpty="true" id="IssuesReturns.WonumAdditionalLookup_list" resource="wonumTemp">
+				<searchAttributes id="IssuesReturns.WonumAdditionalLookup_additionallocations_searchAttributes">
+					<searchAttribute id="IssuesReturns.WonumAdditionalLookup_additionallocations_searchAttribute_wonum" name="wonum"/>
+				</searchAttributes>
+				<listItemTemplate id="IssuesReturns.WonumAdditionalLookup_listItemTemplate_Item1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumAdditionalLookup_Item1Desc1_wonum" layoutInsertAt="item1" resourceAttribute="wonum"/>
+					<listtext cssClass="bold textappearance-medium" id="IssuesReturns.WonumAdditionalLookup_Item1Desc1_wodesc" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="IssuesReturns.WonumAdditionalLookup_returnAttributes">
+				<returnAttribute id="IssuesReturns.WonumAdditionalLookup_wonum" sourceAttribute="wonum" targetAttribute="wonum"/>
 			</returnAttributes>
 		</lookup>
 		<!-- Tuan-out: add wonum lookup -->
@@ -1411,7 +1448,7 @@
 		<resource id="wonumTemp" inMemory="true" name="wonumTemp" singleton="true">
 			<attributes id="wonumTemp_attributes">
 				<localAttribute dataType="string" id="wonumTemp_wonum_string" index="true" name="wonum"/>
-				<localAttribute dataType="string" id="wonumTemp_desc_string" name="wodesc"/>
+				<localAttribute dataType="string" id="wonumTemp_desc_string" name="description"/>
 			</attributes>
 		</resource>
 		<!-- Tuan-out: add wonum temp data -->
@@ -1628,8 +1665,9 @@
 		</resource>
 
 		<!-- Tuan-in: invreserve for lookup wonum -->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreservewo" name="invreservewo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" defaultOrderBy="invreserveid desc" additionalData="true" id="invreservewo" name="invreservewo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invreservewoResource_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="invreservewoResource_identifier_spi_invreserveid" index="true" name="invreserveid"/>
 				<attribute describedByProperty="spi:displaytaskid" id="invreservewoResource_taskid_spi_wmdisplaytaskid" index="true" name="taskid"/>
 				<attribute describedByProperty="spi:requestnum" id="invreservewoResource_requestnum_spi_wmrequestnum" key="1" name="requestnum"/>
 				<attribute describedByProperty="spi:description" id="invreservewoResource_itemdesc_spi_wmdescription" name="itemdesc"/>
@@ -1657,6 +1695,18 @@
 			</queryBases>
 		</resource>
 
+		<resource defaultOrderBy="id desc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#materialUseTransactionsResource" pageSize="200" additionalData="true" id="matusetranswo" name="matusetranswo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="matusetranswoResource_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="matusetranswoResource_identifier_spi_id" index="true" name="id"/>
+				<attribute describedByProperty="spi:refwo" id="matusetranswoResource_refwo_spi_wonum" index="true" name="wonum"/>
+				<attribute describedByProperty="spi:storeloc" id="invreservewoResource_storeloc_spi_wmlocation" index="true" name="location"/>
+			</attributes>
+			<queryBases id="matusetranswo_queryBases">
+				<queryBase defaultForSearch="true" id="matusetranswo_queryBase_searchAllInvreserve" name="searchAllMatusetrans" queryUri="/oslc/os/oslcmatusetrans"/>
+			</queryBases>
+			<whereClause clause="spi:refwo='*'" id="matusetranswo_whereClause"/>
+		</resource>
+		<!-- Tuan-out: invreserve for lookup wonum -->
 
 		<!-- Invreserve resource -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvreserveResource" id="invreserve" name="invreserve" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
@@ -2106,7 +2156,22 @@
 			<whereClause id="additionalbin_whereClause"/>
 		</resource>
 
-		<!-- Work Order Resource -->
+		<!-- Tuan-in: add Work Order Resource for look up  -->
+		<resource describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder" defaultOrderBy="identifier desc" id="workOrderLookup" name="workOrderLookup" pageSize="20" providedBy="/oslc/sp/WorkManagement">
+			<attributes id="workOrderLookup_attributes">
+				<attribute describedByProperty="oslc:shortTitle" id="workOrderLookup_wonum_oslcshortTitle" index="true" name="wonum"/>
+				<attribute describedByProperty="dcterms:title" id="workOrderLookup_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:status" id="workOrderLookup_status_spistatus" index="true" name="status"/>
+				<attribute describedByProperty="spi_wm:istask" id="workOrderLookup_istask_spistatus" index="true" name="istask"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="workOrderLookup_location_spilocationoslcshortTitle" index="true" name="location" referenceResource="additionallocations"/>
+				<attribute describedByProperty="dcterms:identifier" id="workOrderLookup_identifier_dctermsidentifier" index="true" name="identifier"/>
+			</attributes>
+			<queryBases id="workOrderLookup_queryBases">
+				<queryBase id="workOrderLookup_queryBase_getworkorders" name="getworkorders" queryUri="/oslc/os/oslcwodetail"/>
+			</queryBases>
+		</resource>
+		<!-- Tuan-out: add Work Order Resource for look up  -->
+
 		<resource describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder" id="workOrder" name="workOrder" pageSize="20" providedBy="/oslc/sp/WorkManagement">
 			<attributes id="workOrder_attributes">
 				<attribute describedByProperty="oslc:shortTitle" id="workOrder_wonum_oslcshortTitle" name="wonum"/>
