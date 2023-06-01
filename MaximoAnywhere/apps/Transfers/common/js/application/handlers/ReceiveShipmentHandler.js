@@ -1073,6 +1073,11 @@ define("application/handlers/ReceiveShipmentHandler", [
                     domaininvusereceipts,
                     "COMPLETE"
                 );
+                
+                /* #region  Tuan-in: add shipped status */
+                filter.push({ invuse_status: "SHIPPED" });
+                /* #endregion Tuan-in: add shipped status */
+
                 var assetPromise = ModelService.filtered(
                     "shipment",
                     PlatformConstants.SEARCH_RESULT_QUERYBASE,

@@ -431,9 +431,8 @@
 			<container id="Transfers.CreateGoodReceiptNoteView_container_1" resource="createGRNForm">
 				<group id="Transfers.CreateGoodReceiptNoteView_group_0">
 					<groupitem id="Transfers.CreateGoodReceiptNoteView_grnnumber_groupitem_1">
-						<text editable="true" required="false" id="Transfers.CreateGoodReceiptNoteView_grnnumber" label="GRN No." placeHolder="Tap to enter" resourceAttribute="grnnumber">
+						<text editable="true" required="false" id="Transfers.CreateGoodReceiptNoteView_grnnumber" lookup="Transfers.GrnLookupView" label="GRN No." placeHolder="Tap to enter" resourceAttribute="grnnumber">
 							<eventHandlers id="Transfers.CreateGoodReceiptNoteView_vendor_eventHandlers">
-								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="render" id="Transfers.CreateGoodReceiptNoteView_render_eventHandler_grnnumber" method="updateGRNLookupData"/>
 								<eventHandler class="application.handlers.GoodReceiptNoteHandler" event="datachange" id="Transfers.CreateGoodReceiptNoteView_datachange_eventHandler_grnnumber" method="checkExistGRN"/>
 							</eventHandlers>
 						</text>
@@ -1029,7 +1028,7 @@
 					<text editable="false" labelCss="labelDetailText" label="Received Unit" id="Transfers.ReceivedItemsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
 					<text editable="false" labelCss="labelDetailText" label="Receipt Qty" id="Transfers.ReceivedItemsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
 					<text editable="false" labelCss="labelDetailText" label="Status" id="Transfers.ReceivedItemsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
-					<text editable="false" labelCss="labelDetailText" label="GRN" id="Transfers.receiveditemslistview_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
+					<!-- <text editable="false" labelCss="labelDetailText" label="GRN" id="Transfers.receiveditemslistview_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/> -->
 					<text editable="false" cssClass="titleText" id="Transfers.ReceivedItemsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
 
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
@@ -1131,7 +1130,7 @@
 					<text labelCss="labelDetailText" editable="false" label="Received Unit" id="Transfers.POMaterialReceiptsListView_unit" layoutInsertAt="r2item1" resourceAttribute="receivedunit"/>
 					<text labelCss="labelDetailText" editable="false" label="Receipt Qty" id="Transfers.POMaterialReceiptsListView_quantity" layoutInsertAt="r2item2" resourceAttribute="receiptquantity"/>
 					<text labelCss="labelDetailText" editable="false" label="Status" id="Transfers.POMaterialReceiptsListView_status" layoutInsertAt="r3item1" resourceAttribute="status"/>
-					<text labelCss="labelDetailText" editable="false" label="GRN" id="Transfers.POMaterialReceiptsListView_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/>
+					<!-- <text labelCss="labelDetailText" editable="false" label="GRN" id="Transfers.POMaterialReceiptsListView_grnnumber" layoutInsertAt="r3item2" resourceAttribute="grnnumber"/> -->
 					<text cssClass="titleText" editable="false" id="Transfers.POMaterialReceiptsListView_description" layoutInsertAt="r4item1" resourceAttribute="itemdesc"/>
 					<!-- Tuan-out: update layout -->
 					<!-- Loc-Out: arrange all fields AND add PartNo -->
@@ -2816,6 +2815,22 @@
 		</lookup>
 
 		<!-- Tuan-in: add grn lookup -->
+		<lookup id="Transfers.GrnLookupView" label="Select Good Receipt Note" resource="grnResource">
+			<requiredResources id="Transfers.GrnLookupView_requiredResources">
+				<requiredResource id="Transfers.GrnLookupView_grnResource" name="grnResource" reload="true"/>
+			</requiredResources>
+			<list id="Transfers.GrnLookupView_list" resource="grnResource">
+				<searchAttributes id="Transfers.GrnLookupView_searchAttributes">
+					<searchAttribute id="Transfers.GrnLookupView_searchAttribute_formnumber" name="formnumber"/>
+				</searchAttributes>
+				<listItemTemplate id="Transfers.GrnLookupView_listItemTemplate_BinLotLookupItem" layout="Item2">
+					<!-- <listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupView_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/> -->
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupView_grnnumber" layoutInsertAt="item1" resourceAttribute="grnnumber"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupView_description" layoutInsertAt="item2" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+		</lookup>
+
 		<lookup id="Transfers.GrnLookup" label="Select Good Receipt Note" resource="grnTemp">
 			<requiredResources id="Transfers.GrnLookup_requiredResources">
 				<requiredResource id="Transfers.GrnLookup_grnTemp" name="grnTemp" reload="false"/>
@@ -2825,9 +2840,9 @@
 				<searchAttributes id="Transfers.GrnLookup_searchAttributes">
 					<searchAttribute id="Transfers.GrnLookup_searchAttribute_formnumber" name="formnumber"/>
 				</searchAttributes>
-				<listItemTemplate id="Transfers.GrnLookup_listItemTemplate_BinLotLookupItem" layout="Item1Desc1">
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				<listItemTemplate id="Transfers.GrnLookup_listItemTemplate" layout="Item2">
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_grnnumber" layoutInsertAt="item1" resourceAttribute="grnnumber"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookup_description" layoutInsertAt="item2" resourceAttribute="description"/>
 				</listItemTemplate>
 			</list>
 			<returnAttributes id="Transfers.GrnLookup_returnAttributes">
@@ -2844,9 +2859,10 @@
 				<searchAttributes id="Transfers.GrnLookupManagePO_searchAttributes">
 					<searchAttribute id="Transfers.GrnLookupManagePO_searchAttribute_formnumber" name="formnumber"/>
 				</searchAttributes>
-				<listItemTemplate id="Transfers.GrnLookupManagePO_listItemTemplate_BinLotLookupItem" layout="Item1Desc1">
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupManagePO_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
-					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupManagePO_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				<listItemTemplate id="Transfers.GrnLookupManagePO_listItemTemplate" layout="Item2">
+					<!-- <listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupManagePO_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/> -->
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupManagePO_grnnumber" layoutInsertAt="item1" resourceAttribute="grnnumber"/>
+					<listtext cssClass="bold textappearance-medium" id="Transfers.GrnLookupManagePO_description" layoutInsertAt="item2" resourceAttribute="description"/>
 				</listItemTemplate>
 			</list>
 			<returnAttributes id="Transfers.GrnLookupManagePO_returnAttributes">
@@ -3449,8 +3465,9 @@
 		<!-- Tuan-out: grn resource -->
 
 		<!-- Tuan-in: add form number PO List-->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" id="grnResource" name="grnResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GRN" defaultOrderBy="identifier desc" id="grnResource" name="grnResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="grnResource_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="grnResource_identifier_dcterms_identifier" index="true" name="identifier"/>
 				<attribute describedByProperty="spi:status" id="grnResource_status_spi_status" name="status"/>
 				<attribute describedByProperty="spi:grnnumber" id="grnResource_grnnumber_spi_grnnumber" index="true" name="grnnumber"/>
 				<attribute describedByProperty="spi:description" id="grnResource_description_spi_description" name="description"/>
@@ -3475,6 +3492,7 @@
 		<resource id="grnTemp" inMemory="true" name="grnTemp" singleton="true">
 			<attributes id="grnTemp_attributes">
 				<localAttribute dataType="string" id="grnTemp_formnumber_string" name="formnumber"/>
+				<localAttribute dataType="string" id="grnTemp_grnnumber_string" name="grnnumber"/>
 				<localAttribute dataType="string" id="grnTemp_description_string" name="description"/>
 			</attributes>
 		</resource>
@@ -3539,26 +3557,28 @@
 			<attributes id="receivedShipmentLookupResource_attributes">
 				<attribute describedByProperty="spi:invuseresource{spi:formnumber}" id="receivedShipmentLookupResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:invuseresource{spi:receipts}" id="receivedShipmentLookupResource_receipts_spi_receipts" name="receipts"/>
+				<attribute describedByProperty="spi:invuseresource{spi:status}" id="receivedShipmentLookupResource_status_spi_status" name="status"/>
 				<attribute describedByProperty="spi:shipdate" id="receivedShipmentLookupResource_shipmentdate_spi_shipmentdate" index="true" name="shipdate"/>
 				<attribute describedByProperty="spi:shipmentnum" id="receivedShipmentLookupResource_shipment_spi_shipment" name="shipment"/>
 			</attributes>
 			<queryBases id="receivedShipmentLookupResource_queryBases">
 				<queryBase defaultForSearch="true" id="receivedShipmentLookupResource_queryBase_getAllReceivedShipment" name="getAllReceivedShipment" queryUri="/oslc/os/oslcshipment"/>
 			</queryBases>
-			<whereClause clause="spi:invuseresource{spi:receipts!='COMPLETE'} and spi:invuseresource{spi:formnumber='*'}" id="receivedShipmentLookupResource_whereClause"/>
+			<whereClause clause="spi:invuseresource{spi:receipts!='COMPLETE'} and spi:invuseresource{spi:formnumber='*'} and spi:invuseresource{spi:status='SHIPPED'}" id="receivedShipmentLookupResource_whereClause"/>
 		</resource>
 
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SHIPMENT" defaultOrderBy="shipdate desc" id="manageReceivedShipmentLookupResource" name="manageReceivedShipmentLookupResource" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="manageReceivedShipmentLookupResource_attributes">
 				<attribute describedByProperty="spi:invuseresource{spi:formnumber}" id="manageReceivedShipmentLookupResource_formnumber_spi_formnumber" index="true" name="formnumber"/>
 				<attribute describedByProperty="spi:invuseresource{spi:receipts}" id="manageReceivedShipmentLookupResource_receipts_spi_receipts" name="receipts"/>
+				<attribute describedByProperty="spi:invuseresource{spi:status}" id="manageReceivedShipmentLookupResource_status_spi_status" name="status"/>
 				<attribute describedByProperty="spi:shipdate" id="manageReceivedShipmentLookupResource_shipmentdate_spi_shipmentdate" index="true" name="shipdate"/>
 				<attribute describedByProperty="spi:shipmentnum" id="manageReceivedShipmentLookupResource_shipment_spi_shipment" name="shipment"/>
 			</attributes>
 			<queryBases id="manageReceivedShipmentLookupResource_queryBases">
 				<queryBase defaultForSearch="true" id="manageReceivedShipmentLookupResource_queryBase_getAllReceivedShipment" name="getAllReceivedShipment" queryUri="/oslc/os/oslcshipment"/>
 			</queryBases>
-			<whereClause clause="spi:invuseresource{spi:receipts!='NONE'} and spi:invuseresource{spi:formnumber='*'}" id="manageReceivedShipmentLookupResource_whereClause"/>
+			<whereClause clause="spi:invuseresource{spi:receipts!='NONE'} and spi:invuseresource{spi:formnumber='*'} and spi:invuseresource{spi:status='SHIPPED'}" id="manageReceivedShipmentLookupResource_whereClause"/>
 		</resource>
 
 
@@ -5463,9 +5483,12 @@
 		</resource>
 
 		<!-- Shipment resource -->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Shipment" id="shipment" name="shipment" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<!-- Tuan-in: add order by id desc -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Shipment" defaultOrderBy="shipmentid desc" id="shipment" name="shipment" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+		<!-- <resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Shipment" id="shipment" name="shipment" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> -->
+		<!-- Tuan-out: add order by id desc -->
 			<attributes id="shipment_attributes">
-				<attribute describedByProperty="dcterms:identifier" id="shipment_shipmentnum_dctermsidentifier" name="shipmentid"/>
+				<attribute describedByProperty="dcterms:identifier" id="shipment_shipmentnum_dctermsidentifier" index="true" name="shipmentid"/>
 				<attribute describedByProperty="spi:shipmentnum" id="shipment_shipmentnum_spi_shipmentnum" index="true" name="shipmentnum"/>
 				<attribute describedByProperty="spi:status" id="shipment_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
 				<attribute describedByProperty="spi:siteid" id="shipment_siteid_spisiteid" index="true" name="siteid"/>
@@ -5477,6 +5500,9 @@
 				<attribute describedByProperty="spi:invuseresource{oslc:shortTitle}" id="shipment_invuse_invusenum" index="true" name="invusenum"/>
 				<attribute describedByProperty="spi:invuseresource{spi:receipts}" id="shipment_invuse_receipts" name="receipts"/>
 				<attribute describedByProperty="spi:invuseresource{spi:fromstoreloc}" id="shipment_invuse_fromstoreloc" name="fromstoreloc"/>
+				<!-- Tuan-in: add invuse status -->
+				<attribute describedByProperty="spi:invuseresource{spi:status}" id="shipment_invuse_status" name="invuse_status"/>
+				<!-- Tuan-in: add invuse status -->
 				<attribute describedByProperty="spi:shipdate" id="shipment_shipdate_spishipdate" name="shipdate"/>
 				<attribute describedByProperty="spi:expreceiptdate" id="shipment_expreceiptdate_spiexpreceiptdate" name="expreceiptdate"/>
 				<!-- attribute describedByProperty="spi:matrectrans" describedByResource="shipMatrectrans" id="shipment_smatrectrans_spimatrectrans" index="true" name="matrectrans"/-->
