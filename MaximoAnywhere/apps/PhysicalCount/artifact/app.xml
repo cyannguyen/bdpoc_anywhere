@@ -5,30 +5,31 @@
 <!-- =================================== -->
 <!-- Physical COUNT ARTIFACT -->
 <!-- =================================== -->
-<app blindQuerySupport="true" id="PhysicalCount" logLevel="0" requiredRole="ANYWHERE_PHYSICAL_COUNT" version="201506161051" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">
-	
+<app blindQuerySupport="true" id="PhysicalCount" logLevel="0" requiredRole="ANYWHERE_PHYSICAL_COUNT" version="201506161051"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">
+
 	<!-- Back up this file before you edit it. -->
-	
+
 	<!-- comment this in to enable device side sso login-->
-    <!-- 
+	<!-- 
     <eventHandlers id="PhysicalCount_eventHandlers">
 	    <eventHandler class="platform.handlers.SSOHandler" event="initialize" id="PhysicalCount_eventHandlers_initialize_performSSOLogin" method="performSSOLogin"/>
 	</eventHandlers> 	
 	-->
-	
+
 	<!--UI SECTION-->
 	<!--To change the display name of any element, change the label attribute.-->
 	<!--If you support additional languages, you must also update the label in the common/js/application/translation/nls/<language>/artifact.js file for that language.-->
-	
+
 	<ui id="ui">
-	<!--My Assigned Work view-->
-		<view id="Inventory.ItemsView" label="Items" showBackButton="false" showKeyboard="false"> 
+		<!--My Assigned Work view-->
+		<view id="Inventory.ItemsView" label="Items" showBackButton="false" showKeyboard="false">
 			<!--Each query that you define must correspond to and have the same name as the public query in Maximo.-->
 			<!--You must also add the "Assigned Work Orders" query to the list of query bases in this file.-->
 			<queries id="Inventory.ItemsView_invbalance_queries" resource="invbalance">
 				<!-- <query id="Inventory.ItemsView_physicalcount" label="Physical Count" queryBase="physicalcount"/>
 				<query id="Inventory.ItemsView_physicalcountNB" label="Physical Count NB" queryBase="physicalcountNB"/> -->
-				
+
 				<!-- <query id="Inventory.ItemsView_physicalcount" label="Physical Count" queryBase="physicalcount" system="true">
 					<eventHandlers id="Inventory.ItemsView_physicalcount_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_physicalcount_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
@@ -39,7 +40,7 @@
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_physicalcountNB_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
 					</eventHandlers>
 				</query>
-				
+
 				<!-- Add 6 new queryBases -->
 				<!-- <query id="Inventory.ItemsView_mainwarehouse" label="Main Warehouse" queryBase="mainwarehouse" system="true">
 					<eventHandlers id="Inventory.ItemsView_mainwarehouse_eventHandlers">
@@ -71,7 +72,7 @@
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_notcounted3months_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
 					</eventHandlers>
 				</query> -->
-				
+
 				<query id="Inventory.ItemsView___errored__" label="Records with Errors" queryBase="__errored__" system="true">
 					<eventHandlers id="Inventory.ItemsView___errored___eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView___errored___eventHandlers_render_hideShowErrorMenu" method="hideShowErrorMenu"/>
@@ -80,7 +81,7 @@
 				<query id="Inventory.ItemsView___search_result__" label="Search Results" queryBase="__search_result__" system="true"/>
 			</queries>
 
- 			<actions id="Inventory.ItemsView_actions">
+			<actions id="Inventory.ItemsView_actions">
 				<!-- <action enableFeatureByProperty="barcode.enabled" id="Inventory.ItemsView_ScanBarCode_action" image="header_barcode_OFF.svg" label="Scan Bar Code">
 					<eventHandlers id="Inventory.ItemsView_ScanBarCode_action_eventHandlers">
 						<eventHandler class="application.handlers.CodeScannerHandlerExt" event="click" id="Inventory.ItemsView_ScanBarCode_action_eventHandlers_click_findByScan" method="findByScan"/>
@@ -94,30 +95,38 @@
 				</action>
 				<action id="Inventory.ItemsView_Recount_action" image="/images/header_recount_OFF.svg" label="Recount" transitionTo="Inventory.ItemRecountView"/>
 			</actions>
-				
+
 			<requiredResources id="Inventory.ItemsView_requiredResources">
 				<requiredResource id="Inventory.ItemsView_invbalance" name="invbalance"/>
 				<requiredResource id="Inventory.ItemsView_appInfo" name="appInfo"/>
-				
+
 				<requiredResource id="Inventory.ItemsView_additionalstoreroom" name="storeRoomResource" reload="true"/>
+				<!-- Tuan-in: add require resource to set default storeroom in settings -->
+				<requiredResource id="Inventory.ItemsView_chooseStoreRoomResource" name="chooseStoreRoomResource"/>
+				<!-- Tuan-out: add require resource to set default storeroom in settings -->
 			</requiredResources>
-					
+
 			<progressIndicator id="Inventory.ItemsView_0"/>
-			
+
 			<!-- [Loc]: Add storeRoom Label -->
 			<container cssClass="storeRoomHeaderContainer" id="Inventory.ItemsView_StoreRoom_container_" resource="storeRoomResource">
 				<text cssClass="storeRoomHeader" editable="false" id="Inventory.ItemsView.StoreRoom_Label" resourceAttribute="location"/>
 				<!-- <eventHandlers id="Inventory.ItemsView_StoreRoom_eventHandlers">
 					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_StoreRoom_eventHandlers_render_loadStoreRoomTitle" method="loadStoreRoomTitle"/>
 				</eventHandlers> -->
+				<!-- Tuan-in: add default storeroom -->
+				<eventHandlers id="Inventory.ItemsView_StoreRoom_eventHandlers">
+					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_StoreRoom_eventHandlers_render_checkEmptyStoreroom" method="checkEmptyStoreroom"/>
+				</eventHandlers>
+				<!-- Tuan-out: add default storeroom -->
 			</container>
-			
-			
-			<list displayPageSize="20" id="Inventory.ItemsView_invbalance_list" recordLabel="Item" resource="invbalance" transitionTo="Inventory.ItemDetailView"> 
- 
-			    <findByScan enableFeatureByProperty="barcode.enabled" headerLabel="Records matching: {0}" id="Inventory.ItemsView_itemnum" resourceAttribute="itemnum"/>
-						    							    											    
-			    <!-- <sortOptions id="Inventory.ItemsView_invbalance_list_sortOptions">
+
+
+			<list displayPageSize="20" id="Inventory.ItemsView_invbalance_list" recordLabel="Item" resource="invbalance" transitionTo="Inventory.ItemDetailView">
+
+				<findByScan enableFeatureByProperty="barcode.enabled" headerLabel="Records matching: {0}" id="Inventory.ItemsView_itemnum" resourceAttribute="itemnum"/>
+
+				<!-- <sortOptions id="Inventory.ItemsView_invbalance_list_sortOptions">
 					<sortOption id="Inventory.ItemsView_sortOption_Bin" label="Bin">
 					    <sortAttribute direction="asc" id="Inventory.ItemsView_Bin_sortAttribute_location" name="location"/>
 						<sortAttribute direction="asc" id="Inventory.ItemsView_Bin_sortAttribute_binnum" name="binnum"/>
@@ -133,23 +142,28 @@
 						<sortAttribute direction="desc" id="Inventory.ItemsView_CountDate_sortAttribute_physcntdate" name="lastcountdate"/>
 					</sortOption>
 				</sortOptions> -->
-				
+
 				<sortOptions id="Inventory.ItemsView_invbalance_list_sortOptions">
+					<!-- Tuan-in: change default search Date Desc -->
+					<sortOption id="Inventory.ItemsView_sortOption_CountDate_Desc" label="Date Desc">
+						<sortAttribute direction="desc" id="Inventory.ItemsView_CountDate_sortAttribute_physcntdate_desc" name="dateparse"/>
+					</sortOption>
 					<sortOption id="Inventory.ItemsView_sortOption_CountDate" label="Date Asc">
 						<sortAttribute direction="asc" id="Inventory.ItemsView_CountDate_sortAttribute_physcntdate" name="dateparse"/>
 					</sortOption>
 					<sortOption id="Inventory.ItemsView_sortOption_Bin" label="Bin">
-					    <sortAttribute direction="asc" id="Inventory.ItemsView_Bin_sortAttribute_location" name="location"/>
+						<sortAttribute direction="asc" id="Inventory.ItemsView_Bin_sortAttribute_location" name="location"/>
 						<sortAttribute direction="asc" id="Inventory.ItemsView_Bin_sortAttribute_binnum" name="binnum"/>
 					</sortOption>
 					<sortOption id="Inventory.ItemsView_sortOption_ItemNumber" label="Item Number">
 						<sortAttribute direction="asc" id="Inventory.ItemsView_ItemNumber_sortAttribute_itemnum" name="itemnum"/>
-					</sortOption>	
-					<sortOption id="Inventory.ItemsView_sortOption_CountDate_Desc" label="Date Desc">
-						<sortAttribute direction="desc" id="Inventory.ItemsView_CountDate_sortAttribute_physcntdate_desc" name="dateparse"/>
 					</sortOption>
+					<!-- <sortOption id="Inventory.ItemsView_sortOption_CountDate_Desc" label="Date Desc">
+						<sortAttribute direction="desc" id="Inventory.ItemsView_CountDate_sortAttribute_physcntdate_desc" name="dateparse"/>
+					</sortOption> -->
+					<!-- Tuan-out: change default search Date Desc -->
 				</sortOptions>
-												
+
 				<!-- <listItemTemplate id="Inventory.ItemsView_invbalance_listItemTemplate_ItemList" layout="ItemList">
 					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsView_invbalance_ItemList_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
 					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsView_invbalance_ItemList_itemnumdesc" layoutInsertAt="item2" resourceAttribute="description"/>					
@@ -159,7 +173,7 @@
 					
 					<listtext id="Inventory.ItemsView_invbalance_ItemList_orgid" layoutInsertAt="item6" resourceAttribute="orgid"/>
 				</listItemTemplate> -->
-				
+
 				<!-- <listItemTemplate id="Inventory.ItemsView_invbalance_listItemTemplate_ItemList" cssClass="checkImage" layout="ItemList2">
 					<image id="Inventory.ItemsView_invbalance_ItemList2_row0" layoutInsertAt="item1" resourceAttribute="row0"/>
 					<listtext cssClass="bold textappearance-medium listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row1" layoutInsertAt="item2" resourceAttribute="description"/>
@@ -167,7 +181,7 @@
 					<listtext cssClass="bold textappearance-medium listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row3" layoutInsertAt="item4" resourceAttribute="row2"/>
 					<listtext cssClass="bold textappearance-medium listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row4" layoutInsertAt="item5" resourceAttribute="row3"/>
 				</listItemTemplate> -->
-				
+
 				<listItemTemplate id="Inventory.ItemsView_invbalance_listItemTemplate_ItemList" layout="ItemList3">
 					<!-- <listtext id="Inventory.ItemsView_invbalance_ItemList2_row" layoutInsertAt="item1" resourceAttribute="location"/> -->
 					<!-- <image id="Inventory.ItemsView_invbalance_ItemList2_row0" layoutInsertAt="item1" resourceAttribute="row0"/> -->
@@ -177,40 +191,40 @@
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row2_col1" layoutInsertAt="item4" resourceAttribute="itemnum"/>
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row2_col2" layoutInsertAt="item5" value="Bin Num: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row2_col3" layoutInsertAt="item6" resourceAttribute="binnum"/>
-					
+
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row3_col0" layoutInsertAt="item7" value="Unit: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row3_col1" layoutInsertAt="item8" resourceAttribute="issueunit"/>
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row3_col2" layoutInsertAt="item9" value="Qty: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row3_col3" layoutInsertAt="item10" resourceAttribute="curbal"/>
-					
+
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row4_col0" layoutInsertAt="item11" value="Part no: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row4_col1" layoutInsertAt="item12" resourceAttribute="modelnum"/>
-					
+
 					<!-- <listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row5_col0" layoutInsertAt="item13" value="Last Count Date: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row5_col1" layoutInsertAt="item14" resourceAttribute="lastcountdate"/> -->
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row5_col1" layoutInsertAt="item13" resourceAttribute="joinedlastcountdate"/>
 					<image cssClass="checkImage" id="Inventory.ItemsView_invbalance_ItemList2_row0" layoutInsertAt="item14" resourceAttribute="row0"/>
 				</listItemTemplate>
-				
+
 				<eventHandlers id="Inventory.ItemsView_invbalance_list_eventHandlers">
-				    <eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_invbalance_list_eventHandlers_render_initializeBarcodeScanner" method="initializeBarcodeScanner"/>
-				    <eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="Inventory.ItemsView_invbalance_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>	
-				</eventHandlers>	
+					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_invbalance_list_eventHandlers_render_initializeBarcodeScanner" method="initializeBarcodeScanner"/>
+					<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="Inventory.ItemsView_invbalance_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>
+				</eventHandlers>
 			</list>
-		
+
 			<eventHandlers id="Inventory.ItemsView_eventHandlers">
 				<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_eventHandlers_render_showBusyList" method="showBusyList"/>
 			</eventHandlers>
-					
+
 		</view>
-		
+
 		<!--Item Details view-->
 		<view id="Inventory.ItemDetailView" label="Item Details" resource="invbalance" showKeyboard="false" showOverflow="false">
 			<requiredResources id="Inventory.ItemDetailView_requiredResources">
 				<requiredResource id="Inventory.ItemDetailView_invbalance" name="invbalance"/>
 				<requiredResource id="Inventory.ItemDetailView_blindCountQueryBases" name="blindCountQueryBases"/>
 				<requiredResource id="Inventory.ItemDetailView_itemDetailResource" name="itemDetailResource"/>
-				
+
 				<!-- Loc: resource to cancount -->
 				<!-- <requiredResource id="Inventory.ItemDetailView_additionaluserinfo" name="additionaluserinfo" reload="true"/> -->
 			</requiredResources>
@@ -228,7 +242,7 @@
 						<!-- <eventHandler class="application.handlers.InventoryHandler" event="datachange" id="Inventory.ItemDetailView_Next_action_eventHandlers_datachange_disableOnLasttRecord" method="disableOnLastRecord"/> -->
 					</eventHandlers>
 				</action>
-			</actions>			
+			</actions>
 
 			<list id="Inventory.ItemDetailView_itemDetailResource_list" resource="itemDetailResource" showHeader="false">
 				<!-- <listItemTemplate id="Inventory.ItemDetailView_itemDetailResource_listItemTemplate_ItemList" layout="ItemList">
@@ -242,44 +256,44 @@
 					<listtext id="Inventory.ItemDetailView_itemDetailResource_ItemList_orgid" layoutInsertAt="item7" resourceAttribute="orgid"/>
 					<listtext id="Inventory.ItemDetailView_itemDetailResource_ItemList_count" layoutInsertAt="item8" resourceAttribute="count"/>
 				</listItemTemplate> -->
-				
+
 				<listItemTemplate id="Inventory.ItemDetailView_itemDetailResource_listItemTemplate_ItemList" layout="DetailItemList">
 					<listtext cssClass="detailDescriptionItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row0" layoutInsertAt="item1" resourceAttribute="description"/>
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row1_col0" layoutInsertAt="item2" value="Item"/>
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row1_col1" layoutInsertAt="item3" value="Part No:"/>
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row2_col0" layoutInsertAt="item4" resourceAttribute="itemnum"/>
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row2_col1" layoutInsertAt="item5" resourceAttribute="modelnum"/>
-					
+
 					<!-- <listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row3_col0" layoutInsertAt="item6" value="Quantity:"/> -->
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row3_col0" layoutInsertAt="item6" value="Physical Count:"/>
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row3_col1" layoutInsertAt="item7" value="Bin Num:"/>
 					<!-- <listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row4_col0" layoutInsertAt="item8" resourceAttribute="curbal"/> -->
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row4_col0" layoutInsertAt="item8" resourceAttribute="physcnt"/>
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row4_col1" layoutInsertAt="item9" resourceAttribute="binnum"/>
-					
+
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row5_col0" layoutInsertAt="item10" value="Unit:"/>
 					<listtext cssClass="detailItemTitle" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row_col1" layoutInsertAt="item11" value="Last Count Date:"/>
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row6_col0" layoutInsertAt="item12" resourceAttribute="unit"/>
 					<listtext cssClass="detailItem" id="Inventory.ItemDetailView_itemDetailResource_ItemList_row6_col1" layoutInsertAt="item13" resourceAttribute="lastcountdate"/>
 				</listItemTemplate>
-				
+
 				<eventHandlers id="Inventory.ItemDetailView_itemDetailResource_list_eventHandlers">
 					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemDetailView_itemDetailResource_list_eventHandlers_render_populateItemDetail" method="populateItemDetail"/>
-				</eventHandlers>				
-			</list>	
+				</eventHandlers>
+			</list>
 			<container id="Inventory.ItemDetailView_invbalance_container_0" resource="invbalance">
-				<group id="Inventory.ItemDetailView_group_0">	
-					<groupitem id="Inventory.ItemDetailView_invbalance_groupitem_0" layout="ItemList">				    
+				<group id="Inventory.ItemDetailView_group_0">
+					<groupitem id="Inventory.ItemDetailView_invbalance_groupitem_0" layout="ItemList">
 						<text editable="false" id="Inventory.ItemDetailView_invbalance_groupitem_0_CurrentBalance" label="Current Balance:" layoutInsertAt="item1"/>
-						<text editable="false" id="Inventory.ItemDetailView_invbalance_groupitem_0_curbal" layoutInsertAt="item2" resourceAttribute="curbal"/>											
-					</groupitem>					    								
+						<text editable="false" id="Inventory.ItemDetailView_invbalance_groupitem_0_curbal" layoutInsertAt="item2" resourceAttribute="curbal"/>
+					</groupitem>
 				</group>
 				<eventHandlers id="Inventory.ItemDetailView_container_0_eventHandlers">
 					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemDetailView_container_0_eventHandlers_render_showCurrentBalance" method="showCurrentBalance"/>
-				</eventHandlers>																							
-			</container>												
+				</eventHandlers>
+			</container>
 			<container id="Inventory.ItemDetailView_invbalance_container_1" resource="invbalance">
-			<errorIndicator id="Inventory.ItemDetailView_errorIndicator"/>
+				<errorIndicator id="Inventory.ItemDetailView_errorIndicator"/>
 				<!-- <group id="Inventory.ItemDetailView_group_1">	
 					<groupitem id="Inventory.ItemDetailView_invbalance_groupitem_1" layout="ItemList">				    
 						<text editable="false" id="Inventory.ItemDetailView_invbalance_groupitem_1_physcnt_LastCount" label="Last Count" layoutInsertAt="item1" resourceAttribute="physcnt"/>
@@ -292,17 +306,17 @@
 						<text editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_2_count_PhysicalCount" label="Physical Count" layoutInsertAt="item1" placeHolder="Tap to enter" resourceAttribute="count"/>
 					</groupitem>					
 				</group> -->
-				
+
 				<!-- <group id="Inventory.ItemDetailView_group_1">	
 					<groupitem id="Inventory.ItemDetailView_invbalance_groupitem_1" layout="ItemList">				    
 						<text editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_2_count_PhysicalCount" label="New Physical Count" layoutInsertAt="item1" placeHolder="Tap to enter" resourceAttribute="count"/>
 					</groupitem>					
 				</group> -->
-																						
+
 			</container>
-			
+
 			<container cssClass="blankContainer" id="Inventory.ItemDetailView_invbalance_container_blank"/>
-			
+
 			<container cssClass="inputCountContainer" id="Inventory.ItemDetailView_invbalance_container_2" resource="invbalance">
 				<!-- <group id="Inventory.ItemDetailView_group_2">	
 					<groupitem id="Inventory.ItemDetailView_invbalance_groupitem_2" layout="ItemList2">
@@ -310,16 +324,16 @@
 						<text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_count_PhysicalCount" layoutInsertAt="item2" placeHolder="e.g. 2 (must be non-negative)" resourceAttribute="count"/>
 					</groupitem>					
 				</group> -->
-				
-				<text cssClass="inputCountLabel" id="Inventory.ItemDetailView_invbalance_groupitem_3_label_PhysicalCount" layoutInsertAt="item1" value="New Physical Count"/>				    
+
+				<text cssClass="inputCountLabel" id="Inventory.ItemDetailView_invbalance_groupitem_3_label_PhysicalCount" layoutInsertAt="item1" value="New Physical Count"/>
 				<text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_count_PhysicalCount" layoutInsertAt="item2" placeHolder="e.g. 2 (must be non-negative)" resourceAttribute="count"/>
-				
+
 				<!-- Loc: add the memo field to input -->
-				<text cssClass="inputCountLabel" id="Inventory.ItemDetailView_invbalance_groupitem_3_label_Memo" layoutInsertAt="item3" value="Memo"/>				    
+				<text cssClass="inputCountLabel" id="Inventory.ItemDetailView_invbalance_groupitem_3_label_Memo" layoutInsertAt="item3" value="Memo"/>
 				<text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_memo" layoutInsertAt="item4" placeHolder="Memo" resourceAttribute="memo"/>
-				
+
 			</container>
-			
+
 			<container cssClass="detailButtonContainer" id="Inventory.ItemDetailView_invbalance_container_3">
 				<button cssClass="mblUpdateButton" id="Inventory.ItemDetailView_Update_button" label="Update Physical Count">
 					<eventHandlers id="Inventory.ItemDetailView_Update_button_eventHandlers">
@@ -328,8 +342,8 @@
 					</eventHandlers>
 				</button>
 			</container>
-			
-			
+
+
 			<!-- <footer id="Inventory.ItemDetailView_footer">
 				<button id="Inventory.ItemDetailView_Cancel_button" label="Cancel">
 					<eventHandlers id="Inventory.ItemDetailView_Cancel_button_eventHandlers">
@@ -342,32 +356,37 @@
 					</eventHandlers>
 				</button>
 			</footer> -->
-			
+
 			<eventHandlers id="Inventory.ItemDetailView_eventHandlers">
 				<eventHandler class="application.handlers.InventoryHandler" event="back" id="Inventory.ItemDetailView_eventHandlers_back_handleBackButton" method="handleBackButton"/>
-			</eventHandlers>	
-			
-		</view>    
-		
+				<!-- Tuan-in: add event handle clean up -->
+				<eventHandler class="application.handlers.InventoryHandler" event="initialize" id="Inventory.ItemDetailView_eventHandlers_initialize_initDetail" method="initDetail"/>
+				<!-- <eventHandler class="application.handlers.InventoryHandler" event="cleanup" id="Inventory.ItemDetailView_eventHandlers_cleanup_discardSummaryView" method="discardSummaryView"/> -->
+				<eventHandler class="application.handlers.InventoryHandler" event="initialize" id="Inventory.ItemDetailView_eventHandlers_initialize_adhocInit" method="adhocInit"/>
+				<!-- Tuan-out: add event handle clean up -->
+			</eventHandlers>
+
+		</view>
+
 		<!-- Item Recount view -->
 		<view id="Inventory.ItemRecountView" label="Recount / Ad Hoc Count">
 			<requiredResources id="Inventory.ItemRecountView_requiredResources">
 				<requiredResource id="Inventory.ItemRecountView_searchItems" name="searchItems"/>
 				<requiredResource id="Inventory.ItemRecountView_itemsResource" name="itemsResource"/>
 				<requiredResource id="Inventory.ItemRecountView_locTestDomain" name="locTestDomain"/>
-				
+
 				<!-- <requiredResource id="Inventory.ItemRecountView_getDistinctBin" name="additionalInvbalance"/> -->
 				<requiredResource id="Inventory.ItemRecountView_getDistinctBin" name="getDistinctBin"/>
-			</requiredResources>			
+			</requiredResources>
 			<container id="Inventory.ItemRecountView_searchItems_container_0" resource="searchItems">
 				<group id="Inventory.ItemRecountView_group_0">
 					<groupitem id="Inventory.ItemRecountView_searchItems_groupitem_0">
 						<text codeScannable="true" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_0_itemnum_Item" label="Item" lookup="Inventory.ItemsLookup" lookupAttribute="itemnum" placeHolder="Tap to enter" resourceAttribute="itemnum">
-						    <eventHandlers id="Inventory.ItemRecountView_searchItems_groupitem_0_searchItems_eventHandlers">
+							<eventHandlers id="Inventory.ItemRecountView_searchItems_groupitem_0_searchItems_eventHandlers">
 								<eventHandler class="application.handlers.InventoryHandler" event="datachange" id="Inventory.ItemRecountView_searchItems_eventHandlers_click_setSearchQuery" method="setFieldsReadonly"/>
-							</eventHandlers>	
-						</text>							
-					</groupitem>										
+							</eventHandlers>
+						</text>
+					</groupitem>
 					<!-- <groupitem id="Inventory.ItemRecountView_searchItems_groupitem_1">
 						<text codeScannable="true" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_1_location_Storeroom" label="Storeroom" lookup="Inventory.StoreroomLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
 					    	<eventHandlers id="Inventory.ItemRecountView_searchItems_groupitem_1_location_Storeroom_eventHandlers">
@@ -375,11 +394,11 @@
 							</eventHandlers>						
 						</text>
 					</groupitem> -->
-					
+
 					<groupitem id="Inventory.ItemRecountView_searchItems_groupitem_1">
 						<text cssClass="recountlDescription" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_1_description_Description" label="Description" placeHolder="Tap to enter" resourceAttribute="description"/>
 					</groupitem>
-					
+
 					<groupitem id="Inventory.ItemRecountView_searchItems_groupitem_2">
 						<!-- <text codeScannable="true" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_2_binnum_Bin" label="Bin" placeHolder="Tap to enter" resourceAttribute="binnum"/> -->
 						<text codeScannable="true" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_2_binnum_Bin" label="Bin" lookup="Inventory.BinLookup" lookupAttribute="binnum" placeHolder="Tap to enter" resourceAttribute="binnum"/>
@@ -387,7 +406,7 @@
 							<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemRecountView_searchItems_groupitem_1_binnum_Bin_eventHandlers_render_handleConditionBinnum" method="handleConditionBinnum"/>
 						</eventHandlers>
 					</groupitem>
-					
+
 					<groupitem cssClass="binRangeContainer" id="Inventory.ItemRecountView_searchItems_groupitem_4" layout="ItemBinRange">
 						<text codeScannable="true" cssClass="binRange" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_2_binfrom_BinFrom" label="Bin from" layoutInsertAt="item1" lookup="Inventory.BinLookup" lookupAttribute="binnum" placeHolder="Tap to enter" resourceAttribute="binfrom"/>
 						<text codeScannable="true" cssClass="binRange" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_2_binto_BinTo" label="Bin to" layoutInsertAt="item2" lookup="Inventory.BinLookup" lookupAttribute="binnum" placeHolder="Tap to enter" resourceAttribute="binto"/>
@@ -395,15 +414,17 @@
 							<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemRecountView_searchItems_groupitem_4_bin_BinRange_eventHandlers_render_handleConditionBinRange" method="handleConditionBinRange"/>
 						</eventHandlers>
 					</groupitem>
-					
-					<groupitem id="Inventory.ItemRecountView_searchItems_groupitem_3">
+
+					<!-- Tuan-in: hide search by lot -->
+					<!-- <groupitem id="Inventory.ItemRecountView_searchItems_groupitem_3">
 						<text codeScannable="true" editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_3_lotnum_Lot" label="Lot" placeHolder="Tap to enter" resourceAttribute="lotnum"/>
-					</groupitem>
-					
-					<!-- <groupitem id="Inventory.ItemRecountView_searchItems_groupitem_4">
-						<text editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_4_locTest" label="LocTest" lookup="Inventory.LocTestLookup" lookupAttribute="value" resourceAttribute="binnum" placeHolder="Tap to enter"  required="true" />
 					</groupitem> -->
-					
+					<!-- Tuan-out: hide search by lot -->
+
+					<!-- <groupitem id="Inventory.ItemRecountView_searchItems_groupitem_4">
+						<text editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_4_locTest" label="LocTest" lookup="Inventory.LocTestLookup" lookupAttribute="value" resourceAttribute="binnum" placeHolder="Tap to enter" required="true" />
+					</groupitem> -->
+
 					<groupitem id="Inventory.ItemRecountView_searchItems_groupitem_5">
 						<text editable="true" id="Inventory.ItemRecountView_searchItems_groupitem_5_modelnum_PartNo" label="Part no" placeHolder="Tap to enter" resourceAttribute="modelnum"/>
 					</groupitem>
@@ -424,31 +445,31 @@
 			</footer>
 			<eventHandlers id="Inventory.ItemRecountView_eventHandlers">
 				<eventHandler class="application.handlers.InventoryHandler" event="initialize" id="Inventory.ItemRecountView_eventHandlers_initialize_initSearchData" method="initSearchData"/>
-				<eventHandler class="application.handlers.InventoryHandler" event="cleanup" id="Inventory.ItemRecountView_eventHandlers_cleanup_discardSummaryView" method="discardSummaryView"/>	
-				<eventHandler class="application.handlers.InventoryHandler" event="initialize" id="Inventory.ItemRecountView_eventHandlers_initialize_adhocInit" method="adhocInit"/>													
+				<!-- <eventHandler class="application.handlers.InventoryHandler" event="cleanup" id="Inventory.ItemRecountView_eventHandlers_cleanup_discardSummaryView" method="discardSummaryView"/> -->
+				<eventHandler class="application.handlers.InventoryHandler" event="initialize" id="Inventory.ItemRecountView_eventHandlers_initialize_adhocInit" method="adhocInit"/>
 			</eventHandlers>
 		</view>
 
 		<!--Work Order Meter list view -->
 		<view id="WorkExecution.WOMeterList" label="Recount List">
-			<list displayPageSize="20" id="WorkExecution.WOMeterList_temp_list" recordLabel="Item" resource="temp" showHeader="false" transitionTo="Inventory.ItemDetailView"> 
-							    									 											
+			<list displayPageSize="20" id="WorkExecution.WOMeterList_temp_list" recordLabel="Item" resource="temp" showHeader="false" transitionTo="Inventory.ItemDetailView">
+
 				<listItemTemplate id="WorkExecution.WOMeterList_temp_listItemTemplate_ItemList" layout="ItemList">
 					<listtext cssClass="bold textappearance-medium" id="WorkExecution.WOMeterList_temp_ItemList_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
-					<listtext cssClass="bold textappearance-medium" id="WorkExecution.WOMeterList_temp_ItemList_itemnumdesc" layoutInsertAt="item2" resourceAttribute="description"/>					
-					<listtext id="WorkExecution.WOMeterList_temp_ItemList_location" layoutInsertAt="item3" resourceAttribute="location"/>					
+					<listtext cssClass="bold textappearance-medium" id="WorkExecution.WOMeterList_temp_ItemList_itemnumdesc" layoutInsertAt="item2" resourceAttribute="description"/>
+					<listtext id="WorkExecution.WOMeterList_temp_ItemList_location" layoutInsertAt="item3" resourceAttribute="location"/>
 					<listtext id="WorkExecution.WOMeterList_temp_ItemList_binnum" layoutInsertAt="item4" resourceAttribute="binnum"/>
 					<listtext id="WorkExecution.WOMeterList_temp_ItemList_lotnum" layoutInsertAt="item5" resourceAttribute="lotnum"/>
 				</listItemTemplate>
 			</list>
 			<eventHandlers id="WorkExecution.WOMeterList_eventHandlers">
-				<eventHandler class="application.handlers.InventoryHandler" event="render" id="WorkExecution.WOMeterList_eventHandlers_render_showBusyList" method="showBusyList"/>					
-			</eventHandlers>				
+				<eventHandler class="application.handlers.InventoryHandler" event="render" id="WorkExecution.WOMeterList_eventHandlers_render_showBusyList" method="showBusyList"/>
+			</eventHandlers>
 		</view>
 
 		<!--Item Details view-->
-		<view id="Inventory.ItemDetailTempView" label="Item Details" resource="temp">	
-			
+		<view id="Inventory.ItemDetailTempView" label="Item Details" resource="temp">
+
 			<container id="Inventory.ItemDetailTempView_temp_container_0" resource="temp">
 				<errorIndicator id="Inventory.ItemDetailTempView_errorIndicator"/>
 				<group id="Inventory.ItemDetailTempView_group_0">
@@ -456,14 +477,14 @@
 						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_0_itemnum_Item" label="Item" resourceAttribute="itemnum"/>
 						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_0_itemnumdesc_Description" label="Description" resourceAttribute="description"/>
 					</groupitem>
-					
+
 					<groupitem id="Inventory.ItemDetailTempView_temp_groupitem_1">
 						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_1_location_Storeroom" label="Storeroom" resourceAttribute="location"/>
 						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_1_binnum_Bin" label="Bin" resourceAttribute="binnum"/>
 						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_1_lotnum_Lot" label="Lot" resourceAttribute="lotnum"/>
-						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_1_physcnt_PhysicalCount" label="Physical Count" resourceAttribute="physcnt"/>						
+						<text editable="false" id="Inventory.ItemDetailTempView_temp_groupitem_1_physcnt_PhysicalCount" label="Physical Count" resourceAttribute="physcnt"/>
 					</groupitem>
- 
+
 					<groupitem id="Inventory.ItemDetailTempView_temp_groupitem_2">
 						<text editable="true" id="Inventory.ItemDetailTempView_temp_groupitem_2_adjustedphyscnt_PhysicalCount" label="Physical Count" placeHolder="Tap to enter" resourceAttribute="adjustedphyscnt"/>
 					</groupitem>
@@ -472,7 +493,7 @@
 				<eventHandlers id="Inventory.ItemDetailTempView_container_0_eventHandlers">
 					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemDetailTempView_container_0_eventHandlers_render_renderDetail" method="renderDetail"/>
 				</eventHandlers>
-													
+
 			</container>
 
 			<footer id="Inventory.ItemDetailTempView_footer">
@@ -486,12 +507,12 @@
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemDetailTempView_Done_button_eventHandlers_click_processCount" method="processCount"/>
 					</eventHandlers>
 				</button>
-			</footer>	
-				
-		</view> 
-						
-<!-- Lookups -->
-		
+			</footer>
+
+		</view>
+
+		<!-- Lookups -->
+
 		<!-- Loc Test Lookup -->
 		<lookup id="Inventory.LocTestLookup" label="Select LocTest" resource="locTestDomain">
 			<requiredResources id="Inventory.LocTestLookup.requiredResources">
@@ -506,7 +527,7 @@
 			<!-- <returnAttributes id="Inventory.LocTestLookup_returnAttributes">
 				<returnAttribute id="Inventory.LocTestLookup_value_value" sourceAttribute="value" targetAttribute="value"/>
 			</returnAttributes> -->
-		</lookup>	
+		</lookup>
 		<!-- <lookup filterClass="application.handlers.InventoryHandler" id="Inventory.LocTestLookup" filterMethod="filterBinLookup" label="Select LocTest" resource="invbalance">
 			<requiredResources id="Inventory.LocTestLookup.requiredResources">
 				<requiredResource id="Inventory.LocTestLookup_requireResource" name="invbalance" reload="true"/>
@@ -525,31 +546,31 @@
 		<lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterItemsForLookup" id="Inventory.ItemsLookup" label="Select Item" resource="itemsResource">
 			<requiredResources id="Inventory.ItemsLookup_requiredResources">
 				<requiredResource id="Inventory.ItemsLookup_searchItems" name="searchItems"/>
-				<requiredResource id="Inventory.ItemsLookup_itemsResource" name="itemsResource"/>				
+				<requiredResource id="Inventory.ItemsLookup_itemsResource" name="itemsResource"/>
 				<requiredResource id="Inventory.ItemsLookup_additionalInvbalance" name="additionalInvbalance" reload="true"/>
-				<requiredResource id="Inventory.ItemsLookup_additionalitem" name="additionalitem" reload="true"/>			
+				<requiredResource id="Inventory.ItemsLookup_additionalitem" name="additionalitem" reload="true"/>
 			</requiredResources>
 
 			<list displayPageSize="40" id="Inventory.ItemsLookup_itemsResource_list" resource="itemsResource">
-			    <searchAttributes id="Inventory.ItemsLookup_itemsResource_searchAttributes">
+				<searchAttributes id="Inventory.ItemsLookup_itemsResource_searchAttributes">
 					<searchAttribute id="Inventory.ItemsLookup_itemsResource_searchAttribute_itemnum" name="itemnum"/>
 				</searchAttributes>
-				
+
 				<listItemTemplate id="Inventory.ItemsLookup_itemsResource_listItemTemplate_ItemList" layout="ItemList">
 					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsLookup_itemsResource_ItemList_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
 					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsLookup_itemsResource_ItemList_description" layoutInsertAt="item2" resourceAttribute="description"/>
 					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsLookup_itemsResource_ItemList_binnum" layoutInsertAt="item3" resourceAttribute="binnum"/>
-					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsLookup_itemsResource_ItemList_lotnum" layoutInsertAt="item4" resourceAttribute="lotnum"/>													
-				</listItemTemplate>			
-			</list>	
+					<listtext cssClass="bold textappearance-medium" id="Inventory.ItemsLookup_itemsResource_ItemList_lotnum" layoutInsertAt="item4" resourceAttribute="lotnum"/>
+				</listItemTemplate>
+			</list>
 			<returnAttributes id="Inventory.ItemsLookup_returnAttributes">
 				<returnAttribute id="Inventory.ItemsLookup_itemnum_itemnum" sourceAttribute="itemnum" targetAttribute="itemnum"/>
 				<returnAttribute id="Inventory.ItemsLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
 				<returnAttribute id="Inventory.ItemsLookup_binnum_binnum" sourceAttribute="binnum" targetAttribute="binnum"/>
-				<returnAttribute id="Inventory.ItemsLookup_lotnum_lotnum" sourceAttribute="lotnum" targetAttribute="lotnum"/>								
-			</returnAttributes>				
-		</lookup>	
-				
+				<returnAttribute id="Inventory.ItemsLookup_lotnum_lotnum" sourceAttribute="lotnum" targetAttribute="lotnum"/>
+			</returnAttributes>
+		</lookup>
+
 		<!-- Bin lookup -->
 		<!-- <lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterBinLookup" id="Inventory.BinLookup" label="Select Bin" resource="invbalance"> -->
 		<!-- <lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterBinLookup" id="Inventory.BinLookup" label="Select Bin" resource="invbalance"> -->
@@ -558,25 +579,24 @@
 				<!-- <requiredResource id="Inventory.BinLookup_invbalance" name="invbalance" reload="true"/> -->
 				<requiredResource id="Inventory.BinLookup_invbalance" name="getDistinctBin" reload="true"/>
 			</requiredResources>
-<!-- 			<list id="Inventory.BinLookup_invbalance_list" resource="invbalance"> --> 
-			<list id="Inventory.BinLookup_invbalance_list" resource="getDistinctBin"> 
+			<!-- 			<list id="Inventory.BinLookup_invbalance_list" resource="invbalance"> -->
+			<list id="Inventory.BinLookup_invbalance_list" resource="getDistinctBin">
 				<searchAttributes id="Inventory.BinLookup_invbalance_searchAttributes">
 					<searchAttribute id="Inventory.BinLookup_invbalance_searchAttribute_binnum" name="binnum"/>
 				</searchAttributes>
 				<listItemTemplate id="Inventory.BinLookup_invbalance_listItemTemplate_ItemLookup" layout="ItemLookup">
 					<listtext cssClass="bold textappearance-medium" id="Inventory.BinLookup_invbalance_ItemLookup_binnum" layoutInsertAt="item1" resourceAttribute="binnum"/>
-					<!-- <listtext resourceAttribute="itemnumdesc"
-						layoutInsertAt="desc1" cssClass="bold textappearance-medium" />
+					<!-- <listtext resourceAttribute="itemnumdesc" layoutInsertAt="desc1" cssClass="bold textappearance-medium" />
 						 -->
 				</listItemTemplate>
 			</list>
 		</lookup>
-		
+
 		<lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterBinLookupTo" id="Inventory.BinLookupTo" label="Select Bin To" resource="invbalance">
 			<requiredResources id="Inventory.BinLookupTo_requiredResources">
 				<requiredResource id="Inventory.BinLookupTo_invbalance" name="invbalance" reload="true"/>
 			</requiredResources>
-			<list id="Inventory.BinLookupTo_invbalance_list" resource="invbalance"> 
+			<list id="Inventory.BinLookupTo_invbalance_list" resource="invbalance">
 				<searchAttributes id="Inventory.BinLookupTo_invbalance_searchAttributes">
 					<searchAttribute id="Inventory.BinLookupTo_invbalance_searchAttribute_binnum" name="binnum"/>
 				</searchAttributes>
@@ -585,7 +605,7 @@
 				</listItemTemplate>
 			</list>
 		</lookup>
-		
+
 		<!-- Storeroom lookup -->
 		<lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterStoreroomForLookup" id="Inventory.StoreroomLookup" label="Select Storeroom" resource="additionalstoreroom">
 			<requiredResources id="Inventory.StoreroomLookup_requiredResources">
@@ -605,8 +625,8 @@
 			</list>
 			<returnAttributes id="Inventory.StoreroomLookup_returnAttributes">
 				<returnAttribute id="Inventory.StoreroomLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
-				<returnAttribute id="Inventory.StoreroomLookup_siteid_siteid" sourceAttribute="siteid" targetAttribute="siteid"/>											
-			</returnAttributes>	
+				<returnAttribute id="Inventory.StoreroomLookup_siteid_siteid" sourceAttribute="siteid" targetAttribute="siteid"/>
+			</returnAttributes>
 		</lookup>
 
 
@@ -621,49 +641,49 @@
 				</searchAttributes>
 				<listItemTemplate id="Inventory.LotLookup_invlot_listItemTemplate_ItemLookup" layout="ItemLookup">
 					<listtext cssClass="bold textappearance-medium" id="Inventory.LotLookup_invlot_ItemLookup_lotnum" layoutInsertAt="item1" resourceAttribute="lotnum"/>
-					<listtext cssClass="bold textappearance-medium" id="Inventory.LotLookup_invlot_ItemLookup_mfglotnum" layoutInsertAt="desc1" resourceAttribute="mfglotnum"/>					
+					<listtext cssClass="bold textappearance-medium" id="Inventory.LotLookup_invlot_ItemLookup_mfglotnum" layoutInsertAt="desc1" resourceAttribute="mfglotnum"/>
 				</listItemTemplate>
 			</list>
 		</lookup>
-		
-		<!-- dialogs --> 
-		
+
+		<!-- dialogs -->
+
 		<dialog id="Inventory.RequiredSearchFieldMissing">
 			<container id="Inventory.RequiredSearchFieldMissing_container_0">
 				<text editable="false" id="Inventory.RequiredSearchFieldMissing_container_0_Somerequiredfields" value="Some required fields are empty. Specify the missing information."/>
 				<button id="Inventory.RequiredSearchFieldMissing_Ok_button" label="Ok" primary="true">
-	                <eventHandlers id="Inventory.RequiredSearchFieldMissing_Ok_button_eventHandlers">
+					<eventHandlers id="Inventory.RequiredSearchFieldMissing_Ok_button_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.RequiredSearchFieldMissing_Ok_button_eventHandlers_click_hideDialog" method="hideDialog"/>
-		            </eventHandlers>
-	            </button>
+					</eventHandlers>
+				</button>
 			</container>
 		</dialog>
-		
+
 		<dialog id="Inventory.NotExistStoreRoomWarning">
 			<container cssClass="mblSimpleDialogText" id="Platform.LogOutPrompt_container_0">
 				<text editable="false" id="Platform.LogOutPrompt_container_0_Doyouwanttologo" value="Not exist this storeRoom"/>
 			</container>
 			<container cssClass="mblSimpleDialogFooter" id="Inventory.NotExistStoreRoomWarning_container_1">
 				<button id="Inventory.NotExistStoreRoomWarning_Ok_button" label="Ok" primary="true">
-	                <eventHandlers id="Inventory.NotExistStoreRoomWarning_Ok_button_eventHandlers">
+					<eventHandlers id="Inventory.NotExistStoreRoomWarning_Ok_button_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.NotExistStoreRoomWarning_Ok_button_eventHandlers_click_hideDialog" method="clearChooseStoreRoom"/>
-		            </eventHandlers>
-	            </button>
+					</eventHandlers>
+				</button>
 			</container>
 		</dialog>
 	</ui>
-		
-<!-- Resources -->
+
+	<!-- Resources -->
 
 	<!--DATA DEFINITION SECTION-->
-	<data id="data">	
-    	<!-- InvBalance resource -->
-    	<!-- class="application.handlers.InventoryHandler" -->
-    	<!-- Loc: remove defaultOrderBy to sort by current sortOption (Line:137) -->
+	<data id="data">
+		<!-- InvBalance resource -->
+		<!-- class="application.handlers.InventoryHandler" -->
+		<!-- Loc: remove defaultOrderBy to sort by current sortOption (Line:137) -->
 		<!-- <resource class="application.handlers.InventoryHandler" defaultOrderBy="location asc,binnum asc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" hasManagedQuery="true" id="invbalance" name="invbalance" pageSize="40" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> -->
 		<resource class="application.handlers.InventoryHandler" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" hasManagedQuery="true" id="invbalance" name="invbalance" pageSize="40" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invbalance_attributes">
-				<attribute describedByProperty="dcterms:identifier" id="invbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>			    
+				<attribute describedByProperty="dcterms:identifier" id="invbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>
 				<attribute describedByProperty="spi:binnum" id="invbalance_binnum_spibinnum" index="true" name="binnum"/>
 				<attribute describedByProperty="spi:physcnt" id="invbalance_physcnt_spiphyscnt" name="physcnt"/>
 				<attribute describedByProperty="spi:curbal" id="invbalance_curbal_spicurbal" name="curbal"/>
@@ -677,21 +697,21 @@
 				<attribute describedByProperty="spi:siteid" id="invbalance_siteid_spisiteid" index="true" name="siteid"/>
 				<!--Add ORGID-->
 				<attribute describedByProperty="spi:orgid" id="invbalance_orgid_spiorgid" index="true" name="orgid"/>
-				
-			
+
+
 				<attribute describedByProperty="spi:lotnum" id="invbalance_lotnum_spilotnum" index="true" name="lotnum"/>
 				<attribute describedByProperty="spi:adjustedphyscnt" id="invbalance_adjustedphyscnt_spiadjustedphyscnt" name="adjustedphyscnt"/>
 				<attribute describedByProperty="spi:physcntdate" id="invbalance_physcntdate_spiphyscntdate" name="physcntdate"/>
 				<attribute describedByProperty="spi:adjustedphyscntdate" id="invbalance_adjustedphyscntdate_spiadjustedphyscntdate" name="adjustedphyscntdate"/>
 				<localAttribute dataType="boolean" formula="${currentbalance} &gt; 0" id="invbalance_hasbalance_boolean" index="true" name="hasbalance"/>
 				<localAttribute dataType="boolean" formula="${adjustedphyscnt} == 0" id="invbalance_show_boolean" index="true" name="show" persistent="true"/>
-				<localAttribute dataType="double" id="invbalance_count_double" maxSize="15" name="count"/>	
-				
+				<localAttribute dataType="double" id="invbalance_count_double" maxSize="15" name="count"/>
+
 				<!-- [Loc]: custom to show List -->
 				<attribute describedByProperty="spi:modelnum" id="invbalance_modelnum_spimodelnum" index="true" name="modelnum"/>
 				<!-- Loc: add the memo field -->
 				<attribute describedByProperty="spi:anywh_countmemo" id="invbalance_siteid_spimemo" name="anywhcountmemo"/>
-				
+
 				<!-- <localAttribute dataType="string" id="invbalance_row0" formula="${description}" name="row0"/> -->
 				<!-- <localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MM/yy',  selector:'date'}) == dojo.date.locale.format(new Date(), { datePattern: 'dd/MM/yy',  selector:'date'})?'green_check.png':''" id="invbalance_row0" name="row0" persistent="true"/> -->
 				<!-- duration: 7days -->
@@ -700,46 +720,46 @@
 				<!-- <localAttribute dataType="string" id="invbalance_row1" formula="'Item: ' + ${itemnum} + ', Bin Num: ' + ${binnum} + ', Qty: ' + ${curbal}" name="row1"/>
 				<localAttribute dataType="string" id="invbalance_row2" formula="'Part no: ' + ${modelnum}" name="row2"/>
 				<localAttribute dataType="string" id="invbalance_row3" formula="'Unit: ' + ${issueunit} + ', Last Count Date: ' + dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MM/yy hh:mm',  selector:'date'})" name="row3"/> -->
-				
+
 				<localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/>
 				<localAttribute dataType="string" formula="'Last Count Date: ' + ${lastcountdate}" id="invbalance_joinedlastcountdate" index="true" name="joinedlastcountdate"/>
 				<localAttribute dataType="integer" formula="Date.parse(${physcntdate})" id="invbalance_dateParse" index="true" name="dateparse" remoteName="spi:physcntdate"/>
-				
+
 				<!-- Loc: add the memo field -->
 				<localAttribute dataType="string" id="invbalance_memo_string" maxSize="255" name="memo"/>
-				
+
 			</attributes>
-			<queryBases id="invbalance_queryBases">		
-			    <!-- <queryBase defaultForSearch="true" id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview?savedQuery=getAllInvbalances"/> -->
-		    	<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount"/> -->
-		    	<!-- <queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/> -->
-		    	<queryBase defaultForSearch="true" id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/>
-		    	<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount">
+			<queryBases id="invbalance_queryBases">
+				<!-- <queryBase defaultForSearch="true" id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview?savedQuery=getAllInvbalances"/> -->
+				<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount"/> -->
+				<!-- <queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/> -->
+				<queryBase defaultForSearch="true" id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/>
+				<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount">
 		    		<eventHandlers id="Inventory.ItemsView_physicalcount_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_physicalcount_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
 					</eventHandlers>
 		    	</queryBase>
-		    	<queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB" >
+		    	<queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB">
 		    		<eventHandlers id="Inventory.ItemsView_physicalcountNB_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_physicalcountNB_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
 					</eventHandlers>
 		    	</queryBase> -->
-		    	
-		    	<!-- Add 6 new queryBases -->
-		    	<!-- <queryBase id="invbalance_queryBase_mainwarehouse" name="mainwarehouse" queryUri="/oslc/os/oslcinvbalview?savedQuery=mainwarehouse"/>
+
+				<!-- Add 6 new queryBases -->
+				<!-- <queryBase id="invbalance_queryBase_mainwarehouse" name="mainwarehouse" queryUri="/oslc/os/oslcinvbalview?savedQuery=mainwarehouse"/>
 		    	<queryBase id="invbalance_queryBase_chemicalwarehouse" name="chemicalwarehouse" queryUri="/oslc/os/oslcinvbalview?savedQuery=chemicalwarehouse"/>
 		    	<queryBase id="invbalance_queryBase_coldstorage" name="coldstorage" queryUri="/oslc/os/oslcinvbalview?savedQuery=coldstorage"/>
 		    	<queryBase id="invbalance_queryBase_outsideyard" name="outsideyard" queryUri="/oslc/os/oslcinvbalview?savedQuery=outsideyard"/>
 		    	<queryBase id="invbalance_queryBase_workshop" name="workshop" queryUri="/oslc/os/oslcinvbalview?savedQuery=workshop"/>
 		    	<queryBase id="invbalance_queryBase_notcounted3months" name="notcounted3months" queryUri="/oslc/os/oslcinvbalview?savedQuery=notcounted3months"/> -->
-	 		</queryBases>									
+			</queryBases>
 			<whereClause id="invbalance_whereClause"/>
 		</resource>
 
-		 <!-- InvBalance Lookup resource -->
+		<!-- InvBalance Lookup resource -->
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#InvbalancesView" id="additionalInvbalance" name="additionalInvbalance" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalInvbalance_attributes">
-				<attribute describedByProperty="dcterms:identifier" id="additionalInvbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>			    
+				<attribute describedByProperty="dcterms:identifier" id="additionalInvbalance_invbalancesid_dctermsidentifier" name="invbalancesid"/>
 				<attribute describedByProperty="spi:binnum" id="additionalInvbalance_binnum_spibinnum" index="true" name="binnum"/>
 				<attribute describedByProperty="spi:conditioncode" id="additionalInvbalance_conditioncode_spiconditioncode" name="conditioncode"/>
 				<attribute describedByProperty="spi:itemnum" id="additionalInvbalance_itemnum_spiitemoslcshortTitle" index="true" name="itemnum"/>
@@ -747,21 +767,21 @@
 				<attribute describedByProperty="spi:itemsetid" id="additionalInvbalance_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
 				<attribute describedByProperty="spi:location" id="additionalInvbalance_location_spilocation" index="true" name="location"/>
 				<attribute describedByProperty="spi:siteid" id="additionalInvbalance_siteid_spisiteid" index="true" name="siteid"/>
-				<attribute describedByProperty="spi:lotnum" id="additionalInvbalance_lotnum_spilotnum" index="true" name="lotnum"/>					
+				<attribute describedByProperty="spi:lotnum" id="additionalInvbalance_lotnum_spilotnum" index="true" name="lotnum"/>
 			</attributes>
-			<queryBases id="additionalInvbalance_queryBases">		
-			    <queryBase id="additionalInvbalance_queryBase_getInvbalances" name="getInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
-	 		</queryBases>									
+			<queryBases id="additionalInvbalance_queryBases">
+				<queryBase id="additionalInvbalance_queryBase_getInvbalances" name="getInvbalances" queryUri="/oslc/os/oslcinvbalview"/>
+			</queryBases>
 			<whereClause id="additionalInvbalance_whereClause"/>
 		</resource>
-										
+
 		<resource id="searchItems" name="searchItems">
 			<attributes id="searchItems_attributes">
 				<localAttribute dataType="string" id="searchItems_itemnum_string" index="true" name="itemnum"/>
 				<localAttribute dataType="string" id="searchItems_location_string" name="location"/>
 				<localAttribute dataType="string" id="searchItems_binnum_string" name="binnum"/>
 				<localAttribute dataType="string" id="searchItems_lotnum_string" name="lotnum"/>
-				
+
 				<localAttribute dataType="string" id="searchItems_description_string" maxSize="512" name="description"/>
 				<localAttribute dataType="string" id="searchItems_binfrom_string" name="binfrom"/>
 				<localAttribute dataType="string" id="searchItems_binto_string" name="binto"/>
@@ -769,41 +789,33 @@
 			</attributes>
 			<whereClause id="searchItems_whereClause"/>
 		</resource>
-				
+
 		<!-- Location resource -->
-		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> 
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionallocations_attributes">
 				<attribute describedByProperty="dcterms:identifier" id="additionallocations_locationsid_dctermsidentifier" name="locationsid"/>
 				<attribute describedByProperty="spi:siteid" id="additionallocations_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
 				<attribute describedByProperty="oslc:shortTitle" id="additionallocations_location_oslcshortTitle" index="true" name="location"/>
 				<attribute describedByProperty="dcterms:title" id="additionallocations_description_dctermstitle" index="true" name="description"/>
 
-				<attribute describedByProperty="spi:locoper{spi:failureCode{oslc:shortTitle}}" id="additionallocations_failurecode_spilocoperspifailureCodeoslcshortTitle" name="failurecode"/>	
-				<attribute describedByProperty="spi:locoper{spi:failureCode{dcterms:title}}" id="additionallocations_failurecodedesc_spilocoperspifailureCodedctermstitle" name="failurecodedesc"/>					
-				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" 
-					/> -->
+				<attribute describedByProperty="spi:locoper{spi:failureCode{oslc:shortTitle}}" id="additionallocations_failurecode_spilocoperspifailureCodeoslcshortTitle" name="failurecode"/>
+				<attribute describedByProperty="spi:locoper{spi:failureCode{dcterms:title}}" id="additionallocations_failurecodedesc_spilocoperspifailureCodedctermstitle" name="failurecodedesc"/>
+				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" /> -->
 				<!-- <attribute name="changeby" describedByProperty="spi:changeby" /> -->
-				<!-- <attribute name="changedate" describedByProperty="spi:changedate" 
-					/> -->
+				<!-- <attribute name="changedate" describedByProperty="spi:changedate" /> -->
 				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
-				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" 
-					/> -->
-				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" 
-					/> -->
-				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
-					/> -->
+				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" /> -->
+				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" /> -->
+				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" /> -->
 				<attribute describedByProperty="spi:status" id="additionallocations_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
-				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
-					/> -->
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" /> -->
 				<!-- <attribute name="type" describedByProperty="spi:type" /> -->
-				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" 
-					/> -->
-				<!-- <attribute name="locationld" describedByProperty="spi:description_longdescription" 
-					/> -->
+				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" /> -->
+				<!-- <attribute name="locationld" describedByProperty="spi:description_longdescription" /> -->
 			</attributes>
 			<queryBases id="additionallocations_queryBases">
- 	 			<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
-	 		</queryBases>									
+				<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
+			</queryBases>
 			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionallocations_whereClause"/>
 		</resource>
 
@@ -820,11 +832,11 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainAssetstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainAssetstatus_queryBases">
- 	 			<queryBase id="domainAssetstatus_queryBase_getlocassetstatus" name="getlocassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainAssetstatus_queryBase_getlocassetstatus" name="getlocassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainAssetstatus_whereClause"/>
 		</resource>
-		
+
 		<!-- Storeroom resource -->
 		<!-- [Loc]: move to dialog.xml(Platform.Settings) to load for Change Default StoreRoom-->
 		<!-- <resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#StoreRoom" id="additionalstoreroom" name="additionalstoreroom" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
@@ -837,24 +849,17 @@
 					but also support wildcard search within these fields this based on user input
 				<localAttribute dataType="string" formula="${location}" id="additionalstoreroom_locationForSearch_string" index="true" name="locationForSearch"/>
 				<attribute describedByProperty="dcterms:title" id="additionalstoreroom_description_dctermstitle" index="true" name="description"/>
-				<attribute name="autowogen" describedByProperty="spi:autowogen" 
-					/>
+				<attribute name="autowogen" describedByProperty="spi:autowogen" />
 				<attribute name="changeby" describedByProperty="spi:changeby" />
-				<attribute name="changedate" describedByProperty="spi:changedate" 
-					/>
+				<attribute name="changedate" describedByProperty="spi:changedate" />
 				<attribute name="disabled" describedByProperty="spi:disabled" />
-				<attribute name="glaccount" describedByProperty="spi:glaccount" 
-					/>
-				<attribute name="isdefault" describedByProperty="spi:isdefault" 
-					/>
-				<attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
-					/>
+				<attribute name="glaccount" describedByProperty="spi:glaccount" />
+				<attribute name="isdefault" describedByProperty="spi:isdefault" />
+				<attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" />
 				<attribute describedByProperty="spi:status" id="additionalstoreroom_status_spistatus" name="status"/>
-				<attribute name="statusdate" describedByProperty="spi:statusdate" 
-					/>
+				<attribute name="statusdate" describedByProperty="spi:statusdate" />
 				<attribute describedByProperty="spi:type" id="additionalstoreroom_type_spitype" name="type"/>
-				<attribute name="useinpopr" describedByProperty="spi:useinpopr" 
-					/>
+				<attribute name="useinpopr" describedByProperty="spi:useinpopr" />
 			</attributes>
 			<queryBases id="additionalstoreroom_queryBases">
  	 			<queryBase id="additionalstoreroom_queryBase_getlocationstoreroom" name="getlocationstoreroom" queryUri="/oslc/os/oslcopersroom"/>
@@ -868,15 +873,14 @@
 				<attribute describedByProperty="oslc:shortTitle" id="additionalitem_itemnum_oslcshortTitle" index="true" name="itemnum"/>
 				<attribute describedByProperty="dcterms:identifier" id="additionalitem_itemid_dctermsidentifier" name="itemid"/>
 				<attribute describedByProperty="dcterms:title" id="additionalitem_description_dctermstitle" name="description"/>
-				<!-- <attribute name="longdescription" describedByProperty="dcterms:description" 
-					/> -->
+				<!-- <attribute name="longdescription" describedByProperty="dcterms:description" /> -->
 				<attribute describedByProperty="spi:itemtype" id="additionalitem_itemtype_spiitemtype" name="itemtype"/>
 				<attribute describedByProperty="spi:rotating" id="additionalitem_rotating_spirotating" index="true" name="rotating"/>
 				<attribute describedByProperty="spi:itemsetid" id="additionalitem_itemsetid_spiitemsetid" name="itemsetid"/>
 			</attributes>
 			<queryBases id="additionalitem_queryBases">
- 	 			<queryBase id="additionalitem_queryBase_getitem" name="getitem" queryUri="/oslc/os/oslcitem"/>
-	 		</queryBases>									
+				<queryBase id="additionalitem_queryBase_getitem" name="getitem" queryUri="/oslc/os/oslcitem"/>
+			</queryBases>
 			<whereClause clause="spi:rotating=0" id="additionalitem_whereClause"/>
 		</resource>
 
@@ -908,16 +912,15 @@
 				<!-- <attribute name="siteid" describedByProperty="spi:siteid" /> -->
 				<attribute describedByProperty="spi:maxvalue" id="additionalloctype_maxvalue_spimaxvalue" name="maxvalue"/>
 				<attribute describedByProperty="spi:value" id="additionalloctype_value_spivalue" name="value"/>
-				<!-- <attribute name="description" describedByProperty="dcterms:title" 
-					/> -->
+				<!-- <attribute name="description" describedByProperty="dcterms:title" /> -->
 				<!-- <attribute name="defaults" describedByProperty="spi:defaults" /> -->
 				<attribute describedByProperty="oslc:shortTitle" id="additionalloctype_domainid_oslcshortTitle" name="domainid"/>
 				<attribute describedByProperty="dcterms:identifier" id="additionalloctype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
- 			<queryBases id="additionalloctype_queryBases">
- 	 			<queryBase id="additionalloctype_queryBase_getloctype" name="getloctype" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
- 			<whereClause clause="oslc:shortTitle='LOCTYPE' and spi:maxvalue='STOREROOM'" id="additionalloctype_whereClause"/>
+			<queryBases id="additionalloctype_queryBases">
+				<queryBase id="additionalloctype_queryBase_getloctype" name="getloctype" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
+			<whereClause clause="oslc:shortTitle='LOCTYPE' and spi:maxvalue='STOREROOM'" id="additionalloctype_whereClause"/>
 		</resource>
 
 		<!-- Item Status domain -->
@@ -933,8 +936,8 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainitemstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainitemstatus_queryBases">
- 	 			<queryBase id="domainitemstatus_queryBase_getitemstatus" name="getitemstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainitemstatus_queryBase_getitemstatus" name="getitemstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='ITEMSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainitemstatus_whereClause"/>
 		</resource>
 
@@ -952,8 +955,8 @@
 				<attribute describedByProperty="dcterms:identifier" id="domainlocationstatustype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
 			</attributes>
 			<queryBases id="domainlocationstatustype_queryBases">
- 	 			<queryBase id="domainlocationstatustype_queryBase_getlocstat" name="getlocstat" queryUri="/oslc/os/oslcsynonymdomain"/>
-	 		</queryBases>			
+				<queryBase id="domainlocationstatustype_queryBase_getlocstat" name="getlocstat" queryUri="/oslc/os/oslcsynonymdomain"/>
+			</queryBases>
 			<whereClause clause="oslc:shortTitle='LOCSTAT'" id="domainlocationstatustype_whereClause"/>
 		</resource>
 
@@ -966,8 +969,8 @@
 				<attribute describedByProperty="dcterms:identifier" id="oslcmaxvars_identifier_dctermsidentifier" name="identifier"/>
 			</attributes>
 			<queryBases id="oslcmaxvars_queryBases">
- 	 			<queryBase id="oslcmaxvars_queryBase_getmaxvarsinprglabtrans" name="getmaxvarsinprglabtrans" queryUri="/oslc/os/oslcmaxvars"/>
-	 		</queryBases>			
+				<queryBase id="oslcmaxvars_queryBase_getmaxvarsinprglabtrans" name="getmaxvarsinprglabtrans" queryUri="/oslc/os/oslcmaxvars"/>
+			</queryBases>
 			<whereClause clause="spi:varname in ['STARTTIMERINPRG','LABTRANSTOLERANCE']" id="oslcmaxvars_whereClause"/>
 		</resource>
 
@@ -977,19 +980,16 @@
 				<attribute describedByProperty="spi:itemnum" id="additionalInventory_itemnum_spiitemnum" index="true" isExactMatchIndex="true" name="itemnum"/>
 				<localAttribute dataType="string" formula="${itemnum}" id="additionalInventory_itemnumForSearch_string" index="true" name="itemnumForSearch"/>
 				<attribute describedByProperty="spi:binnum" id="additionalInventory_binnum_spibinnum" index="true" isExactMatchIndex="true" name="binnum"/>
-				<!-- <attribute name="hardresissue" describedByProperty="spi:hardresissue" 
-					/> -->
+				<!-- <attribute name="hardresissue" describedByProperty="spi:hardresissue" /> -->
 				<attribute describedByProperty="dcterms:identifier" id="additionalInventory_inventoryid_dctermsidentifier" name="inventoryid"/>
 				<attribute describedByProperty="spi:itemsetid" id="additionalInventory_itemsetid_spiitemsetid" index="true" isExactMatchIndex="true" name="itemsetid"/>
 				<attribute describedByProperty="spi:location" id="additionalInventory_location_spilocation" index="true" isExactMatchIndex="true" name="location"/>
 				<localAttribute dataType="string" formula="${location}" id="additionalInventory_locationForSearch_string" index="true" name="locationForSearch"/>
-								<!-- <attribute name="manufacturer" describedByProperty="spi:manufacturer" 
-					/> -->
+				<!-- <attribute name="manufacturer" describedByProperty="spi:manufacturer" /> -->
 				<!-- <attribute name="orgid" describedByProperty="spi:orgid" /> -->
 				<attribute describedByProperty="spi:siteid" id="additionalInventory_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
 				<attribute describedByProperty="spi:status" id="additionalInventory_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
-				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
-					/> -->
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" /> -->
 				<attribute describedByProperty="spi:storeloc" id="additionalInventory_storeloc_spistoreloc" name="storeloc"/>
 				<attribute describedByProperty="spi:invbalances{spi:curbal}" id="additionalInventory_curbal_spiinvbalancesspicurbal" name="curbal"/>
 				<!-- fields pulled in from additionalitem resource -->
@@ -999,66 +999,66 @@
 
 			</attributes>
 			<queryBases id="additionalInventory_queryBases">
- 	 			<queryBase id="additionalInventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
-	 		</queryBases>			
+				<queryBase id="additionalInventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory"/>
+			</queryBases>
 		</resource>
 
 		<!-- UserInfo attribute list -->
-		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
-	        <attributes id="userInfo_attributes">
-		        <attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
-		        <attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
-		        <attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
-		        <attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
-		        <attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
-		        <attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
-		        <attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
-		        <attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
-		        <attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
-		        <attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
-		        <attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
-		        <attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
-		        <attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
-		        <attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
-		        <attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
-		        <attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
-		     </attributes>
-		     <queryBases id="userInfo_queryBases">
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="userInfo_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
+				<attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
+				<attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
+				<attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
+				<attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
+				<attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
+				<attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
+				<attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
+				<attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
+				<attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
+				<attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
+				<attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
+				<attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
+				<attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
+				<attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
+				<attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
+			</attributes>
+			<queryBases id="userInfo_queryBases">
 				<queryBase id="userInfo_queryBase_currentUser" name="currentUser" queryUri="/oslc/os/oslcmaxuser?savedQuery=currentUser"/>
 			</queryBases>
-	    </resource>
-	    
-		<!-- Roles attribute list -->				
-	    <resource id="userRoles" name="userRoles">
+		</resource>
+
+		<!-- Roles attribute list -->
+		<resource id="userRoles" name="userRoles">
 			<attributes id="userRoles_attributes">
-				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>			
+				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>
 			</attributes>
 		</resource>
-	    
+
 		<!-- ALN DOMAIN -->
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#AlphaNumericDomain" id="meterCharacteristics" name="meterCharacteristics" pageSize="2000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="meterCharacteristics_attributes">
-				<attribute describedByProperty="spi:value" id="meterCharacteristics_value_spivalue" index="true" name="value"/> 
+				<attribute describedByProperty="spi:value" id="meterCharacteristics_value_spivalue" index="true" name="value"/>
 				<attribute describedByProperty="spi:domainid" id="meterCharacteristics_domainid_spidomainid" index="true" name="domainid"/>
 				<attribute describedByProperty="spi:alndomainid" id="meterCharacteristics_alndomainid_spialndomainid" index="true" key="1" name="alndomainid"/>
 			</attributes>
 			<queryBases id="meterCharacteristics_queryBases">
- 	 			<queryBase id="meterCharacteristics_queryBase_getCharacteristics" name="getCharacteristics" queryUri="/oslc/os/oslcalndomain"/>
-	 		</queryBases>
-	 		<whereClause id="meterCharacteristics_whereClause"/>
+				<queryBase id="meterCharacteristics_queryBase_getCharacteristics" name="getCharacteristics" queryUri="/oslc/os/oslcalndomain"/>
+			</queryBases>
+			<whereClause id="meterCharacteristics_whereClause"/>
 		</resource>
-		
+
 		<!-- GETDISTINCTBIN -->
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#GETDISTINCTBIN" id="getDistinctBin" name="getDistinctBin" pageSize="2000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="getDistinctBin_attributes">
 				<attribute describedByProperty="spi:binnum" id="getDistinctBin_binnum_spibinnum" index="true" name="binnum"/>
 			</attributes>
 			<queryBases id="getDistinctBin_queryBases">
- 	 			<queryBase id="getDistinctBin_queryBase_getDistinctBin" name="getDistinctBin" queryUri="/oslc/os/getdistinctbin"/>
-	 		</queryBases>
-	 		<whereClause id="getDistinctBin_whereClause"/>
+				<queryBase id="getDistinctBin_queryBase_getDistinctBin" name="getDistinctBin" queryUri="/oslc/os/getdistinctbin"/>
+			</queryBases>
+			<whereClause id="getDistinctBin_whereClause"/>
 		</resource>
-		
+
 		<!-- USERCANCOUNT -->
 		<!-- <resource additionalData="true" refreshOnLogin="true" isSystem="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#USERCANCOUNT" id="additionaluserinfo" name="additionaluserinfo" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionaluserinfo_attributes">
@@ -1070,91 +1070,91 @@
 	 		</queryBases>
 	 		<whereClause id="additionaluserinfo_whereClause"/>
 		</resource> -->
-		
-		<!-- SITE --> 
+
+		<!-- SITE -->
 		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Site" id="site" isSystem="true" name="site" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="site_attributes">
 				<attribute describedByProperty="oslc:shortTitle" id="site_lotnum_oslcshortTitle" index="true" key="1" name="siteid"/>
 				<attribute describedByProperty="spi:orgid" id="site_orgid_spiorgid" name="orgid"/>
 			</attributes>
 			<queryBases id="site_queryBases">
- 	 			<queryBase id="site_queryBase_getSite" name="getSite" queryUri="/oslc/os/oslcsite"/>
-	 		</queryBases>
-	 		<whereClause id="site_whereClause"/>
-		</resource>	 
+				<queryBase id="site_queryBase_getSite" name="getSite" queryUri="/oslc/os/oslcsite"/>
+			</queryBases>
+			<whereClause id="site_whereClause"/>
+		</resource>
 
-		<!-- INVLOT --> 
+		<!-- INVLOT -->
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Invlot" id="invlot" name="invlot" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="invlot_attributes">
-			    <attribute describedByProperty="spi:invlotid" id="invlot_invlotid_spiinvlotid" index="true" name="identifier"/>
+				<attribute describedByProperty="spi:invlotid" id="invlot_invlotid_spiinvlotid" index="true" name="identifier"/>
 				<attribute describedByProperty="spi:lotnum" id="invlot_lotnum_spilotnum" index="true" name="lotnum"/>
 				<attribute describedByProperty="spi:mfglotnum" id="invlot_mfglotnum_spimfglotnum" index="true" name="mfglotnum"/>
 			</attributes>
 			<queryBases id="invlot_queryBases">
- 	 			<queryBase id="invlot_queryBase_getLot" name="getLot" queryUri="/oslc/os/oslcinvlot"/>
-	 		</queryBases>
-	 		<whereClause id="invlot_whereClause"/>
-		</resource>	 
-								
-		<!-- BlindCount QueryBases --> 
+				<queryBase id="invlot_queryBase_getLot" name="getLot" queryUri="/oslc/os/oslcinvlot"/>
+			</queryBases>
+			<whereClause id="invlot_whereClause"/>
+		</resource>
+
+		<!-- BlindCount QueryBases -->
 		<resource id="blindCountQueryBases" name="blindCountQueryBases">
 			<attributes id="blindCountQueryBases_attributes">
 				<localAttribute dataType="boolean" id="blindCountQueryBases_physicalcount_boolean" name="physicalcount"/>
 			</attributes>
 			<whereClause id="blindCountQueryBases_whereClause"/>
 		</resource>
-		
+
 		<!-- InvBalance Detail Resource -->
 		<resource id="itemDetailResource" name="itemDetailResource" singleton="true">
-	        <attributes id="itemDetailResource_attributes">
-	        	<localAttribute dataType="string" id="itemDetailResource_itemnum_string" name="itemnum"/>
-	        	<localAttribute dataType="string" id="itemDetailResource_itemdesc_string" name="description"/> 
-	        	<!-- <localAttribute dataType="string" id="itemDetailResource_location_string" name="location"/> -->
-	        	<localAttribute dataType="string" id="itemDetailResource_binnum_string" name="binnum"/>
-	        	<!-- <localAttribute dataType="string" id="itemDetailResource_lot_string" name="lot"/> -->
-	        	<localAttribute dataType="string" id="itemDetailResource_unit_string" name="unit"/>
-	        	<localAttribute dataType="double" id="itemDetailResource_curbal_double" name="curbal"/>
-	        	<!-- <localAttribute dataType="string" id="itemDetailResource_orgid_string" name="orgid"/>
+			<attributes id="itemDetailResource_attributes">
+				<localAttribute dataType="string" id="itemDetailResource_itemnum_string" name="itemnum"/>
+				<localAttribute dataType="string" id="itemDetailResource_itemdesc_string" name="description"/>
+				<!-- <localAttribute dataType="string" id="itemDetailResource_location_string" name="location"/> -->
+				<localAttribute dataType="string" id="itemDetailResource_binnum_string" name="binnum"/>
+				<!-- <localAttribute dataType="string" id="itemDetailResource_lot_string" name="lot"/> -->
+				<localAttribute dataType="string" id="itemDetailResource_unit_string" name="unit"/>
+				<localAttribute dataType="double" id="itemDetailResource_curbal_double" name="curbal"/>
+				<!-- <localAttribute dataType="string" id="itemDetailResource_orgid_string" name="orgid"/>
 	        	<localAttribute dataType="double" id="itemDetailResource_count_double" name="count"/> -->
-	        	
-	        	<localAttribute dataType="string" id="itemDetailResource_modelnum_string" name="modelnum"/>
-	        	<localAttribute dataType="string" id="itemDetailResource_lastcountdate_string" name="lastcountdate"/>
-	        	
-	        	<!-- Loc: (Deprecated) <localAttribute dataType="string" id="itemDetailResource_memo_string" name="memo"/> -->
-	        	<localAttribute dataType="string" id="itemDetailResource_physcnt_string" name="physcnt"/>
-	        	
-	        	
-	        </attributes> 
-	    </resource>		
+
+				<localAttribute dataType="string" id="itemDetailResource_modelnum_string" name="modelnum"/>
+				<localAttribute dataType="string" id="itemDetailResource_lastcountdate_string" name="lastcountdate"/>
+
+				<!-- Loc: (Deprecated) <localAttribute dataType="string" id="itemDetailResource_memo_string" name="memo"/> -->
+				<localAttribute dataType="string" id="itemDetailResource_physcnt_string" name="physcnt"/>
+
+
+			</attributes>
+		</resource>
 
 		<resource id="itemsResource" name="itemsResource" pageSize="40">
-	        <attributes id="itemsResource_attributes">
-	        	<localAttribute dataType="string" id="itemsResource_itemnum_string" index="true" key="1" name="itemnum"/>
-	        	<localAttribute dataType="string" id="itemsResource_description_string" key="2" name="description"/>
-	        	<localAttribute dataType="string" id="itemsResource_binnum_string" key="3" name="binnum"/>	
-	        	<localAttribute dataType="string" id="itemsResource_lotnum_string" key="4" name="lotnum"/>	        	        	
-	        </attributes>
-			<whereClause id="itemsResource_whereClause"/>	         
-	    </resource>	
-	    
+			<attributes id="itemsResource_attributes">
+				<localAttribute dataType="string" id="itemsResource_itemnum_string" index="true" key="1" name="itemnum"/>
+				<localAttribute dataType="string" id="itemsResource_description_string" key="2" name="description"/>
+				<localAttribute dataType="string" id="itemsResource_binnum_string" key="3" name="binnum"/>
+				<localAttribute dataType="string" id="itemsResource_lotnum_string" key="4" name="lotnum"/>
+			</attributes>
+			<whereClause id="itemsResource_whereClause"/>
+		</resource>
+
 		<!-- Local Resource Storage -->
 		<resource id="appInfo" name="appInfo">
 			<attributes id="appInfo_attributes">
 				<localAttribute dataType="string" id="appInfo_previousQueryBase_string" name="previousQueryBase"/>
 			</attributes>
 		</resource>
-		
+
 		<!-- [Loc] -->
 		<resource id="storeRoomResource" name="storeRoomResource" singleton="true">
-	        <attributes id="storeRoomResource_attributes">
+			<attributes id="storeRoomResource_attributes">
 				<localAttribute dataType="string" id="storeRoomResource_StoreRoomTitle_string" name="location"/>
-	        </attributes> 
-	    </resource>
-	    <resource id="chooseStoreRoomResource" name="chooseStoreRoomResource" singleton="true">
-	        <attributes id="chooseStoreRoomResource_attributes">
+			</attributes>
+		</resource>
+		<resource id="chooseStoreRoomResource" name="chooseStoreRoomResource" singleton="true">
+			<attributes id="chooseStoreRoomResource_attributes">
 				<localAttribute dataType="string" id="chooseStoreRoomResource_StoreRoomTitle_string" name="location"/>
-	        </attributes> 
-	    </resource>											
+			</attributes>
+		</resource>
 	</data>
 	<messages id="messages">
 		<message defaultMessage="The item, bin, and storeroom combination is not valid. Check your entries." id="invalidBin"/>
@@ -1167,11 +1167,11 @@
 		<message defaultMessage="The specified location was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidLocation"/>
 		<message defaultMessage="The specified asset was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidAsset"/>
 		<message defaultMessage="" id="changePasswordInfo"/>
-		<message defaultMessage="Lookup data is not stored on the device. Go to Settings \u003E Refresh Lookup Data when you are online." id="nolookupdata"/>	
-		<message defaultMessage="The value {0} is not a valid number" id="newReadingNaN"/>	
-		<message defaultMessage="Item" id="itemnum"/>								
+		<message defaultMessage="Lookup data is not stored on the device. Go to Settings \u003E Refresh Lookup Data when you are online." id="nolookupdata"/>
+		<message defaultMessage="The value {0} is not a valid number" id="newReadingNaN"/>
+		<message defaultMessage="Item" id="itemnum"/>
 		<message defaultMessage="Bin" id="binnum"/>
 		<message defaultMessage="Counts for item {0}" id="itemsforscan"/>
-		<message defaultMessage="Detail ({0}/{1})" id="detailLabel"/>   
+		<message defaultMessage="Detail ({0}/{1})" id="detailLabel"/>
 	</messages>
 </app>
