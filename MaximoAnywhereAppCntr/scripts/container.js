@@ -118,7 +118,7 @@ async function loadBuildContainerProperties(properties, log) {
             process.env['ANDROID_SDK_ROOT'] = path.resolve(androidHome);
         }
         await verifyAndroid.prepareGradle(log);
-        await verifyAndroid.setGradleEnvVariables(log);
+        await verifyAndroid.setGradleEnvVariables(log, properties.get('Android_TARGET_DEVICE_NAME'));
         try {
             //Load Android Properties
             let packageTypeAndroid = ''
@@ -134,7 +134,8 @@ async function loadBuildContainerProperties(properties, log) {
             if(['release', 'releasenosign', 'development'].indexOf(packageTypeAndroid.toLowerCase()) == -1){
                 throw new Error("Invalid value in 'android.binary.packageType'");
             }
-             
+            // Android SDK version:
+            containerPropertiesObject['android']['buildSDKVersion'] = properties.get('Android_TARGET_DEVICE_NAME');
             
             //Ensure all signing details are provided if package type set to release
             
@@ -143,12 +144,14 @@ async function loadBuildContainerProperties(properties, log) {
                 let storePassword = null;
                 let alias = null;
                 let password = null;
+                let storeType = null;
                 try{
                     log.i(null, null, 'Loading Android signing properties');
                     keystore = path.resolve(currDir, properties.get('android.signapp.keystore'));
                     storePassword = properties.get('android.signapp.storePassword');
                     alias = properties.get('android.signapp.alias');
                     password = properties.get('android.signapp.password');
+                    storeType = properties.get('android.signapp.storeType');
                 }catch(ex){
                     throw new Error('Android package type set to Release, but no signing properties found');
                 }
@@ -161,12 +164,11 @@ async function loadBuildContainerProperties(properties, log) {
                     throw new Error('Keystore file not found. Ensure android.signapp.keystore value is valid');
                 }
 
-                containerPropertiesObject['android'] = {
-                    'keystore': keystore,
-                    'storePassword': storePassword,
-                    'alias': alias,
-                    'password': password
-                };
+                containerPropertiesObject['android']['keystore'] = keystore
+                containerPropertiesObject['android']['storePassword'] = storePassword
+                containerPropertiesObject['android']['alias'] = alias
+                containerPropertiesObject['android']['password'] = password
+                containerPropertiesObject['android']['storeType'] = storeType
 
             }
 
@@ -192,9 +194,9 @@ async function loadBuildContainerProperties(properties, log) {
                 throw new Error("Could not read require property  'ios.binary.packageType'")
             }
 
-            //if(['simulator', 'development', 'enterprise'].indexOf(packageTypeios.toLowerCase()) === -1){
-            //    throw new Error("Invalid value in 'ios.binary.packageType'");
-            //}
+            if(['simulator', 'development', 'enterprise'].indexOf(packageTypeios.toLowerCase()) === -1){
+                throw new Error("Invalid value in 'ios.binary.packageType'");
+            }
 
             let useDistributionProfile = null;
             if (packageTypeios && packageTypeios.toLowerCase() === 'development') {
@@ -244,13 +246,7 @@ async function loadBuildContainerProperties(properties, log) {
                 platformToFilter.push(Constants.OS.WINDOWS);
             }
             let vsReleaseVersion = properties.getRaw('visualstudio.version.release') ? properties.getRaw('visualstudio.version.release').trim() : null;
-            if (vsReleaseVersion === '14.0')
-                containerPropertiesObject[Constants.OS.WINDOWS]['vsReleaseVersion'] = vsReleaseVersion
-            else {
-                log.e(null, null, "Windows target will not be built since visualstudio.version.release property is not a valid value");
-                platformToFilter.push(Constants.OS.WINDOWS);
-            }
-
+            containerPropertiesObject[Constants.OS.WINDOWS]['vsReleaseVersion'] = vsReleaseVersion
             let vsInstallDir = properties.get('visualstudio.install.path') ? properties.get('visualstudio.install.path').trim() : null;
             if (vsInstallDir) {
                 containerPropertiesObject[Constants.OS.WINDOWS]['vsInstallPath'] = path.resolve(vsInstallDir);
@@ -331,6 +327,10 @@ async function loadAppDescriptorProperties(appPath, containerProps, log) {
             descriptorContents['defaultPackageName'] = iphoneNode.getAttribute('bundleId');
             descriptorContents['ios']['version'] = iphoneNode.getAttribute('version');
             descriptorContents['defaultVersion'] = iphoneNode.getAttribute('version');
+            
+            //IJ28577
+            let CFBundleVersion = iphoneNode.getAttribute('CFBundleVersion');
+            descriptorContents['ios']['CFBundleVersion'] = CFBundleVersion ? CFBundleVersion : null;
 
             //descriptorContents['ios']['provisioningProfile'] = iphoneNode.getAttribute('provisioningProfile');
             //Do this only if building for IOS
@@ -366,6 +366,9 @@ async function loadAppDescriptorProperties(appPath, containerProps, log) {
 
             let androidNode = document.getElementsByTagName('android')[0];
             descriptorContents['android']['version'] = androidNode.getAttribute('version');
+            //IJ28577
+            let verCode = androidNode.getAttribute('versionCode');
+            descriptorContents['android']['versionCode'] = verCode ? verCode : null;
             descriptorContents['defaultVersion'] = descriptorContents['defaultVersion'] ? descriptorContents['defaultVersion'] : descriptorContents['android']['version'];
             for (let i = 0; i < androidNode.childNodes.length; i++) {
                 if (androidNode.childNodes[i].tagName === 'security') {
@@ -516,6 +519,18 @@ function getTheLatestPluginZipName(pluginPath) {
 
 }
 
+function writeAppDownloadMD5() {
+    let appDownloadPath = path.resolve(currDir, './app-download/js/appdownload.js');
+    let checksum = "file:appdownload.js:" + utils.calcMD5(appDownloadPath);
+    fs.writeFile(path.resolve(currDir, './app-download/js/appdownload.md5'), checksum, err => {
+        if (err) {
+          console.error('[writeAppDownloadMD5] Unable to write MD5 file: ' + err);
+          return
+        }
+    });
+    return checksum;
+}
+
 /**
  *Entry function that generates the binaries.
  *
@@ -541,6 +556,9 @@ async function build() {
             appBuildProps.get('adapter.connection.port') && appBuildProps.get('adapter.connection.context')) {
             let serverUrl = appBuildProps.get('adapter.connection.protocol') + '://' + appBuildProps.get('adapter.connection.domain') +
                 ':' + appBuildProps.get('adapter.connection.port') + '/' + appBuildProps.get('adapter.connection.context');
+			//appBuildProps.get('adapter.connection.context')) {
+            //let serverUrl = appBuildProps.get('adapter.connection.protocol') + '://' + appBuildProps.get('adapter.connection.domain') +
+            //    '/' + appBuildProps.get('adapter.connection.context');
             defaultServer = serverUrl;
         }
         if (defaultServer)
@@ -584,6 +602,7 @@ async function build() {
                     appLogger.setTag(ostag)
                     try {
                         logSummary.i(app_topic, ostag, "Initializing App " + app + ' for platform ' + Constants.OS.ANDROID + '--', app);
+						logSummary.i(app_topic, ostag, "Generating MD5 checksum " + writeAppDownloadMD5(), app);
                         createdLocation = await new InitAppAndroid(containerProps, app, appPath, appDescriptorInfo[app], defaultServer, platformConfig, pluginConfig, appLogger).run(true)
                         logSummary.i(app_topic, ostag, "Completed App Initialization: " + app, app);
                         logSummary.i(app_topic, ostag, "Building App for: " + app, app);
@@ -626,7 +645,11 @@ async function build() {
                 await appLogger.flush(app);
                 await logSummary.flush(app_topic);
             }
-            //}));
+
+            let winTempPath = path.resolve(currDir,"scripts/internal/windows/temp"); 
+            if(fsc.existsSync(winTempPath))
+                fs.rmdirSync(winTempPath, { recursive: true });
+                
         }
 
 

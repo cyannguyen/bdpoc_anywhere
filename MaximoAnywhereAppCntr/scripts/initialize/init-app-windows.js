@@ -24,7 +24,6 @@ const currDir = process.cwd();
 class InitAppWindows extends InitApp  {
     constructor(containerProps, appName, appPath, appDescriptorContents, defaultServer, appBaseDir, platformsConfig, pluginsConfig, logger){
         super(containerProps, appName, appPath, appDescriptorContents, defaultServer, appBaseDir, platformsConfig, pluginsConfig, logger);
-
     }
 
     async copyImageResources(baseAppPath, descriptorDetails, outputLocation, memoizeName) { 
@@ -186,10 +185,13 @@ class InitAppWindows extends InitApp  {
             });
 
             await this.copyWinJS(appCreateLocation);
+            // Ensuring backward compatibility with MS Visual Studio 2015
+            let vsReleaseVersion = this.containerProps[OS.WINDOWS]['vsReleaseVersion'];
 
-            //Enable the line below to support vs 2017 with cordova-windows 7 and jsonstore plugins
-            //await this.changeVCLibVersionInJSProj(appCreateLocation);
-           
+            if (vsReleaseVersion.indexOf("15") > -1) {
+                //Enable the line below to support vs 2017 with cordova-windows 7 and jsonstore plugins
+                await this.changeVCLibVersionInJSProj(appCreateLocation);
+            }
 
             return appCreateLocation;
         }).catch((ex)=>{

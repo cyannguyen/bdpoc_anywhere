@@ -85,9 +85,14 @@ var app = {
 
     },
 
+    validURL: function(urlString) {
+		var pattern = new RegExp("^(https?://)?(((www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6})|((\\d{1,3}\\.){3}\\d{1,3}))(:\\d{2,4})?(/[-\\w@\\+\\.~#\\?&/=%]*)?$");
+  		return (pattern.test(urlString) == true)? urlString : "";
+	}, 
+
     checkAndShowEULA: function() {
 
-    	var eulaAccepted = localStorage.getItem('eulaAccepted') ? localStorage.getItem('eulaAccepted') : false ;
+    	var eulaAccepted = JSON.parse(localStorage.getItem('eulaAccepted')) ? localStorage.getItem('eulaAccepted') : false ;
 
     	if (eulaAccepted == 'true') {
     		return;
@@ -191,14 +196,15 @@ var app = {
         }
 
     	//Rooted device check
-
-    	/* if (device.platform == "Android" || device.platform == "iOS") {
+		/*
+    	if (device.platform == "Android" || device.platform == "iOS") {
     		try {
     			await this.checkDevice();
     		} catch (e) {
     			this.showDeviceRooted("RootedJailBroken");
     		}
-    	} */ 
+    	}
+		*/
     },
 
     sendToLogin: function() {
@@ -242,7 +248,8 @@ var app = {
             return;
         }
         let appUpdateCollection = await getCollection();
-        let storedurl = appUpdateCollection[0].json.maximo_url;
+
+        let storedurl = (appUpdateCollection && appUpdateCollection[0] && appUpdateCollection[0].json) ? appUpdateCollection[0].json.maximo_url : this.validURL(localStorage.getItem('maximo_url'));
         localStorage.setItem(
             "maximo_url",
             storedurl
@@ -250,7 +257,8 @@ var app = {
         let auxUrl = new URL(storedurl);
         let serverURL = auxUrl.origin + "/maxanywhere/AnywhereAppUpdate";
         let appId = window.AnywhereAppID;
-        let deployeDateTime = appUpdateCollection[0].json.deploydatetime;
+        let currentDeployment = new Date();
+        let deployeDateTime = (appUpdateCollection && appUpdateCollection[0] && appUpdateCollection[0].json) ? appUpdateCollection[0].json.deploydatetime : currentDeployment.toISOString().replace('T', ' ').replace('Z', ' ');
 
         let res = deployeDateTime.substring(deployeDateTime.indexOf('.')+1, deployeDateTime.length);
         if(res.length == 2 ){
@@ -265,7 +273,7 @@ var app = {
                 fetch(serverURL + "?appid=" + appId + "&deploydatetime=" + deployeDateTime, { method: "POST" })
             );
         } catch (error) {
-            app.showError("notavaliable");
+            app.showError("notavailable");
             app.sendToLogin();
             return;
         }
@@ -287,7 +295,7 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: async function(id) {
         let urltxt = document.getElementById("serverURL")
-        urltxt.value = localStorage.getItem('maximo_url');
+        urltxt.value = this.validURL(localStorage.getItem('maximo_url'));
         let initData = [{ 'maximo_url': urltxt.value, 'deploydatetime': 'null' }];
         let aData = await addToCollection(initData);
 
@@ -323,7 +331,7 @@ var app = {
         sync.on("complete", async(data) => {
 
             try {
-                let urlValue = localStorage.getItem("maximo_url");
+                let urlValue = this.validURL(localStorage.getItem('maximo_url'));
                 await setCollection({
                     'maximo_url': urlValue,
                     'deploydatetime': appToDownload.DEPLOYDATETIME
@@ -339,7 +347,7 @@ var app = {
         sync.on("error", function(e) {
             console.log("Error: ", e.message);
             SpinnerDialog.hide();
-            app.showError("notavaliable");
+            app.showError("notavailable");
             return;
         });
 
@@ -357,7 +365,9 @@ app.initialize();
 const authenticate = async() => {
     app.hideError();
     SpinnerDialog.show(null, $.i18n("loading"),true);
+    var pattern = new RegExp("^(https?://)?(((www\\.)?([-a-z0-9]{1,63}\\.)*?[a-z0-9][-a-z0-9]{0,61}[a-z0-9]\\.[a-z]{2,6})|((\\d{1,3}\\.){3}\\d{1,3}))(:\\d{2,4})?(/[-\\w@\\+\\.~#\\?&/=%]*)?$");
     let urlValue = document.getElementById("serverURL").value.trim();
+    urlValue = (pattern.test(urlValue) == true)? urlValue : "";
     let pingresponse = null;
     try {
         pingresponse = await timeout(
@@ -365,11 +375,11 @@ const authenticate = async() => {
             fetch(urlValue + "/ping.jsp", { method: "GET" })
         );
         if (!pingresponse || !pingresponse.ok) {
-            app.showError("notavaliable");
+            app.showError("notavailable");
             return;
         }
     } catch (error) {
-        app.showError("notavaliable");
+        app.showError("notavailable");
         return;
     }
 
@@ -402,13 +412,13 @@ const authenticate = async() => {
         );
     } catch (error) {
         SpinnerDialog.hide();
-        app.showError("notavaliable");
+        app.showError("notavailable");
         return;
     }
 
     if (response && response.status != 200) {
         SpinnerDialog.hide();
-        app.showError("notavaliable");
+        app.showError("notavailable");
         return;
     }
 
@@ -476,12 +486,34 @@ function closeCollection(keyValueObject) {
 	WL.JSONStore.closeAll();
 }
 
-
 function showPrivacyAlert(){
-	navigator.notification.alert (
-			termsnprivacy.getPrivacyPolicy(),  // message
-			function() {},         // callback
-			termsnprivacy.privacyTitle,            // title
-            'Done'                  // buttonName
-    );
+    //cordova.InAppBrowser.open("https://www.ibm.com/support/pages/node/6574761","_blank","location=no,footer=yes");
+    /*navigator.notification.alert (
+        termsnprivacy.getPrivacyPolicy(),  // message
+        function() {},         // callback
+        termsnprivacy.privacyTitle,            // title
+        'Done'                  // buttonName
+    );*/
+    var link = document.getElementById("ppbt");
+    var privacyModal = document.getElementById("privacyDialog");
+    link.onclick = function() {
+        privacyModal.style.display = "block";
+    }
+
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        privacyModal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target.id == "ppbt") {
+            privacyModal.style.display = "block";
+        }
+    }
+
+    document.getElementById("modal-header").innerHTML= termsnprivacy.privacyTitle ;
+    document.getElementById("modal-header").style = "font-weight:bold";
+
+    document.getElementById("modal-text").innerHTML= termsnprivacy.getPrivacyPolicy() ;
+    document.getElementById("modal-text").style = "text-align:left";
 }
