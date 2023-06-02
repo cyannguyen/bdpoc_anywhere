@@ -933,13 +933,29 @@ define("application/handlers/InventoryHandler", [
             }
             var currentIndex = resourceObject.getCurrentIndex();
             var view = eventContext.ui.getViewFromId("Inventory.ItemDetailView");
+			// Tuan-in: show correct number of records  
+			var numberOfRecords = resourceObject.recordsCount;
+			if(!numberOfRecords) numberOfRecords = resourceObject.count();
             var label = MessageService.createResolvedMessage("detailLabel", [
                 currentIndex + 1,
+                // resourceObject.count(),
                 resourceObject.recordsCount,
             ]);
+			// Tuan-out: show correct number of records  
             view.label = label;
             view.refresh();
         },
+
+		// Tuan-in: add disable on last record 
+		disableOnLastRecordInLastPage: function(eventContext) {
+			var resourceObject = CommonHandler._getAdditionalResource(eventContext, "invbalance");
+            if (!resourceObject) return;
+			var currentIndex = resourceObject.getCurrentIndex();
+			var numberOfRecords = resourceObject.recordsCount;
+			if(!numberOfRecords) numberOfRecords = resourceObject.count();
+			eventContext.setEnabled(currentIndex + 1!=numberOfRecords);
+		},
+		// Tuan-out: add disable on last record 
 
         loadDetailItem: function (eventContext) {
             var self = this;
@@ -974,13 +990,16 @@ define("application/handlers/InventoryHandler", [
             if (resourceObject.hasNext()) {
                 resourceObject.next();
             } else {
+				eventContext.application.showBusy();
                 ModelService.loadNextPage(resourceObject, false)
                     .then(function () {
                         resourceObject.next();
                         self.populateItemDetail(eventContext);
+						eventContext.application.hideBusy();
                     })
                     .otherwise(function (error) {
                         console.log(error);
+						eventContext.application.hideBusy();
                     });
             }
             // Tuan-in: handle load next page if possible

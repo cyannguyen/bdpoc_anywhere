@@ -239,7 +239,7 @@
 				<action id="Inventory.ItemDetailView_Next_action" image="right_arrow.png" label="Next" overflow="false">
 					<eventHandlers id="Inventory.ItemDetailView_Next_action_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemDetailView_Next_action_eventHandlers_click" method="nextRecord"/>
-						<!-- <eventHandler class="application.handlers.InventoryHandler" event="datachange" id="Inventory.ItemDetailView_Next_action_eventHandlers_datachange_disableOnLasttRecord" method="disableOnLastRecord"/> -->
+						<eventHandler class="application.handlers.InventoryHandler" event="datachange" id="Inventory.ItemDetailView_Next_action_eventHandlers_datachange_disableOnLastRecordInLastPage" method="disableOnLastRecordInLastPage"/>
 					</eventHandlers>
 				</action>
 			</actions>
