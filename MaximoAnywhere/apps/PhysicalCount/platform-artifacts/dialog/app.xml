@@ -4295,6 +4295,25 @@
 		</resource>
         <!-- Loc-In: add resource to load for Change Default StoreRoom-->
 		<!-- Storeroom resource -->
+
+        <!-- Tuan-in: add resource to set default storeroom -->
+        <resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#StoreRoom" id="storeroom" name="storeroom" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="storeroom_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="storeroom_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="storeroom_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="storeroom_location_oslcshortTitle" index="true" name="location"/>
+				<localAttribute dataType="string" formula="${location}" id="storeroom_locationForSearch_string" index="true" name="locationForSearch"/>
+				<attribute describedByProperty="dcterms:title" id="storeroom_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:status" id="storeroom_status_spistatus" name="status"/>
+				<attribute describedByProperty="spi:type" id="storeroom_type_spitype" name="type"/>
+			</attributes>
+			<queryBases id="storeroom_queryBases">
+ 	 			<queryBase id="storeroom_queryBase_getlocationstoreroom" name="getlocationstoreroom" queryUri="/oslc/os/oslcopersroom"/>
+	 		</queryBases>									
+			<whereClause clause="spi:type in [${additionalloctype[maxvalue=STOREROOM].value}]" id="storeroom_whereClause"/>
+		</resource>
+        <!-- Tuan-out: add resource to set default storeroom -->
+
 		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#StoreRoom" id="additionalstoreroom" name="additionalstoreroom" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
 			<attributes id="additionalstoreroom_attributes">
 

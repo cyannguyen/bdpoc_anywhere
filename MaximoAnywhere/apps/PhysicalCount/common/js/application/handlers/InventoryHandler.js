@@ -41,6 +41,15 @@ define("application/handlers/InventoryHandler", [
     "platform/store/_ResourceMetadataContext",
     "platform/format/FormatterService",
     "dojo/date/stamp",
+    //[Tuan]
+    "dojo/query",
+    "dojo/on",
+    "dojo/touch",
+    "dojox/gesture/tap",
+    "dojo/dom",
+    "dojo/dom-style",
+    "dojo/mouse",
+    "dojo/domReady!",
 ], function (
     declare,
     arrayUtil,
@@ -69,9 +78,22 @@ define("application/handlers/InventoryHandler", [
     SystemProperties,
     ResourceMetadataContext,
     FormatterService,
-    dateTimeISOFormatter
+    dateTimeISOFormatter,
+    // [Tuan]
+    on,
+    touch,
+    tap,
+    mouse
 ) {
     var originatingQuerybase = null;
+
+    /* #region Tuan-in: add global variables */
+    var storeroomMenu = "platform.storeroomMenu";
+    var storeroomMenuItems = null;
+    var storeroomIndex = 0;
+    var saveSearchFilter = null;
+    /* #endregion Tuan-out: add global variables */
+
     return declare([ApplicationHandlerBase], {
         needsQueryReset: false,
 
@@ -176,8 +198,12 @@ define("application/handlers/InventoryHandler", [
                                 if (self.needsQueryReset) {
                                     eventContext.ui
                                         .getViewFromId("Inventory.ItemsView")
-                                        .setQueryBaseIndexByQuery(querybase)
-                                        .always(afterDataFetch);
+                                        // Tuan-in: only change queryBase index to keep nextPageURL
+                                        // .setQueryBaseIndexByQuery(querybase)
+                                        .onlyChangeQueryBaseIndex(querybase);
+                                    // .always(afterDataFetch);
+                                    // Tuan-out: only change queryBase index to keep nextPageURL
+                                    eventContext.ui.hideCurrentView();
                                 } else {
                                     ModelService.refreshDataForWorkListIfPossible(
                                         invBalanceSet.name,
@@ -188,11 +214,15 @@ define("application/handlers/InventoryHandler", [
                                     ).always(afterDataFetch);
                                 }
                             } else {
-                                ModelService.allCached(
-                                    invBalanceSet.name,
-                                    invBalanceSet._queryBaseName,
-                                    invBalanceSet.count()
-                                ).always(afterDataFetch);
+								// Tuan-in:reload search result screen offline to show correct number of records 
+                                // ModelService.allCached(
+                                //     invBalanceSet.name,
+                                //     invBalanceSet._queryBaseName,
+                                //     invBalanceSet.count()
+                                // ).always(afterDataFetch);
+								eventContext.ui.hideCurrentView();
+                                self.loadSearchResultByQueryBase(eventContext);
+								// Tuan-out:reload search result screen offline to show correct number of records 
                             }
                         });
                     })
@@ -404,6 +434,28 @@ define("application/handlers/InventoryHandler", [
         },
         //Loc-Out
 
+        // Tuan-in: add load search result by query base
+        loadSearchResultByQueryBase: function (eventContext) {
+            var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
+            if (saveSearchFilter) {
+                this.populateSearchWithFilter(eventContext, saveSearchFilter).then(function () {
+                    view.onlyChangeQueryBaseIndex(PlatformConstants.SEARCH_RESULT_QUERYBASE);
+                    view.lists[0].refresh();
+                    view.lists[0].changeSort(0);
+                });
+            } else {
+                var promise = view.setQueryBaseIndexByQuery(
+                    PlatformConstants.SEARCH_RESULT_QUERYBASE
+                );
+                promise.then(function () {
+                    view.lists[0].refresh();
+                    view.lists[0].changeSort(0);
+                });
+            }
+        },
+
+        // Tuan-out: add load search result by query base
+
         populateSearch: function (eventContext) {
             var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
             eventContext.application.ui.performSearch = true;
@@ -443,7 +495,7 @@ define("application/handlers/InventoryHandler", [
                 //In-Tuan: add filter bin range
                 var bigFilter = [];
                 var filter = {};
-                var oslcQueryParameters = {};
+                // var oslcQueryParameters = {};
 
                 var filteredItems = 0;
                 if (search.itemnum) {
@@ -560,45 +612,191 @@ define("application/handlers/InventoryHandler", [
                     }
                 );
 
-                var deferred = new Deferred();
+                // var deferred = new Deferred();
+
                 //In-Tuan: add bigFilter to filter binRange
                 bigFilter.push(filter);
                 filter = bigFilter;
+                saveSearchFilter = filter;
                 //out-Tuan: add bigFilter to filter binRange
 
                 //CommunicationManager.checkConnectivityAvailable().then(function(hasConnectivity){
-                ModelService.fetchFromServer(
-                    "invbalance",
-                    PlatformConstants.SEARCH_RESULT_QUERYBASE
-                ).then(function (hasConnectivity) {
-                    eventContext.application.showBusy();
-                    if (hasConnectivity) {
-                        //network fetch
-                        ModelService.filtered(
-                            "invbalance",
-                            PlatformConstants.SEARCH_RESULT_QUERYBASE,
-                            filter,
-                            null,
-                            true,
-                            false,
-                            oslcQueryParameters
-                        ).then(function (resultSet) {
-                            // Tuan-in: add save search data
-                            arrayUtil.forEach(resultSet.data, function (data) {
-                                data.setQueryBase("__search_result__");
-                            });
-                            // Tuan-out: add save search data
-                            resultSet.resourceID = "invbalance";
-                            eventContext.application.addResource(resultSet);
+                return this.populateSearchWithFilter(eventContext, filter);
+            }
+        },
 
-                            if (resultSet.count() > 0) {
-                                if (resultSet.count() == 1) {
+        // Tuan-in: add populate search with filter
+        populateSearchWithFilter: function (eventContext, filter) {
+            var oslcQueryParameters = {};
+            var deferred = new Deferred();
+            var deferredSearch = new Deferred();
+
+            ModelService.fetchFromServer(
+                "invbalance",
+                PlatformConstants.SEARCH_RESULT_QUERYBASE
+            ).then(function (hasConnectivity) {
+                eventContext.application.showBusy();
+                if (hasConnectivity) {
+                    //network fetch
+                    ModelService.filtered(
+                        "invbalance",
+                        PlatformConstants.SEARCH_RESULT_QUERYBASE,
+                        filter,
+                        null,
+                        true,
+                        false,
+                        oslcQueryParameters
+                    ).then(function (resultSet) {
+                        // Tuan-in: add save search data
+                        arrayUtil.forEach(resultSet.data, function (data) {
+                            data.setQueryBase("__search_result__");
+                        });
+                        // Tuan-out: add save search data
+                        resultSet.resourceID = "invbalance";
+                        eventContext.application.addResource(resultSet);
+
+                        if (resultSet.count() > 0) {
+                            if (resultSet.count() == 1) {
+                                resultSet.setCurrentIndex(0);
+                                //eventContext.application.ui.getViewFromId('Inventory.ItemDetailView');
+                                eventContext.ui.show("Inventory.ItemDetailView");
+                            } else {
+                                ModelService.save(resultSet).then(function () {
                                     resultSet.setCurrentIndex(0);
+                                    // Tuan-in: remove change to search query because it's already in to prevent override nextPageInfo
+                                    // eventContext.ui
+                                    //     .getViewFromId("Inventory.ItemsView")
+                                    //     .setQueryBaseIndexByQuery(
+                                    //         PlatformConstants.SEARCH_RESULT_QUERYBASE
+                                    //     )
+                                    //     .then(function () {
+                                    //         eventContext.ui.show("Inventory.ItemsView");
+                                    //     });
+                                    // Tuan-in: remove change to search query because it's already in to prevent override nextPageInfo
+                                    eventContext.ui.show("Inventory.ItemsView");
+                                });
+                            }
+                            deferredSearch.resolve();
+                            eventContext.application.hideBusy();
+                        } else {
+                            //offline fetch
+                            if (search.itemnum) {
+                                filter.itemnum = search.itemnum;
+                            }
+
+                            //removed attribute that was added by previous modelservice network call.
+                            delete filter._querybases;
+
+                            ModelService.filtered(
+                                "invbalance",
+                                null,
+                                filter,
+                                null,
+                                false,
+                                false,
+                                oslcQueryParameters
+                            ).then(function (invbalanceSet) {
+                                deferred.resolve(invbalanceSet);
+                            });
+
+                            var promise = deferred.promise;
+
+                            promise.then(function (invbalanceSet) {
+                                ModelService.clearSearchResult(invbalanceSet).then(function () {
+                                    if (invbalanceSet.count() > 0) {
+                                        arrayUtil.forEach(invbalanceSet.data, function (data) {
+                                            data.setQueryBase("__search_result__");
+                                        });
+
+                                        invbalanceSet.resourceID = "invbalance";
+                                        eventContext.application.addResource(invbalanceSet);
+
+                                        if (invbalanceSet.count() == 1) {
+                                            invbalanceSet.setCurrentIndex(0);
+                                            //eventContext.application.ui.getViewFromId('Inventory.ItemDetailView');
+                                            eventContext.ui.show("Inventory.ItemDetailView");
+                                        } else {
+                                            ModelService.save(invbalanceSet).then(function () {
+                                                invbalanceSet.setCurrentIndex(0);
+                                                eventContext.ui
+                                                    .getViewFromId("Inventory.ItemsView")
+                                                    .setQueryBaseIndexByQuery(
+                                                        PlatformConstants.SEARCH_RESULT_QUERYBASE
+                                                    )
+                                                    .then(function () {
+                                                        eventContext.ui.show("Inventory.ItemsView");
+                                                    });
+                                            });
+                                        }
+                                        deferredSearch.resolve();
+                                        eventContext.application.hideBusy();
+                                    } else {
+                                        ModelService.clearSearchResult(invbalanceSet);
+                                        eventContext.application.showMessage(
+                                            MessageService.createStaticMessage(
+                                                "norecords"
+                                            ).getMessage()
+                                        );
+                                        eventContext.application.ui.performSearch = false;
+                                        deferredSearch.resolve();
+                                        eventContext.application.hideBusy();
+                                    }
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    //offline fetch
+                    // Tuan-in: remove redundant filter attributes
+                    // if (search.itemnum) {
+                    //     filter.itemnum = search.itemnum;
+                    // }
+                    // Tuan-out: remove redundant filter attributes
+
+                    //removed attribute that was added by previous modelservice network call.
+                    delete filter._querybases;
+
+					// Tuan-in: check to prevent search with more criteria in offline 
+					if(filter.length > 1) {
+						eventContext.application.showMessage(
+							"Cannot search multiple criteria in Offline Mode"
+						);
+						deferredSearch.resolve();
+						return;
+					}
+					// Tuan-out: check to prevent search with more criteria in offline 
+
+                    ModelService.filtered(
+                        "invbalance",
+                        null,
+                        filter,
+                        null,
+                        false,
+                        false,
+                        oslcQueryParameters
+                    ).then(function (invbalanceSet) {
+                        deferred.resolve(invbalanceSet);
+                    });
+
+                    var promise = deferred.promise;
+
+                    promise.then(function (invbalanceSet) {
+                        ModelService.clearSearchResult(invbalanceSet).then(function () {
+                            if (invbalanceSet.count() > 0) {
+                                arrayUtil.forEach(invbalanceSet.data, function (data) {
+                                    data.setQueryBase("__search_result__");
+                                });
+
+                                invbalanceSet.resourceID = "invbalance";
+                                eventContext.application.addResource(invbalanceSet);
+
+                                if (invbalanceSet.count() == 1) {
+                                    invbalanceSet.setCurrentIndex(0);
                                     //eventContext.application.ui.getViewFromId('Inventory.ItemDetailView');
                                     eventContext.ui.show("Inventory.ItemDetailView");
                                 } else {
-                                    ModelService.save(resultSet).then(function () {
-                                        resultSet.setCurrentIndex(0);
+                                    ModelService.save(invbalanceSet).then(function () {
+                                        invbalanceSet.setCurrentIndex(0);
                                         // Tuan-in: remove change to search query because it's already in to prevent override nextPageInfo
                                         // eventContext.ui
                                         //     .getViewFromId("Inventory.ItemsView")
@@ -608,151 +806,29 @@ define("application/handlers/InventoryHandler", [
                                         //     .then(function () {
                                         //         eventContext.ui.show("Inventory.ItemsView");
                                         //     });
-                                        // Tuan-in: remove change to search query because it's already in to prevent override nextPageInfo
+                                        // Tuan-out: remove change to search query because it's already in to prevent override nextPageInfo
                                         eventContext.ui.show("Inventory.ItemsView");
                                     });
                                 }
-
+                                deferredSearch.resolve();
                                 eventContext.application.hideBusy();
                             } else {
-                                //offline fetch
-                                if (search.itemnum) {
-                                    filter.itemnum = search.itemnum;
-                                }
-
-                                //removed attribute that was added by previous modelservice network call.
-                                delete filter._querybases;
-
-                                ModelService.filtered(
-                                    "invbalance",
-                                    null,
-                                    filter,
-                                    null,
-                                    false,
-                                    false,
-                                    oslcQueryParameters
-                                ).then(function (invbalanceSet) {
-                                    deferred.resolve(invbalanceSet);
-                                });
-
-                                var promise = deferred.promise;
-
-                                promise.then(function (invbalanceSet) {
-                                    ModelService.clearSearchResult(invbalanceSet).then(function () {
-                                        if (invbalanceSet.count() > 0) {
-                                            arrayUtil.forEach(invbalanceSet.data, function (data) {
-                                                data.setQueryBase("__search_result__");
-                                            });
-
-                                            invbalanceSet.resourceID = "invbalance";
-                                            eventContext.application.addResource(invbalanceSet);
-
-                                            if (invbalanceSet.count() == 1) {
-                                                invbalanceSet.setCurrentIndex(0);
-                                                //eventContext.application.ui.getViewFromId('Inventory.ItemDetailView');
-                                                eventContext.ui.show("Inventory.ItemDetailView");
-                                            } else {
-                                                ModelService.save(invbalanceSet).then(function () {
-                                                    invbalanceSet.setCurrentIndex(0);
-                                                    eventContext.ui
-                                                        .getViewFromId("Inventory.ItemsView")
-                                                        .setQueryBaseIndexByQuery(
-                                                            PlatformConstants.SEARCH_RESULT_QUERYBASE
-                                                        )
-                                                        .then(function () {
-                                                            eventContext.ui.show(
-                                                                "Inventory.ItemsView"
-                                                            );
-                                                        });
-                                                });
-                                            }
-
-                                            eventContext.application.hideBusy();
-                                        } else {
-                                            ModelService.clearSearchResult(invbalanceSet);
-                                            eventContext.application.showMessage(
-                                                MessageService.createStaticMessage(
-                                                    "norecords"
-                                                ).getMessage()
-                                            );
-                                            eventContext.application.ui.performSearch = false;
-                                            eventContext.application.hideBusy();
-                                        }
-                                    });
-                                });
+                                ModelService.clearSearchResult(invbalanceSet);
+                                eventContext.application.showMessage(
+                                    MessageService.createStaticMessage("norecords").getMessage()
+                                );
+                                eventContext.application.ui.performSearch = false;
+                                deferredSearch.resolve();
+                                eventContext.application.hideBusy();
                             }
                         });
-                    } else {
-                        //offline fetch
-                        // Tuan-in: remove redundant filter attributes
-                        // if (search.itemnum) {
-                        //     filter.itemnum = search.itemnum;
-                        // }
-                        // Tuan-out: remove redundant filter attributes
+                    });
+                }
+            });
 
-                        //removed attribute that was added by previous modelservice network call.
-                        delete filter._querybases;
-
-                        ModelService.filtered(
-                            "invbalance",
-                            null,
-                            filter,
-                            null,
-                            false,
-                            false,
-                            oslcQueryParameters
-                        ).then(function (invbalanceSet) {
-                            deferred.resolve(invbalanceSet);
-                        });
-
-                        var promise = deferred.promise;
-
-                        promise.then(function (invbalanceSet) {
-                            ModelService.clearSearchResult(invbalanceSet).then(function () {
-                                if (invbalanceSet.count() > 0) {
-                                    arrayUtil.forEach(invbalanceSet.data, function (data) {
-                                        data.setQueryBase("__search_result__");
-                                    });
-
-                                    invbalanceSet.resourceID = "invbalance";
-                                    eventContext.application.addResource(invbalanceSet);
-
-                                    if (invbalanceSet.count() == 1) {
-                                        invbalanceSet.setCurrentIndex(0);
-                                        //eventContext.application.ui.getViewFromId('Inventory.ItemDetailView');
-                                        eventContext.ui.show("Inventory.ItemDetailView");
-                                    } else {
-                                        ModelService.save(invbalanceSet).then(function () {
-                                            invbalanceSet.setCurrentIndex(0);
-                                            // Tuan-in: remove change to search query because it's already in to prevent override nextPageInfo
-                                            // eventContext.ui
-                                            //     .getViewFromId("Inventory.ItemsView")
-                                            //     .setQueryBaseIndexByQuery(
-                                            //         PlatformConstants.SEARCH_RESULT_QUERYBASE
-                                            //     )
-                                            //     .then(function () {
-                                            //         eventContext.ui.show("Inventory.ItemsView");
-                                            //     });
-                                            // Tuan-out: remove change to search query because it's already in to prevent override nextPageInfo
-                                            eventContext.ui.show("Inventory.ItemsView");
-                                        });
-                                    }
-
-                                    eventContext.application.hideBusy();
-                                } else {
-                                    ModelService.clearSearchResult(invbalanceSet);
-                                    eventContext.application.showMessage(
-                                        MessageService.createStaticMessage("norecords").getMessage()
-                                    );
-                                    eventContext.application.ui.performSearch = false;
-                                    eventContext.application.hideBusy();
-                                }
-                            });
-                        });
-                    }
-                });
-            }
+            return deferredSearch.promise;
         },
+        // Tuan-in: add populate search with filter
 
         // Tuan-in: init detail page
         initDetail: function (eventContext) {
@@ -854,6 +930,8 @@ define("application/handlers/InventoryHandler", [
             if (storeroomSetting) {
                 storeroomSetting.set("location", storeRoomTitle);
             }
+
+            this.clearSearchResultQueryBase(eventContext);
             /* #endregion  Tuan-in: add default storeroom */
         },
 
@@ -933,29 +1011,29 @@ define("application/handlers/InventoryHandler", [
             }
             var currentIndex = resourceObject.getCurrentIndex();
             var view = eventContext.ui.getViewFromId("Inventory.ItemDetailView");
-			// Tuan-in: show correct number of records  
-			var numberOfRecords = resourceObject.recordsCount;
-			if(!numberOfRecords) numberOfRecords = resourceObject.count();
+            // Tuan-in: show correct number of records
+            var numberOfRecords = resourceObject.recordsCount;
+            if (!numberOfRecords) numberOfRecords = resourceObject.count();
             var label = MessageService.createResolvedMessage("detailLabel", [
                 currentIndex + 1,
                 // resourceObject.count(),
-                resourceObject.recordsCount,
+                numberOfRecords,
             ]);
-			// Tuan-out: show correct number of records  
+            // Tuan-out: show correct number of records
             view.label = label;
             view.refresh();
         },
 
-		// Tuan-in: add disable on last record 
-		disableOnLastRecordInLastPage: function(eventContext) {
-			var resourceObject = CommonHandler._getAdditionalResource(eventContext, "invbalance");
+        // Tuan-in: add disable on last record
+        disableOnLastRecordInLastPage: function (eventContext) {
+            var resourceObject = CommonHandler._getAdditionalResource(eventContext, "invbalance");
             if (!resourceObject) return;
-			var currentIndex = resourceObject.getCurrentIndex();
-			var numberOfRecords = resourceObject.recordsCount;
-			if(!numberOfRecords) numberOfRecords = resourceObject.count();
-			eventContext.setEnabled(currentIndex + 1!=numberOfRecords);
-		},
-		// Tuan-out: add disable on last record 
+            var currentIndex = resourceObject.getCurrentIndex();
+            var numberOfRecords = resourceObject.recordsCount;
+            if (!numberOfRecords) numberOfRecords = resourceObject.count();
+            eventContext.setEnabled(currentIndex + 1 != numberOfRecords);
+        },
+        // Tuan-out: add disable on last record
 
         loadDetailItem: function (eventContext) {
             var self = this;
@@ -990,16 +1068,16 @@ define("application/handlers/InventoryHandler", [
             if (resourceObject.hasNext()) {
                 resourceObject.next();
             } else {
-				eventContext.application.showBusy();
+                eventContext.application.showBusy();
                 ModelService.loadNextPage(resourceObject, false)
                     .then(function () {
                         resourceObject.next();
                         self.populateItemDetail(eventContext);
-						eventContext.application.hideBusy();
+                        eventContext.application.hideBusy();
                     })
                     .otherwise(function (error) {
                         console.log(error);
-						eventContext.application.hideBusy();
+                        eventContext.application.hideBusy();
                     });
             }
             // Tuan-in: handle load next page if possible
@@ -1041,9 +1119,104 @@ define("application/handlers/InventoryHandler", [
             eventContext.setEnabled(isCanCount);
         },
 
+        /* #region  Tuan-in: add storeroomMenu */
+        buildStoreroomMenu: function (eventContext) {
+            if (storeroomMenuItems) return;
+            var storerooms = CommonHandler._getAdditionalResource(
+                eventContext,
+                "additionalstoreroom"
+            );
+            if (!storerooms) return;
+            storeroomMenuItems = new Array();
+            var data = storerooms.data;
+            for (var i = 0; i < data.length; ++i) {
+                storeroomMenuItems.push({
+                    label: data[i].location,
+                    listControl: eventContext,
+                    index: i,
+                    eventHandlers: [
+                        {
+                            event: "click",
+                            class: "application.handlers.InventoryHandler",
+                            method: "changeStoreroom",
+                        },
+                    ],
+                    cssIconClass: i != storeroomIndex ? "" : "menuItemSelected",
+                });
+                storeroomMenuItems.push({ label: "-" });
+            }
+
+            // var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView.StoreRoom_Label");
+            // var domNode = eventContext.baseWidget.domNode;
+
+            // eventContext.addHandler(on(domNode, touch.press, lang.hitch(eventContext, function (e) {
+            // 	if (!(eventContext.ui.currentMenu && eventContext.ui.currentMenu.id == this.storeroomMenu)) {
+            // 		eventContext.ui.showMenu(this.storeroomMenu, e, domNode, this.storeroomMenuItems, 'storeroomMenu');
+            // 	} else {
+            // 		eventContext.ui.hideCurrentMenu();
+            // 	}
+            // })));
+        },
+
+        changeStoreroomLabel: function (eventContext) {
+            var storeroom = eventContext.getResource().getCurrentRecord();
+            if (!storeroom) return;
+            eventContext.setLabel(storeroom.location);
+        },
+
+        handleClickStoreroom: function (eventContext) {
+			if (!storeroomMenuItems) return;
+            var domNode = eventContext.baseWidget.domNode;
+
+            if (!(eventContext.ui.currentMenu && eventContext.ui.currentMenu.id == storeroomMenu)) {
+                eventContext.ui.showMenu(
+                    storeroomMenu,
+                    event,
+                    domNode,
+                    storeroomMenuItems,
+                    "storeroomMenu"
+                );
+            } else {
+                eventContext.ui.hideCurrentMenu();
+            }
+        },
+
+        changeStoreroom: function (eventContext) {
+            var selectedStoreroom = eventContext.label;
+            this.setStoreRoomTitle(eventContext, selectedStoreroom);
+            this.reloadData(eventContext);
+        },
+
+        clearSearchResultQueryBase: function (eventContext) {
+            ModelService.all("invbalance", PlatformConstants.SEARCH_RESULT_QUERYBASE).then(
+                function (searchResultSet) {
+                    ModelService.clearSearchResult(searchResultSet);
+                }
+            );
+        },
+
+        reloadData: function (eventContext) {
+            var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
+            var promise = view.changeQueryBase(0);
+            var self = this;
+            promise.then(function () {
+                self.showFilteredList(eventContext).then(function (result) {
+                    if (result) {
+                        view.lists[0].refresh();
+                        view.lists[0].changeSort(0);
+                    }
+                });
+            });
+        },
+
+        /* #endregion Tuan-out: add storeroomMenu */
+
         /* #region  Tuan-in: add default storeroom */
         checkEmptyStoreroom: function (eventContext) {
             var storeroom = eventContext.getResource().getCurrentRecord();
+
+            this.buildStoreroomMenu(eventContext);
+
             if (!storeroom || storeroom.location) return;
             var filter = [];
             filter.push({ location: "*" });
@@ -1097,7 +1270,8 @@ define("application/handlers/InventoryHandler", [
                     //window.UI.showToastMessage(" " + inputCurrentLocation.get('location'));
                 } else {
                     this.setStoreRoomTitle(eventContext, pendingLocation.toUpperCase());
-                    this.filterAdditionalInvbalanceByStoreRoom(eventContext);
+                    // this.filterAdditionalInvbalanceByStoreRoom(eventContext);
+                    this.reloadData(eventContext);
                 }
             }
         },
@@ -1166,9 +1340,11 @@ define("application/handlers/InventoryHandler", [
             }
         },
 
-        showFilteredList: function (eventContext) {
+        showFilteredList: function (eventContext, queryBase) {
             var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
-            var querybase = view.queries.children[view.queryBaseIndex].queryBase;
+            var querybase = queryBase
+                ? queryBase
+                : view.queries.children[view.queryBaseIndex].queryBase;
             var self = this;
 
             var currentStoreRoom = eventContext.application

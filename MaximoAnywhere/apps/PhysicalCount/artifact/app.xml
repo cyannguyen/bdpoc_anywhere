@@ -78,7 +78,13 @@
 						<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView___errored___eventHandlers_render_hideShowErrorMenu" method="hideShowErrorMenu"/>
 					</eventHandlers>
 				</query>
-				<query id="Inventory.ItemsView___search_result__" label="Search Results" queryBase="__search_result__" system="true"/>
+				<!-- Tuan-in: add reload search result -->
+				<query id="Inventory.ItemsView___search_result__" label="Search Results" queryBase="__search_result__" system="true">
+					<eventHandlers id="Inventory.ItemsView_search_result_eventHandlers">
+						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_search_result_eventHandlers_render" method="loadSearchResultByQueryBase"/>
+					</eventHandlers>
+				</query>
+				<!-- Tuan-out: add reload search result -->
 			</queries>
 
 			<actions id="Inventory.ItemsView_actions">
@@ -103,22 +109,27 @@
 				<requiredResource id="Inventory.ItemsView_additionalstoreroom" name="storeRoomResource" reload="true"/>
 				<!-- Tuan-in: add require resource to set default storeroom in settings -->
 				<requiredResource id="Inventory.ItemsView_chooseStoreRoomResource" name="chooseStoreRoomResource"/>
+				<requiredResource id="Inventory..ItemsView_additionalstoreroom" name="additionalstoreroom"/>
 				<!-- Tuan-out: add require resource to set default storeroom in settings -->
 			</requiredResources>
 
 			<progressIndicator id="Inventory.ItemsView_0"/>
 
 			<!-- [Loc]: Add storeRoom Label -->
-			<container cssClass="storeRoomHeaderContainer" id="Inventory.ItemsView_StoreRoom_container_" resource="storeRoomResource">
-				<text cssClass="storeRoomHeader" editable="false" id="Inventory.ItemsView.StoreRoom_Label" resourceAttribute="location"/>
+			<container cssClass="storeRoomHeaderContainer" id="Inventory.ItemsView_StoreRoom_container" resource="storeRoomResource">
+				<button cssClass="storeRoomHeader" id="Inventory.ItemsView.StoreRoom_Label" resourceAttribute="location">
+					<!-- Tuan-in: add default storeroom -->
+					<eventHandlers id="Inventory.ItemsView_StoreRoom_eventHandlers">
+						<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_StoreRoom_eventHandlers_render_checkEmptyStoreroom" method="checkEmptyStoreroom"/>
+						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_StoreRoom_eventHandlers_click_handleClickStoreroom" method="handleClickStoreroom"/>
+						<eventHandler class="application.handlers.InventoryHandler" event="datachange" id="Inventory.ItemsView_StoreRoom_eventHandlers_datachange_changeStoreroomLabel" method="changeStoreroomLabel"/>
+					</eventHandlers>
+					<!-- Tuan-out: add default storeroom -->
+				</button>
 				<!-- <eventHandlers id="Inventory.ItemsView_StoreRoom_eventHandlers">
 					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_StoreRoom_eventHandlers_render_loadStoreRoomTitle" method="loadStoreRoomTitle"/>
 				</eventHandlers> -->
-				<!-- Tuan-in: add default storeroom -->
-				<eventHandlers id="Inventory.ItemsView_StoreRoom_eventHandlers">
-					<eventHandler class="application.handlers.InventoryHandler" event="render" id="Inventory.ItemsView_StoreRoom_eventHandlers_render_checkEmptyStoreroom" method="checkEmptyStoreroom"/>
-				</eventHandlers>
-				<!-- Tuan-out: add default storeroom -->
+
 			</container>
 
 
@@ -689,7 +700,10 @@
 				<attribute describedByProperty="spi:curbal" id="invbalance_curbal_spicurbal" name="curbal"/>
 				<attribute describedByProperty="spi:conditioncode" id="invbalance_conditioncode_spiconditioncode" name="conditioncode"/>
 				<attribute describedByProperty="spi:itemnum" id="invbalance_itemnum_spiitemoslcshortTitle" index="true" name="itemnum"/>
-				<attribute describedByProperty="spi:description" id="invbalance_itemnumdesc_spiitemdctermstitle" name="description"/>
+				<!-- Tuan-in: add index to description to search offline -->
+				<!-- <attribute describedByProperty="spi:description" id="invbalance_itemnumdesc_spiitemdctermstitle" name="description"/> -->
+				<attribute describedByProperty="spi:description" id="invbalance_itemnumdesc_spiitemdctermstitle" index="true" name="description"/>
+				<!-- Tuan-in: add index to description to search offline -->
 				<attribute describedByProperty="spi:itemsetid" id="invbalance_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
 				<attribute describedByProperty="spi:abctype" id="invbalance_abctype_spiabctype" index="true" name="abctype"/>
 				<attribute describedByProperty="spi:issueunit" id="invbalance_issueunit_spiissueunit" index="true" name="issueunit"/>
@@ -715,15 +729,25 @@
 				<!-- <localAttribute dataType="string" id="invbalance_row0" formula="${description}" name="row0"/> -->
 				<!-- <localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MM/yy',  selector:'date'}) == dojo.date.locale.format(new Date(), { datePattern: 'dd/MM/yy',  selector:'date'})?'green_check.png':''" id="invbalance_row0" name="row0" persistent="true"/> -->
 				<!-- duration: 7days -->
-				<localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate}),'month', 3), new Date(), 'date') &gt;= 0 ? ${physcnt} == ${curbal} ? 'green_check.png' : ${physcnt} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/>
+				<!-- <localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate}),'month', 3), new Date(), 'date') &gt;= 0 ? ${physcnt} == ${curbal} ? 'green_check.png' : ${physcnt} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/> -->
 				<!-- <localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate}),'day', 7), new Date(), 'date') >= 0 ? ${physcnt} == ${curbal} ? 'green_check.png' : ${physcnt} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/> -->
 				<!-- <localAttribute dataType="string" id="invbalance_row1" formula="'Item: ' + ${itemnum} + ', Bin Num: ' + ${binnum} + ', Qty: ' + ${curbal}" name="row1"/>
 				<localAttribute dataType="string" id="invbalance_row2" formula="'Part no: ' + ${modelnum}" name="row2"/>
 				<localAttribute dataType="string" id="invbalance_row3" formula="'Unit: ' + ${issueunit} + ', Last Count Date: ' + dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MM/yy hh:mm',  selector:'date'})" name="row3"/> -->
 
-				<localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/>
+				<!-- Tuan-in: add date for offline  -->
+				<localAttribute dataType="string" formula="${adjustedphyscnt}?${adjustedphyscnt}:${physcnt}" id="physcnt_use" name="physcnt_use"/>
+				<localAttribute dataType="string" formula="${adjustedphyscnt}?${adjustedphyscntdate}:${physcntdate}" id="physcntdate_use" index="true" name="physcntdate_use"/>
+				<localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate_use}),'month', 3), new Date(), 'date') &gt;= 0 ? ${physcnt_use} == ${curbal} ? 'green_check.png' : ${physcnt_use} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/>
+				<localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate_use}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/>
+
+				<!-- Tuan-out: add date for offline  -->
+
+
+				<!-- <localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/> -->
 				<localAttribute dataType="string" formula="'Last Count Date: ' + ${lastcountdate}" id="invbalance_joinedlastcountdate" index="true" name="joinedlastcountdate"/>
 				<localAttribute dataType="integer" formula="Date.parse(${physcntdate})" id="invbalance_dateParse" index="true" name="dateparse" remoteName="spi:physcntdate"/>
+
 
 				<!-- Loc: add the memo field -->
 				<localAttribute dataType="string" id="invbalance_memo_string" maxSize="255" name="memo"/>
