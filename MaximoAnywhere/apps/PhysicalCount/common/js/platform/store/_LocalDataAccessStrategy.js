@@ -89,6 +89,9 @@ function(declare, lang, arrayUtil, Deferred, DataAccessStrategyBase, Logger, Pla
 		},
 		
 		queryResourceData: function(queryBase, query, pageSize, isExactMatch, returnAttr){
+			// Tuan-in: get all data local
+			pageSize = 1000000
+			// Tuan-out: get all data local
 			return this._localQueryResourceDataFromStore(queryBase, query, pageSize, null, isExactMatch, returnAttr);
 		},
 		
@@ -98,11 +101,7 @@ function(declare, lang, arrayUtil, Deferred, DataAccessStrategyBase, Logger, Pla
 			then(function(){
 				Logger.trace('[DATA] A request for data was received for resource ' + self._metadata.name);
 				Logger.trace('[DATA] Fetching data from local store');
-
-				// Tuan-in: get all data local
-				pageSize = 1000000
-				// Tuan-out: get all data local
-				
+	
 				//Get a pagesize+1 records so if we get pagesize records there is a next page for sure
 				var promise = null;
 				if (isExactMatch){
