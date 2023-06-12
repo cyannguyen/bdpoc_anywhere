@@ -214,15 +214,15 @@ define("application/handlers/InventoryHandler", [
                                     ).always(afterDataFetch);
                                 }
                             } else {
-								// Tuan-in:reload search result screen offline to show correct number of records 
+                                // Tuan-in:reload search result screen offline to show correct number of records
                                 // ModelService.allCached(
                                 //     invBalanceSet.name,
                                 //     invBalanceSet._queryBaseName,
                                 //     invBalanceSet.count()
                                 // ).always(afterDataFetch);
-								eventContext.ui.hideCurrentView();
+                                eventContext.ui.hideCurrentView();
                                 self.loadSearchResultByQueryBase(eventContext);
-								// Tuan-out:reload search result screen offline to show correct number of records 
+                                // Tuan-out:reload search result screen offline to show correct number of records
                             }
                         });
                     })
@@ -679,11 +679,6 @@ define("application/handlers/InventoryHandler", [
                             deferredSearch.resolve();
                             eventContext.application.hideBusy();
                         } else {
-                            //offline fetch
-                            if (search.itemnum) {
-                                filter.itemnum = search.itemnum;
-                            }
-
                             //removed attribute that was added by previous modelservice network call.
                             delete filter._querybases;
 
@@ -756,15 +751,15 @@ define("application/handlers/InventoryHandler", [
                     //removed attribute that was added by previous modelservice network call.
                     delete filter._querybases;
 
-					// Tuan-in: check to prevent search with more criteria in offline 
-					if(filter.length > 1) {
-						eventContext.application.showMessage(
-							"Cannot search multiple criteria in Offline Mode"
-						);
-						deferredSearch.resolve();
-						return;
-					}
-					// Tuan-out: check to prevent search with more criteria in offline 
+                    // Tuan-in: check to prevent search with more criteria in offline
+                    if (filter.length > 1) {
+                        eventContext.application.showMessage(
+                            "Cannot search multiple criteria in Offline Mode"
+                        );
+                        deferredSearch.resolve();
+                        return;
+                    }
+                    // Tuan-out: check to prevent search with more criteria in offline
 
                     ModelService.filtered(
                         "invbalance",
@@ -1121,7 +1116,7 @@ define("application/handlers/InventoryHandler", [
 
         /* #region  Tuan-in: add storeroomMenu */
         buildStoreroomMenu: function (eventContext) {
-            if (storeroomMenuItems) return;
+            if (storeroomMenuItems && storeroomMenuItems.length > 0) return;
             var storerooms = CommonHandler._getAdditionalResource(
                 eventContext,
                 "additionalstoreroom"
@@ -1165,7 +1160,11 @@ define("application/handlers/InventoryHandler", [
         },
 
         handleClickStoreroom: function (eventContext) {
-			if (!storeroomMenuItems) return;
+            if (!storeroomMenuItems || storeroomMenuItems.length == 0) {
+                var message = MessageService.createStaticMessage('nolookupdata').getMessage();
+                eventContext.application.showMessage(message);
+                return;
+            }
             var domNode = eventContext.baseWidget.domNode;
 
             if (!(eventContext.ui.currentMenu && eventContext.ui.currentMenu.id == storeroomMenu)) {

@@ -111,7 +111,7 @@
 				<requiredResource id="Inventory.ItemsView_additionalstoreroom" name="storeRoomResource" reload="true"/>
 				<!-- Tuan-in: add require resource to set default storeroom in settings -->
 				<requiredResource id="Inventory.ItemsView_chooseStoreRoomResource" name="chooseStoreRoomResource"/>
-				<requiredResource id="Inventory..ItemsView_additionalstoreroom" name="additionalstoreroom"/>
+				<requiredResource id="Inventory.ItemsView_additionalstoreroomdata" name="additionalstoreroom" reload="true"/>
 				<!-- Tuan-out: add require resource to set default storeroom in settings -->
 			</requiredResources>
 
