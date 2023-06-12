@@ -88,11 +88,13 @@
 			</queries>
 
 			<actions id="Inventory.ItemsView_actions">
-				<!-- <action enableFeatureByProperty="barcode.enabled" id="Inventory.ItemsView_ScanBarCode_action" image="header_barcode_OFF.svg" label="Scan Bar Code">
+				<!-- Tuan-in: enable scan bar code -->
+				<action enableFeatureByProperty="barcode.enabled" id="Inventory.ItemsView_ScanBarCode_action" image="header_barcode_OFF.svg" label="Scan Bar Code">
 					<eventHandlers id="Inventory.ItemsView_ScanBarCode_action_eventHandlers">
 						<eventHandler class="application.handlers.CodeScannerHandlerExt" event="click" id="Inventory.ItemsView_ScanBarCode_action_eventHandlers_click_findByScan" method="findByScan"/>
 					</eventHandlers>
-				</action> -->
+				</action>
+				<!-- Tuan-out: enable scan bar code -->
 				<action id="Inventory.ItemsView_DownloadWorkList_action" label="Download Work List" overflow="true">
 					<eventHandlers id="Inventory.ItemsView_DownloadWorkList_action_eventHandlers">
 						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_click_workoffline" method="workoffline"/>
