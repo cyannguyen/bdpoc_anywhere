@@ -52,10 +52,12 @@
 						<image cssClass="actionButton" id="transferReceivingicon4" image="acBtn_manage_shipments.svg" label="Manage Received Shipments" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext4" layoutInsertAt="item1" value="Manage Received Shipments"/>
 					</groupitem>
+					<!-- Tuan-in: add GRN -->
 					<groupitem id="Transfers.ModuleSelectionView_CreateGoodReceiptNode_Group7" layout="Button1Item1" transitionTo="Transfers.CreateGoodReceiptNoteView">
 						<image cssClass="actionButton" id="transferReceivingicon7" image="acBtn_transfer_grn.svg" label="Create Good Receipt Note" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext7" layoutInsertAt="item1" value="Create Good Receipt Note"/>
 					</groupitem>
+					<!-- Tuan-out: add GRN -->
 					<groupitem id="Transfers.ModuleSelectionView_ReceivePurchaseOrder_Group6" layout="Button1Item1" transitionTo="Transfers.ReceivePurchaseOrderItemsSeachView">
 						<image cssClass="actionButton" id="transferReceivingicon6" image="acBtn_receive_po.svg" label="Receive External PO" layoutInsertAt="button1" platform="false"/>
 						<text id="createTransferReceivingtext6" layoutInsertAt="item1" value="Receive Purchase Orders"/>
