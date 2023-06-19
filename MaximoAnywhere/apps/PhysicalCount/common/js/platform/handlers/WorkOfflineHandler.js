@@ -212,6 +212,9 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 
 			var metadata = this.worklistResource.getMetadata();
 			var queryBases = metadata.queryBasesLabel;
+
+			var totalDownload = queryBases.length - 1;
+			var currentDownload = 0;
 			
 			var progressInfo = WorklistDataManager.downloadAllDataForSingleWorklistResourceAndQueryBases(resourceName,queryBases , !this._allowContinue());
 			
@@ -225,8 +228,13 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 				} else {
 					percent = Math.round((downloaded/total) * 100);
 				}
+
+				var downloadPercent = currentDownload + "/" + totalDownload + " " + percent;
+				if(downloaded == total) {
+					currentDownload++;
+				}
 				
-				var progressMsg = MessageService.createResolvedMessage('downloadProgress', [self.workOrdersLabel, percent]);
+				var progressMsg = MessageService.createResolvedMessage('downloadProgress', [self.workOrdersLabel, downloadPercent]);
 				if (syncDownload==='true'){
 					
 					if (self.worklistProgressResource) {				
