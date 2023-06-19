@@ -160,6 +160,202 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 				eventContext.logger.log("Unable to find the worklist list resource", 0);
 			}
 		},
+
+
+		/* #region  Tuan-in: add workofline for multiple queryBases */
+		startDownloadAllQueryBases: function(resourceName) {
+			var self = this;
+			var shouldDisplayStayAwake = SystemProperties.getProperty('si.device.keepDisplayAlive');
+			if(shouldDisplayStayAwake == true || shouldDisplayStayAwake == null)
+				ScreenLockManager.keepDisplayAwake();
+
+			var uiManager = new WorklistDataUIManager(this.ui);
+			WorklistDataManager._setWorklistDataUIManager(uiManager);
+			
+			var listMetaData = ResourceMetaData.getResourceMetadata(resourceName);
+			origPageSize = listMetaData.getPageSize();
+			syncDownload = SystemProperties.getProperty('si.worklistSyncDownload');
+			syncDownloadPageSize = SystemProperties.getProperty('si.worklistSyncDownload.pageSize');
+			
+			var progressMsg = MessageService.createResolvedMessage('downloadStarting', [this.workOrdersLabel]);
+			if (syncDownload==='true')
+			{
+				//set page size
+				if (syncDownloadPageSize.length>0){
+					if(syncDownloadPageSize>origPageSize){
+						syncDownloadPageSize = origPageSize;
+					} else if (syncDownloadPageSize==0){
+						syncDownloadPageSize = "50";
+					}
+				} else {
+					syncDownloadPageSize = "50";
+				}
+				
+				self.ui.show("Platform.DownloadCurrentWorklist");
+				
+				if (syncDownloadPageSize.length>0){
+					if (parseInt(syncDownloadPageSize)>0){
+						listMetaData.setPageSize(syncDownloadPageSize);
+					}
+				}
+				
+				self.worklistProgressResource = self.ui.application.getResource('PlatformProgressResource').getRecordAt(0);
+				if (self.worklistProgressResource) {				
+					self.worklistProgressResource.set('progressMsg', progressMsg);
+				}
+				
+				listMetaData.started=true;
+			} else {
+				self.progressResource.set('progressMsg', progressMsg);
+				self.progressResource.set('started', true);
+			}
+
+			var metadata = this.worklistResource.getMetadata();
+			var queryBases = metadata.queryBasesLabel;
+			
+			var progressInfo = WorklistDataManager.downloadAllDataForSingleWorklistResourceAndQueryBases(resourceName,queryBases , !this._allowContinue());
+			
+			this.progressWatches.push(progressInfo.watch("recordsDownloaded", function(fieldName, oldValue, newValue){
+				var downloaded = newValue['downloaded'];
+				var total = newValue['total'];
+				var percent = null;
+				if (total == 0 || total < downloaded){
+					self.application.log("Count was not returned from the server", 0);
+					percent = '[' + MessageService.createStaticMessage('percentNotAvailable').getMessage() + ']';
+				} else {
+					percent = Math.round((downloaded/total) * 100);
+				}
+				
+				var progressMsg = MessageService.createResolvedMessage('downloadProgress', [self.workOrdersLabel, percent]);
+				if (syncDownload==='true'){
+					
+					if (self.worklistProgressResource) {				
+						self.worklistProgressResource.set('progressMsg', progressMsg);
+					}
+				} else {
+					self.progressResource.set('progressMsg', progressMsg );
+				}
+
+			}));
+		
+			this.progressWatches.push(progressInfo.watch("attachmentProgress", function(fieldName, oldValue, newValue){
+				if (newValue.attachmentsDownloadFinished){
+					return;
+				}
+				var recordWithAttachmentCount = newValue.recordWithAttachmentCount;
+				var recordsWithAttachmentDownloaded = newValue.recordsDownloaded;
+				var progressMsg = MessageService.createResolvedMessage('downloadAttachmentProgress', [self.workOrdersLabel, 
+					recordsWithAttachmentDownloaded, recordWithAttachmentCount]);
+				
+				if (syncDownload==='true'){
+					if (self.worklistProgressResource) {				
+						self.worklistProgressResource.set('progressMsg', progressMsg);
+					}
+				} else {
+					self.progressResource.set('progressMsg', progressMsg );
+				}			
+			}));
+			
+			return this._handleOverallProcessingPromiseQueryBases(progressInfo, resourceName);
+		},
+		downloadWorkList: function(eventContext) {
+			var resourceName = this.worklistResource.getResourceName();
+			this.startDownloadAllQueryBases(resourceName);
+		},
+
+		_handleOverallProcessingPromiseQueryBases: function(progressInfo, resourceName){
+			var promise = WorklistDataManager._overallProcessing.promise;
+			var self = this;
+			var queryBase = progressInfo.queryBaseDownloading;
+
+			promise.otherwise(function(err){
+				if (!self.cancelTriggered){
+					
+					if (syncDownload==='true') {
+						self.ui.hideCurrentDialog();
+					}
+					
+					if (lang.isObject(err) && err.errorCode == "PROCEDURE_ERROR"){
+						var message = null;
+						if (err.invocationResult && err.invocationResult.errors && err.invocationResult.errors[0]['oslc:statusCode'] == 400){
+							var queryBaseLabel = self.ui.getCurrentViewControl().getCurrentQueryBaseLabel();
+							message = MessageService.createResolvedMessage('downloadFailedQueryBaseError', [queryBaseLabel]);
+						}
+						else{
+							message = MessageService.createResolvedMessage('downloadFailed');
+						}
+						self.progressResource.set('started', false);
+						self._clearWatches();
+						self.application.showMessage(message);
+					} else {
+						if(self._allowContinue()){
+							var message = ((err == "Unable to connect to server") ? 'downloadFailedNoConnectivity' : 'downloadFailed');
+							self._showDownloadFailedDialogWithContinue(message, lang.hitch(self,self._afterCancel),
+									function(){ return self.continueDownload(resourceName, queryBase); }); 
+						}
+						else{
+							self._showDownloadFailedDialog('downloadFailed');
+						}
+					}
+				}
+				
+				if (syncDownload==='true')
+				{
+					var listMetaData = ResourceMetaData.getResourceMetadata(resourceName);
+					//reset pagesize back to original size
+					listMetaData.setPageSize(origPageSize);
+					listMetaData.started = false;
+					progressInfo = null; 
+				}
+			});			
+			
+			var deferred = new Deferred();
+			var thatResourceName = resourceName;
+			
+			promise.then(function(){
+				self._callOutDeferred = new Deferred();
+				var callOutPromise = self._callOutDeferred.promise;
+				self._processCallOuts(resourceName, queryBase);
+				callOutPromise.then(function(){
+					if (self.cancelTriggered){
+						deferred.resolve();
+					}else{
+						WorkOfflineMapManager.notifyMapsToLoadData(self.worklistResource, thatResourceName, self.progressResource)
+						.then(function(message){
+							if (syncDownload==='true')
+							{
+								var listMetaData = ResourceMetaData.getResourceMetadata(thatResourceName);
+	
+								//reset pagesize back to original size
+								listMetaData.setPageSize(origPageSize);
+								progressInfo = null; // null check  
+								listMetaData.started= false;
+							}
+
+							self.progressResource.set('started', false);
+							self._showDownloadCompleteDialog(progressInfo, message);
+							deferred.resolve();
+						}).otherwise(function(err){
+							if (err.isWarning) {
+								self.progressResource.set('started', false);
+								self._showDownloadCompleteDialog(progressInfo, err.message);
+							}					
+							deferred.reject();
+						});
+					}
+				});
+				callOutPromise.always(function(){
+					var shouldDisplayStayAwake = SystemProperties.getProperty('si.device.keepDisplayAlive');
+					if(shouldDisplayStayAwake == true || shouldDisplayStayAwake == null)
+						ScreenLockManager.releaseDisplay();
+				});	
+			});
+			
+			
+			return deferred.promise;
+			
+		},
+		/* #endregion Tuan-out: add workofline for multiple queryBases*/
 		
 		startDownload: function(resourceName, queryBase) {
 			var self = this;
@@ -367,6 +563,7 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 								progressInfo = null; // null check  
 								listMetaData.started= false;
 							}
+
 							self.progressResource.set('started', false);
 							self._showDownloadCompleteDialog(progressInfo, message);
 							deferred.resolve();
@@ -374,7 +571,7 @@ function(declare, ApplicationHandlerBase, WorklistDataManager, WorklistDataUIMan
 							if (err.isWarning) {
 								self.progressResource.set('started', false);
 								self._showDownloadCompleteDialog(progressInfo, err.message);
-							}							
+							}					
 							deferred.reject();
 						});
 					}

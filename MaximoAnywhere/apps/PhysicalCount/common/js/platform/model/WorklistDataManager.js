@@ -106,6 +106,47 @@ function(thisModule, lang, Deferred, Logger, SystemProperties, ConnectivityCheck
 			
 			return this.progressInfo;
 		},
+
+		/* #region  Tuan-in: add workofline for multiple queryBases */
+		downloadAllDataForSingleWorklistResourceAndQueryBases: function(resourceName, queryBases, applyStablePagination){
+			this._initClassIfNeeded();
+			this.cleanUp();
+			
+			var self = this;
+			uiManager.showDownloadInProgressDialog();
+			
+			ttDownloadAllDataForWorklistResourceAndQueryBase.startTracking();
+			
+			this._overallProcessing = new Deferred();
+			
+			var resourceMetadata = ResourceMetadataContext.getResourceMetadata(resourceName);
+			var metrics = resourceMetadata.getResourceMetrics(queryBase);
+			if (metrics && metrics.getNextPageUrl()){
+				metrics._nextPageURL = null;
+			}
+			
+			this.needRecordLevelProgressInfo = true;			
+
+			this.resourcesCount = 1;
+			this.resourcesQueryBaseCount[resourceMetadata.name] = queryBases.length - 1;
+
+			for(var i = 0; i<queryBases.length; ++i) {
+				var queryBase = queryBases[i].name;
+				if(queryBase == "physicalcount") continue;
+				this.sendRequestForAllResourceData(resourceMetadata, queryBase, applyStablePagination);
+			};
+
+			this._overallProcessing.promise.
+			always(function(e){
+				ttDownloadAllDataForWorklistResourceAndQueryBase.stopTracking();
+				if(e == "canceled"){
+					self.cleanUp();	
+				}				
+			});
+			
+			return this.progressInfo;
+		},
+		/* #endregion Tuan-in: add workofline for multiple queryBases*/
 		
 		continueDownloadRemaringDataForSingleWorklistResourceAndQueryBase: function(resourceName, queryBase){
 			this._initClassIfNeeded();

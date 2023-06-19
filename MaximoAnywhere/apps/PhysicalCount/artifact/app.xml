@@ -41,6 +41,27 @@
 					</eventHandlers>
 				</query>
 
+				<!-- Tuan-in: add query to filter -->
+
+				<query id="Inventory.ItemsView_countNonConflict" label="Count with non-conflict" queryBase="countedyes" system="true">
+					<eventHandlers id="Inventory.ItemsView_countNonConflict_eventHandlers">
+						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_countNonConflict_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
+					</eventHandlers>
+				</query>
+
+				<query id="Inventory.ItemsView_countConflict" label="Count with conflict" queryBase="countedno" system="true">
+					<eventHandlers id="Inventory.ItemsView_countConflict_eventHandlers">
+						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_countConflict_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
+					</eventHandlers>
+				</query>
+
+				<query id="Inventory.ItemsView_notcounted" label="Not Counted for 3M" queryBase="notcounted" system="true">
+					<eventHandlers id="Inventory.ItemsView_notcounted_eventHandlers">
+						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_notcounted_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
+					</eventHandlers>
+				</query>
+				<!-- Tuan-in: add query to filter -->
+
 				<!-- Add 6 new queryBases -->
 				<!-- <query id="Inventory.ItemsView_mainwarehouse" label="Main Warehouse" queryBase="mainwarehouse" system="true">
 					<eventHandlers id="Inventory.ItemsView_mainwarehouse_eventHandlers">
@@ -97,7 +118,10 @@
 				<!-- Tuan-out: enable scan bar code -->
 				<action id="Inventory.ItemsView_DownloadWorkList_action" label="Download Work List" overflow="true">
 					<eventHandlers id="Inventory.ItemsView_DownloadWorkList_action_eventHandlers">
-						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_click_workoffline" method="workoffline"/>
+						<!-- Tuan-in: add download multiple queryBases -->
+						<!-- <eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_click_workoffline" method="workoffline"/> -->
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_click_workoffline" method="downloadWorkList"/>
+						<!-- Tuan-in: add download multiple queryBases -->
 						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="WorkExecution.WorkItemsView_DownloadWorkList_action_eventHandlers_render_enableDisableMenu" method="enableDisableMenu"/>
 					</eventHandlers>
 				</action>
@@ -759,7 +783,12 @@
 				<!-- <queryBase defaultForSearch="true" id="invbalance_queryBase_getAllInvbalances" name="getAllInvbalances" queryUri="/oslc/os/oslcinvbalview?savedQuery=getAllInvbalances"/> -->
 				<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount"/> -->
 				<!-- <queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/> -->
-				<queryBase defaultForSearch="true" id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/>
+				<queryBase id="invbalance_queryBase_physicalcountNB" name="physicalcountNB" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcountNB"/>
+				<!-- Tuan-in: add query base for filter -->
+				<queryBase id="invbalance_queryBase_countno-conflict" name="countedyes" queryUri="/oslc/os/oslcinvbalview?savedQuery=countedyes"/>
+				<queryBase id="invbalance_queryBase_count-conflict" name="countedno" queryUri="/oslc/os/oslcinvbalview?savedQuery=countedno"/>
+				<queryBase id="invbalance_queryBase_notcount" name="notcounted" queryUri="/oslc/os/oslcinvbalview?savedQuery=notcounted"/>
+				<!-- Tuan-in: add query base for filter -->
 				<!-- <queryBase id="invbalance_queryBase_physicalcount" name="physicalcount" queryUri="/oslc/os/oslcinvbalview?savedQuery=physicalcount">
 		    		<eventHandlers id="Inventory.ItemsView_physicalcount_eventHandlers">
 						<eventHandler class="application.handlers.InventoryHandler" event="click" id="Inventory.ItemsView_physicalcount_eventHandlers_render" method="loadInvbalanceByQueryBase"/>
