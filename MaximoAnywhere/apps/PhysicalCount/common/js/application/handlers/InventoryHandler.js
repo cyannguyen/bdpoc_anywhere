@@ -1196,7 +1196,12 @@ define("application/handlers/InventoryHandler", [
 
         reloadData: function (eventContext) {
             var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
-            var promise = view.changeQueryBase(0);
+            var querybase = view.queries.children[view.queryBaseIndex].queryBase;
+            var indexQueryBaseChange = 0;
+            if(querybase != PlatformConstants.SEARCH_RESULT_QUERYBASE) {
+                indexQueryBaseChange = view.queryBaseIndex;
+            }
+            var promise = view.changeQueryBase(indexQueryBaseChange);
             var self = this;
             promise.then(function () {
                 self.showFilteredList(eventContext).then(function (result) {
