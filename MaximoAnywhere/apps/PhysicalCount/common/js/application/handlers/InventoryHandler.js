@@ -184,7 +184,8 @@ define("application/handlers/InventoryHandler", [
                         //Loc: reload list QueryBase and default storeroom
                         //self.loadInvbalanceByQueryBase(self);
                     }
-
+                    //Tuan-in: reload data when finish counting
+                    self.reloadData(eventContext);
                     eventContext.ui.hideCurrentView();
                     self.setOriginatingQuerybase(eventContext, null);
                 };
@@ -1161,7 +1162,7 @@ define("application/handlers/InventoryHandler", [
 
         handleClickStoreroom: function (eventContext) {
             if (!storeroomMenuItems || storeroomMenuItems.length == 0) {
-                var message = MessageService.createStaticMessage('nolookupdata').getMessage();
+                var message = MessageService.createStaticMessage("nolookupdata").getMessage();
                 eventContext.application.showMessage(message);
                 return;
             }
@@ -1198,7 +1199,7 @@ define("application/handlers/InventoryHandler", [
             var view = eventContext.application.ui.getViewFromId("Inventory.ItemsView");
             var querybase = view.queries.children[view.queryBaseIndex].queryBase;
             var indexQueryBaseChange = 0;
-            if(querybase != PlatformConstants.SEARCH_RESULT_QUERYBASE) {
+            if (querybase != PlatformConstants.SEARCH_RESULT_QUERYBASE) {
                 indexQueryBaseChange = view.queryBaseIndex;
             }
             var promise = view.changeQueryBase(indexQueryBaseChange);
