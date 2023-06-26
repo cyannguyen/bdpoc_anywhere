@@ -129,6 +129,7 @@ function(declare, ApplicationHandlerBase, Logger, CodeScanner, ModelDataSet, Mod
 					if (resultSet==undefined){
 						eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE);
 					} else {
+						
 						var count = null;
 						count = resultSet.count();
 				
@@ -142,8 +143,15 @@ function(declare, ApplicationHandlerBase, Logger, CodeScanner, ModelDataSet, Mod
 								resource.setCurrentIndexByRecord(resultSet[0]);
 							}
 							*/
-						
-							eventContext.ui.show('Inventory.ItemDetailView');
+							// Tuan-in: save resource to track scan result 
+							ModelService.save(resultSet).then(function(){
+								eventContext.ui.getViewFromId('Inventory.ItemsView').setQueryBaseIndexByQuery(PlatformConstants.SEARCH_RESULT_QUERYBASE).then(function(){
+									eventContext.application.hideBusy();
+								});
+								eventContext.ui.show('Inventory.ItemDetailView');
+							});
+							// eventContext.ui.show('Inventory.ItemDetailView');
+							// Tuan-in: save resource to track scan result 
 						}
 						else {
 							ModelService.save(resultSet).then(function(){
