@@ -224,6 +224,9 @@
 					<!-- <image id="Inventory.ItemsView_invbalance_ItemList2_row0" layoutInsertAt="item1" resourceAttribute="row0"/> -->
 					<!-- <listtext cssClass="bold textappearance-medium descriptionListItem" id="Inventory.ItemsView_invbalance_ItemList2_row1" layoutInsertAt="item2" resourceAttribute="description"/> -->
 					<listtext cssClass="bold textappearance-smallerer descriptionListItem" id="Inventory.ItemsView_invbalance_ItemList2_row1" layoutInsertAt="item2" resourceAttribute="description"/>
+					<!-- Tuan-in: add memo icon -->
+					<image cssClass="checkImage" id="Inventory.ItemsView_invbalance_ItemList_memo_icon" layoutInsertAt="item15" resourceAttribute="memo_icon"/>
+					<!-- Tuan-out: add memo icon -->
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row2_col0" layoutInsertAt="item3" value="Item: "/>
 					<listtext cssClass="bold textappearance-smaller listItemMargin" id="Inventory.ItemsView_invbalance_ItemList2_row2_col1" layoutInsertAt="item4" resourceAttribute="itemnum"/>
 					<listtext cssClass="bold textappearance-smaller listItemTiltle" id="Inventory.ItemsView_invbalance_ItemList2_row2_col2" layoutInsertAt="item5" value="Bin Num: "/>
@@ -367,7 +370,10 @@
 
 				<!-- Loc: add the memo field to input -->
 				<text cssClass="inputCountLabel" id="Inventory.ItemDetailView_invbalance_groupitem_3_label_Memo" layoutInsertAt="item3" value="Memo"/>
-				<text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_memo" layoutInsertAt="item4" placeHolder="Memo" resourceAttribute="memo"/>
+				<!-- Tuan-in: change memo resource to submit to server -->
+				<!-- <text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_memo" layoutInsertAt="item4" placeHolder="Memo" resourceAttribute="memo"/> -->
+				<text cssClass="inputCountText" editable="true" id="Inventory.ItemDetailView_invbalance_groupitem_3_memo" layoutInsertAt="item4" placeHolder="Memo" resourceAttribute="anywhcountmemo"/>
+				<!-- Tuan-out: change memo resource to submit to server -->
 
 			</container>
 
@@ -768,6 +774,11 @@
 				<localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate_use}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/>
 
 				<!-- Tuan-out: add date for offline  -->
+
+				<!-- Tuan-in: add memo icon -->
+				<localAttribute dataType="string" formula=" ${anywhcountmemo}? 'action_getInfo_on.svg' : ''" id="invbalance_memo_icon" name="memo_icon" persistent="true"/>
+				<!-- Tuan-out: add memo icon -->
+
 
 
 				<!-- <localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/> -->

@@ -20,7 +20,12 @@
 	</row>
 	<row id="row_4">
 		<column colspan="3" columnid="item11" id="item11_column"/>
-		<column colspan="9" columnid="item12" id="item12_column"/>
+		<!-- <column colspan="9" columnid="item12" id="item12_column"/> -->
+
+		<!-- Tuan-in: add memo icon -->
+		<column colspan="8" columnid="item12" id="item12_column"/>
+		<column colspan="1" columnid="item15" id="item15_column"/>
+		<!-- Tuan-out: add memo icon -->
 	</row>
 	<row id="row_5">
 		<!-- <column colspan="5" columnid="item13" id="item13_column"/>
