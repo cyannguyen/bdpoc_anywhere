@@ -586,15 +586,17 @@
 		</lookup>	 -->
 
 		<!-- My lookup -->
-		<lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterItemsForLookup" id="Inventory.ItemsLookup" label="Select Item" resource="itemsResource">
+		<!-- Tuan-in: fix search by itemnum in lookup screen not working -->
+		<lookup id="Inventory.ItemsLookup" label="Select Item" resource="additionalInvbalance">
+		<!-- <lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterItemsForLookup" id="Inventory.ItemsLookup" label="Select Item" resource="itemsResource"> -->
 			<requiredResources id="Inventory.ItemsLookup_requiredResources">
-				<requiredResource id="Inventory.ItemsLookup_searchItems" name="searchItems"/>
-				<requiredResource id="Inventory.ItemsLookup_itemsResource" name="itemsResource"/>
+				<!-- <requiredResource id="Inventory.ItemsLookup_searchItems" name="searchItems"/>
+				<requiredResource id="Inventory.ItemsLookup_itemsResource" name="itemsResource"/> -->
 				<requiredResource id="Inventory.ItemsLookup_additionalInvbalance" name="additionalInvbalance" reload="true"/>
-				<requiredResource id="Inventory.ItemsLookup_additionalitem" name="additionalitem" reload="true"/>
+				<!-- <requiredResource id="Inventory.ItemsLookup_additionalitem" name="additionalitem" reload="true"/> -->
 			</requiredResources>
 
-			<list displayPageSize="40" id="Inventory.ItemsLookup_itemsResource_list" resource="itemsResource">
+			<list displayPageSize="40" id="Inventory.ItemsLookup_itemsResource_list" resource="additionalInvbalance">
 				<searchAttributes id="Inventory.ItemsLookup_itemsResource_searchAttributes">
 					<searchAttribute id="Inventory.ItemsLookup_itemsResource_searchAttribute_itemnum" name="itemnum"/>
 				</searchAttributes>
@@ -613,6 +615,7 @@
 				<returnAttribute id="Inventory.ItemsLookup_lotnum_lotnum" sourceAttribute="lotnum" targetAttribute="lotnum"/>
 			</returnAttributes>
 		</lookup>
+		<!-- Tuan-in: fix search by itemnum in lookup screen not working -->
 
 		<!-- Bin lookup -->
 		<!-- <lookup filterClass="application.handlers.InventoryHandler" filterMethod="filterBinLookup" id="Inventory.BinLookup" label="Select Bin" resource="invbalance"> -->
@@ -770,7 +773,7 @@
 				<!-- Tuan-in: add date for offline  -->
 				<localAttribute dataType="string" formula="${adjustedphyscnt}?${adjustedphyscnt}:${physcnt}" id="physcnt_use" name="physcnt_use"/>
 				<localAttribute dataType="string" formula="${adjustedphyscnt}?${adjustedphyscntdate}:${physcntdate}" id="physcntdate_use" index="true" name="physcntdate_use"/>
-				<localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate_use}),'month', 3), new Date(), 'date') &gt;= 0 ? ${physcnt_use} == ${curbal} ? 'green_check.png' : ${physcnt_use} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/>
+				<localAttribute dataType="string" formula="dojo.date.compare(dojo.date.add(new Date(${physcntdate_use}),'day', 90), new Date(), 'date') &gt;= 0 ? ${physcnt_use} == ${curbal} ? 'green_check.png' : ${physcnt_use} == 0 ? '' : 'yellow_check.png' : ''" id="invbalance_row0" name="row0" persistent="true"/>
 				<localAttribute dataType="string" formula="dojo.date.locale.format(new Date(${physcntdate_use}), { datePattern: 'dd/MMM/yyyy hh:mm a',  selector:'date'})" id="invbalance_row5" index="true" name="lastcountdate" remoteName="spi:physcntdate"/>
 
 				<!-- Tuan-out: add date for offline  -->
