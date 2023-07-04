@@ -314,12 +314,12 @@
 				</searchAttributes>
 
 				<listItemTemplate id="IssuesReturns.InventoryUsagesListView_listItemTemplate" layout="InventoryUsageList">
-					<listtext id="IssuesReturns.InventoryUsagesListView_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
-					<listtext id="IssuesReturns.InventoryUsagesListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
-					<listtext id="IssuesReturns.InventoryUsagesListView_documentref" layoutInsertAt="item3" resourceAttribute="documentref"/>
-					<listtext id="IssuesReturns.InventoryUsagesListView_createdate" layoutInsertAt="item4" resourceAttribute="createdate"/>
-					<listtext id="IssuesReturns.InventoryUsagesListView_preparedby" layoutInsertAt="item5" resourceAttribute="preparedby"/>
-					<listtext id="IssuesReturns.InventoryUsagesListView_usetype" layoutInsertAt="item6" resourceAttribute="usetype"/>
+					<text labelCss="labelDetailText" editable="false" cssClass="titleText" label="Form number" id="IssuesReturns.InventoryUsagesListView_formnumber" layoutInsertAt="item1" resourceAttribute="formnumber"/>
+					<text labelCss="labelDetailText" editable="false" label="Description" id="IssuesReturns.InventoryUsagesListView_description" layoutInsertAt="item2" resourceAttribute="description"/>
+					<text labelCss="labelDetailText" editable="false" label="Document Ref" id="IssuesReturns.InventoryUsagesListView_documentref" layoutInsertAt="item3" resourceAttribute="documentref"/>
+					<text labelCss="labelDetailText" editable="false" label="Create date" id="IssuesReturns.InventoryUsagesListView_createdate" layoutInsertAt="item4" resourceAttribute="createdate"/>
+					<text labelCss="labelDetailText" editable="false" label="Prepared By" id="IssuesReturns.InventoryUsagesListView_preparedby" layoutInsertAt="item5" resourceAttribute="preparedby"/>
+					<text labelCss="labelDetailText" editable="false" label="Use Type" id="IssuesReturns.InventoryUsagesListView_usetype" layoutInsertAt="item6" resourceAttribute="usetype"/>
 				</listItemTemplate>
 			</list>
 
