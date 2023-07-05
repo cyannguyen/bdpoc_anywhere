@@ -222,6 +222,10 @@ define("application/handlers/InventoryHandler", [
                                 //     invBalanceSet.count()
                                 // ).always(afterDataFetch);
                                 eventContext.ui.hideCurrentView();
+                                if (saveSearchFilter.length > 1) {
+                                    // prevent save search filter from online to offline lead to unexpected behaviour
+                                    saveSearchFilter = null;
+                                }
                                 self.loadSearchResultByQueryBase(eventContext);
                                 // Tuan-out:reload search result screen offline to show correct number of records
                             }
