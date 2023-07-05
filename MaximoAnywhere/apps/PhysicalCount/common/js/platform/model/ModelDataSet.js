@@ -430,10 +430,13 @@ define("platform/model/ModelDataSet",
 							var metrics = self._metaData.getResourceMetrics(self._queryBaseName);
 							var count  = null;
 							if(metrics){
-								count = metrics.getServerCount();
-								if (count < self.count() || self.count() == 0 ){
+								count = metrics.getServerCount(); 
+								// Tuan-in: fix count not correct
+								// if (count < self.count() || self.count() == 0 ){
+								if (count < self.count() || self.count() == 0 || self.count() < metrics.getPageSize()){
 									count = self.count();
 								}
+								// Tuan-out: fix count not correct 
 							} else {
 								//lookup data comes here
 								count = self.count();
