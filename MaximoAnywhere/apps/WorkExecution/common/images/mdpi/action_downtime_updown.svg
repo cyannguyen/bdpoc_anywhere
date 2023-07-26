@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>action_downtime_updown</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-info-copy" transform="translate(-4.000000, -4.000000)" fill="#5AAAFA">
+            <g id="action_downtime_updown" transform="translate(4.000000, 4.000000)">
+                <path d="M12,24 C5.372583,24 0,18.627417 0,12 C0,5.372583 5.372583,0 12,0 C18.627417,0 24,5.372583 24,12 C24,18.627417 18.627417,24 12,24 Z M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z" id="Oval" fill-rule="nonzero"></path>
+                <polygon id="Combined-Shape" points="12.9992574 16.992114 15.5502122 13.8450614 17.0162948 15.1623088 11.9977515 20.9917285 7 15.2860353 8.40875817 13.8450614 10.9992574 16.992114 11.0170374 6.99961452 8.46608254 10.1466671 7 8.8294197 12.0185433 3 17.0162948 8.70569322 15.6075366 10.1466671 13.0170374 6.99961452"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

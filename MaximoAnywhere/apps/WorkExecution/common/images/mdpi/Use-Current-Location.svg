@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="26px" viewBox="0 0 22 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>Use-Current-Location</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-header-/-curr-location" transform="translate(-5.000000, -3.000000)" fill="#FFFFFF">
+            <path d="M10.0829584,15 C10.5044769,17.5125049 12.4874951,19.4955231 15,19.9170416 L15,22 L17,22 L17,19.9170416 C19.5125049,19.4955231 21.4955231,17.5125049 21.9170416,15 L24,15 L24,13 L21.9170416,13 C21.4955231,10.4874951 19.5125049,8.50447689 17,8.08295844 L17,6 L15,6 L15,8.08295844 C12.4874951,8.50447689 10.5044769,10.4874951 10.0829584,13 L8,13 L8,15 L10.0829584,15 Z M16,28.811583 C10.1054665,23.1321237 5,20.0751322 5,14 C5,7.92486775 9.92486775,3 16,3 C22.0751322,3 27,7.92486775 27,14 C27,20.0751322 22.0746748,22.7222233 16,28.811583 Z M16,17 C14.3431458,17 13,15.6568542 13,14 C13,12.3431458 14.3431458,11 16,11 C17.6568542,11 19,12.3431458 19,14 C19,15.6568542 17.6568542,17 16,17 Z" id="Use-Current-Location"></path>
+        </g>
+    </g>
+</svg>

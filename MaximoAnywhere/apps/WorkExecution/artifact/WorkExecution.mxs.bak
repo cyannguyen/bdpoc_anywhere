@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatescript version="20220526_155012-0400">
+	<app apptype="anywhere" id="WorkExecution">
+		<add container="WorkExecution.WorkItemsView_workOrder_listItemTemplate_WorkListItem" control="eventHandlers">
+			<set property="id" value="WorkExecution.WorkItemsView_workOrder_listItemTemplate_eventHandlers"/>
+		</add>
+		<add container="WorkExecution.WorkItemsView_workOrder_listItemTemplate_eventHandlers" control="eventHandler">
+			<set property="class" value="application.handlers.WOListHandler"/>
+			<set property="event" value="render"/>
+			<set property="id" value="WorkExecution.WorkItemsView_workOrder_listItemTemplate_eventHandlers_render"/>
+			<set property="method" value="refreshClassDescription"/>
+		</add>
+		<add container="WorkExecution.MultipleAssetsLocationsView_progress_checkbox" control="eventHandlers">
+			<set property="id" value="WorkExecution.MultipleAssetsLocationsView_progress_checkbox_eventHandlers"/>
+		</add>
+		<add container="WorkExecution.MultipleAssetsLocationsView_progress_checkbox_eventHandlers" control="eventHandler">
+			<set property="class" value="application.handlers.MetersListHandler"/>
+			<set property="event" value="render"/>
+			<set property="id" value="WorkExecution.MultipleAssetsLocationsView_progress_checkbox_eventHandlers_isReadonly"/>
+			<set property="method" value="isReadonly"/>
+		</add>
+		<modify control="WorkExecution.FollowUpWorkOrderView_Cancel_button_eventHandlers_click_discardNewWorkOrderView">
+			<set property="method" value="cancelFollowUP"/>
+		</modify>
+		<add before="WorkExecution.FollowUpWorkOrderView_eventHandlers_initialize_initializeMeters" container="WorkExecution.FollowUpWorkOrderView_eventHandlers" control="eventHandler">
+			<set property="class" value="application.handlers.WODetailHandler"/>
+			<set property="event" value="cleanup"/>
+			<set property="id" value="WorkExecution.FollowUpWorkOrderView_eventHandlers_cleanup_handleBackButton"/>
+			<set property="method" value="discardNewWorkOrderView"/>
+		</add>
+		<add container="WorkExecution.EditStatusView_requiredResources" control="requiredResource">
+			<set property="id" value="WorkExecution.EditStatusView_additionalworktype"/>
+			<set property="name" value="additionalworktype"/>
+		</add>
+	</app>
+</updatescript>

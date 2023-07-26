@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="MapLoadOfflineAreaList" width="100">
+	<row id="row_0">
+		<column colspan="7" columnid="item1" id="item1_column"/>	
+		<column colspan="1" columnid="item2" halign="right" id="item2_column"/>
+	</row>
+	
+	
+</layout>

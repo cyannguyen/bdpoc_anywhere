@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>msg_downloadComplete_small</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-download-/-complete" transform="translate(-6.000000, -6.000000)">
+            <g id="msg_downloadComplete_small" transform="translate(6.000000, 6.000000)">
+                <path d="M10,0 C4.47785714,0 0,4.47785714 0,10 C0,15.5221429 4.47785714,20 10,20 C15.5221429,20 20,15.5221429 20,10 C20,4.47785714 15.5221429,0 10,0 L10,0 Z" id="Shape" fill-opacity="0.8" fill="#FFFFFF"></path>
+                <path d="M10,0 C15.5221429,0 20,4.47785714 20,10 C20,15.5221429 15.5221429,20 10,20 C4.47785714,20 0,15.5221429 0,10 C0,4.47785714 4.47785714,0 10,0 Z M7.9284938,12.6489855 L4.51775883,9.2382505 L3.05320395,10.7028054 L7.9284938,15.5780952 L16.9467961,6.55979298 L15.4822412,5.0952381 L7.9284938,12.6489855 Z" id="Combined-Shape" fill="#4B8400"></path>
+            </g>
+        </g>
+    </g>
+</svg>

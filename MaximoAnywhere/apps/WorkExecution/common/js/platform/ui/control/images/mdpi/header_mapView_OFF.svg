@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_mapView_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-header-/-maps" transform="translate(-4.000000, -4.000000)" fill="#FFFFFF">
+            <path d="M18.3284752,19 C14.1566742,11.6441966 13.7331669,11.3643131 13.7331669,8.76683308 C13.7331669,6.13418387 15.8673508,4 18.5,4 C21.1326492,4 23.2668331,6.13418387 23.2668331,8.76683308 C23.2668331,11.3643131 22.7026598,11.6441966 18.6658874,19 L25,19 L25,20 L10,20 L10,25 L9,25 L9,20 L7,20 L7,19 L9,19 L9,10 L10,10 L10,19 L18.3284752,19 Z M12,7 L12,9 L6,9 L6,26 L26,26 L26,9 L25,9 L25,7 L28,7 L28,28 L4,28 L4,7 L12,7 Z" id="header_mapView_OFF"></path>
+        </g>
+    </g>
+</svg>

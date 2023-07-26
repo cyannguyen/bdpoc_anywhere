@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="32px" viewBox="0 0 43 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_app_WorkExecution_back_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="header_app_WorkExecution_back_OFF" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header_app_WorkExecution_noBack" transform="translate(14.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M16,2 L22,2 L22,10 L21,10 L21,3 L16,3 L16,2 Z M6,2 L6,3 L1,3 L1,23 L13,23 L13,24 L0,24 L0,2 L6,2 Z" id="board"></path>
+            <path d="M9,2 C9,0.8954305 9.8954305,0 11,0 C12.1045695,0 13,0.8954305 13,2 L16,2 L16,6 L6,6 L6,2 L9,2 Z M11,3 C11.5522847,3 12,2.55228475 12,2 C12,1.44771525 11.5522847,1 11,1 C10.4477153,1 10,1.44771525 10,2 C10,2.55228475 10.4477153,3 11,3 Z" id="clip"></path>
+            <g id="lines" transform="translate(5.000000, 9.000000)">
+                <rect id="Rectangle-3" x="0" y="0" width="12" height="1"></rect>
+                <rect id="Rectangle-6" x="0" y="3" width="8" height="1"></rect>
+                <rect id="Rectangle-6-Copy" x="0" y="6" width="8" height="1"></rect>
+                <rect id="Rectangle-7" x="0" y="9" width="5" height="1"></rect>
+            </g>
+            <polygon id="play" points="15 24.0266077 15 12 26.5701133 18.0133038"></polygon>
+        </g>
+        <g id="nany-icon-/-back-arrow" fill="#FFFFFF">
+            <polygon id="header_back_OFF" points="4.09980033 16 7.53567422 22.5 4.18511389 22.5 1 16 4.64943967 9.5 8 9.5"></polygon>
+        </g>
+    </g>
+</svg>

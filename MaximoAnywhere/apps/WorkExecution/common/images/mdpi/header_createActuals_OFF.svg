@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="22px" viewBox="0 0 24 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_createActuals_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-header-/-signature-copy" transform="translate(-4.000000, -6.000000)" fill="#FFFFFF">
+            <g id="header_createActuals_OFF" transform="translate(4.000000, 6.000000)">
+                <path d="M20,17 L24,17 L24,18 L20,18 L20,22 L19,22 L19,18 L15,18 L15,17 L19,17 L19,13 L20,13 L20,17 Z" id="header_createWO_OFF"></path>
+                <path d="M4.92435236,11 L0,11 L0,6 L2,6 L2,7 L4,7 L4,6 L6,6 L6,5 L4,5 L4,4 L2,4 L2,5 L0,5 L0,2 L4,2 L4,0 L5,0 L9,0 L9,0.416043685 C8.64280868,0.572107214 8.30737557,0.768696603 7.99951255,1 L5,1 L5,2 L6.99963381,2 C6.37194482,2.83566053 6,3.87439408 6,5 C6,6.63559896 6.7853431,8.08777121 7.99951255,9 L6,9 L4.92435236,11 Z" id="Combined-Shape"></path>
+                <path d="M16.9725356,14 L5.02746439,14 C5.27618653,11.7500248 7.18372317,10 9.5,10 L12.5,10 C14.8162768,10 16.7238135,11.7500248 16.9725356,14 Z M11,9 C8.790861,9 7,7.209139 7,5 C7,2.790861 8.790861,1 11,1 C13.209139,1 15,2.790861 15,5 C15,7.209139 13.209139,9 11,9 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

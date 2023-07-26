@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>action_meterReading_off</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-meter-reading" transform="translate(-4.000000, -4.000000)" fill="#5AAAFA" fill-rule="nonzero">
+            <path d="M15,8 L17,8 L17,10 L15,10 L15,8 Z M10,10 L12,10 L12,12 L10,12 L10,10 Z M8,15 L10,15 L10,17 L8,17 L8,15 Z M22,15 L24,15 L24,17 L22,17 L22,15 Z M16,28 C9.372583,28 4,22.627417 4,16 C4,9.372583 9.372583,4 16,4 C22.627417,4 28,9.372583 28,16 C28,22.627417 22.627417,28 16,28 Z M22.5294118,10 L14,15.5882353 L16.9411765,18.5294118 L22.5294118,10 Z M21.9940274,24.0052151 C24.4263175,22.1810798 26,19.2743165 26,16 C26,10.4771525 21.5228475,6 16,6 C10.4771525,6 6,10.4771525 6,16 C6,19.2762096 7.57550265,22.1844408 10.0101922,24.0083779 C11.5894692,24.0052151 20.9027406,24.0083779 21.9940274,24.0052151 Z" id="action_meterReading_off"></path>
+        </g>
+    </g>
+</svg>
